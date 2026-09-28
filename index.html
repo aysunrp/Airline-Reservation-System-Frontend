@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEROVA | Luxury Travel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body>
+    <header id="site-header" class="site-header">
+        <div class="header-container">
+            <a class="logo" href="#hero">
+                <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+                    <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+                </svg>
+                <span class="logo-text">Aerova</span>
+            </a>
+
+            <nav id="primary-navigation" class="main-navigation" aria-label="Primary">
+                <ul class="nav-list">
+                    <li class="nav-item"><a class="nav-link" href="#explore">Explore</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#flights">Flights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#destinations">Destinations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="#my-trips">My Trips</a></li>
+                </ul>
+                <a class="login-button login-button--drawer" href="#login">Login</a>
+            </nav>
+
+            <div class="header-actions">
+                <a class="trips-link" href="#my-trips">My Trips</a>
+                <button class="search-button" type="button" aria-label="Search">
+                    <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <a class="login-button" href="#login">Login</a>
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu">
+                    <span class="menu-toggle-bar"></span>
+                    <span class="menu-toggle-bar"></span>
+                    <span class="menu-toggle-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="hero-background" role="img" aria-label="Aircraft in flight above the clouds"></div>
+            <div class="hero-overlay" aria-hidden="true"></div>
+            <div class="hero-content">
+                <p class="hero-eyebrow">Luxury Travel Experience</p>
+                <h1 class="hero-title">
+                    <span class="hero-title-line">Your Journey</span>
+                    <span class="hero-title-line">Starts Here</span>
+                </h1>
+                <p class="hero-description">Discover new destinations, create unforgettable memories and fly beyond expectations.</p>
+                <div class="hero-actions">
+                    <a class="hero-cta" href="#our-story">
+                        Explore Our Story
+                        <span class="hero-cta-arrow" aria-hidden="true">→</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/js/home.js"></script>
+</body>
+</html>
