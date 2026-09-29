@@ -38,3 +38,46 @@
         }
     });
 })();
+
+(function () {
+    var card = document.getElementById("flight-search-card");
+    if (!card) {
+        return;
+    }
+
+    var tabs = card.querySelectorAll(".search-tab");
+    var returnField = document.getElementById("return-field");
+    var returnInput = document.getElementById("return-date");
+
+    function setTrip(tab) {
+        tabs.forEach(function (item) {
+            var active = item === tab;
+            item.classList.toggle("is-active", active);
+            item.setAttribute("aria-selected", active ? "true" : "false");
+        });
+
+        var oneWay = tab.getAttribute("data-trip") === "one-way";
+        if (returnField && returnInput) {
+            returnField.classList.toggle("is-disabled", oneWay);
+            returnInput.disabled = oneWay;
+        }
+    }
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            setTrip(tab);
+        });
+    });
+
+    var swapButton = document.getElementById("swap-route-button");
+    var fromInput = document.getElementById("from-input");
+    var toInput = document.getElementById("to-input");
+
+    if (swapButton && fromInput && toInput) {
+        swapButton.addEventListener("click", function () {
+            var fromValue = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = fromValue;
+        });
+    }
+})();
