@@ -81,3 +81,19 @@
         });
     }
 })();
+
+(function () {
+    var images = document.querySelectorAll(".destination-image");
+
+    images.forEach(function (image) {
+        function hideMissingImage() {
+            image.classList.add("is-missing");
+        }
+
+        if (image.complete && image.naturalWidth === 0) {
+            hideMissingImage();
+        }
+
+        image.addEventListener("error", hideMissingImage);
+    });
+})();
