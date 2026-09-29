@@ -97,3 +97,45 @@
         image.addEventListener("error", hideMissingImage);
     });
 })();
+
+(function () {
+    var form = document.getElementById("newsletter-form");
+    var input = document.getElementById("newsletter-email");
+    var message = document.getElementById("newsletter-message");
+
+    if (!form || !input || !message) {
+        return;
+    }
+
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    function showMessage(text, isError) {
+        message.textContent = text;
+        message.hidden = false;
+        message.classList.toggle("is-error", isError);
+        message.classList.toggle("is-success", !isError);
+        input.setAttribute("aria-invalid", isError ? "true" : "false");
+    }
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var email = input.value.trim();
+        input.value = email;
+
+        if (!email) {
+            showMessage("Please enter your email address.", true);
+            input.focus();
+            return;
+        }
+
+        if (!emailPattern.test(email)) {
+            showMessage("Please enter a valid email address.", true);
+            input.focus();
+            return;
+        }
+
+        showMessage("You're subscribed. Welcome to AEROVA.", false);
+        input.value = "";
+    });
+})();
