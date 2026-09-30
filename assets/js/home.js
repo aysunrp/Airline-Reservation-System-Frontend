@@ -539,3 +539,25 @@
         input.value = "";
     });
 })();
+
+(function () {
+    var card = document.getElementById("why-easy-booking");
+    if (!card) {
+        return;
+    }
+
+    function openBookingPage() {
+        window.location.href = card.getAttribute("data-href") || "booking.html";
+    }
+
+    card.addEventListener("click", function () {
+        openBookingPage();
+    });
+
+    card.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openBookingPage();
+        }
+    });
+})();

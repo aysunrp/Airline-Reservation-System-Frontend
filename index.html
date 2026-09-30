@@ -12,7 +12,7 @@
 <body>
     <header id="site-header" class="site-header">
         <div class="header-container">
-            <a class="logo" href="#hero">
+            <a class="logo" href="index.html" aria-label="AEROVA Home">
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
                 </svg>
@@ -21,7 +21,6 @@
 
             <nav id="primary-navigation" class="main-navigation" aria-label="Primary">
                 <ul class="nav-list">
-                    <li class="nav-item"><a class="nav-link" href="#explore">Explore</a></li>
                     <li class="nav-item"><a class="nav-link" href="booking.html">Book</a></li>
                     <li class="nav-item"><a class="nav-link" href="#destinations">Destinations</a></li>
                     <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
@@ -116,7 +115,7 @@
                             <p class="destination-location">United Arab Emirates</p>
                             <h3 class="destination-name">Dubai</h3>
                             <p class="destination-description">Skyline light, desert silence, and evenings shaped for arrival.</p>
-                            <a class="destination-link" href="#dubai">Explore <span class="destination-link-arrow" aria-hidden="true">→</span></a>
+                            <a class="destination-book" href="booking.html?to=Dubai">Book Now →</a>
                         </div>
                     </article>
 
@@ -127,7 +126,7 @@
                             <p class="destination-location">United Kingdom</p>
                             <h3 class="destination-name">London</h3>
                             <p class="destination-description">Royal avenues, river mist, and a capital of quiet grandeur.</p>
-                            <a class="destination-link" href="#london">Explore <span class="destination-link-arrow" aria-hidden="true">→</span></a>
+                            <a class="destination-book" href="booking.html?to=London">Book Now →</a>
                         </div>
                     </article>
 
@@ -138,7 +137,7 @@
                             <p class="destination-location">France</p>
                             <h3 class="destination-name">Paris</h3>
                             <p class="destination-description">Couture, cafés, and the soft gold of the Seine at dusk.</p>
-                            <a class="destination-link" href="#paris">Explore <span class="destination-link-arrow" aria-hidden="true">→</span></a>
+                            <a class="destination-book" href="booking.html?to=Paris">Book Now →</a>
                         </div>
                     </article>
 
@@ -149,7 +148,7 @@
                             <p class="destination-location">Türkiye</p>
                             <h3 class="destination-name">Istanbul</h3>
                             <p class="destination-description">Domes, bazaars, and the water between two continents.</p>
-                            <a class="destination-link" href="#istanbul">Explore <span class="destination-link-arrow" aria-hidden="true">→</span></a>
+                            <a class="destination-book" href="booking.html?to=Istanbul">Book Now →</a>
                         </div>
                     </article>
 
@@ -160,7 +159,7 @@
                             <p class="destination-location">Azerbaijan</p>
                             <h3 class="destination-name">Baku</h3>
                             <p class="destination-description">Flame towers, Caspian wind, and a city of old and new.</p>
-                            <a class="destination-link" href="#baku">Explore <span class="destination-link-arrow" aria-hidden="true">→</span></a>
+                            <a class="destination-book" href="booking.html?to=Baku">Book Now →</a>
                         </div>
                     </article>
 
@@ -171,7 +170,7 @@
                             <p class="destination-location">Indian Ocean</p>
                             <h3 class="destination-name">Maldives</h3>
                             <p class="destination-description">Still lagoons, private shores, and horizons reserved for you.</p>
-                            <a class="destination-link" href="#maldives">Explore <span class="destination-link-arrow" aria-hidden="true">→</span></a>
+                            <a class="destination-book" href="booking.html?to=Maldives">Book Now →</a>
                         </div>
                     </article>
                 </div>
@@ -187,7 +186,7 @@
                 </div>
 
                 <div class="why-aerova-grid">
-                    <a id="why-easy-booking" class="why-aerova-card" href="#flight-search">
+                    <article id="why-easy-booking" class="why-aerova-card" role="link" tabindex="0" aria-label="Easy Booking. Book a Flight" data-href="booking.html">
                         <span class="why-aerova-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24">
                                 <path d="M4 8.5h16v8H4z" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -197,7 +196,7 @@
                         <h3 class="why-aerova-card-title">Easy Booking</h3>
                         <p class="why-aerova-card-description">Find and book your next flight in just a few steps.</p>
                         <span class="why-aerova-card-link">Book a Flight <span class="why-aerova-card-arrow" aria-hidden="true">→</span></span>
-                    </a>
+                    </article>
 
                     <a id="why-seat-selection" class="why-aerova-card" href="seat-selection.html">
                         <span class="why-aerova-icon" aria-hidden="true">
@@ -412,6 +411,6 @@
         </div>
     </footer>
 
-    <script src="assets/js/home.js?v=voice1"></script>
+    <script src="assets/js/home.js?v=easybook1"></script>
 </body>
 </html>

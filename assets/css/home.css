@@ -997,6 +997,8 @@ h1 {
     flex-direction: column;
     align-items: flex-start;
     padding: 1.35rem 1.3rem 1.25rem;
+    transform: translateY(0);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .destination-location {
@@ -1030,21 +1032,37 @@ h1 {
     line-height: 1.55;
 }
 
-.destination-link {
+.destination-book {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    margin-top: 0.85rem;
-    color: var(--color-cream);
-    font-size: 0.88rem;
+    justify-content: center;
+    overflow: hidden;
+    max-height: 0;
+    min-height: 0;
+    margin-top: 0;
+    padding: 0 1.05rem;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+    font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.04em;
-    transition: color 0.25s ease;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition:
+        max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        margin-top 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease,
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0.45s ease,
+        filter 0.25s ease;
 }
 
-.destination-link-arrow {
-    display: inline-block;
-    transition: transform 0.25s ease;
+.destination-book:hover {
+    filter: brightness(1.06);
 }
 
 .destination-card:hover {
@@ -1060,12 +1078,21 @@ h1 {
     background: linear-gradient(180deg, rgba(7, 17, 29, 0.22) 0%, rgba(7, 17, 29, 0.88) 100%);
 }
 
-.destination-card:hover .destination-link {
-    color: var(--color-gold-light);
+.destination-card:hover .destination-content,
+.destination-card:focus-within .destination-content {
+    transform: translateY(-6px);
 }
 
-.destination-card:hover .destination-link-arrow {
-    transform: translateX(5px);
+.destination-card:hover .destination-book,
+.destination-card:focus-within .destination-book {
+    max-height: 3rem;
+    min-height: 40px;
+    margin-top: 0.9rem;
+    padding: 0.55rem 1.05rem;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 
 @media (max-width: 980px) {
@@ -1110,15 +1137,24 @@ h1 {
         min-height: 320px;
     }
 
-    .destination-link {
+    .destination-card:hover .destination-book,
+    .destination-card:focus-within .destination-book {
         min-height: 44px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .destination-content,
+    .destination-book {
+        transition: none;
+    }
+
     .destination-card:hover,
     .destination-card:hover .destination-image,
-    .destination-card:hover .destination-link-arrow {
+    .destination-card:hover .destination-content,
+    .destination-card:focus-within .destination-content,
+    .destination-card:hover .destination-book,
+    .destination-card:focus-within .destination-book {
         transform: none;
     }
 }
@@ -1189,7 +1225,25 @@ h1 {
     border: 1px solid rgba(7, 17, 29, 0.08);
     border-radius: 18px;
     box-shadow: 0 12px 32px rgba(7, 17, 29, 0.04);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
     transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+a.why-aerova-card:visited {
+    color: inherit;
+}
+
+#why-easy-booking {
+    cursor: pointer;
+}
+
+#why-easy-booking .why-aerova-card-title,
+#why-easy-booking .why-aerova-card-description,
+#why-easy-booking .why-aerova-card-link,
+#why-easy-booking .why-aerova-icon {
+    pointer-events: none;
 }
 
 .why-aerova-icon {

@@ -502,6 +502,19 @@
         navigateToResults(data);
     });
 
+    function applyDestinationFromQuery() {
+        var params = new URLSearchParams(window.location.search);
+        var destination = params.get("to");
+
+        if (!destination) {
+            return;
+        }
+
+        toInput.value = destination.trim();
+        toInput.classList.remove("is-invalid");
+    }
+
     refreshSegments();
     setTrip("round-trip");
+    applyDestinationFromQuery();
 })();
