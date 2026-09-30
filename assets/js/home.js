@@ -40,108 +40,446 @@
 })();
 
 (function () {
-    var card = document.getElementById("flight-search-card");
-    if (!card) {
+    var form = document.getElementById("voice-quick-search");
+    var input = document.getElementById("voice-search-input");
+    var micButton = document.getElementById("voice-mic-button");
+    var status = document.getElementById("voice-search-status");
+    var message = document.getElementById("voice-search-message");
+
+    if (!form || !input || !micButton) {
         return;
     }
 
-    var tabs = card.querySelectorAll(".search-tab");
-    var routeFields = document.getElementById("route-fields");
-    var departureField = document.getElementById("departure-field");
-    var returnField = document.getElementById("return-field");
-    var multiPanel = document.getElementById("home-multi");
-    var segmentList = document.getElementById("home-segment-list");
-    var addFlight = document.getElementById("home-add-flight");
-    var swapButton = document.getElementById("swap-route-button");
-    var fromInput = document.getElementById("from-input");
-    var toInput = document.getElementById("to-input");
-    var maxSegments = 6;
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var activeRecognition = null;
 
-    function setTrip(type) {
-        card.classList.toggle("is-round-trip", type === "round-trip");
-        card.classList.toggle("is-one-way", type === "one-way");
-        card.classList.toggle("is-multi-city", type === "multi-city");
+    var MONTHS = {
+        january: 1, jan: 1,
+        february: 2, feb: 2,
+        march: 3, mar: 3,
+        april: 4, apr: 4,
+        may: 5,
+        june: 6, jun: 6,
+        july: 7, jul: 7,
+        august: 8, aug: 8,
+        september: 9, sep: 9, sept: 9,
+        october: 10, oct: 10,
+        november: 11, nov: 11,
+        december: 12, dec: 12
+    };
 
-        tabs.forEach(function (tab) {
-            var active = tab.getAttribute("data-trip") === type;
-            tab.classList.toggle("is-active", active);
-            tab.setAttribute("aria-selected", active ? "true" : "false");
-        });
-
-        if (routeFields) {
-            routeFields.hidden = type === "multi-city";
-        }
-        if (departureField) {
-            departureField.hidden = type === "multi-city";
-        }
-        if (returnField) {
-            returnField.hidden = type !== "round-trip";
-            returnField.classList.remove("is-disabled");
-        }
-        if (multiPanel) {
-            multiPanel.hidden = type !== "multi-city";
-        }
-    }
-
-    tabs.forEach(function (tab) {
-        tab.addEventListener("click", function () {
-            setTrip(tab.getAttribute("data-trip"));
-        });
+    var KNOWN_CITIES = [
+        "abu dhabi", "new york", "los angeles", "hong kong", "san francisco",
+        "cape town", "kuala lumpur", "tel aviv", "rio de janeiro", "las vegas",
+        "dubai", "london", "paris", "istanbul", "baku", "maldives", "male",
+        "tokyo", "singapore", "doha", "moscow", "berlin", "rome", "madrid",
+        "barcelona", "amsterdam", "vienna", "zurich", "geneva", "milan",
+        "munich", "frankfurt", "beijing", "shanghai", "seoul", "bangkok",
+        "mumbai", "delhi", "cairo", "riyadh", "jeddah", "kuwait", "manama",
+        "muscat", "tehran", "athens", "lisbon", "prague", "budapest",
+        "warsaw", "stockholm", "oslo", "copenhagen", "helsinki", "dublin",
+        "edinburgh", "manchester", "birmingham", "toronto", "montreal",
+        "vancouver", "chicago", "miami", "boston", "washington", "seattle",
+        "sydney", "melbourne", "auckland", "johannesburg", "sharjah", "antalya"
+    ].sort(function (a, b) {
+        return b.length - a.length;
     });
 
-    if (swapButton && fromInput && toInput) {
-        swapButton.addEventListener("click", function () {
-            var fromValue = fromInput.value;
-            fromInput.value = toInput.value;
-            toInput.value = fromValue;
+    function pad(value) {
+        return String(value).padStart(2, "0");
+    }
+
+    function toIsoDate(year, month, day) {
+        var date = new Date(Date.UTC(year, month - 1, day));
+        if (
+            date.getUTCFullYear() !== year ||
+            date.getUTCMonth() !== month - 1 ||
+            date.getUTCDate() !== day
+        ) {
+            return "";
+        }
+
+        return year + "-" + pad(month) + "-" + pad(day);
+    }
+
+    function titleCaseCity(value) {
+        return value
+            .trim()
+            .replace(/\s+/g, " ")
+            .split(" ")
+            .map(function (word) {
+                if (!word) {
+                    return word;
+                }
+
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            })
+            .join(" ");
+    }
+
+    function cleanCity(value) {
+        return titleCaseCity(
+            String(value || "")
+                .replace(/[.,;!?]+$/g, "")
+                .replace(/\b(for|on|with|and|the|a|an)\b/gi, " ")
+                .replace(/\s+/g, " ")
+                .trim()
+        );
+    }
+
+    function extractPassengers(text) {
+        var match = text.match(/\b(\d{1,2})\s*(?:passengers?|people|persons?|travelers?|travellers?)\b/i);
+        if (match) {
+            return {
+                value: Number(match[1]),
+                match: match[0]
+            };
+        }
+
+        match = text.match(/\bfor\s+(\d{1,2})\b/i);
+        if (match) {
+            return {
+                value: Number(match[1]),
+                match: match[0]
+            };
+        }
+
+        return null;
+    }
+
+    function extractDate(text) {
+        var monthNames = Object.keys(MONTHS).join("|");
+        var match;
+
+        match = text.match(new RegExp(
+            "\\b(" + monthNames + ")\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s*(\\d{4})\\b",
+            "i"
+        ));
+        if (match) {
+            return {
+                value: toIsoDate(Number(match[3]), MONTHS[match[1].toLowerCase()], Number(match[2])),
+                match: match[0]
+            };
+        }
+
+        match = text.match(new RegExp(
+            "\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(" + monthNames + "),?\\s*(\\d{4})\\b",
+            "i"
+        ));
+        if (match) {
+            return {
+                value: toIsoDate(Number(match[3]), MONTHS[match[2].toLowerCase()], Number(match[1])),
+                match: match[0]
+            };
+        }
+
+        match = text.match(/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/);
+        if (match) {
+            return {
+                value: toIsoDate(Number(match[1]), Number(match[2]), Number(match[3])),
+                match: match[0]
+            };
+        }
+
+        match = text.match(/\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})\b/);
+        if (match) {
+            var first = Number(match[1]);
+            var second = Number(match[2]);
+            var year = Number(match[3]);
+            var month = first > 12 ? second : first;
+            var day = first > 12 ? first : second;
+
+            if (first <= 12 && second <= 12) {
+                month = first;
+                day = second;
+            }
+
+            return {
+                value: toIsoDate(year, month, day),
+                match: match[0]
+            };
+        }
+
+        return null;
+    }
+
+    function findKnownCity(text, fromIndex) {
+        var lower = text.toLowerCase();
+        var start = typeof fromIndex === "number" ? fromIndex : 0;
+        var best = null;
+
+        KNOWN_CITIES.forEach(function (city) {
+            var index = lower.indexOf(city, start);
+
+            while (index !== -1) {
+                var beforeOk = index === 0 || /[\s,]/.test(lower.charAt(index - 1));
+                var afterOk = index + city.length >= lower.length || /[\s,]/.test(lower.charAt(index + city.length));
+
+                if (beforeOk && afterOk) {
+                    if (!best || index < best.index || (index === best.index && city.length > best.city.length)) {
+                        best = {
+                            city: city,
+                            index: index,
+                            length: city.length
+                        };
+                    }
+                    break;
+                }
+
+                index = lower.indexOf(city, index + 1);
+            }
         });
+
+        return best;
     }
 
-    if (!segmentList || !addFlight) {
-        return;
+    function extractCities(text) {
+        var from = "";
+        var to = "";
+        var match;
+
+        match = text.match(/\bfrom\s+([a-z][\w\s'-]*?)\s+to\s+([a-z][\w\s'-]*?)(?=\s+(?:for|on|with|\d)|,|$)/i);
+        if (match) {
+            return {
+                from: cleanCity(match[1]),
+                to: cleanCity(match[2])
+            };
+        }
+
+        match = text.match(/\b([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)\s+to\s+([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)(?=\s+(?:for|on|with|\d)|,|$)/i);
+        if (match) {
+            return {
+                from: cleanCity(match[1]),
+                to: cleanCity(match[2])
+            };
+        }
+
+        var first = findKnownCity(text, 0);
+        if (first) {
+            var second = findKnownCity(text, first.index + first.length);
+            if (second) {
+                return {
+                    from: titleCaseCity(first.city),
+                    to: titleCaseCity(second.city)
+                };
+            }
+        }
+
+        var leftover = text
+            .replace(/\b(i|want|to|fly|from|travel|please|would|like|a|an|the|on|for|with|and)\b/gi, " ")
+            .replace(/[.,;!?]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        var parts = leftover.split(" ").filter(Boolean);
+        if (parts.length >= 2) {
+            from = cleanCity(parts[0]);
+            to = cleanCity(parts.slice(1).join(" "));
+        }
+
+        return {
+            from: from,
+            to: to
+        };
     }
 
-    function segments() {
-        return segmentList.querySelectorAll(".home-segment");
+    function parseVoiceQuery(rawText) {
+        var text = String(rawText || "").replace(/\s+/g, " ").trim();
+        var working = text;
+        var passengersInfo = extractPassengers(working);
+        var dateInfo = extractDate(working);
+
+        if (passengersInfo) {
+            working = working.replace(passengersInfo.match, " ");
+        }
+
+        if (dateInfo) {
+            working = working.replace(dateInfo.match, " ");
+        }
+
+        working = working
+            .replace(/\b(i want to|i would like to|would like to|want to|fly|travel|please)\b/gi, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        var cities = extractCities(working);
+
+        return {
+            from: cities.from,
+            to: cities.to,
+            passengers: passengersInfo ? passengersInfo.value : null,
+            departureDate: dateInfo && dateInfo.value ? dateInfo.value : ""
+        };
     }
 
-    function refreshSegments() {
-        var items = segments();
-        items.forEach(function (segment, index) {
-            var number = index + 1;
-            segment.querySelector(".home-segment-name").textContent = "Flight " + number;
-            segment.querySelector(".from-input").setAttribute("aria-label", "Flight " + number + " from");
-            segment.querySelector(".to-input").setAttribute("aria-label", "Flight " + number + " to");
-            segment.querySelector(".segment-date").setAttribute("aria-label", "Flight " + number + " departure");
-            segment.querySelector('[data-voice="from"]').setAttribute("aria-label", "Voice input for flight " + number + " departure");
-            segment.querySelector('[data-voice="to"]').setAttribute("aria-label", "Voice input for flight " + number + " destination");
-            segment.querySelector(".segment-remove").hidden = items.length < 3;
-        });
-        addFlight.hidden = items.length >= maxSegments;
+    function clearMessage() {
+        if (message) {
+            message.hidden = true;
+            message.textContent = "";
+        }
+
+        input.classList.remove("is-invalid");
     }
 
-    addFlight.addEventListener("click", function () {
-        if (segments().length >= maxSegments) {
+    function showMessage(text) {
+        if (!message) {
             return;
         }
 
-        var clone = segments()[0].cloneNode(true);
-        clone.querySelectorAll("input").forEach(function (input) {
-            input.value = "";
-        });
-        segmentList.appendChild(clone);
-        refreshSegments();
-    });
+        message.textContent = text;
+        message.hidden = !text;
+        input.classList.toggle("is-invalid", Boolean(text));
+    }
 
-    segmentList.addEventListener("click", function (event) {
-        var remove = event.target.closest(".segment-remove");
-        if (remove && segments().length > 2) {
-            remove.closest(".home-segment").remove();
-            refreshSegments();
+    function setListening(isListening) {
+        micButton.classList.toggle("is-listening", isListening);
+        micButton.setAttribute("aria-label", isListening ? "Stop voice search" : "Start voice search");
+        form.classList.toggle("is-listening", isListening);
+
+        if (status) {
+            status.hidden = !isListening;
         }
-    });
+    }
 
-    refreshSegments();
+    function stopVoice() {
+        if (activeRecognition) {
+            activeRecognition.onresult = null;
+            activeRecognition.onerror = null;
+            activeRecognition.onend = null;
+
+            try {
+                activeRecognition.stop();
+            } catch (error) {
+                // Recognition may already be stopped.
+            }
+
+            activeRecognition = null;
+        }
+
+        setListening(false);
+    }
+
+    function startVoice() {
+        if (!SpeechRecognition) {
+            showMessage("Voice search is not supported in this browser. Please type your request.");
+            return;
+        }
+
+        if (micButton.classList.contains("is-listening")) {
+            stopVoice();
+            return;
+        }
+
+        stopVoice();
+        clearMessage();
+
+        var recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+        activeRecognition = recognition;
+        setListening(true);
+
+        recognition.onresult = function (event) {
+            var transcript = "";
+            for (var i = 0; i < event.results.length; i += 1) {
+                transcript += event.results[i][0].transcript;
+            }
+
+            if (transcript) {
+                input.value = transcript.trim();
+            }
+        };
+
+        recognition.onerror = function () {
+            showMessage("Unable to capture voice input. Please try again or type your request.");
+        };
+
+        recognition.onend = function () {
+            setListening(false);
+            if (activeRecognition === recognition) {
+                activeRecognition = null;
+            }
+        };
+
+        try {
+            recognition.start();
+        } catch (error) {
+            setListening(false);
+            activeRecognition = null;
+            showMessage("Unable to start voice search. Please try again or type your request.");
+        }
+    }
+
+    micButton.addEventListener("click", startVoice);
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        stopVoice();
+        clearMessage();
+
+        var query = input.value.trim();
+        input.value = query;
+
+        if (!query) {
+            showMessage("Please say or type where you would like to fly.");
+            input.focus();
+            return;
+        }
+
+        var parsed = parseVoiceQuery(query);
+
+        if (!parsed.from) {
+            showMessage("Please provide your origin.");
+            input.focus();
+            return;
+        }
+
+        if (!parsed.to) {
+            showMessage("Please provide your destination.");
+            input.focus();
+            return;
+        }
+
+        if (!parsed.passengers || parsed.passengers < 1 || parsed.passengers > 9) {
+            showMessage("Please provide the number of passengers.");
+            input.focus();
+            return;
+        }
+
+        if (!parsed.departureDate) {
+            showMessage("Please provide your departure date.");
+            input.focus();
+            return;
+        }
+
+        var params = new URLSearchParams();
+        params.set("from", parsed.from);
+        params.set("to", parsed.to);
+        params.set("passengers", String(parsed.passengers));
+        params.set("departureDate", parsed.departureDate);
+
+        var resultsUrl = "flight-results.html?" + params.toString();
+        var data = {
+            from: parsed.from,
+            to: parsed.to,
+            passengers: parsed.passengers,
+            departureDate: parsed.departureDate,
+            query: query
+        };
+
+        window.aerovaBookingSearch = data;
+        window.aerovaBookingResultsUrl = resultsUrl;
+
+        try {
+            sessionStorage.setItem("aerovaBookingSearch", JSON.stringify(data));
+            sessionStorage.setItem("aerovaBookingResultsUrl", resultsUrl);
+        } catch (error) {
+            // Storage may be unavailable; in-memory values remain ready.
+        }
+
+        window.location.href = resultsUrl;
+    });
 })();
 
 (function () {

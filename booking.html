@@ -49,7 +49,181 @@
         </div>
     </header>
 
-    <main id="booking-content" class="booking-content"></main>
+    <main id="booking-content" class="booking-content">
+        <section class="booking-page" aria-label="Flight booking">
+            <div class="booking-intro">
+                <p class="booking-eyebrow">Book Your Flight</p>
+                <h1 class="booking-title">Find Your AEROVA Flight</h1>
+                <p class="booking-subtitle">Search, compare and book your perfect journey.</p>
+            </div>
+
+            <div class="booking-card">
+                <form id="booking-form" class="booking-form is-round-trip" novalidate>
+                    <div class="booking-tabs" role="tablist" aria-label="Trip type">
+                        <button class="booking-tab is-active" type="button" role="tab" aria-selected="true" data-trip="round-trip">Round Trip</button>
+                        <button class="booking-tab" type="button" role="tab" aria-selected="false" data-trip="one-way">One Way</button>
+                        <button class="booking-tab" type="button" role="tab" aria-selected="false" data-trip="multi-city">Multi City</button>
+                    </div>
+
+                    <div class="route-pair">
+                        <div class="field">
+                            <label class="field-label" for="booking-from">From</label>
+                            <div class="field-control">
+                                <input id="booking-from" class="field-input from-input" type="text" name="from" placeholder="City or airport" autocomplete="off">
+                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for departure">
+                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="swap-button" type="button" aria-label="Swap departure and destination">
+                            <svg class="swap-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2 7h16M14 3.5 18 7l-4 3.5M22 17H6M10 13.5 6 17l4 3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+
+                        <div class="field">
+                            <label class="field-label" for="booking-to">To</label>
+                            <div class="field-control">
+                                <input id="booking-to" class="field-input to-input" type="text" name="to" placeholder="City or airport" autocomplete="off">
+                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for destination">
+                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="multi-city" class="booking-multi" hidden>
+                        <div id="segment-list" class="segment-list">
+                            <article class="flight-segment">
+                                <div class="segment-head">
+                                    <p class="segment-name">Flight 1</p>
+                                    <button class="segment-remove" type="button" hidden>Remove</button>
+                                </div>
+                                <div class="segment-layout">
+                                    <div class="route-pair">
+                                        <div class="field">
+                                            <span class="field-label">From</span>
+                                            <div class="field-control">
+                                                <input class="field-input from-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 from">
+                                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for flight 1 departure">
+                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <span class="field-label">To</span>
+                                            <div class="field-control">
+                                                <input class="field-input to-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 to">
+                                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for flight 1 destination">
+                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <span class="field-label">Departure Date</span>
+                                        <input class="field-input segment-date" type="date" aria-label="Flight 1 departure date">
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="flight-segment">
+                                <div class="segment-head">
+                                    <p class="segment-name">Flight 2</p>
+                                    <button class="segment-remove" type="button" hidden>Remove</button>
+                                </div>
+                                <div class="segment-layout">
+                                    <div class="route-pair">
+                                        <div class="field">
+                                            <span class="field-label">From</span>
+                                            <div class="field-control">
+                                                <input class="field-input from-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 from">
+                                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for flight 2 departure">
+                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <span class="field-label">To</span>
+                                            <div class="field-control">
+                                                <input class="field-input to-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 to">
+                                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for flight 2 destination">
+                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <span class="field-label">Departure Date</span>
+                                        <input class="field-input segment-date" type="date" aria-label="Flight 2 departure date">
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <button id="add-segment" class="add-segment" type="button">+ Add Flight</button>
+                    </div>
+
+                    <div class="booking-fields">
+                        <div class="field booking-departure">
+                            <label class="field-label" for="booking-departure">Departure Date</label>
+                            <input id="booking-departure" class="field-input" type="date" name="departure">
+                        </div>
+                        <div class="field booking-return">
+                            <label class="field-label" for="booking-return">Return Date</label>
+                            <input id="booking-return" class="field-input" type="date" name="return">
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="booking-passengers">Passengers</label>
+                            <select id="booking-passengers" class="field-input" name="passengers">
+                                <option value="1" selected>1 Passenger</option>
+                                <option value="2">2 Passengers</option>
+                                <option value="3">3 Passengers</option>
+                                <option value="4">4 Passengers</option>
+                                <option value="5">5 Passengers</option>
+                                <option value="6">6 Passengers</option>
+                                <option value="7">7 Passengers</option>
+                                <option value="8">8 Passengers</option>
+                                <option value="9">9 Passengers</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="booking-cabin">Cabin Class</label>
+                            <select id="booking-cabin" class="field-input" name="cabin">
+                                <option value="economy" selected>Economy</option>
+                                <option value="comfort">Comfort</option>
+                                <option value="business">Business Class</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <p id="booking-message" class="booking-message" hidden></p>
+
+                    <div class="booking-actions">
+                        <button class="booking-submit" type="submit">Search Flights</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
 
     <footer id="site-footer" class="site-footer">
         <div class="footer-main">
@@ -144,3 +318,8 @@
     <script src="assets/js/booking.js"></script>
 </body>
 </html>
+
+
+
+
+
