@@ -8,6 +8,7 @@
     --color-gold-light: #e0c48a;
     --color-line: rgba(246, 241, 231, 0.14);
     --font-display: "Cinzel", "Times New Roman", serif;
+    --font-serif: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
     --font-sans: "Outfit", "Segoe UI", sans-serif;
     --header-height: 88px;
     --page-width: 1180px;
@@ -507,6 +508,151 @@ h2 {
 
 .flights-content {
     flex: 1;
+}
+
+.flights-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: calc(100vh - var(--header-height));
+    min-height: calc(100dvh - var(--header-height));
+    overflow: hidden;
+    background: var(--color-navy-deep);
+    color: var(--color-cream);
+}
+
+.flights-hero-background,
+.flights-hero-overlay {
+    position: absolute;
+    inset: 0;
+}
+
+.flights-hero-background {
+    z-index: 0;
+    background-color: var(--color-navy-deep);
+    background-image: url("../images/airplane-night.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.flights-hero-overlay {
+    z-index: 1;
+    background:
+        linear-gradient(180deg, rgba(5, 12, 22, 0.5) 0%, rgba(5, 12, 22, 0.16) 38%, rgba(5, 12, 22, 0.42) 100%),
+        linear-gradient(100deg, rgba(5, 12, 22, 0.68) 0%, rgba(5, 12, 22, 0.28) 52%, rgba(5, 12, 22, 0.12) 100%);
+}
+
+.flights-hero-content {
+    position: relative;
+    z-index: 2;
+    width: min(var(--page-width), calc(100% - (var(--gutter) * 2)));
+    margin-inline: auto;
+    padding: 5.5rem 0 6.5rem;
+}
+
+.flights-hero-eyebrow {
+    margin-bottom: 1.35rem;
+    color: var(--color-gold);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+}
+
+.flights-hero-title {
+    margin-bottom: 1.5rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(3.4rem, 6.4vw, 6.15rem);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    line-height: 0.9;
+    text-transform: uppercase;
+    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.flights-hero-title-line {
+    display: block;
+    white-space: nowrap;
+}
+
+.flights-hero-subtitle {
+    max-width: 28rem;
+    margin-bottom: 2.35rem;
+    color: var(--color-cream-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.75;
+}
+
+.flights-hero-actions {
+    display: flex;
+    align-items: center;
+}
+
+.flights-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding: 0.9rem 1.55rem;
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    border-radius: 2px;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.flights-hero-cta:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+}
+
+.flights-hero-cta-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+}
+
+.flights-hero-cta:hover .flights-hero-cta-arrow {
+    transform: translateX(5px);
+}
+
+@media (max-width: 1080px) {
+    .flights-hero-title {
+        font-size: clamp(3rem, 8vw, 4.75rem);
+    }
+}
+
+@media (max-width: 640px) {
+    .flights-hero-content {
+        padding: 3.75rem 0 4.25rem;
+    }
+
+    .flights-hero-eyebrow {
+        font-size: 0.68rem;
+        letter-spacing: 0.28em;
+    }
+
+    .flights-hero-title {
+        font-size: clamp(2.35rem, 11.5vw, 3.2rem);
+    }
+
+    .flights-hero-title-line {
+        white-space: normal;
+    }
+
+    .flights-hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .flights-hero-cta {
+        width: 100%;
+        min-height: 48px;
+        justify-content: center;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
