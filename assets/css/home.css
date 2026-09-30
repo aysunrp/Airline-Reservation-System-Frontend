@@ -724,6 +724,90 @@ h1 {
     align-items: end;
 }
 
+.flight-search-card.is-one-way .search-fields {
+    grid-template-columns: minmax(18rem, 2.15fr) repeat(3, minmax(0, 1fr));
+}
+
+.flight-search-card.is-multi-city .search-fields {
+    grid-template-columns: repeat(2, minmax(0, 16rem));
+}
+
+.flight-search-section:has(.flight-search-card.is-multi-city) {
+    height: auto;
+    background: linear-gradient(to bottom, transparent 0, transparent var(--search-overlap), #f3eee4 var(--search-overlap));
+}
+
+.route-fields[hidden],
+.home-multi[hidden],
+#departure-field[hidden],
+#return-field[hidden],
+.segment-remove[hidden],
+.home-add-flight[hidden] {
+    display: none !important;
+}
+
+.home-multi {
+    grid-column: 1 / -1;
+}
+
+.home-multi .route-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.home-segment {
+    padding: 1.05rem 0 0.15rem;
+    border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.home-segment-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.home-segment-name {
+    margin: 0;
+    color: var(--color-gold-light);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.segment-remove {
+    color: rgba(246, 241, 231, 0.7);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.segment-remove:hover {
+    color: var(--color-gold-light);
+}
+
+.home-segment-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+    gap: 1rem;
+    align-items: end;
+}
+
+.home-add-flight {
+    margin-top: 0.85rem;
+    color: var(--color-gold-light);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.home-add-flight:hover {
+    color: var(--color-cream);
+}
+
 .search-field {
     min-width: 0;
 }
@@ -866,12 +950,19 @@ select.search-field-input {
         --search-overlap: 22rem;
     }
 
-    .search-fields {
+    .search-fields,
+    .flight-search-card.is-one-way .search-fields,
+    .flight-search-card.is-multi-city .search-fields {
         grid-template-columns: 1fr 1fr;
     }
 
-    .route-fields {
+    .route-fields,
+    .home-multi {
         grid-column: 1 / -1;
+    }
+
+    .home-segment-layout {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -897,7 +988,10 @@ select.search-field-input {
     }
 
     .search-fields,
-    .route-fields {
+    .flight-search-card.is-one-way .search-fields,
+    .flight-search-card.is-multi-city .search-fields,
+    .route-fields,
+    .home-multi .route-fields {
         grid-template-columns: 1fr;
     }
 

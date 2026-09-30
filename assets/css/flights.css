@@ -505,6 +505,10 @@ h2 {
     }
 }
 
+.flights-content {
+    flex: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

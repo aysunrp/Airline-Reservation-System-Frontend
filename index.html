@@ -70,7 +70,7 @@
         </section>
 
         <section id="flight-search" class="flight-search-section">
-            <div id="flight-search-card" class="flight-search-card">
+            <div id="flight-search-card" class="flight-search-card is-round-trip">
                 <div id="search-tabs" class="search-tabs" role="tablist" aria-label="Trip type">
                     <button id="round-trip-tab" class="search-tab is-active" type="button" role="tab" aria-selected="true" data-trip="round-trip">Round Trip</button>
                     <button id="one-way-tab" class="search-tab" type="button" role="tab" aria-selected="false" data-trip="one-way">One Way</button>
@@ -78,6 +78,89 @@
                 </div>
 
                 <div id="search-fields" class="search-fields">
+                    <div id="home-multi" class="home-multi" hidden>
+                        <div id="home-segment-list" class="home-segment-list">
+                            <article class="home-segment">
+                                <div class="home-segment-head">
+                                    <p class="home-segment-name">Flight 1</p>
+                                    <button class="segment-remove" type="button" hidden>Remove</button>
+                                </div>
+                                <div class="home-segment-layout">
+                                    <div class="route-fields">
+                                        <div class="search-field">
+                                            <span class="search-field-label">From</span>
+                                            <div class="search-field-control">
+                                                <input class="search-field-input from-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 from">
+                                                <button class="voice-button" type="button" data-voice="from" aria-label="Voice input for flight 1 departure">
+                                                    <svg class="voice-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="search-field">
+                                            <span class="search-field-label">To</span>
+                                            <div class="search-field-control">
+                                                <input class="search-field-input to-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 to">
+                                                <button class="voice-button" type="button" data-voice="to" aria-label="Voice input for flight 1 destination">
+                                                    <svg class="voice-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="search-field">
+                                        <span class="search-field-label">Departure Date</span>
+                                        <input class="search-field-input segment-date" type="date" aria-label="Flight 1 departure date">
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="home-segment">
+                                <div class="home-segment-head">
+                                    <p class="home-segment-name">Flight 2</p>
+                                    <button class="segment-remove" type="button" hidden>Remove</button>
+                                </div>
+                                <div class="home-segment-layout">
+                                    <div class="route-fields">
+                                        <div class="search-field">
+                                            <span class="search-field-label">From</span>
+                                            <div class="search-field-control">
+                                                <input class="search-field-input from-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 from">
+                                                <button class="voice-button" type="button" data-voice="from" aria-label="Voice input for flight 2 departure">
+                                                    <svg class="voice-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="search-field">
+                                            <span class="search-field-label">To</span>
+                                            <div class="search-field-control">
+                                                <input class="search-field-input to-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 to">
+                                                <button class="voice-button" type="button" data-voice="to" aria-label="Voice input for flight 2 destination">
+                                                    <svg class="voice-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="search-field">
+                                        <span class="search-field-label">Departure Date</span>
+                                        <input class="search-field-input segment-date" type="date" aria-label="Flight 2 departure date">
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <button id="home-add-flight" class="home-add-flight" type="button">+ Add Flight</button>
+                    </div>
+
                     <div id="route-fields" class="route-fields">
                         <div id="from-field" class="search-field">
                             <label class="search-field-label" for="from-input">From</label>
@@ -141,9 +224,8 @@
                         <label class="search-field-label" for="cabin-class">Cabin Class</label>
                         <select id="cabin-class" class="search-field-input">
                             <option value="economy" selected>Economy</option>
-                            <option value="premium-economy">Premium Economy</option>
-                            <option value="business">Business</option>
-                            <option value="first">First Class</option>
+                            <option value="comfort">Comfort</option>
+                            <option value="business">Business Class</option>
                         </select>
                     </div>
                 </div>
