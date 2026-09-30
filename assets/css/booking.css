@@ -428,10 +428,30 @@ select.field-input {
     transform: translateY(-50%);
 }
 
-.mic-button:hover,
-.mic-button.is-listening {
+.mic-button:hover {
     color: var(--color-gold-light);
     background: rgba(198, 163, 106, 0.12);
+}
+
+.mic-button.is-listening {
+    color: var(--color-ink);
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    box-shadow: 0 0 0 0 rgba(198, 163, 106, 0.4);
+    animation: booking-mic-pulse 1.4s ease-out infinite;
+}
+
+@keyframes booking-mic-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(198, 163, 106, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(198, 163, 106, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(198, 163, 106, 0);
+    }
 }
 
 .mic-icon {
