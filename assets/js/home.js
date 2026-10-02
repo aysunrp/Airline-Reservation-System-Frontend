@@ -234,29 +234,34 @@
     }
 
     function extractCities(text) {
-        var from = "";
-        var to = "";
+        var source = String(text || "").replace(/\s+/g, " ").trim();
         var match;
 
-        match = text.match(/\bfrom\s+([a-z][\w\s'-]*?)\s+to\s+([a-z][\w\s'-]*?)(?=\s+(?:for|on|with|\d)|,|$)/i);
+        // "from Baku to London" / "Baku to London" / "Baku to London, ..."
+        match = source.match(
+            /(?:^|\bfrom\s+)([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)\s+to\s+([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)/i
+        );
         if (match) {
-            return {
-                from: cleanCity(match[1]),
-                to: cleanCity(match[2])
-            };
+            var fromCandidate = cleanCity(match[1]);
+            var toCandidate = cleanCity(match[2]);
+
+            // Ignore filler false-positives like "want to fly"
+            if (
+                fromCandidate &&
+                toCandidate &&
+                !/^(want|like|fly|travel|please)$/i.test(fromCandidate) &&
+                !/^(fly|travel|go|go\s+to)$/i.test(toCandidate)
+            ) {
+                return {
+                    from: fromCandidate,
+                    to: toCandidate
+                };
+            }
         }
 
-        match = text.match(/\b([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)\s+to\s+([a-z][\w'-]+(?:\s+[a-z][\w'-]+)?)(?=\s+(?:for|on|with|\d)|,|$)/i);
-        if (match) {
-            return {
-                from: cleanCity(match[1]),
-                to: cleanCity(match[2])
-            };
-        }
-
-        var first = findKnownCity(text, 0);
+        var first = findKnownCity(source, 0);
         if (first) {
-            var second = findKnownCity(text, first.index + first.length);
+            var second = findKnownCity(source, first.index + first.length);
             if (second) {
                 return {
                     from: titleCaseCity(first.city),
@@ -265,7 +270,7 @@
             }
         }
 
-        var leftover = text
+        var leftover = source
             .replace(/\b(i|want|to|fly|from|travel|please|would|like|a|an|the|on|for|with|and)\b/gi, " ")
             .replace(/[.,;!?]/g, " ")
             .replace(/\s+/g, " ")
@@ -273,13 +278,15 @@
 
         var parts = leftover.split(" ").filter(Boolean);
         if (parts.length >= 2) {
-            from = cleanCity(parts[0]);
-            to = cleanCity(parts.slice(1).join(" "));
+            return {
+                from: cleanCity(parts[0]),
+                to: cleanCity(parts.slice(1).join(" "))
+            };
         }
 
         return {
-            from: from,
-            to: to
+            from: "",
+            to: ""
         };
     }
 
@@ -441,32 +448,40 @@
             return;
         }
 
-        if (!parsed.passengers || parsed.passengers < 1 || parsed.passengers > 9) {
-            showMessage("Please provide the number of passengers.");
-            input.focus();
-            return;
-        }
-
-        if (!parsed.departureDate) {
-            showMessage("Please provide your departure date.");
-            input.focus();
-            return;
-        }
-
         var params = new URLSearchParams();
         params.set("from", parsed.from);
         params.set("to", parsed.to);
-        params.set("passengers", String(parsed.passengers));
-        params.set("departureDate", parsed.departureDate);
+
+        if (parsed.passengers && parsed.passengers >= 1 && parsed.passengers <= 9) {
+            params.set("passengers", String(parsed.passengers));
+        }
+
+        if (parsed.departureDate) {
+            params.set("departureDate", parsed.departureDate);
+        }
+
+        if (parsed.cabinClass) {
+            params.set("cabinClass", parsed.cabinClass);
+        }
 
         var resultsUrl = "flight-results.html?" + params.toString();
         var data = {
             from: parsed.from,
             to: parsed.to,
-            passengers: parsed.passengers,
-            departureDate: parsed.departureDate,
             query: query
         };
+
+        if (parsed.passengers && parsed.passengers >= 1 && parsed.passengers <= 9) {
+            data.passengers = parsed.passengers;
+        }
+
+        if (parsed.departureDate) {
+            data.departureDate = parsed.departureDate;
+        }
+
+        if (parsed.cabinClass) {
+            data.cabinClass = parsed.cabinClass;
+        }
 
         window.aerovaBookingSearch = data;
         window.aerovaBookingResultsUrl = resultsUrl;
