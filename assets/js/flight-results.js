@@ -291,14 +291,101 @@
         return day + " " + MONTH_NAMES[month - 1] + " " + year;
     }
 
-    function formatPassengerLabel(passengers) {
-        var count = Number(passengers);
+    function startOfToday() {
+        var now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
 
-        if (!count || count < 1) {
-            count = 1;
+    function parseISODate(value) {
+        if (!value) {
+            return null;
         }
 
-        return count + (count === 1 ? " Passenger" : " Passengers");
+        var parts = String(value).split("-");
+        if (parts.length !== 3) {
+            return null;
+        }
+
+        var year = Number(parts[0]);
+        var month = Number(parts[1]);
+        var day = Number(parts[2]);
+
+        if (!year || !month || !day || month < 1 || month > 12) {
+            return null;
+        }
+
+        var date = new Date(year, month - 1, day);
+
+        if (
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day
+        ) {
+            return null;
+        }
+
+        return date;
+    }
+
+    function toISODate(date) {
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1);
+        var day = String(date.getDate());
+
+        if (month.length < 2) {
+            month = "0" + month;
+        }
+
+        if (day.length < 2) {
+            day = "0" + day;
+        }
+
+        return year + "-" + month + "-" + day;
+    }
+
+    function addDays(date, days) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+    }
+
+    function getDayNumber(date) {
+        return Math.round(date.getTime() / 86400000);
+    }
+
+    function scheduleOperatesOn(schedule, date) {
+        return getDayNumber(date) % 4 === (schedule.id - 1) % 4;
+    }
+
+    function parseDepartureMinutes(timeValue) {
+        var parts = String(timeValue || "").split(":");
+        var hours = Number(parts[0]);
+        var minutes = Number(parts[1]);
+
+        if (!isFinite(hours) || !isFinite(minutes)) {
+            return 0;
+        }
+
+        return (hours * 60) + minutes;
+    }
+
+    function createDatedFlight(schedule, date) {
+        var dateISO = toISODate(date);
+
+        return {
+            id: schedule.id,
+            instanceId: String(schedule.id) + "-" + dateISO,
+            airline: schedule.airline,
+            flightNumber: schedule.flightNumber,
+            from: schedule.from,
+            to: schedule.to,
+            departure: schedule.departure,
+            arrival: schedule.arrival,
+            duration: schedule.duration,
+            durationMinutes: schedule.durationMinutes,
+            stops: schedule.stops,
+            aircraft: schedule.aircraft,
+            cabinPrices: schedule.cabinPrices,
+            date: dateISO
+        };
     }
 
     function resolveCabinName(cabinValue) {
@@ -326,6 +413,20 @@
         return typeof price === "number" ? price : null;
     }
 
+    function sortFlightsChronologically(flights) {
+        return flights.sort(function (a, b) {
+            if (a.date < b.date) {
+                return -1;
+            }
+
+            if (a.date > b.date) {
+                return 1;
+            }
+
+            return parseDepartureMinutes(a.departure) - parseDepartureMinutes(b.departure);
+        });
+    }
+
     function filterFlights(criteria) {
         var fromValue = normalizeText(criteria.from);
         var toValue = normalizeText(criteria.to);
@@ -334,16 +435,41 @@
             return [];
         }
 
-        return MOCK_FLIGHTS.filter(function (flight) {
+        var matchingSchedules = MOCK_FLIGHTS.filter(function (flight) {
             return normalizeText(flight.from) === fromValue &&
                 normalizeText(flight.to) === toValue;
         });
+
+        var results = [];
+        var selectedDate = parseISODate(criteria.departureDate);
+
+        if (selectedDate) {
+            matchingSchedules.forEach(function (schedule) {
+                results.push(createDatedFlight(schedule, selectedDate));
+            });
+        } else {
+            var today = startOfToday();
+            var dayOffset;
+
+            for (dayOffset = 0; dayOffset < 30; dayOffset += 1) {
+                var date = addDays(today, dayOffset);
+
+                matchingSchedules.forEach(function (schedule) {
+                    if (scheduleOperatesOn(schedule, date)) {
+                        results.push(createDatedFlight(schedule, date));
+                    }
+                });
+            }
+        }
+
+        return sortFlightsChronologically(results);
     }
 
     function updateResultsHeader(criteria) {
         var routeElement = document.querySelector(".results-route");
         var metaElement = document.querySelector(".results-meta");
         var eyebrowElement = document.querySelector(".results-eyebrow");
+        var selectedDate = parseISODate(criteria.departureDate);
 
         if (eyebrowElement) {
             eyebrowElement.textContent = "Available Flights";
@@ -356,25 +482,16 @@
         }
 
         if (metaElement) {
-            var metaParts = [];
-            var formattedDate = formatDisplayDate(criteria.departureDate);
-
-            if (formattedDate) {
-                metaParts.push(formattedDate);
+            if (selectedDate) {
+                metaElement.textContent = formatDisplayDate(toISODate(selectedDate));
+            } else {
+                metaElement.textContent = "Available flights in the next 30 days";
             }
-
-            metaParts.push(formatPassengerLabel(criteria.passengers));
-
-            if (criteria.cabinClass) {
-                metaParts.push(criteria.cabinClass);
-            }
-
-            metaElement.textContent = metaParts.join(" · ");
         }
     }
 
     function buildCabinOptionsMarkup(flight, selectedCabin) {
-        var groupId = "cabin-group-" + flight.id;
+        var groupId = "cabin-group-" + (flight.instanceId || flight.id);
         var optionsMarkup = CABIN_CLASSES.map(function (cabin) {
             var isSelected = cabin === selectedCabin;
             var price = getCabinPrice(flight, cabin);
@@ -406,10 +523,11 @@
 
     function createFlightCard(flight, selectedCabin) {
         var price = getCabinPrice(flight, selectedCabin);
+        var displayDate = formatDisplayDate(flight.date) || "Date not selected";
         var article = document.createElement("article");
 
         article.className = "flight-card";
-        article.setAttribute("data-flight-id", String(flight.id));
+        article.setAttribute("data-flight-id", String(flight.instanceId || flight.id));
         article.setAttribute("data-selected-cabin", selectedCabin);
 
         article.innerHTML =
@@ -417,22 +535,14 @@
                 '<p class="airline-name">' + escapeHtml(flight.airline) + "</p>" +
                 '<p class="flight-number">' + escapeHtml(flight.flightNumber) + "</p>" +
             "</div>" +
-            '<div class="flight-card-schedule">' +
-                '<div class="schedule-point">' +
-                    '<p class="schedule-time">' + escapeHtml(flight.departure) + "</p>" +
-                    '<p class="schedule-city">' + escapeHtml(flight.from) + "</p>" +
-                "</div>" +
-                '<div class="schedule-path">' +
-                    '<p class="schedule-duration">' + escapeHtml(flight.duration) + "</p>" +
-                    '<div class="schedule-line" aria-hidden="true"></div>' +
-                    '<p class="schedule-stops">' + escapeHtml(flight.stops) + "</p>" +
-                "</div>" +
-                '<div class="schedule-point schedule-point--arrival">' +
-                    '<p class="schedule-time">' + escapeHtml(flight.arrival) + "</p>" +
-                    '<p class="schedule-city">' + escapeHtml(flight.to) + "</p>" +
-                "</div>" +
+            '<div class="flight-card-journey">' +
+                '<p class="journey-date">' + escapeHtml(displayDate) + "</p>" +
+                '<p class="journey-times">' + escapeHtml(flight.departure) + " → " + escapeHtml(flight.arrival) + "</p>" +
+                '<p class="journey-route">' + escapeHtml(flight.from) + " → " + escapeHtml(flight.to) + "</p>" +
             "</div>" +
             '<div class="flight-card-details">' +
+                '<p class="detail-item"><span class="detail-label">Duration</span> ' + escapeHtml(flight.duration) + "</p>" +
+                '<p class="detail-item"><span class="detail-label">Stops</span> ' + escapeHtml(flight.stops) + "</p>" +
                 '<p class="detail-item"><span class="detail-label">Aircraft</span> ' + escapeHtml(flight.aircraft) + "</p>" +
                 buildCabinOptionsMarkup(flight, selectedCabin) +
             "</div>" +
@@ -488,7 +598,7 @@
             cabinClass: cabinClass,
             price: price,
             passengers: criteria.passengers,
-            departureDate: criteria.departureDate,
+            departureDate: flight.date || criteria.departureDate,
             returnDate: criteria.returnDate,
             tripType: criteria.tripType
         };
