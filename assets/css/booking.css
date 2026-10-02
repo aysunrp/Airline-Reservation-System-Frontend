@@ -367,6 +367,48 @@ h2 {
     position: relative;
 }
 
+.city-suggestions {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    margin: 0;
+    padding: 0.35rem 0;
+    list-style: none;
+    background: linear-gradient(180deg, rgba(18, 32, 50, 0.98) 0%, rgba(8, 16, 28, 0.99) 100%);
+    border: 1px solid rgba(198, 163, 106, 0.42);
+    border-radius: 12px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    max-height: 14rem;
+    overflow-y: auto;
+}
+
+.city-suggestions[hidden] {
+    display: none !important;
+}
+
+.city-suggestion {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 0.95rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-cream);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 300;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.city-suggestion:hover,
+.city-suggestion.is-active {
+    background: rgba(198, 163, 106, 0.14);
+    color: var(--color-gold-light);
+}
+
 .field-input {
     width: 100%;
     min-height: 48px;

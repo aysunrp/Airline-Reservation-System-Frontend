@@ -132,6 +132,10 @@
         departureInput.disabled = isMulti;
         returnInput.disabled = !isRoundTrip;
 
+        if (typeof hideCitySuggestions === "function") {
+            hideCitySuggestions();
+        }
+
         clearValidation();
     }
 
@@ -457,15 +461,153 @@
         });
     });
 
+    var CITY_SUGGESTIONS = [
+        "Baku",
+        "London",
+        "Paris",
+        "Istanbul",
+        "Dubai",
+        "Berlin",
+        "Barcelona",
+        "Rome",
+        "Milan",
+        "New York",
+        "Tokyo",
+        "Singapore"
+    ];
+
+    var activeSuggestionInput = null;
+
+    function isCityInput(element) {
+        return element &&
+            (element.classList.contains("from-input") || element.classList.contains("to-input"));
+    }
+
+    function getSuggestionsList(input) {
+        var control = input.closest(".field-control");
+        if (!control) {
+            return null;
+        }
+
+        var list = control.querySelector(".city-suggestions");
+        if (!list) {
+            list = document.createElement("ul");
+            list.className = "city-suggestions";
+            list.hidden = true;
+            list.setAttribute("role", "listbox");
+            control.appendChild(list);
+        }
+
+        return list;
+    }
+
+    function hideCitySuggestions(input) {
+        if (input) {
+            var list = input.closest(".field-control");
+            list = list ? list.querySelector(".city-suggestions") : null;
+            if (list) {
+                list.hidden = true;
+                list.innerHTML = "";
+            }
+
+            if (activeSuggestionInput === input) {
+                activeSuggestionInput = null;
+            }
+
+            return;
+        }
+
+        form.querySelectorAll(".city-suggestions").forEach(function (suggestions) {
+            suggestions.hidden = true;
+            suggestions.innerHTML = "";
+        });
+        activeSuggestionInput = null;
+    }
+
+    function filterCities(query) {
+        var normalized = String(query || "").trim().toLowerCase();
+        if (!normalized) {
+            return [];
+        }
+
+        return CITY_SUGGESTIONS.filter(function (city) {
+            return city.toLowerCase().indexOf(normalized) === 0;
+        });
+    }
+
+    function renderCitySuggestions(input, cities) {
+        var list = getSuggestionsList(input);
+        if (!list) {
+            return;
+        }
+
+        list.innerHTML = "";
+
+        if (!cities.length) {
+            list.hidden = true;
+            activeSuggestionInput = null;
+            return;
+        }
+
+        cities.forEach(function (city) {
+            var item = document.createElement("li");
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "city-suggestion";
+            button.setAttribute("role", "option");
+            button.textContent = city;
+            item.appendChild(button);
+            list.appendChild(item);
+        });
+
+        list.hidden = false;
+        activeSuggestionInput = input;
+    }
+
+    function showCitySuggestions(input) {
+        if (!isCityInput(input)) {
+            return;
+        }
+
+        hideCitySuggestions();
+        renderCitySuggestions(input, filterCities(input.value));
+    }
+
+    function selectCitySuggestion(input, city) {
+        input.value = city;
+        input.classList.remove("is-invalid");
+        hideCitySuggestions(input);
+        input.focus();
+    }
+
+    form.addEventListener("mousedown", function (event) {
+        var suggestion = event.target.closest(".city-suggestion");
+        if (suggestion && form.contains(suggestion)) {
+            event.preventDefault();
+        }
+    });
+
     form.addEventListener("click", function (event) {
+        var suggestion = event.target.closest(".city-suggestion");
+        if (suggestion && form.contains(suggestion)) {
+            var suggestionInput = suggestion.closest(".field-control");
+            suggestionInput = suggestionInput ? suggestionInput.querySelector(".from-input, .to-input") : null;
+            if (suggestionInput) {
+                selectCitySuggestion(suggestionInput, suggestion.textContent);
+            }
+            return;
+        }
+
         var swap = event.target.closest(".swap-button");
         if (swap && form.contains(swap) && tripType !== "multi-city") {
+            hideCitySuggestions();
             swapRouteValues(swap.closest(".route-pair"));
             return;
         }
 
         var remove = event.target.closest(".segment-remove");
         if (remove && segmentList.contains(remove) && getSegments().length > 2) {
+            hideCitySuggestions();
             remove.closest(".flight-segment").remove();
             refreshSegments();
             return;
@@ -473,7 +615,32 @@
 
         var mic = event.target.closest(".mic-button");
         if (mic && form.contains(mic)) {
+            hideCitySuggestions();
             startVoiceInput(mic);
+        }
+    });
+
+    form.addEventListener("input", function (event) {
+        if (isCityInput(event.target)) {
+            showCitySuggestions(event.target);
+        }
+    });
+
+    form.addEventListener("focusin", function (event) {
+        if (isCityInput(event.target) && event.target.value.trim()) {
+            showCitySuggestions(event.target);
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".field-control")) {
+            hideCitySuggestions();
+        }
+    });
+
+    form.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            hideCitySuggestions();
         }
     });
 
@@ -482,10 +649,15 @@
             return;
         }
 
+        hideCitySuggestions();
+
         var clone = getSegments()[0].cloneNode(true);
         clone.querySelectorAll("input").forEach(function (input) {
             input.value = "";
             input.classList.remove("is-invalid");
+        });
+        clone.querySelectorAll(".city-suggestions").forEach(function (list) {
+            list.remove();
         });
         segmentList.appendChild(clone);
         refreshSegments();
@@ -493,6 +665,7 @@
 
     form.addEventListener("submit", function (event) {
         event.preventDefault();
+        hideCitySuggestions();
 
         var data = validate();
         if (!data) {
