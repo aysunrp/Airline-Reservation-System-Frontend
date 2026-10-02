@@ -277,6 +277,7 @@ h2 {
 
 .seat-intro {
     max-width: 36rem;
+    margin-bottom: 2.5rem;
 }
 
 .seat-title {
@@ -296,6 +297,601 @@ h2 {
     font-weight: 300;
     letter-spacing: 0.02em;
     line-height: 1.6;
+}
+
+.seat-layout {
+    display: grid;
+    grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.75rem);
+    align-items: start;
+}
+
+.flight-summary {
+    padding: 1.5rem 1.4rem;
+    background:
+        radial-gradient(ellipse at 0% 0%, rgba(198, 163, 106, 0.14), transparent 48%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
+    border-radius: 20px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
+}
+
+.summary-airline {
+    margin: 0 0 0.35rem;
+    color: var(--color-gold-light);
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.summary-flight {
+    margin: 0 0 1.15rem;
+    color: var(--color-cream);
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+}
+
+.summary-route {
+    margin: 0 0 0.35rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.summary-date {
+    margin: 0 0 0.85rem;
+    color: var(--color-gold-light);
+    font-size: 0.92rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+}
+
+.summary-times {
+    margin: 0 0 1.25rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.summary-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.summary-meta-item {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.summary-meta-label {
+    display: block;
+    margin-bottom: 0.15rem;
+    color: rgba(246, 241, 231, 0.55);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.seat-map-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    min-width: 0;
+}
+
+.seat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem 1.35rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.legend-swatch {
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.legend-swatch--available {
+    background: rgba(246, 241, 231, 0.14);
+    border-color: rgba(246, 241, 231, 0.35);
+}
+
+.legend-swatch--selected {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    border-color: var(--color-gold);
+}
+
+.legend-swatch--occupied {
+    background: rgba(7, 17, 29, 0.85);
+    border-color: rgba(246, 241, 231, 0.12);
+}
+
+.legend-label {
+    color: rgba(246, 241, 231, 0.78);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.airplane {
+    --seat-size: 2.85rem;
+    --aisle-size: 2rem;
+    --row-label-size: 1.35rem;
+    --seat-gap: 0.7rem;
+    --group-gap: 0.7rem;
+    --body-width: min(100%, 26rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+.airplane[data-layout="comfort"] {
+    --seat-size: 2.45rem;
+    --aisle-size: 1.55rem;
+    --seat-gap: 0.55rem;
+    --group-gap: 0.55rem;
+    --body-width: min(100%, 30rem);
+}
+
+.airplane[data-layout="economy"] {
+    --seat-size: 2.05rem;
+    --aisle-size: 1.45rem;
+    --row-label-size: 1.2rem;
+    --seat-gap: 0.35rem;
+    --group-gap: 0.35rem;
+    --body-width: min(100%, 28rem);
+}
+
+.airplane-front-label {
+    margin: 0;
+    color: var(--color-gold-light);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+}
+
+.airplane-body {
+    position: relative;
+    width: var(--body-width);
+    padding: 0 0.85rem 1.35rem;
+    background:
+        linear-gradient(180deg, rgba(18, 32, 50, 0.98) 0%, rgba(7, 17, 29, 0.99) 55%, rgba(5, 12, 22, 1) 100%);
+    border: 1px solid rgba(198, 163, 106, 0.32);
+    border-radius: 56% 56% 22px 22px / 12% 12% 18px 18px;
+    box-shadow:
+        inset 0 0 0 1px rgba(246, 241, 231, 0.04),
+        inset 18px 0 28px rgba(0, 0, 0, 0.18),
+        inset -18px 0 28px rgba(0, 0, 0, 0.18),
+        0 28px 60px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+}
+
+.airplane[data-layout="business"] .airplane-body {
+    border-radius: 60% 60% 24px 24px / 16% 16% 18px 18px;
+    max-width: 24rem;
+    margin-inline: auto;
+}
+
+.airplane[data-layout="economy"] .airplane-body {
+    border-radius: 48% 48% 20px 20px / 7% 7% 16px 16px;
+}
+
+.airplane-nose {
+    display: flex;
+    justify-content: center;
+    padding: 1.35rem 1rem 0.85rem;
+}
+
+.cockpit-glass {
+    display: flex;
+    gap: 0.4rem;
+    align-items: flex-end;
+    justify-content: center;
+    width: min(58%, 9.5rem);
+    height: 2.4rem;
+    padding: 0.45rem 0.7rem 0.35rem;
+    border: 1px solid rgba(198, 163, 106, 0.35);
+    border-bottom: 0;
+    border-radius: 999px 999px 10px 10px;
+    background:
+        linear-gradient(180deg, rgba(198, 163, 106, 0.16) 0%, rgba(7, 17, 29, 0.2) 100%);
+}
+
+.cockpit-pane {
+    display: block;
+    width: 1.35rem;
+    height: 1.1rem;
+    border-radius: 0.55rem 0.55rem 0.3rem 0.3rem;
+    background: linear-gradient(180deg, rgba(224, 196, 138, 0.28) 0%, rgba(246, 241, 231, 0.08) 100%);
+    border: 1px solid rgba(198, 163, 106, 0.28);
+}
+
+.cabin-deck {
+    display: flex;
+    flex-direction: column;
+    gap: 0.95rem;
+    padding: 0.35rem 0.35rem 0.2rem;
+}
+
+.cabin-amenity {
+    display: flex;
+    justify-content: center;
+    gap: 0.55rem;
+}
+
+.amenity-block {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.4rem;
+    min-height: 1.55rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid rgba(246, 241, 231, 0.12);
+    border-radius: 6px;
+    background: rgba(5, 12, 22, 0.55);
+    color: rgba(246, 241, 231, 0.4);
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.cabin-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 0.95rem 0.55rem 1rem;
+    border-top: 1px solid rgba(198, 163, 106, 0.22);
+    border-bottom: 1px solid rgba(198, 163, 106, 0.22);
+    background:
+        linear-gradient(180deg, rgba(198, 163, 106, 0.05) 0%, transparent 18%, transparent 82%, rgba(198, 163, 106, 0.04) 100%);
+}
+
+.cabin-section-label {
+    margin: 0;
+    color: var(--color-gold);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.airplane-tail {
+    width: 42%;
+    height: 0.7rem;
+    margin: 0.55rem auto 0;
+    border-radius: 0 0 14px 14px;
+    background: linear-gradient(180deg, rgba(198, 163, 106, 0.18) 0%, rgba(198, 163, 106, 0.05) 100%);
+    border: 1px solid rgba(198, 163, 106, 0.18);
+    border-top: 0;
+}
+
+.seat-columns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--seat-gap);
+    margin-bottom: 0.2rem;
+    margin-left: var(--row-label-size);
+    color: rgba(246, 241, 231, 0.42);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-align: center;
+}
+
+.seat-columns > span:not(.seat-columns-aisle) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--seat-size);
+}
+
+.seat-columns-aisle {
+    display: block;
+    width: var(--aisle-size);
+    flex: 0 0 var(--aisle-size);
+}
+
+.seat-map {
+    display: flex;
+    flex-direction: column;
+    gap: 0.48rem;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--group-gap);
+}
+
+.row-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--row-label-size);
+    flex: 0 0 var(--row-label-size);
+    color: rgba(246, 241, 231, 0.4);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-align: center;
+}
+
+.seat-group {
+    display: grid;
+    gap: var(--seat-gap);
+}
+
+.seat-aisle {
+    position: relative;
+    width: var(--aisle-size);
+    flex: 0 0 var(--aisle-size);
+    align-self: stretch;
+    min-height: var(--seat-size);
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(246, 241, 231, 0.04) 35%,
+            rgba(246, 241, 231, 0.08) 50%,
+            rgba(246, 241, 231, 0.04) 65%,
+            transparent 100%
+        );
+}
+
+.seat-aisle::before {
+    content: "";
+    position: absolute;
+    top: 15%;
+    bottom: 15%;
+    left: 50%;
+    width: 1px;
+    background: rgba(198, 163, 106, 0.22);
+    transform: translateX(-50%);
+}
+
+.seat {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--seat-size);
+    height: var(--seat-size);
+    border-radius: 11px 11px 8px 8px;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.airplane[data-layout="business"] .seat {
+    font-size: 0.72rem;
+    border-radius: 12px 12px 9px 9px;
+}
+
+.airplane[data-layout="economy"] .seat {
+    font-size: 0.62rem;
+    border-radius: 8px 8px 6px 6px;
+}
+
+.seat--available {
+    background: rgba(246, 241, 231, 0.14);
+    border: 1px solid rgba(246, 241, 231, 0.42);
+    color: var(--color-cream);
+}
+
+.seat--available:hover {
+    border-color: rgba(198, 163, 106, 0.8);
+    color: var(--color-gold-light);
+    transform: translateY(-1px);
+}
+
+.seat--selected {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    border: 1px solid var(--color-gold);
+    color: var(--color-ink);
+}
+
+.seat--occupied {
+    background: rgba(5, 12, 22, 0.92);
+    border: 1px solid rgba(246, 241, 231, 0.1);
+    color: rgba(246, 241, 231, 0.28);
+    cursor: not-allowed;
+}
+
+.seat-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    width: min(100%, 28rem);
+    margin-inline: auto;
+    padding: 1.25rem 1.35rem;
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 18px;
+}
+
+.airplane[data-layout="comfort"] ~ .seat-info {
+    width: min(100%, 30rem);
+}
+
+.airplane[data-layout="economy"] ~ .seat-info {
+    width: min(100%, 28rem);
+}
+
+.seat-selection-message {
+    width: min(100%, 28rem);
+    margin: 0 auto;
+    color: #f0c9a0;
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.airplane[data-layout="comfort"] ~ .seat-selection-message,
+.airplane[data-layout="economy"] ~ .seat-selection-message {
+    width: min(100%, 30rem);
+}
+
+.airplane[data-layout="economy"] ~ .seat-selection-message {
+    width: min(100%, 28rem);
+}
+
+.seat-info-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2rem;
+}
+
+.seat-info-item {
+    min-width: 7rem;
+}
+
+.seat-info-label {
+    margin: 0 0 0.3rem;
+    color: rgba(246, 241, 231, 0.55);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.seat-info-value {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.continue-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    min-width: 9.5rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.continue-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+}
+
+@media (max-width: 900px) {
+    .seat-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .flight-summary {
+        max-width: 28rem;
+        margin-inline: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .seat-intro {
+        margin-bottom: 1.85rem;
+    }
+
+    .airplane,
+    .airplane[data-layout="comfort"],
+    .airplane[data-layout="economy"] {
+        --body-width: 100%;
+    }
+
+    .airplane {
+        --seat-size: 2.35rem;
+        --aisle-size: 1.35rem;
+        --row-label-size: 1.1rem;
+    }
+
+    .airplane[data-layout="comfort"] {
+        --seat-size: 2.1rem;
+        --aisle-size: 1.15rem;
+    }
+
+    .airplane[data-layout="economy"] {
+        --seat-size: 1.75rem;
+        --aisle-size: 1rem;
+        --row-label-size: 1rem;
+    }
+
+    .airplane-body {
+        padding-inline: 0.55rem;
+        border-radius: 42% 42% 16px 16px / 8% 8% 14px 14px;
+    }
+
+    .cabin-section {
+        padding-inline: 0.2rem;
+        overflow-x: auto;
+    }
+
+    .seat {
+        font-size: 0.62rem;
+    }
+
+    .airplane[data-layout="economy"] .seat {
+        font-size: 0.56rem;
+    }
+
+    .seat-info,
+    .airplane[data-layout="comfort"] ~ .seat-info,
+    .airplane[data-layout="economy"] ~ .seat-info,
+    .seat-selection-message,
+    .airplane[data-layout="comfort"] ~ .seat-selection-message,
+    .airplane[data-layout="economy"] ~ .seat-selection-message {
+        width: 100%;
+    }
+
+    .seat-info {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.15rem 1.1rem;
+    }
+
+    .continue-button {
+        width: 100%;
+    }
 }
 
 /* Footer */

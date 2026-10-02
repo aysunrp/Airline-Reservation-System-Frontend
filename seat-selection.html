@@ -55,6 +55,86 @@
                     <h1 class="seat-title">Select Your Seat</h1>
                     <p class="seat-subtitle">Choose your preferred seat for your journey.</p>
                 </header>
+
+                <div class="seat-layout">
+                    <aside class="flight-summary" aria-label="Flight summary">
+                        <p class="summary-airline" id="summary-airline">AEROVA</p>
+                        <p class="summary-flight" id="summary-flight">AV 101</p>
+                        <p class="summary-route" id="summary-route">Baku → London</p>
+                        <p class="summary-date" id="summary-date">21 November 2026</p>
+                        <p class="summary-times" id="summary-times">09:30 → 13:10</p>
+                        <div class="summary-meta">
+                            <p class="summary-meta-item"><span class="summary-meta-label">Aircraft</span> <span id="summary-aircraft">AEROVA 787-9</span></p>
+                            <p class="summary-meta-item"><span class="summary-meta-label">Cabin</span> <span id="summary-cabin">Economy</span></p>
+                        </div>
+                    </aside>
+
+                    <div class="seat-map-panel">
+                        <div class="seat-legend" aria-label="Seat legend">
+                            <div class="legend-item">
+                                <span class="legend-swatch legend-swatch--available" aria-hidden="true"></span>
+                                <span class="legend-label">Available</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-swatch legend-swatch--selected" aria-hidden="true"></span>
+                                <span class="legend-label">Selected</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-swatch legend-swatch--occupied" aria-hidden="true"></span>
+                                <span class="legend-label">Occupied</span>
+                            </div>
+                        </div>
+
+                        <div class="airplane" id="aircraft-cabin" data-layout="economy" aria-label="Aircraft seat map">
+                            <p class="airplane-front-label">FRONT</p>
+
+                            <div class="airplane-body">
+                                <div class="airplane-nose" aria-hidden="true">
+                                    <div class="cockpit-glass">
+                                        <span class="cockpit-pane"></span>
+                                        <span class="cockpit-pane"></span>
+                                        <span class="cockpit-pane"></span>
+                                    </div>
+                                </div>
+
+                                <div class="cabin-deck">
+                                    <div class="cabin-amenity cabin-amenity--forward" aria-hidden="true">
+                                        <span class="amenity-block">Galley</span>
+                                        <span class="amenity-block">WC</span>
+                                    </div>
+
+                                    <section class="cabin-section" aria-label="Cabin seats">
+                                        <p class="cabin-section-label" id="cabin-section-label">Economy</p>
+                                        <div class="seat-columns" id="seat-columns" aria-hidden="true"></div>
+                                        <div class="seat-map" id="seat-map"></div>
+                                    </section>
+
+                                    <div class="cabin-amenity cabin-amenity--aft" aria-hidden="true">
+                                        <span class="amenity-block">WC</span>
+                                        <span class="amenity-block">Galley</span>
+                                    </div>
+                                </div>
+
+                                <div class="airplane-tail" aria-hidden="true"></div>
+                            </div>
+                        </div>
+
+                        <div class="seat-info" aria-label="Selected seat information">
+                            <div class="seat-info-details">
+                                <div class="seat-info-item">
+                                    <p class="seat-info-label">Selected Seat</p>
+                                    <p class="seat-info-value" id="selected-seat-value">No seat selected</p>
+                                </div>
+                                <div class="seat-info-item">
+                                    <p class="seat-info-label">Price</p>
+                                    <p class="seat-info-value" id="selected-seat-price">Included</p>
+                                </div>
+                            </div>
+                            <button class="continue-button" id="continue-button" type="button">Continue</button>
+                        </div>
+                        <p class="seat-selection-message" id="seat-selection-message" aria-live="polite" hidden></p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -148,5 +228,7 @@
             </ul>
         </div>
     </footer>
+
+    <script src="assets/js/seat-selection.js"></script>
 </body>
 </html>
