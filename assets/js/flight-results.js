@@ -4,9 +4,11 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
+    var CABIN_CLASSES = ["Economy", "Comfort", "Business"];
+
     var MOCK_FLIGHTS = [
         {
-            id: "av-101",
+            id: 1,
             airline: "AEROVA",
             flightNumber: "AV 101",
             from: "Baku",
@@ -17,11 +19,14 @@
             durationMinutes: 340,
             stops: "Non-stop",
             aircraft: "AEROVA 787-9",
-            price: 420,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 420,
+                Comfort: 560,
+                Business: 890
+            }
         },
         {
-            id: "av-205",
+            id: 2,
             airline: "AEROVA",
             flightNumber: "AV 205",
             from: "Baku",
@@ -32,11 +37,32 @@
             durationMinutes: 355,
             stops: "1 Stop",
             aircraft: "AEROVA A350-900",
-            price: 365,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 365,
+                Comfort: 490,
+                Business: 820
+            }
         },
         {
-            id: "av-318",
+            id: 3,
+            airline: "AEROVA",
+            flightNumber: "AV 401",
+            from: "Baku",
+            to: "London",
+            departure: "15:00",
+            arrival: "19:30",
+            duration: "4h 30m",
+            durationMinutes: 270,
+            stops: "Non-stop",
+            aircraft: "AEROVA 787-9",
+            cabinPrices: {
+                Economy: 420,
+                Comfort: 560,
+                Business: 890
+            }
+        },
+        {
+            id: 4,
             airline: "AEROVA",
             flightNumber: "AV 318",
             from: "Baku",
@@ -47,41 +73,14 @@
             durationMinutes: 340,
             stops: "Non-stop",
             aircraft: "AEROVA A321neo",
-            price: 455,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 455,
+                Comfort: 575,
+                Business: 950
+            }
         },
         {
-            id: "av-412",
-            airline: "AEROVA",
-            flightNumber: "AV 412",
-            from: "Baku",
-            to: "London",
-            departure: "07:15",
-            arrival: "11:05",
-            duration: "5h 50m",
-            durationMinutes: 350,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            price: 510,
-            cabinClass: "Comfort"
-        },
-        {
-            id: "av-490",
-            airline: "AEROVA",
-            flightNumber: "AV 490",
-            from: "Baku",
-            to: "London",
-            departure: "11:40",
-            arrival: "15:20",
-            duration: "5h 40m",
-            durationMinutes: 340,
-            stops: "Non-stop",
-            aircraft: "AEROVA 787-9",
-            price: 890,
-            cabinClass: "Business"
-        },
-        {
-            id: "av-220",
+            id: 5,
             airline: "AEROVA",
             flightNumber: "AV 220",
             from: "Baku",
@@ -92,11 +91,14 @@
             durationMinutes: 345,
             stops: "Non-stop",
             aircraft: "AEROVA A350-900",
-            price: 390,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 390,
+                Comfort: 520,
+                Business: 860
+            }
         },
         {
-            id: "av-226",
+            id: 6,
             airline: "AEROVA",
             flightNumber: "AV 226",
             from: "Baku",
@@ -107,11 +109,14 @@
             durationMinutes: 370,
             stops: "1 Stop",
             aircraft: "AEROVA A321neo",
-            price: 340,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 340,
+                Comfort: 470,
+                Business: 790
+            }
         },
         {
-            id: "av-232",
+            id: 7,
             airline: "AEROVA",
             flightNumber: "AV 232",
             from: "Baku",
@@ -122,11 +127,14 @@
             durationMinutes: 345,
             stops: "Non-stop",
             aircraft: "AEROVA A320neo",
-            price: 620,
-            cabinClass: "Comfort"
+            cabinPrices: {
+                Economy: 410,
+                Comfort: 620,
+                Business: 880
+            }
         },
         {
-            id: "av-310",
+            id: 8,
             airline: "AEROVA",
             flightNumber: "AV 310",
             from: "Baku",
@@ -137,11 +145,14 @@
             durationMinutes: 215,
             stops: "Non-stop",
             aircraft: "AEROVA A320neo",
-            price: 210,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 210,
+                Comfort: 290,
+                Business: 480
+            }
         },
         {
-            id: "av-316",
+            id: 9,
             airline: "AEROVA",
             flightNumber: "AV 316",
             from: "Baku",
@@ -152,11 +163,14 @@
             durationMinutes: 220,
             stops: "Non-stop",
             aircraft: "AEROVA A321neo",
-            price: 245,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 245,
+                Comfort: 330,
+                Business: 520
+            }
         },
         {
-            id: "av-322",
+            id: 10,
             airline: "AEROVA",
             flightNumber: "AV 322",
             from: "Baku",
@@ -167,11 +181,14 @@
             durationMinutes: 220,
             stops: "Non-stop",
             aircraft: "AEROVA 787-9",
-            price: 480,
-            cabinClass: "Business"
+            cabinPrices: {
+                Economy: 280,
+                Comfort: 380,
+                Business: 560
+            }
         },
         {
-            id: "av-501",
+            id: 11,
             airline: "AEROVA",
             flightNumber: "AV 501",
             from: "Baku",
@@ -182,11 +199,14 @@
             durationMinutes: 195,
             stops: "Non-stop",
             aircraft: "AEROVA A320neo",
-            price: 185,
-            cabinClass: "Economy"
+            cabinPrices: {
+                Economy: 185,
+                Comfort: 250,
+                Business: 400
+            }
         },
         {
-            id: "av-508",
+            id: 12,
             airline: "AEROVA",
             flightNumber: "AV 508",
             from: "Baku",
@@ -197,11 +217,14 @@
             durationMinutes: 205,
             stops: "Non-stop",
             aircraft: "AEROVA A321neo",
-            price: 275,
-            cabinClass: "Comfort"
+            cabinPrices: {
+                Economy: 200,
+                Comfort: 275,
+                Business: 430
+            }
         },
         {
-            id: "av-515",
+            id: 13,
             airline: "AEROVA",
             flightNumber: "AV 515",
             from: "Baku",
@@ -212,8 +235,11 @@
             durationMinutes: 195,
             stops: "Non-stop",
             aircraft: "AEROVA A350-900",
-            price: 430,
-            cabinClass: "Business"
+            cabinPrices: {
+                Economy: 220,
+                Comfort: 310,
+                Business: 470
+            }
         }
     ];
 
@@ -275,21 +301,42 @@
         return count + (count === 1 ? " Passenger" : " Passengers");
     }
 
+    function resolveCabinName(cabinValue) {
+        var normalized = normalizeText(cabinValue);
+
+        for (var i = 0; i < CABIN_CLASSES.length; i += 1) {
+            if (normalizeText(CABIN_CLASSES[i]) === normalized) {
+                return CABIN_CLASSES[i];
+            }
+        }
+
+        return "";
+    }
+
+    function getDefaultCabin(criteria) {
+        return resolveCabinName(criteria.cabinClass) || "Economy";
+    }
+
+    function getCabinPrice(flight, cabinClass) {
+        if (!flight.cabinPrices) {
+            return null;
+        }
+
+        var price = flight.cabinPrices[cabinClass];
+        return typeof price === "number" ? price : null;
+    }
+
     function filterFlights(criteria) {
         var fromValue = normalizeText(criteria.from);
         var toValue = normalizeText(criteria.to);
-        var cabinValue = normalizeText(criteria.cabinClass);
 
         if (!fromValue || !toValue) {
             return [];
         }
 
         return MOCK_FLIGHTS.filter(function (flight) {
-            var matchesFrom = normalizeText(flight.from) === fromValue;
-            var matchesTo = normalizeText(flight.to) === toValue;
-            var matchesCabin = !cabinValue || normalizeText(flight.cabinClass) === cabinValue;
-
-            return matchesFrom && matchesTo && matchesCabin;
+            return normalizeText(flight.from) === fromValue &&
+                normalizeText(flight.to) === toValue;
         });
     }
 
@@ -326,10 +373,44 @@
         }
     }
 
-    function createFlightCard(flight) {
+    function buildCabinOptionsMarkup(flight, selectedCabin) {
+        var groupId = "cabin-group-" + flight.id;
+        var optionsMarkup = CABIN_CLASSES.map(function (cabin) {
+            var isSelected = cabin === selectedCabin;
+            var price = getCabinPrice(flight, cabin);
+            var disabled = typeof price !== "number";
+
+            return (
+                '<button' +
+                    ' type="button"' +
+                    ' class="cabin-option' + (isSelected ? " is-selected" : "") + '"' +
+                    ' role="radio"' +
+                    ' aria-checked="' + (isSelected ? "true" : "false") + '"' +
+                    ' data-cabin="' + escapeHtml(cabin) + '"' +
+                    (disabled ? " disabled" : "") +
+                ">" +
+                    escapeHtml(cabin) +
+                "</button>"
+            );
+        }).join("");
+
+        return (
+            '<div class="cabin-selection">' +
+                '<p class="cabin-selection-label" id="' + groupId + '-label">Cabin Class</p>' +
+                '<div class="cabin-options" role="radiogroup" aria-labelledby="' + groupId + '-label">' +
+                    optionsMarkup +
+                "</div>" +
+            "</div>"
+        );
+    }
+
+    function createFlightCard(flight, selectedCabin) {
+        var price = getCabinPrice(flight, selectedCabin);
         var article = document.createElement("article");
+
         article.className = "flight-card";
-        article.setAttribute("data-flight-id", flight.id);
+        article.setAttribute("data-flight-id", String(flight.id));
+        article.setAttribute("data-selected-cabin", selectedCabin);
 
         article.innerHTML =
             '<div class="flight-card-airline">' +
@@ -353,25 +434,48 @@
             "</div>" +
             '<div class="flight-card-details">' +
                 '<p class="detail-item"><span class="detail-label">Aircraft</span> ' + escapeHtml(flight.aircraft) + "</p>" +
-                '<p class="detail-item"><span class="detail-label">Cabin</span> ' + escapeHtml(flight.cabinClass) + "</p>" +
+                buildCabinOptionsMarkup(flight, selectedCabin) +
             "</div>" +
             '<div class="flight-card-action">' +
-                '<p class="flight-price">$' + escapeHtml(String(flight.price)) + "</p>" +
+                '<p class="flight-price">$' + escapeHtml(String(price)) + "</p>" +
                 '<button class="select-flight-button" type="button">Select Flight</button>' +
             "</div>";
 
         return article;
     }
 
+    function updateCardCabinSelection(card, flight, cabinClass) {
+        var price = getCabinPrice(flight, cabinClass);
+        if (typeof price !== "number") {
+            return;
+        }
+
+        card.setAttribute("data-selected-cabin", cabinClass);
+
+        var priceElement = card.querySelector(".flight-price");
+        if (priceElement) {
+            priceElement.textContent = "$" + String(price);
+        }
+
+        var options = card.querySelectorAll(".cabin-option");
+        options.forEach(function (option) {
+            var isSelected = option.getAttribute("data-cabin") === cabinClass;
+            option.classList.toggle("is-selected", isSelected);
+            option.setAttribute("aria-checked", isSelected ? "true" : "false");
+        });
+    }
+
     function renderEmptyState(container) {
         container.innerHTML =
             '<div class="results-empty">' +
-                "<h2 class=\"results-empty-title\">No flights found</h2>" +
-                "<p class=\"results-empty-text\">Try changing your search criteria.</p>" +
+                '<h2 class="results-empty-title">No flights found</h2>' +
+                '<p class="results-empty-text">Try changing your search criteria.</p>' +
             "</div>";
     }
 
-    function saveSelectedFlight(flight, criteria) {
+    function saveSelectedFlight(flight, cabinClass, criteria) {
+        var price = getCabinPrice(flight, cabinClass);
+
         var selection = {
             id: flight.id,
             flightNumber: flight.flightNumber,
@@ -381,8 +485,8 @@
             arrival: flight.arrival,
             duration: flight.duration,
             aircraft: flight.aircraft,
-            price: flight.price,
-            cabinClass: flight.cabinClass,
+            cabinClass: cabinClass,
+            price: price,
             passengers: criteria.passengers,
             departureDate: criteria.departureDate,
             returnDate: criteria.returnDate,
@@ -411,13 +515,24 @@
             return;
         }
 
+        var defaultCabin = getDefaultCabin(criteria);
+
         flights.forEach(function (flight) {
-            var card = createFlightCard(flight);
+            var card = createFlightCard(flight, defaultCabin);
+            var cabinButtons = card.querySelectorAll(".cabin-option");
             var selectButton = card.querySelector(".select-flight-button");
+
+            cabinButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    var cabinClass = button.getAttribute("data-cabin");
+                    updateCardCabinSelection(card, flight, cabinClass);
+                });
+            });
 
             if (selectButton) {
                 selectButton.addEventListener("click", function () {
-                    saveSelectedFlight(flight, criteria);
+                    var selectedCabin = card.getAttribute("data-selected-cabin") || defaultCabin;
+                    saveSelectedFlight(flight, selectedCabin, criteria);
                 });
             }
 
