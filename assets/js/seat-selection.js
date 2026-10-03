@@ -125,11 +125,9 @@
     }
 
     function persistSelectedSeat(flightData) {
-        if (!flightData) {
-            return;
-        }
+        var baseData = flightData && typeof flightData === "object" ? flightData : {};
 
-        var updated = Object.assign({}, flightData, {
+        var updated = Object.assign({}, baseData, {
             selectedSeat: selectedSeat || "",
             cabinClass: activeLayout.label === "Business Class" ? "Business" : activeLayout.label
         });
@@ -308,26 +306,55 @@
         });
     }
 
+    function getCurrentlySelectedSeat() {
+        if (selectedSeat) {
+            return selectedSeat;
+        }
+
+        var selectedButton = document.querySelector("#seat-map .seat--selected");
+        if (selectedButton) {
+            return selectedButton.getAttribute("data-seat") || "";
+        }
+
+        var storedFlight = readSelectedFlight();
+        if (storedFlight && storedFlight.selectedSeat) {
+            return String(storedFlight.selectedSeat);
+        }
+
+        return "";
+    }
+
     function bindContinue(flightData) {
-        var continueButton = document.getElementById("continue-button");
+        var continueButton = document.getElementById("continue-button") ||
+            document.querySelector(".continue-button");
+
         if (!continueButton) {
             return;
         }
 
-        continueButton.addEventListener("click", function () {
-            if (!selectedSeat) {
+        continueButton.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            var seatToSave = getCurrentlySelectedSeat();
+            if (!seatToSave) {
                 showMessage("Please select a seat to continue.");
                 return;
             }
 
+            selectedSeat = seatToSave;
             showMessage("");
             persistSelectedSeat(flightData);
+            window.location.href = "passenger-details.html";
         });
     }
 
     function init() {
         var flightData = readSelectedFlight();
         activeLayout = resolveCabinLayout(flightData && flightData.cabinClass);
+
+        if (flightData && flightData.selectedSeat) {
+            selectedSeat = String(flightData.selectedSeat);
+        }
 
         populateFlightSummary(flightData, activeLayout);
         renderSeatMap(activeLayout);
