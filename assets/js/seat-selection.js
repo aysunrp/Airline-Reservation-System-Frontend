@@ -37,7 +37,8 @@
         }
     };
 
-    var selectedSeat = "";
+    var selectedSeats = [];
+    var requiredSeats = 1;
     var activeLayout = CABIN_LAYOUTS.Economy;
 
     function normalizeText(value) {
@@ -102,6 +103,42 @@
         return CABIN_LAYOUTS.Economy;
     }
 
+    function resolvePassengerCount(flightData) {
+        var count = Number(flightData && flightData.passengers);
+
+        if (!count || count < 1) {
+            return 1;
+        }
+
+        if (count > 4) {
+            return 4;
+        }
+
+        return Math.floor(count);
+    }
+
+    function normalizeStoredSeats(flightData) {
+        if (!flightData) {
+            return [];
+        }
+
+        if (Array.isArray(flightData.selectedSeats)) {
+            return flightData.selectedSeats
+                .map(function (seat) {
+                    return String(seat || "").trim();
+                })
+                .filter(function (seat) {
+                    return !!seat;
+                });
+        }
+
+        if (flightData.selectedSeat) {
+            return [String(flightData.selectedSeat).trim()].filter(Boolean);
+        }
+
+        return [];
+    }
+
     function setText(id, value) {
         var element = document.getElementById(id);
         if (element) {
@@ -120,15 +157,26 @@
     }
 
     function updateSelectedSeatSummary() {
-        setText("selected-seat-value", selectedSeat || "No seat selected");
+        var seatsLabel = selectedSeats.length === 1 ? "Selected Seat" : "Selected Seats";
+        setText("selected-seat-label", seatsLabel);
+        setText(
+            "selected-seat-value",
+            selectedSeats.length ? selectedSeats.join(", ") : "No seat selected"
+        );
+        setText(
+            "seat-progress",
+            selectedSeats.length + " of " + requiredSeats + " seats selected"
+        );
         setText("selected-seat-price", "Included");
     }
 
-    function persistSelectedSeat(flightData) {
+    function persistSelectedSeats(flightData) {
         var baseData = flightData && typeof flightData === "object" ? flightData : {};
 
         var updated = Object.assign({}, baseData, {
-            selectedSeat: selectedSeat || "",
+            selectedSeats: selectedSeats.slice(),
+            selectedSeat: selectedSeats.length === 1 ? selectedSeats[0] : selectedSeats.join(", "),
+            passengers: String(requiredSeats),
             cabinClass: activeLayout.label === "Business Class" ? "Business" : activeLayout.label
         });
 
@@ -194,6 +242,31 @@
         return button;
     }
 
+    function syncSeatButtonStates() {
+        var map = document.getElementById("seat-map");
+        if (!map) {
+            return;
+        }
+
+        var selectedLookup = {};
+        selectedSeats.forEach(function (seatId) {
+            selectedLookup[seatId] = true;
+        });
+
+        map.querySelectorAll(".seat").forEach(function (seatButton) {
+            if (seatButton.classList.contains("seat--occupied") || seatButton.disabled) {
+                return;
+            }
+
+            var seatId = seatButton.getAttribute("data-seat");
+            var isSelected = !!selectedLookup[seatId];
+
+            seatButton.classList.toggle("seat--selected", isSelected);
+            seatButton.classList.toggle("seat--available", !isSelected);
+            seatButton.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        });
+    }
+
     function renderSeatMap(layout) {
         var cabin = document.getElementById("aircraft-cabin");
         var columns = document.getElementById("seat-columns");
@@ -253,22 +326,11 @@
 
             map.appendChild(rowElement);
         }
+
+        syncSeatButtonStates();
     }
 
-    function clearSeatSelection() {
-        var map = document.getElementById("seat-map");
-        if (!map) {
-            return;
-        }
-
-        map.querySelectorAll(".seat--selected").forEach(function (seat) {
-            seat.classList.remove("seat--selected");
-            seat.classList.add("seat--available");
-            seat.setAttribute("aria-pressed", "false");
-        });
-    }
-
-    function selectSeat(seatButton, flightData) {
+    function toggleSeat(seatButton, flightData) {
         if (!seatButton || seatButton.disabled || seatButton.classList.contains("seat--occupied")) {
             return;
         }
@@ -278,16 +340,28 @@
             return;
         }
 
-        clearSeatSelection();
+        var existingIndex = selectedSeats.indexOf(seatId);
 
-        seatButton.classList.remove("seat--available");
-        seatButton.classList.add("seat--selected");
-        seatButton.setAttribute("aria-pressed", "true");
+        if (existingIndex !== -1) {
+            selectedSeats.splice(existingIndex, 1);
+            showMessage("");
+        } else {
+            if (selectedSeats.length >= requiredSeats) {
+                showMessage(
+                    "You can select up to " +
+                        requiredSeats +
+                        (requiredSeats === 1 ? " seat." : " seats.")
+                );
+                return;
+            }
 
-        selectedSeat = seatId;
+            selectedSeats.push(seatId);
+            showMessage("");
+        }
+
+        syncSeatButtonStates();
         updateSelectedSeatSummary();
-        showMessage("");
-        persistSelectedSeat(flightData);
+        persistSelectedSeats(flightData);
     }
 
     function bindSeatInteractions(flightData) {
@@ -302,26 +376,26 @@
                 return;
             }
 
-            selectSeat(seatButton, flightData);
+            toggleSeat(seatButton, flightData);
         });
     }
 
-    function getCurrentlySelectedSeat() {
-        if (selectedSeat) {
-            return selectedSeat;
+    function getRemainingSeatsMessage() {
+        var remaining = requiredSeats - selectedSeats.length;
+
+        if (remaining <= 0) {
+            return "";
         }
 
-        var selectedButton = document.querySelector("#seat-map .seat--selected");
-        if (selectedButton) {
-            return selectedButton.getAttribute("data-seat") || "";
+        if (selectedSeats.length === 0) {
+            return requiredSeats === 1
+                ? "Please select a seat to continue."
+                : "Please select " + requiredSeats + " seats to continue.";
         }
 
-        var storedFlight = readSelectedFlight();
-        if (storedFlight && storedFlight.selectedSeat) {
-            return String(storedFlight.selectedSeat);
-        }
-
-        return "";
+        return remaining === 1
+            ? "Please select 1 more seat."
+            : "Please select " + remaining + " more seats.";
     }
 
     function bindContinue(flightData) {
@@ -335,15 +409,13 @@
         continueButton.addEventListener("click", function (event) {
             event.preventDefault();
 
-            var seatToSave = getCurrentlySelectedSeat();
-            if (!seatToSave) {
-                showMessage("Please select a seat to continue.");
+            if (selectedSeats.length !== requiredSeats) {
+                showMessage(getRemainingSeatsMessage());
                 return;
             }
 
-            selectedSeat = seatToSave;
             showMessage("");
-            persistSelectedSeat(flightData);
+            persistSelectedSeats(flightData);
             window.location.href = "passenger-details.html";
         });
     }
@@ -351,10 +423,8 @@
     function init() {
         var flightData = readSelectedFlight();
         activeLayout = resolveCabinLayout(flightData && flightData.cabinClass);
-
-        if (flightData && flightData.selectedSeat) {
-            selectedSeat = String(flightData.selectedSeat);
-        }
+        requiredSeats = resolvePassengerCount(flightData);
+        selectedSeats = normalizeStoredSeats(flightData).slice(0, requiredSeats);
 
         populateFlightSummary(flightData, activeLayout);
         renderSeatMap(activeLayout);

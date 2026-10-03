@@ -56,95 +56,13 @@
                     <p class="passenger-subtitle">Enter the passenger information required for your journey.</p>
                 </header>
 
+                <p class="passenger-details-message" id="passenger-details-message" aria-live="polite" hidden></p>
+
                 <div class="passenger-layout">
                     <div class="passenger-forms">
-                        <article class="details-card" aria-labelledby="passenger-1-title">
-                            <h2 class="details-card-title" id="passenger-1-title">Passenger 1</h2>
+                        <div id="passenger-cards" class="passenger-cards"></div>
 
-                            <section class="details-section" aria-labelledby="personal-info-title">
-                                <h3 class="details-section-title" id="personal-info-title">Personal Information</h3>
-
-                                <div class="field-grid">
-                                    <div class="field">
-                                        <label class="field-label" for="passenger-title">Title <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <select class="field-input" id="passenger-title" name="title" required>
-                                            <option value="" selected disabled>Select title</option>
-                                            <option value="Mr">Mr</option>
-                                            <option value="Mrs">Mrs</option>
-                                            <option value="Ms">Ms</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="passenger-first-name">First Name / Given Name <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="passenger-first-name" name="firstName" type="text" autocomplete="given-name" required>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="passenger-middle-name">Middle Name <span class="optional-mark">(Optional)</span></label>
-                                        <input class="field-input" id="passenger-middle-name" name="middleName" type="text" autocomplete="additional-name">
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="passenger-last-name">Last Name / Surname <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="passenger-last-name" name="lastName" type="text" autocomplete="family-name" required>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="passenger-dob">Date of Birth <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="passenger-dob" name="dateOfBirth" type="date" required>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="passenger-gender">Gender <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <select class="field-input" id="passenger-gender" name="gender" required>
-                                            <option value="" selected disabled>Select gender</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Other">Other</option>
-                                            <option value="Prefer not to say">Prefer not to say</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="field field--full">
-                                        <label class="field-label" for="passenger-nationality">Nationality <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="passenger-nationality" name="nationality" type="text" autocomplete="country-name" required>
-                                    </div>
-                                </div>
-                            </section>
-
-                            <section class="details-section" aria-labelledby="travel-document-title">
-                                <h3 class="details-section-title" id="travel-document-title">Travel Document</h3>
-
-                                <div class="field-grid">
-                                    <div class="field">
-                                        <label class="field-label" for="document-type">Document Type <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <select class="field-input" id="document-type" name="documentType" required>
-                                            <option value="" selected disabled>Select document type</option>
-                                            <option value="Passport">Passport</option>
-                                            <option value="ID Card">ID Card</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="document-number">Document Number <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="document-number" name="documentNumber" type="text" required>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="issuing-country">Issuing Country <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="issuing-country" name="issuingCountry" type="text" required>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="field-label" for="document-expiry">Document Expiry Date <span class="required-mark" aria-hidden="true">*</span></label>
-                                        <input class="field-input" id="document-expiry" name="documentExpiry" type="date" required>
-                                    </div>
-                                </div>
-                            </section>
-                        </article>
-
-                        <article class="details-card" aria-labelledby="booking-contact-title">
+                        <article class="details-card" id="booking-contact-card" aria-labelledby="booking-contact-title">
                             <h2 class="details-card-title" id="booking-contact-title">Booking Contact</h2>
                             <p class="details-card-note">We'll use these details to send your booking confirmation.</p>
 
@@ -178,29 +96,29 @@
                         <h2 class="details-card-title" id="booking-summary-title">Booking Summary</h2>
 
                         <div class="summary-flight">
-                            <p class="summary-airline">AEROVA</p>
-                            <p class="summary-flight-number">AV 101</p>
-                            <p class="summary-route">Baku → London</p>
-                            <p class="summary-date">21 November 2026</p>
-                            <p class="summary-times">09:30 → 13:10</p>
+                            <p class="summary-airline" id="summary-airline">AEROVA</p>
+                            <p class="summary-flight-number" id="summary-flight-number">—</p>
+                            <p class="summary-route" id="summary-route">—</p>
+                            <p class="summary-date" id="summary-date">—</p>
+                            <p class="summary-times" id="summary-times">—</p>
                         </div>
 
                         <dl class="summary-list">
                             <div class="summary-row">
                                 <dt>Aircraft</dt>
-                                <dd>AEROVA 787-9</dd>
+                                <dd id="summary-aircraft">—</dd>
                             </div>
                             <div class="summary-row">
                                 <dt>Cabin Class</dt>
-                                <dd>Economy</dd>
-                            </div>
-                            <div class="summary-row">
-                                <dt>Selected Seat</dt>
-                                <dd>12A</dd>
+                                <dd id="summary-cabin">—</dd>
                             </div>
                             <div class="summary-row">
                                 <dt>Passenger Count</dt>
-                                <dd>1</dd>
+                                <dd id="summary-passengers">—</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Selected Seats</dt>
+                                <dd id="summary-seats">—</dd>
                             </div>
                         </dl>
 
@@ -208,10 +126,10 @@
 
                         <div class="summary-total">
                             <p class="summary-total-label">Total</p>
-                            <p class="summary-total-value">$0.00</p>
+                            <p class="summary-total-value" id="summary-total">$0.00</p>
                         </div>
 
-                        <button class="continue-button" type="button">Continue to Confirmation</button>
+                        <button class="continue-button" id="continue-confirmation-button" type="button">Continue to Confirmation</button>
                     </aside>
                 </div>
             </div>
@@ -307,5 +225,7 @@
             </ul>
         </div>
     </footer>
+
+    <script src="assets/js/passenger-details.js"></script>
 </body>
 </html>

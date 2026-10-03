@@ -795,6 +795,14 @@ h2 {
     line-height: 1.15;
 }
 
+.seat-progress {
+    margin: 0.4rem 0 0;
+    color: rgba(246, 241, 231, 0.62);
+    font-size: 0.82rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+}
+
 .continue-button {
     display: inline-flex;
     align-items: center;
