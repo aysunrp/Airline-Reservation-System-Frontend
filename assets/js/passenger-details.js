@@ -4,6 +4,10 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
+    var PNR_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    var activeFlightData = null;
+    var activeSelectedSeats = [];
+
     function escapeHtml(value) {
         return String(value)
             .replace(/&/g, "&amp;")
@@ -28,6 +32,154 @@
 
         message.textContent = text || "";
         message.hidden = !text;
+    }
+
+    function getSelectPlaceholderOption(select) {
+        if (!select || select.tagName !== "SELECT" || !select.options.length) {
+            return null;
+        }
+
+        return select.options[0];
+    }
+
+    function rememberOriginalPlaceholder(input) {
+        if (!input || input.getAttribute("data-original-placeholder") !== null) {
+            return;
+        }
+
+        if (input.tagName === "SELECT") {
+            var option = getSelectPlaceholderOption(input);
+            input.setAttribute(
+                "data-original-placeholder",
+                option ? option.textContent : ""
+            );
+            return;
+        }
+
+        input.setAttribute("data-original-placeholder", input.getAttribute("placeholder") || "");
+    }
+
+    function clearFieldError(input) {
+        if (!input || !input.classList.contains("is-invalid")) {
+            return;
+        }
+
+        input.classList.remove("is-invalid");
+
+        var original = input.getAttribute("data-original-placeholder");
+        if (original === null) {
+            return;
+        }
+
+        if (input.tagName === "SELECT") {
+            var option = getSelectPlaceholderOption(input);
+            if (option) {
+                option.textContent = original;
+            }
+            return;
+        }
+
+        if (original) {
+            input.setAttribute("placeholder", original);
+        } else {
+            input.removeAttribute("placeholder");
+        }
+    }
+
+    function clearFieldErrors() {
+        document.querySelectorAll(".field-input.is-invalid").forEach(function (input) {
+            clearFieldError(input);
+        });
+    }
+
+    function markInvalid(input, message) {
+        if (!input) {
+            return;
+        }
+
+        rememberOriginalPlaceholder(input);
+        input.classList.add("is-invalid");
+
+        if (input.tagName === "SELECT") {
+            var option = getSelectPlaceholderOption(input);
+            if (option) {
+                option.textContent = message || "This field is required";
+            }
+
+            if (!getTrimmedValue(input)) {
+                input.selectedIndex = 0;
+            }
+            return;
+        }
+
+        input.setAttribute("placeholder", message || "This field is required");
+
+        if (!getTrimmedValue(input) && input.type !== "date") {
+            input.value = "";
+        }
+    }
+
+    function getTrimmedValue(input) {
+        return input ? String(input.value || "").trim() : "";
+    }
+
+    function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function parseISODate(value) {
+        if (!value) {
+            return null;
+        }
+
+        var parts = String(value).split("-");
+        if (parts.length !== 3) {
+            return null;
+        }
+
+        var year = Number(parts[0]);
+        var month = Number(parts[1]);
+        var day = Number(parts[2]);
+        var date = new Date(year, month - 1, day);
+
+        if (
+            !year ||
+            !month ||
+            !day ||
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day
+        ) {
+            return null;
+        }
+
+        return date;
+    }
+
+    function isPastDate(value) {
+        var date = parseISODate(value);
+        if (!date) {
+            return true;
+        }
+
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date < today;
+    }
+
+    function generatePNR() {
+        var pnr = "";
+        var i;
+
+        for (i = 0; i < 6; i += 1) {
+            pnr += PNR_CHARSET.charAt(Math.floor(Math.random() * PNR_CHARSET.length));
+        }
+
+        return pnr;
+    }
+
+    function getFieldById(id) {
+        return document.getElementById(id);
     }
 
     function formatDisplayDate(dateValue) {
@@ -260,13 +412,298 @@
         }
     }
 
+    function collectPassengerData(index, seat) {
+        var passengerNumber = index + 1;
+        var prefix = "passenger-" + passengerNumber;
+        var fields = {
+            title: getFieldById(prefix + "-title-field"),
+            firstName: getFieldById(prefix + "-first-name"),
+            middleName: getFieldById(prefix + "-middle-name"),
+            lastName: getFieldById(prefix + "-last-name"),
+            dateOfBirth: getFieldById(prefix + "-dob"),
+            gender: getFieldById(prefix + "-gender"),
+            nationality: getFieldById(prefix + "-nationality"),
+            documentType: getFieldById(prefix + "-document-type"),
+            documentNumber: getFieldById(prefix + "-document-number"),
+            issuingCountry: getFieldById(prefix + "-issuing-country"),
+            documentExpiry: getFieldById(prefix + "-document-expiry")
+        };
+
+        var requiredChecks = [
+            { key: "title", message: "This field is required" },
+            { key: "firstName", message: "Enter your first name" },
+            { key: "lastName", message: "Enter your last name" },
+            { key: "dateOfBirth", message: "Enter your date of birth" },
+            { key: "gender", message: "Select your gender" },
+            { key: "nationality", message: "Enter your nationality" },
+            { key: "documentType", message: "Select document type" },
+            { key: "documentNumber", message: "Enter document number" },
+            { key: "issuingCountry", message: "Enter issuing country" },
+            { key: "documentExpiry", message: "Enter expiry date" }
+        ];
+
+        var isValid = true;
+        var focusField = null;
+        var i;
+        var check;
+        var value;
+        var dateOfBirthValue;
+        var documentExpiryValue;
+
+        for (i = 0; i < requiredChecks.length; i += 1) {
+            check = requiredChecks[i];
+            value = getTrimmedValue(fields[check.key]);
+
+            if (!value) {
+                markInvalid(fields[check.key], check.message);
+                if (!focusField) {
+                    focusField = fields[check.key];
+                }
+                isValid = false;
+            }
+        }
+
+        dateOfBirthValue = getTrimmedValue(fields.dateOfBirth);
+        if (dateOfBirthValue && !parseISODate(dateOfBirthValue)) {
+            markInvalid(fields.dateOfBirth, "Enter your date of birth");
+            if (!focusField) {
+                focusField = fields.dateOfBirth;
+            }
+            isValid = false;
+        }
+
+        documentExpiryValue = getTrimmedValue(fields.documentExpiry);
+        if (documentExpiryValue && !parseISODate(documentExpiryValue)) {
+            markInvalid(fields.documentExpiry, "Enter expiry date");
+            if (!focusField) {
+                focusField = fields.documentExpiry;
+            }
+            isValid = false;
+        } else if (documentExpiryValue && isPastDate(documentExpiryValue)) {
+            markInvalid(fields.documentExpiry, "Enter expiry date");
+            if (!focusField) {
+                focusField = fields.documentExpiry;
+            }
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return {
+                valid: false,
+                focusField: focusField
+            };
+        }
+
+        return {
+            valid: true,
+            passenger: {
+                passengerNumber: passengerNumber,
+                seat: seat,
+                title: getTrimmedValue(fields.title),
+                firstName: getTrimmedValue(fields.firstName),
+                middleName: getTrimmedValue(fields.middleName),
+                lastName: getTrimmedValue(fields.lastName),
+                dateOfBirth: getTrimmedValue(fields.dateOfBirth),
+                gender: getTrimmedValue(fields.gender),
+                nationality: getTrimmedValue(fields.nationality),
+                documentType: getTrimmedValue(fields.documentType),
+                documentNumber: getTrimmedValue(fields.documentNumber),
+                issuingCountry: getTrimmedValue(fields.issuingCountry),
+                documentExpiry: getTrimmedValue(fields.documentExpiry)
+            }
+        };
+    }
+
+    function collectContactData() {
+        var emailInput = getFieldById("contact-email");
+        var countryCodeInput = getFieldById("contact-country-code");
+        var phoneInput = getFieldById("contact-phone");
+        var email = getTrimmedValue(emailInput);
+        var countryCode = getTrimmedValue(countryCodeInput);
+        var mobilePhone = getTrimmedValue(phoneInput);
+        var isValid = true;
+        var focusField = null;
+
+        if (!email) {
+            markInvalid(emailInput, "Enter a valid email");
+            focusField = emailInput;
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            markInvalid(emailInput, "Enter a valid email");
+            emailInput.value = "";
+            focusField = emailInput;
+            isValid = false;
+        }
+
+        if (!countryCode) {
+            markInvalid(countryCodeInput, "This field is required");
+            if (!focusField) {
+                focusField = countryCodeInput;
+            }
+            isValid = false;
+        }
+
+        if (!mobilePhone) {
+            markInvalid(phoneInput, "Enter your phone number");
+            if (!focusField) {
+                focusField = phoneInput;
+            }
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return {
+                valid: false,
+                focusField: focusField
+            };
+        }
+
+        return {
+            valid: true,
+            contact: {
+                email: email,
+                countryCode: countryCode,
+                mobilePhone: mobilePhone
+            }
+        };
+    }
+
+    function buildBookingData(passengers, contact) {
+        var flightData = activeFlightData || {};
+        var passengerCount = passengers.length;
+        var unitPrice = Number(flightData.price);
+        var totalPrice = isFinite(unitPrice) ? unitPrice * passengerCount : 0;
+
+        return {
+            pnr: generatePNR(),
+            flight: {
+                id: flightData.id || null,
+                airline: flightData.airline || "AEROVA",
+                flightNumber: flightData.flightNumber || "",
+                from: flightData.from || "",
+                to: flightData.to || "",
+                departure: flightData.departure || "",
+                arrival: flightData.arrival || "",
+                duration: flightData.duration || "",
+                aircraft: flightData.aircraft || "",
+                departureDate: flightData.departureDate || "",
+                returnDate: flightData.returnDate || "",
+                tripType: flightData.tripType || ""
+            },
+            cabinClass: flightData.cabinClass || "",
+            passengerCount: passengerCount,
+            selectedSeats: activeSelectedSeats.slice(),
+            passengers: passengers,
+            bookingContact: contact,
+            unitPrice: isFinite(unitPrice) ? unitPrice : 0,
+            totalPrice: totalPrice
+        };
+    }
+
+    function saveBookingData(bookingData) {
+        try {
+            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function handleContinueClick() {
+        clearFieldErrors();
+        showMessage("");
+
+        if (!activeFlightData || !activeSelectedSeats.length) {
+            showMessage("Booking data is incomplete. Please return to seat selection.");
+            return;
+        }
+
+        var passengers = [];
+        var i;
+        var passengerResult;
+        var contactResult;
+        var bookingData;
+        var isValid = true;
+        var focusField = null;
+
+        for (i = 0; i < activeSelectedSeats.length; i += 1) {
+            passengerResult = collectPassengerData(i, activeSelectedSeats[i]);
+
+            if (!passengerResult.valid) {
+                isValid = false;
+                if (!focusField && passengerResult.focusField) {
+                    focusField = passengerResult.focusField;
+                }
+            } else {
+                passengers.push(passengerResult.passenger);
+            }
+        }
+
+        contactResult = collectContactData();
+        if (!contactResult.valid) {
+            isValid = false;
+            if (!focusField && contactResult.focusField) {
+                focusField = contactResult.focusField;
+            }
+        }
+
+        if (!isValid) {
+            if (focusField) {
+                focusField.focus();
+            }
+            return;
+        }
+
+        bookingData = buildBookingData(passengers, contactResult.contact);
+
+        if (!saveBookingData(bookingData)) {
+            showMessage("Unable to save booking details. Please try again.");
+            return;
+        }
+
+        window.location.href = "confirmation.html";
+    }
+
+    function bindContinueButton() {
+        var continueButton = document.getElementById("continue-confirmation-button");
+        if (!continueButton) {
+            return;
+        }
+
+        continueButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            handleContinueClick();
+        });
+    }
+
+    function bindClearInvalidOnInput() {
+        document.addEventListener("input", function (event) {
+            var target = event.target;
+            if (target && target.classList && target.classList.contains("field-input")) {
+                clearFieldError(target);
+            }
+        });
+
+        document.addEventListener("change", function (event) {
+            var target = event.target;
+            if (target && target.classList && target.classList.contains("field-input")) {
+                clearFieldError(target);
+            }
+        });
+    }
+
     function init() {
         var flightData = readSelectedFlight();
         var passengerCount = resolvePassengerCount(flightData);
         var selectedSeats = resolveSelectedSeats(flightData);
         var container = document.getElementById("passenger-cards");
 
+        activeFlightData = flightData;
+        activeSelectedSeats = selectedSeats.slice();
+
         populateBookingSummary(flightData, passengerCount, selectedSeats);
+        bindContinueButton();
+        bindClearInvalidOnInput();
 
         if (!flightData) {
             showMessage("No booking data found. Please select a flight and seats first.");

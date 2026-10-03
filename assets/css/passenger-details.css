@@ -439,6 +439,21 @@ h2 {
     outline: none;
 }
 
+.field-input.is-invalid {
+    border-color: #8f4f4f;
+    background-color: rgba(120, 50, 50, 0.1);
+    color: #c98a86;
+}
+
+.field-input.is-invalid::placeholder {
+    color: #c98a86;
+}
+
+.field-input.is-invalid:hover,
+.field-input.is-invalid:focus {
+    border-color: #8f4f4f;
+}
+
 select.field-input {
     appearance: none;
     padding-right: 2.2rem;
@@ -449,6 +464,14 @@ select.field-input {
     background-position: calc(100% - 16px) 55%, calc(100% - 11px) 55%;
     background-size: 5px 5px, 5px 5px;
     background-repeat: no-repeat;
+}
+
+select.field-input.is-invalid {
+    color: #c98a86;
+    background-color: rgba(120, 50, 50, 0.1);
+    background-image:
+        linear-gradient(45deg, transparent 50%, #c98a86 50%),
+        linear-gradient(135deg, #c98a86 50%, transparent 50%);
 }
 
 .booking-summary {
