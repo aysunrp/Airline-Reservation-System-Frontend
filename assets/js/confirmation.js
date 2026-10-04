@@ -77,27 +77,25 @@
         }
     }
 
-    function ensurePNR(bookingData) {
-        if (bookingData.pnr) {
-            return bookingData.pnr;
-        }
-
-        bookingData.pnr = generatePNR();
-
+    function saveBookingData(bookingData) {
         try {
             sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
         } catch (error) {
-            // Keep generated PNR in memory even if save fails
+            // Ignore storage errors and continue rendering
+        }
+    }
+
+    function ensurePNR(bookingData) {
+        if (bookingData.pnr) {
+            return String(bookingData.pnr);
         }
 
+        bookingData.pnr = generatePNR();
+        saveBookingData(bookingData);
         return bookingData.pnr;
     }
 
     function getPassengerName(passenger) {
-        if (!passenger) {
-            return "Passenger";
-        }
-
         return [passenger.title, passenger.firstName, passenger.middleName, passenger.lastName]
             .map(function (part) {
                 return String(part || "").trim();
@@ -119,8 +117,8 @@
         var markup = "";
         var i;
         var passenger;
-        var seat;
         var name;
+        var seat;
 
         if (!items.length) {
             list.innerHTML =
@@ -134,8 +132,8 @@
 
         for (i = 0; i < items.length; i += 1) {
             passenger = items[i] || {};
-            seat = passenger.assignedSeat || seats[i] || "—";
             name = getPassengerName(passenger) || "—";
+            seat = passenger.assignedSeat || seats[i] || "—";
 
             markup +=
                 '<li class="confirmation-passenger-item">' +
@@ -152,20 +150,14 @@
         var rows = document.querySelectorAll(".price-summary-list .price-summary-row");
         var totalRow = document.querySelector(".price-summary-row--total dd");
 
-        if (rows[0]) {
-            var passengersDd = rows[0].querySelector("dd");
-            if (passengersDd) {
-                passengersDd.textContent = String(passengerCount);
-            }
+        if (rows[0] && rows[0].querySelector("dd")) {
+            rows[0].querySelector("dd").textContent = String(passengerCount);
         }
 
-        setText("confirmation-price-cabin", cabinClass || "—");
+        setText("confirmation-price-cabin", cabinClass);
 
-        if (rows[2]) {
-            var seatsDd = rows[2].querySelector("dd");
-            if (seatsDd) {
-                seatsDd.textContent = seatsText;
-            }
+        if (rows[2] && rows[2].querySelector("dd")) {
+            rows[2].querySelector("dd").textContent = seatsText;
         }
 
         if (totalRow) {
@@ -175,16 +167,12 @@
 
     function populateConfirmation(bookingData) {
         var flight = bookingData.flight || {};
-        var selectedSeats = Array.isArray(bookingData.selectedSeats)
-            ? bookingData.selectedSeats
-            : [];
-        var passengers = Array.isArray(bookingData.passengers)
-            ? bookingData.passengers
-            : [];
+        var selectedSeats = Array.isArray(bookingData.selectedSeats) ? bookingData.selectedSeats : [];
+        var passengers = Array.isArray(bookingData.passengers) ? bookingData.passengers : [];
         var passengerCount = bookingData.passengerCount || passengers.length || selectedSeats.length || 0;
         var seatsText = selectedSeats.length ? selectedSeats.join(", ") : "—";
-        var route = flight.route ||
-            ((flight.from || "—") + " → " + (flight.to || "—"));
+        var route = flight.route || ((flight.from || "—") + " → " + (flight.to || "—"));
+        var cabinClass = bookingData.cabinClass || "—";
         var pnr = ensurePNR(bookingData);
         var airlineEl = document.querySelector(".flight-airline");
 
@@ -195,7 +183,7 @@
         setText("confirmation-departure-time", flight.departure || "—");
         setText("confirmation-arrival-time", flight.arrival || "—");
         setText("confirmation-aircraft", flight.aircraft || "—");
-        setText("confirmation-cabin", bookingData.cabinClass || "—");
+        setText("confirmation-cabin", cabinClass);
         setText("confirmation-passenger-count", String(passengerCount || "—"));
         setText("confirmation-selected-seats", seatsText);
         setText("confirmation-total-price", formatPrice(bookingData.totalPrice));
@@ -205,12 +193,7 @@
         }
 
         renderPassengers(passengers, selectedSeats);
-        populatePriceSummary(
-            passengerCount || "—",
-            bookingData.cabinClass || "—",
-            seatsText,
-            bookingData.totalPrice
-        );
+        populatePriceSummary(passengerCount || "—", cabinClass, seatsText, bookingData.totalPrice);
     }
 
     function init() {
