@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/payment.css">
 </head>
 <body>
     <header id="site-header" class="site-header">
@@ -49,6 +50,130 @@
     </header>
 
     <main id="payment-content" class="payment-content">
+        <section class="payment-page" aria-label="Payment">
+            <div class="payment-page-container">
+                <header class="payment-intro">
+                    <h1 class="payment-title">Payment</h1>
+                    <p class="payment-subtitle">Complete your payment securely to confirm your reservation.</p>
+                </header>
+
+                <div class="payment-layout">
+                    <div class="payment-forms">
+                        <article class="payment-card" aria-labelledby="payment-method-title">
+                            <h2 class="payment-card-title" id="payment-method-title">Payment Method</h2>
+
+                            <div class="payment-method-list" role="radiogroup" aria-label="Payment method">
+                                <label class="payment-method-option" for="payment-method-card">
+                                    <input class="payment-method-input" id="payment-method-card" name="payment-method" type="radio" value="card" checked>
+                                    <span class="payment-method-control" aria-hidden="true"></span>
+                                    <span class="payment-method-copy">
+                                        <span class="payment-method-name">Credit / Debit Card</span>
+                                        <span class="payment-method-note">Visa, Mastercard, and other major cards</span>
+                                    </span>
+                                </label>
+
+                                <label class="payment-method-option" for="payment-method-apple">
+                                    <input class="payment-method-input" id="payment-method-apple" name="payment-method" type="radio" value="apple">
+                                    <span class="payment-method-control" aria-hidden="true"></span>
+                                    <span class="payment-method-copy">
+                                        <span class="payment-method-name">Apple Pay</span>
+                                        <span class="payment-method-note">Pay quickly with Apple Pay</span>
+                                    </span>
+                                </label>
+
+                                <label class="payment-method-option" for="payment-method-google">
+                                    <input class="payment-method-input" id="payment-method-google" name="payment-method" type="radio" value="google">
+                                    <span class="payment-method-control" aria-hidden="true"></span>
+                                    <span class="payment-method-copy">
+                                        <span class="payment-method-name">Google Pay</span>
+                                        <span class="payment-method-note">Pay quickly with Google Pay</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="card-details" id="card-details">
+                                <h3 class="card-details-title">Card Details</h3>
+
+                                <div class="payment-field-grid">
+                                    <div class="payment-field payment-field--full">
+                                        <label class="payment-field-label" for="cardholder-name">Cardholder Name</label>
+                                        <input class="payment-field-input" id="cardholder-name" name="cardholderName" type="text" autocomplete="cc-name" placeholder="Name on card">
+                                    </div>
+
+                                    <div class="payment-field payment-field--full">
+                                        <label class="payment-field-label" for="card-number">Card Number</label>
+                                        <input class="payment-field-input payment-field-input--card" id="card-number" name="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="ACCT-000003" maxlength="19">
+                                    </div>
+
+                                    <div class="payment-field">
+                                        <label class="payment-field-label" for="card-expiry">Expiry Date</label>
+                                        <input class="payment-field-input" id="card-expiry" name="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7">
+                                    </div>
+
+                                    <div class="payment-field">
+                                        <label class="payment-field-label" for="card-cvv">CVV</label>
+                                        <input class="payment-field-input" id="card-cvv" name="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+
+                                <p class="payment-security-note">Your payment information is securely processed.</p>
+                            </div>
+                        </article>
+                    </div>
+
+                    <aside class="payment-summary" aria-labelledby="payment-summary-title">
+                        <h2 class="payment-card-title" id="payment-summary-title">Payment Summary</h2>
+
+                        <div class="summary-flight">
+                            <p class="summary-airline" id="payment-summary-airline">AEROVA</p>
+                            <p class="summary-flight-number" id="payment-summary-flight-number">AV 101</p>
+                            <p class="summary-route" id="payment-summary-route">Baku → London</p>
+                            <p class="summary-date" id="payment-summary-date">10 October 2026</p>
+                            <p class="summary-times" id="payment-summary-times">09:30 → 13:10</p>
+                        </div>
+
+                        <dl class="summary-list">
+                            <div class="summary-row">
+                                <dt>Aircraft</dt>
+                                <dd id="payment-summary-aircraft">AEROVA 787-9</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Cabin Class</dt>
+                                <dd id="payment-summary-cabin">Economy</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Passenger Count</dt>
+                                <dd id="payment-summary-passengers">1</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Selected Seats</dt>
+                                <dd id="payment-summary-seats">16F</dd>
+                            </div>
+                        </dl>
+
+                        <div class="summary-divider" aria-hidden="true"></div>
+
+                        <dl class="price-list">
+                            <div class="price-row">
+                                <dt>Base Fare</dt>
+                                <dd id="payment-base-fare">$380.00</dd>
+                            </div>
+                            <div class="price-row">
+                                <dt>Taxes &amp; Fees</dt>
+                                <dd id="payment-taxes">$40.00</dd>
+                            </div>
+                            <div class="price-row price-row--total">
+                                <dt>Total</dt>
+                                <dd id="payment-total">$420.00</dd>
+                            </div>
+                        </dl>
+
+                        <button class="pay-button" id="pay-button" type="button">Pay $420.00</button>
+                        <p class="pay-terms">By clicking Pay, you agree to the terms and conditions.</p>
+                    </aside>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer id="site-footer" class="site-footer">
