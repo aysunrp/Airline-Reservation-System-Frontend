@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/my-trips.css">
 </head>
 <body>
     <header id="site-header" class="site-header">
@@ -48,7 +49,97 @@
         </div>
     </header>
 
-    <main id="my-trips-content" class="passenger-details-content">
+    <main id="my-trips-content" class="my-trips-content">
+        <section class="my-trips-page" aria-label="My trips">
+            <div class="my-trips-container">
+                <header class="my-trips-intro">
+                    <h1 class="my-trips-title">My Trips</h1>
+                    <p class="my-trips-subtitle">View and manage your AEROVA reservations in one place.</p>
+                </header>
+
+                <div class="trips-tabs">
+                    <input class="trips-tab-input" id="tab-upcoming" name="trips-tab" type="radio" checked>
+                    <input class="trips-tab-input" id="tab-past" name="trips-tab" type="radio">
+
+                    <div class="trips-tab-list" role="tablist" aria-label="Trip categories">
+                        <label class="trips-tab-label" for="tab-upcoming">Upcoming Trips</label>
+                        <label class="trips-tab-label" for="tab-past">Past Trips</label>
+                    </div>
+
+                    <div class="trips-tab-panels">
+                        <section class="trips-panel trips-panel--upcoming" aria-label="Upcoming trips">
+                            <div class="trips-list" id="upcoming-trips-list">
+                                <article class="trip-card" aria-labelledby="trip-card-title-1">
+                                    <div class="trip-card-top">
+                                        <div class="trip-card-identity">
+                                            <p class="trip-card-airline">AEROVA</p>
+                                            <h2 class="trip-card-route" id="trip-card-title-1">Baku → London</h2>
+                                            <p class="trip-card-flight">Flight AV 101</p>
+                                        </div>
+                                        <div class="trip-card-status trip-card-status--confirmed">Confirmed</div>
+                                    </div>
+
+                                    <dl class="trip-card-meta">
+                                        <div class="trip-card-meta-item">
+                                            <dt>Booking Reference</dt>
+                                            <dd>AV7K92M</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Flight Date</dt>
+                                            <dd>10 October 2026</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Departure</dt>
+                                            <dd>09:30</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Arrival</dt>
+                                            <dd>13:10</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Duration</dt>
+                                            <dd>5h 40m</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Aircraft</dt>
+                                            <dd>AEROVA 787-9</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Cabin Class</dt>
+                                            <dd>Economy</dd>
+                                        </div>
+                                        <div class="trip-card-meta-item">
+                                            <dt>Seat</dt>
+                                            <dd>16F</dd>
+                                        </div>
+                                    </dl>
+
+                                    <div class="trip-card-footer">
+                                        <div class="trip-card-price">
+                                            <p class="trip-card-price-label">Total</p>
+                                            <p class="trip-card-price-value">$420.00</p>
+                                        </div>
+                                        <a class="trip-card-button" href="confirmation.html">View Details</a>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <div class="trips-empty" id="upcoming-trips-empty" hidden>
+                                <p class="trips-empty-title">No upcoming trips</p>
+                                <p class="trips-empty-text">When you book a flight with AEROVA, your upcoming reservations will appear here.</p>
+                            </div>
+                        </section>
+
+                        <section class="trips-panel trips-panel--past" aria-label="Past trips">
+                            <div class="trips-empty" id="past-trips-empty">
+                                <p class="trips-empty-title">No past trips</p>
+                                <p class="trips-empty-text">Completed journeys will appear here once you have flown with AEROVA.</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer id="site-footer" class="site-footer">
