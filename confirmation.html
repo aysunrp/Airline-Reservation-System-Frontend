@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/confirmation.css">
 </head>
 <body>
     <header id="site-header" class="site-header">
@@ -49,6 +50,91 @@
     </header>
 
     <main id="confirmation-content" class="confirmation-content">
+        <section class="confirmation-page" aria-label="Booking confirmation">
+            <div class="confirmation-container">
+                <header class="confirmation-status">
+                    <div class="confirmation-check" aria-hidden="true">✓</div>
+                    <h1 class="confirmation-title">Booking Confirmed</h1>
+                    <p class="confirmation-message">Your reservation has been successfully created.</p>
+                </header>
+
+                <article class="confirmation-card confirmation-card--pnr" aria-labelledby="booking-reference-label">
+                    <p class="confirmation-card-label" id="booking-reference-label">Booking Reference</p>
+                    <p class="confirmation-pnr" id="confirmation-pnr">AV7K92M</p>
+                    <p class="confirmation-pnr-note">Keep this reference for managing your trip.</p>
+                </article>
+
+                <article class="confirmation-card" aria-labelledby="flight-details-title">
+                    <h2 class="confirmation-card-title" id="flight-details-title">Flight Details</h2>
+
+                    <div class="flight-overview">
+                        <p class="flight-airline">AEROVA</p>
+                        <p class="flight-number">Flight Number: <span id="confirmation-flight-number">AV 101</span></p>
+                        <p class="flight-route" id="confirmation-route">Baku → London</p>
+                    </div>
+
+                    <dl class="confirmation-meta">
+                        <div class="confirmation-meta-item">
+                            <dt>Departure</dt>
+                            <dd>
+                                <span id="confirmation-departure-date">10 October 2026</span>
+                                <span id="confirmation-departure-time">09:30</span>
+                            </dd>
+                        </div>
+                        <div class="confirmation-meta-item">
+                            <dt>Arrival</dt>
+                            <dd>
+                                <span id="confirmation-arrival-time">13:10</span>
+                            </dd>
+                        </div>
+                        <div class="confirmation-meta-item">
+                            <dt>Aircraft</dt>
+                            <dd id="confirmation-aircraft">AEROVA 787-9</dd>
+                        </div>
+                        <div class="confirmation-meta-item">
+                            <dt>Cabin</dt>
+                            <dd id="confirmation-cabin">Economy</dd>
+                        </div>
+                    </dl>
+                </article>
+
+                <article class="confirmation-card" aria-labelledby="passenger-seat-title">
+                    <h2 class="confirmation-card-title" id="passenger-seat-title">Passenger &amp; Seat</h2>
+
+                    <ul class="confirmation-passenger-list" id="confirmation-passenger-list">
+                        <li class="confirmation-passenger-item">
+                            <p class="passenger-label">Passenger 1</p>
+                            <p class="passenger-name">Aysun Panahli</p>
+                            <p class="passenger-seat">Seat: <span>16F</span></p>
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="confirmation-card confirmation-card--price" aria-labelledby="price-summary-title">
+                    <h2 class="confirmation-card-title" id="price-summary-title">Price Summary</h2>
+
+                    <dl class="price-summary-list">
+                        <div class="price-summary-row">
+                            <dt>Passengers</dt>
+                            <dd id="confirmation-passenger-count">1</dd>
+                        </div>
+                        <div class="price-summary-row">
+                            <dt>Cabin</dt>
+                            <dd id="confirmation-price-cabin">Economy</dd>
+                        </div>
+                        <div class="price-summary-row price-summary-row--total">
+                            <dt>Total</dt>
+                            <dd id="confirmation-total-price">$420.00</dd>
+                        </div>
+                    </dl>
+                </article>
+
+                <div class="confirmation-actions">
+                    <a class="confirmation-button confirmation-button--primary" href="index.html#my-trips">View My Trips</a>
+                    <a class="confirmation-button confirmation-button--secondary" href="index.html">Back to Home</a>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer id="site-footer" class="site-footer">

@@ -1,0 +1,363 @@
+/* Confirmation page content — header/footer styles come from passenger-details.css */
+
+.confirmation-content {
+    flex: 1;
+}
+
+.confirmation-page {
+    width: min(720px, calc(100% - (var(--gutter) * 2)));
+    margin: 2.75rem auto 4.5rem;
+}
+
+.confirmation-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+}
+
+.confirmation-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem 0 0.75rem;
+}
+
+.confirmation-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    margin-bottom: 1.15rem;
+    border: 1px solid rgba(198, 163, 106, 0.75);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 25%, rgba(224, 196, 138, 0.35), transparent 55%),
+        rgba(246, 241, 231, 0.06);
+    color: var(--color-gold-light);
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.confirmation-title {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.confirmation-message {
+    margin: 0.85rem 0 0;
+    max-width: 28rem;
+    color: var(--color-cream-muted);
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.55;
+}
+
+.confirmation-card {
+    padding: 1.55rem 1.5rem 1.6rem;
+    background:
+        linear-gradient(180deg, #fbf7f0 0%, #f3ebe0 100%);
+    border: 1px solid rgba(198, 163, 106, 0.42);
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    color: var(--color-ink);
+}
+
+.confirmation-card--pnr {
+    text-align: center;
+    padding: 1.85rem 1.5rem 1.7rem;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(224, 196, 138, 0.28), transparent 55%),
+        linear-gradient(180deg, #fffaf2 0%, #f4ebdf 100%);
+    border-color: rgba(198, 163, 106, 0.55);
+}
+
+.confirmation-card-label {
+    margin: 0;
+    color: #9a7844;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.confirmation-pnr {
+    margin: 0.85rem 0 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 2.55rem);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    line-height: 1;
+}
+
+.confirmation-pnr-note {
+    margin: 0.95rem 0 0;
+    color: rgba(28, 21, 12, 0.68);
+    font-size: 0.92rem;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+.confirmation-card-title {
+    margin: 0 0 1.2rem;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.7rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.flight-overview {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1.35rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(28, 21, 12, 0.1);
+}
+
+.flight-airline {
+    margin: 0;
+    color: #9a7844;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.flight-number {
+    margin: 0;
+    color: rgba(28, 21, 12, 0.78);
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.flight-route {
+    margin: 0.35rem 0 0;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+}
+
+.confirmation-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem 1.25rem;
+    margin: 0;
+}
+
+.confirmation-meta-item {
+    display: grid;
+    gap: 0.3rem;
+}
+
+.confirmation-meta-item dt {
+    margin: 0;
+    color: #9a7844;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.confirmation-meta-item dd {
+    display: grid;
+    gap: 0.15rem;
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.confirmation-passenger-list {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.confirmation-passenger-item {
+    display: grid;
+    gap: 0.2rem;
+    padding: 1rem 1.05rem;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 14px;
+}
+
+.passenger-label {
+    margin: 0;
+    color: #9a7844;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.passenger-name {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.passenger-seat {
+    margin: 0.15rem 0 0;
+    color: rgba(28, 21, 12, 0.72);
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.passenger-seat span {
+    color: var(--color-ink);
+    font-weight: 500;
+}
+
+.price-summary-list {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+}
+
+.price-summary-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.price-summary-row dt {
+    margin: 0;
+    color: rgba(28, 21, 12, 0.6);
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.price-summary-row dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: 0.98rem;
+    font-weight: 500;
+}
+
+.price-summary-row--total {
+    margin-top: 0.35rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(28, 21, 12, 0.12);
+}
+
+.price-summary-row--total dt {
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+}
+
+.price-summary-row--total dd {
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+.confirmation-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-top: 0.35rem;
+}
+
+.confirmation-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0.85rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    transition: transform 0.25s ease, filter 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.confirmation-button--primary {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+}
+
+.confirmation-button--secondary {
+    background: transparent;
+    border: 1px solid rgba(198, 163, 106, 0.75);
+    color: var(--color-cream);
+}
+
+.confirmation-button:hover {
+    transform: translateY(-2px);
+}
+
+.confirmation-button--primary:hover {
+    filter: brightness(1.06);
+}
+
+.confirmation-button--secondary:hover {
+    border-color: var(--color-gold-light);
+    color: var(--color-gold-light);
+}
+
+@media (max-width: 640px) {
+    .confirmation-page {
+        margin: 2rem auto 3.5rem;
+    }
+
+    .confirmation-card {
+        padding: 1.35rem 1.2rem 1.4rem;
+        border-radius: 16px;
+    }
+
+    .confirmation-card--pnr {
+        padding: 1.55rem 1.2rem 1.45rem;
+    }
+
+    .confirmation-pnr {
+        letter-spacing: 0.18em;
+    }
+
+    .confirmation-meta {
+        grid-template-columns: 1fr;
+        gap: 0.95rem;
+    }
+
+    .confirmation-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .confirmation-card-title {
+        font-size: 1.5rem;
+    }
+
+    .price-summary-row--total dd {
+        font-size: 1.6rem;
+    }
+}
