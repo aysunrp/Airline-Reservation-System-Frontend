@@ -659,7 +659,7 @@
             return;
         }
 
-        window.location.href = "confirmation.html";
+        window.location.href = "payment.html";
     }
 
     function bindContinueButton() {
@@ -671,7 +671,6 @@
         }
 
         continueButton.addEventListener("click", function (event) {
-            console.log("Continue button clicked");
             event.preventDefault();
             handleContinueClick();
         });

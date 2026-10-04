@@ -36,6 +36,13 @@
     line-height: 1.6;
 }
 
+.payment-message {
+    margin: 0 0 1.25rem;
+    color: #f0c9a0;
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
 .payment-layout {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
