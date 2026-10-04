@@ -497,8 +497,6 @@
         return {
             valid: true,
             passenger: {
-                passengerNumber: passengerNumber,
-                seat: seat,
                 title: getTrimmedValue(fields.title),
                 firstName: getTrimmedValue(fields.firstName),
                 middleName: getTrimmedValue(fields.middleName),
@@ -509,7 +507,8 @@
                 documentType: getTrimmedValue(fields.documentType),
                 documentNumber: getTrimmedValue(fields.documentNumber),
                 issuingCountry: getTrimmedValue(fields.issuingCountry),
-                documentExpiry: getTrimmedValue(fields.documentExpiry)
+                documentExpiryDate: getTrimmedValue(fields.documentExpiry),
+                assignedSeat: seat
             }
         };
     }
@@ -570,18 +569,18 @@
 
     function buildBookingData(passengers, contact) {
         var flightData = activeFlightData || {};
-        var passengerCount = passengers.length;
+        var passengerCount = Number(flightData.passengers) || passengers.length;
         var unitPrice = Number(flightData.price);
         var totalPrice = isFinite(unitPrice) ? unitPrice * passengerCount : 0;
 
         return {
-            pnr: generatePNR(),
             flight: {
                 id: flightData.id || null,
                 airline: flightData.airline || "AEROVA",
                 flightNumber: flightData.flightNumber || "",
                 from: flightData.from || "",
                 to: flightData.to || "",
+                route: ((flightData.from || "") + " → " + (flightData.to || "")).trim(),
                 departure: flightData.departure || "",
                 arrival: flightData.arrival || "",
                 duration: flightData.duration || "",
@@ -594,8 +593,7 @@
             passengerCount: passengerCount,
             selectedSeats: activeSelectedSeats.slice(),
             passengers: passengers,
-            bookingContact: contact,
-            unitPrice: isFinite(unitPrice) ? unitPrice : 0,
+            contact: contact,
             totalPrice: totalPrice
         };
     }
@@ -665,12 +663,15 @@
     }
 
     function bindContinueButton() {
-        var continueButton = document.getElementById("continue-confirmation-button");
+        var continueButton = document.getElementById("continue-confirmation-button") ||
+            document.querySelector(".booking-summary .continue-button");
+
         if (!continueButton) {
             return;
         }
 
         continueButton.addEventListener("click", function (event) {
+            console.log("Continue button clicked");
             event.preventDefault();
             handleContinueClick();
         });
