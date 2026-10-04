@@ -26,13 +26,13 @@
                     <li class="nav-item"><a class="nav-link" href="index.html#destinations">Destinations</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
-                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="index.html#my-trips">My Trips</a></li>
+                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html">My Trips</a></li>
                 </ul>
                 <a class="login-button login-button--drawer" href="index.html#login">Login</a>
             </nav>
 
             <div class="header-actions">
-                <a class="trips-link" href="index.html#my-trips">My Trips</a>
+                <a class="trips-link" href="my-trips.html">My Trips</a>
                 <button class="search-button" type="button" aria-label="Search">
                     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -75,25 +75,36 @@
 
                     <dl class="confirmation-meta">
                         <div class="confirmation-meta-item">
+                            <dt>Date</dt>
+                            <dd id="confirmation-departure-date">10 October 2026</dd>
+                        </div>
+                        <div class="confirmation-meta-item">
                             <dt>Departure</dt>
-                            <dd>
-                                <span id="confirmation-departure-date">10 October 2026</span>
-                                <span id="confirmation-departure-time">09:30</span>
-                            </dd>
+                            <dd id="confirmation-departure-time">09:30</dd>
                         </div>
                         <div class="confirmation-meta-item">
                             <dt>Arrival</dt>
-                            <dd>
-                                <span id="confirmation-arrival-time">13:10</span>
-                            </dd>
+                            <dd id="confirmation-arrival-time">13:10</dd>
                         </div>
                         <div class="confirmation-meta-item">
                             <dt>Aircraft</dt>
                             <dd id="confirmation-aircraft">AEROVA 787-9</dd>
                         </div>
                         <div class="confirmation-meta-item">
-                            <dt>Cabin</dt>
+                            <dt>Cabin Class</dt>
                             <dd id="confirmation-cabin">Economy</dd>
+                        </div>
+                        <div class="confirmation-meta-item">
+                            <dt>Passenger Count</dt>
+                            <dd id="confirmation-passenger-count">1</dd>
+                        </div>
+                        <div class="confirmation-meta-item">
+                            <dt>Selected Seats</dt>
+                            <dd id="confirmation-selected-seats">16F</dd>
+                        </div>
+                        <div class="confirmation-meta-item">
+                            <dt>Total Price</dt>
+                            <dd id="confirmation-total-price">$420.00</dd>
                         </div>
                     </dl>
                 </article>
@@ -116,21 +127,25 @@
                     <dl class="price-summary-list">
                         <div class="price-summary-row">
                             <dt>Passengers</dt>
-                            <dd id="confirmation-passenger-count">1</dd>
+                            <dd>1</dd>
                         </div>
                         <div class="price-summary-row">
                             <dt>Cabin</dt>
                             <dd id="confirmation-price-cabin">Economy</dd>
                         </div>
+                        <div class="price-summary-row">
+                            <dt>Selected Seats</dt>
+                            <dd>16F</dd>
+                        </div>
                         <div class="price-summary-row price-summary-row--total">
                             <dt>Total</dt>
-                            <dd id="confirmation-total-price">$420.00</dd>
+                            <dd>$420.00</dd>
                         </div>
                     </dl>
                 </article>
 
                 <div class="confirmation-actions">
-                    <a class="confirmation-button confirmation-button--primary" href="index.html#my-trips">View My Trips</a>
+                    <a class="confirmation-button confirmation-button--primary" href="my-trips.html">View My Trips</a>
                     <a class="confirmation-button confirmation-button--secondary" href="index.html">Back to Home</a>
                 </div>
             </div>
@@ -157,7 +172,7 @@
                         <li><a class="footer-link" href="booking.html">Flights</a></li>
                         <li><a class="footer-link" href="index.html#destinations">Destinations</a></li>
                         <li><a class="footer-link" href="index.html#about">About</a></li>
-                        <li><a class="footer-link" href="index.html#my-trips">My Trips</a></li>
+                        <li><a class="footer-link" href="my-trips.html">My Trips</a></li>
                     </ul>
                 </div>
 

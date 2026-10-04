@@ -1,4 +1,6 @@
 (function () {
+    "use strict";
+
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -21,14 +23,12 @@
         message.hidden = !text;
     }
 
-    function formatPrice(price) {
-        var amount = Number(price);
-
-        if (!isFinite(amount)) {
+    function formatPrice(amount) {
+        var value = Number(amount);
+        if (!isFinite(value)) {
             return "$0.00";
         }
-
-        return "$" + amount.toFixed(2);
+        return "$" + value.toFixed(2);
     }
 
     function formatDisplayDate(dateValue) {
@@ -38,7 +38,7 @@
 
         var parts = String(dateValue).split("-");
         if (parts.length !== 3) {
-            return dateValue;
+            return String(dateValue);
         }
 
         var year = Number(parts[0]);
@@ -46,7 +46,7 @@
         var day = Number(parts[2]);
 
         if (!year || !month || !day || month < 1 || month > 12) {
-            return dateValue;
+            return String(dateValue);
         }
 
         return day + " " + MONTH_NAMES[month - 1] + " " + year;
@@ -68,12 +68,10 @@
 
     function calculatePriceBreakdown(totalPrice) {
         var total = Number(totalPrice);
-
         if (!isFinite(total) || total < 0) {
             total = 0;
         }
 
-        // Taxes & Fees = 10% of base fare; Base Fare + Taxes = Total
         var baseFare = total / 1.1;
         var taxes = total - baseFare;
 
@@ -104,36 +102,34 @@
             .join(" ");
     }
 
-    function setFormsVisibility(isVisible) {
-        var layout = document.querySelector(".payment-layout");
-        var payButton = document.getElementById("pay-button");
-
-        if (layout) {
-            layout.hidden = !isVisible;
-        }
-
-        if (payButton) {
-            payButton.disabled = !isVisible;
-        }
+    function getSelectedPaymentMethod() {
+        var selected = document.querySelector('input[name="payment-method"]:checked');
+        return selected ? selected.value : "card";
     }
 
-    function clearSummaryPlaceholders() {
-        setText("payment-summary-airline", "—");
-        setText("payment-summary-flight-number", "—");
-        setText("payment-summary-route", "—");
-        setText("payment-summary-date", "—");
-        setText("payment-summary-times", "—");
-        setText("payment-summary-aircraft", "—");
-        setText("payment-summary-cabin", "—");
-        setText("payment-summary-passengers", "—");
-        setText("payment-summary-seats", "—");
-        setText("payment-base-fare", "$0.00");
-        setText("payment-taxes", "$0.00");
-        setText("payment-total", "$0.00");
+    function getPaymentMethodLabel(method) {
+        if (method === "apple") {
+            return "Apple Pay";
+        }
+        if (method === "google") {
+            return "Google Pay";
+        }
+        return "Credit / Debit Card";
+    }
 
-        var payButton = document.getElementById("pay-button");
-        if (payButton) {
-            payButton.textContent = "Pay $0.00";
+    function updateWalletMethodMessage() {
+        var method = getSelectedPaymentMethod();
+        var messageText = document.getElementById("wallet-method-message-text");
+        if (!messageText) {
+            return;
+        }
+
+        if (method === "apple") {
+            messageText.textContent = "Continue with Apple Pay to complete your payment securely.";
+        } else if (method === "google") {
+            messageText.textContent = "Continue with Google Pay to complete your payment securely.";
+        } else {
+            messageText.textContent = "";
         }
     }
 
@@ -143,9 +139,8 @@
             ? bookingData.selectedSeats
             : [];
         var prices = calculatePriceBreakdown(bookingData.totalPrice);
-        var route = flight.route ||
-            ((flight.from || "—") + " → " + (flight.to || "—"));
-        var times = ((flight.departure || "—") + " → " + (flight.arrival || "—"));
+        var route = flight.route || ((flight.from || "—") + " → " + (flight.to || "—"));
+        var times = (flight.departure || "—") + " → " + (flight.arrival || "—");
         var payButton = document.getElementById("pay-button");
         var cardholderInput = document.getElementById("cardholder-name");
         var cardholderName = getPassengerOneName(bookingData);
@@ -171,6 +166,8 @@
 
         if (payButton) {
             payButton.textContent = "Pay " + formatPrice(prices.total);
+            payButton.disabled = false;
+            payButton.removeAttribute("disabled");
         }
 
         if (cardholderInput && cardholderName) {
@@ -178,24 +175,243 @@
         }
     }
 
-    function init() {
+    function getTrimmedValue(input) {
+        return input ? String(input.value || "").trim() : "";
+    }
+
+    function digitsOnly(value) {
+        return String(value || "").replace(/\D/g, "");
+    }
+
+    function rememberOriginalPlaceholder(input) {
+        if (!input || input.getAttribute("data-original-placeholder") !== null) {
+            return;
+        }
+        input.setAttribute("data-original-placeholder", input.getAttribute("placeholder") || "");
+    }
+
+    function clearFieldError(input) {
+        if (!input || !input.classList.contains("is-invalid")) {
+            return;
+        }
+
+        input.classList.remove("is-invalid");
+
+        var original = input.getAttribute("data-original-placeholder");
+        if (original === null) {
+            return;
+        }
+
+        if (original) {
+            input.setAttribute("placeholder", original);
+        } else {
+            input.removeAttribute("placeholder");
+        }
+    }
+
+    function clearFieldErrors() {
+        var invalidInputs = document.querySelectorAll(".payment-field-input.is-invalid");
+        for (var i = 0; i < invalidInputs.length; i += 1) {
+            clearFieldError(invalidInputs[i]);
+        }
+    }
+
+    function markInvalid(input, message) {
+        if (!input) {
+            return;
+        }
+
+        rememberOriginalPlaceholder(input);
+        input.classList.add("is-invalid");
+        input.setAttribute("placeholder", message || "This field is required");
+
+        if (!getTrimmedValue(input)) {
+            input.value = "";
+        }
+    }
+
+    function isValidCardNumber(value) {
+        var digits = digitsOnly(value);
+        return digits.length >= 13 && digits.length <= 19;
+    }
+
+    function isValidExpiry(value) {
+        var normalized = String(value || "").replace(/\s+/g, "");
+        var match = normalized.match(/^(\d{2})\/(\d{2})$/);
+
+        if (!match) {
+            return false;
+        }
+
+        var month = Number(match[1]);
+        var year = Number(match[2]);
+
+        if (month < 1 || month > 12) {
+            return false;
+        }
+
+        var fullYear = 2000 + year;
+        var expiryEnd = new Date(fullYear, month, 0, 23, 59, 59, 999);
+        return expiryEnd >= new Date();
+    }
+
+    function isValidCvv(value) {
+        return /^\d{3,4}$/.test(digitsOnly(value));
+    }
+
+    function validateCardDetails() {
+        var cardholderInput = document.getElementById("cardholder-name");
+        var cardNumberInput = document.getElementById("card-number");
+        var expiryInput = document.getElementById("card-expiry");
+        var cvvInput = document.getElementById("card-cvv");
+
+        var isValid = true;
+        var focusField = null;
+
+        var cardholderName = getTrimmedValue(cardholderInput);
+        var cardNumber = getTrimmedValue(cardNumberInput);
+        var expiry = getTrimmedValue(expiryInput);
+        var cvv = getTrimmedValue(cvvInput);
+
+        if (!cardholderName) {
+            markInvalid(cardholderInput, "Enter cardholder name");
+            focusField = cardholderInput;
+            isValid = false;
+        }
+
+        if (!cardNumber) {
+            markInvalid(cardNumberInput, "Enter card number");
+            if (!focusField) {
+                focusField = cardNumberInput;
+            }
+            isValid = false;
+        } else if (!isValidCardNumber(cardNumber)) {
+            markInvalid(cardNumberInput, "Enter a valid card number");
+            cardNumberInput.value = "";
+            if (!focusField) {
+                focusField = cardNumberInput;
+            }
+            isValid = false;
+        }
+
+        if (!expiry) {
+            markInvalid(expiryInput, "Enter expiry date");
+            if (!focusField) {
+                focusField = expiryInput;
+            }
+            isValid = false;
+        } else if (!isValidExpiry(expiry)) {
+            markInvalid(expiryInput, "Enter a valid expiry date");
+            expiryInput.value = "";
+            if (!focusField) {
+                focusField = expiryInput;
+            }
+            isValid = false;
+        }
+
+        if (!cvv) {
+            markInvalid(cvvInput, "Enter CVV");
+            if (!focusField) {
+                focusField = cvvInput;
+            }
+            isValid = false;
+        } else if (!isValidCvv(cvv)) {
+            markInvalid(cvvInput, "Enter a valid CVV");
+            cvvInput.value = "";
+            if (!focusField) {
+                focusField = cvvInput;
+            }
+            isValid = false;
+        }
+
+        return {
+            valid: isValid,
+            focusField: focusField
+        };
+    }
+
+    function handlePayClick(event) {
+        event.preventDefault();
+
+        clearFieldErrors();
+
+        var method = getSelectedPaymentMethod();
+
+        if (method === "card") {
+            var validation = validateCardDetails();
+            if (!validation.valid) {
+                if (validation.focusField) {
+                    validation.focusField.focus();
+                }
+                return;
+            }
+        }
+
         var bookingData = readBookingData();
+        if (!bookingData) {
+            showMessage("Booking information could not be found. Please complete passenger details first.");
+            return;
+        }
+
+        bookingData.paymentStatus = "Paid";
+        bookingData.paymentMethod = getPaymentMethodLabel(method);
+
+        try {
+            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
+        } catch (error) {
+            showMessage("Unable to save payment status. Please try again.");
+            return;
+        }
+
+        window.location.href = "./confirmation.html";
+    }
+
+    function bindClearInvalidOnInput() {
+        document.addEventListener("input", function (event) {
+            var target = event.target;
+            if (target && target.classList && target.classList.contains("payment-field-input")) {
+                clearFieldError(target);
+            }
+        });
+    }
+
+    function bindPaymentMethodSelection() {
+        var methodInputs = document.querySelectorAll('input[name="payment-method"]');
+        for (var i = 0; i < methodInputs.length; i += 1) {
+            methodInputs[i].addEventListener("change", function () {
+                clearFieldErrors();
+                updateWalletMethodMessage();
+            });
+        }
+    }
+
+    function init() {
+        var payButton = document.getElementById("pay-button");
+        var layout = document.querySelector(".payment-layout");
+        var bookingData = readBookingData();
+
+        bindPaymentMethodSelection();
+        bindClearInvalidOnInput();
+        updateWalletMethodMessage();
+
+        if (payButton) {
+            payButton.addEventListener("click", handlePayClick);
+        }
 
         if (!bookingData) {
             showMessage("Booking information could not be found. Please complete passenger details first.");
-            clearSummaryPlaceholders();
-            setFormsVisibility(false);
+            if (layout) {
+                layout.hidden = true;
+            }
             return;
         }
 
         showMessage("");
-        setFormsVisibility(true);
+        if (layout) {
+            layout.hidden = false;
+        }
         populatePaymentSummary(bookingData);
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-    } else {
-        init();
-    }
+    document.addEventListener("DOMContentLoaded", init);
 })();

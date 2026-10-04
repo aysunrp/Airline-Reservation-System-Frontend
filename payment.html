@@ -109,16 +109,20 @@
 
                                     <div class="payment-field">
                                         <label class="payment-field-label" for="card-expiry">Expiry Date</label>
-                                        <input class="payment-field-input" id="card-expiry" name="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7">
+                                        <input class="payment-field-input" id="card-expiry" name="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="12">
                                     </div>
 
                                     <div class="payment-field">
                                         <label class="payment-field-label" for="card-cvv">CVV</label>
-                                        <input class="payment-field-input" id="card-cvv" name="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
+                                        <input class="payment-field-input" id="card-cvv" name="cardCvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
                                     </div>
                                 </div>
 
                                 <p class="payment-security-note">Your payment information is securely processed.</p>
+                            </div>
+
+                            <div class="wallet-method-message" id="wallet-method-message">
+                                <p class="wallet-method-message-text" id="wallet-method-message-text">Continue with Apple Pay to complete your payment securely.</p>
                             </div>
                         </article>
                     </div>
@@ -268,6 +272,6 @@
         </div>
     </footer>
 
-    <script src="assets/js/payment.js"></script>
+    <script src="assets/js/payment.js?v=syntax-fix1"></script>
 </body>
 </html>
