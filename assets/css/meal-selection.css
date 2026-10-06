@@ -1,0 +1,225 @@
+/* Meal Selection — page content; header/footer from passenger-details.css */
+
+.meal-selection-content {
+    flex: 1;
+}
+
+.meal-selection-page {
+    width: min(var(--page-width), calc(100% - (var(--gutter) * 2)));
+    margin: 2.75rem auto 4.5rem;
+}
+
+.meal-intro {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+}
+
+.meal-title {
+    margin: 0 0 0.9rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 4vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.meal-subtitle {
+    margin: 0;
+    color: var(--color-cream-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+}
+
+.flight-summary-card {
+    margin-bottom: 1.5rem;
+}
+
+.flight-summary-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 1.5rem 2rem;
+    align-items: start;
+}
+
+.flight-summary-meta {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.meal-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.85fr);
+    gap: clamp(1.4rem, 3vw, 2.25rem);
+    align-items: start;
+}
+
+.meal-main {
+    min-width: 0;
+}
+
+.passenger-meal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.passenger-meal-card .details-card-title {
+    margin-bottom: 0.35rem;
+}
+
+.passenger-meal-note {
+    margin: 0 0 1.25rem;
+    color: var(--color-cream-muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.meal-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.meal-option {
+    display: grid;
+    gap: 0.4rem;
+    width: 100%;
+    min-height: 118px;
+    padding: 1rem 1.05rem;
+    text-align: left;
+    background: rgba(5, 12, 22, 0.55);
+    border: 1px solid rgba(246, 241, 231, 0.14);
+    border-radius: 14px;
+    color: var(--color-cream);
+    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+}
+
+.meal-option:hover {
+    border-color: rgba(198, 163, 106, 0.55);
+    transform: translateY(-1px);
+}
+
+.meal-option.is-selected {
+    background:
+        radial-gradient(ellipse at 0% 0%, rgba(224, 196, 138, 0.18), transparent 55%),
+        rgba(5, 12, 22, 0.72);
+    border-color: rgba(198, 163, 106, 0.85);
+    box-shadow: 0 0 0 1px rgba(198, 163, 106, 0.25);
+}
+
+.meal-option-name {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 0.98rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.meal-option-description {
+    margin: 0;
+    color: rgba(246, 241, 231, 0.58);
+    font-size: 0.88rem;
+    font-weight: 300;
+    line-height: 1.45;
+}
+
+.meal-option-price {
+    margin: 0.15rem 0 0;
+    color: var(--color-gold-light);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.meal-summary {
+    position: sticky;
+    top: calc(var(--header-height) + 1.25rem);
+    padding: 1.5rem 1.45rem 1.55rem;
+    background:
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
+    border-radius: 20px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
+}
+
+.meal-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.meal-summary-item {
+    display: grid;
+    gap: 0.25rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.meal-summary-item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.meal-summary-name {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 0.98rem;
+    font-weight: 400;
+}
+
+.meal-summary-choice {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.meal-summary-choice-label {
+    color: rgba(246, 241, 231, 0.58);
+    font-size: 0.88rem;
+    font-weight: 300;
+}
+
+.meal-summary-choice-price {
+    color: var(--color-gold-light);
+    font-size: 0.92rem;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+    .meal-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .meal-summary {
+        position: static;
+        order: -1;
+    }
+
+    .flight-summary-grid {
+        grid-template-columns: 1fr;
+        gap: 1.15rem;
+    }
+}
+
+@media (max-width: 720px) {
+    .meal-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .meal-selection-page {
+        margin: 2rem auto 3.5rem;
+    }
+}
