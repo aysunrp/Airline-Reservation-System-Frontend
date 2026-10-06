@@ -36,8 +36,8 @@
 
 .page-hero-overlay {
     background:
-        linear-gradient(180deg, rgba(5, 12, 22, 0.35) 0%, rgba(5, 12, 22, 0.72) 55%, rgba(5, 12, 22, 0.94) 100%),
-        linear-gradient(90deg, rgba(5, 12, 22, 0.55), transparent 60%);
+        linear-gradient(180deg, rgba(5, 12, 22, 0.42) 0%, rgba(5, 12, 22, 0.74) 55%, rgba(5, 12, 22, 0.95) 100%),
+        linear-gradient(90deg, rgba(5, 12, 22, 0.62), transparent 58%);
 }
 
 .page-hero-content {

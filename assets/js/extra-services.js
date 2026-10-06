@@ -292,6 +292,7 @@
                 ' data-service-id="' + escapeHtml(service.id) + '"' +
                 ' aria-pressed="' + (isSelected ? "true" : "false") + '"' +
             ">" +
+                '<span class="service-card-media service-card-media--' + escapeHtml(service.id) + '" aria-hidden="true"></span>' +
                 '<span class="service-toggle" aria-hidden="true"></span>' +
                 '<div class="service-card-body">' +
                     '<p class="service-card-name">' + escapeHtml(service.name) + "</p>" +

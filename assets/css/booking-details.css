@@ -443,6 +443,19 @@
     gap: 0.7rem;
 }
 
+.booking-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.25rem;
+}
+
+.booking-actions-row .booking-action-button {
+    width: auto;
+    min-width: 10rem;
+    flex: 1 1 10rem;
+}
+
 .booking-action-button {
     display: inline-flex;
     align-items: center;

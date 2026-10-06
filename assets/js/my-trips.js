@@ -99,8 +99,28 @@
         }
     }
 
+    function isCompletedBooking(bookingData) {
+        if (!bookingData || typeof bookingData !== "object") {
+            return false;
+        }
+
+        var paymentStatus = String(bookingData.paymentStatus || "").toLowerCase();
+        var status = String(bookingData.status || "").toLowerCase();
+
+        if (paymentStatus === "paid" || status === "confirmed" || status === "cancelled") {
+            return true;
+        }
+
+        return !!bookingData.pnr;
+    }
+
     function getBookingStatus(bookingData) {
-        if (bookingData.paymentStatus === "Paid") {
+        var status = String(bookingData.status || "").toLowerCase();
+        if (status === "cancelled") {
+            return "Cancelled";
+        }
+
+        if (bookingData.paymentStatus === "Paid" || status === "confirmed") {
             return "Confirmed";
         }
 
@@ -179,7 +199,7 @@
                         '<p class="trip-card-price-label">Total</p>' +
                         '<p class="trip-card-price-value">' + escapeHtml(formatPrice(bookingData.totalPrice)) + "</p>" +
                     "</div>" +
-                    '<a class="trip-card-button" href="booking-details.html">View Details</a>' +
+                    '<a class="trip-card-button" href="booking-details.html?source=trips">View Details</a>' +
                 "</div>" +
             "</article>"
         );
@@ -240,6 +260,9 @@
 
     function init() {
         var bookingData = readBookingData();
+        if (bookingData && !isCompletedBooking(bookingData)) {
+            bookingData = null;
+        }
         renderTrips(bookingData);
     }
 

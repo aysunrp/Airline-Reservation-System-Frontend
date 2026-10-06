@@ -221,7 +221,16 @@
 
         var heroMedia = byId("destination-hero-media");
         if (heroMedia) {
+            var positions = {
+                baku: "center 35%",
+                london: "center 40%",
+                dubai: "center 30%",
+                paris: "center 35%",
+                istanbul: "center 45%",
+                maldives: "center 42%"
+            };
             heroMedia.style.backgroundImage = "url('" + destination.image + "')";
+            heroMedia.style.backgroundPosition = positions[destination.id] || "center";
             heroMedia.setAttribute("aria-label", destination.imageAlt);
         }
 

@@ -40,24 +40,6 @@
         writeJSON(localStorage, USERS_KEY, users);
     }
 
-    function ensureDemoUser() {
-        var users = getRegisteredUsers();
-        var exists = users.some(function (user) {
-            return normalizeEmail(user.email) === "leyla@aerova.com";
-        });
-
-        if (!exists) {
-            users.push({
-                id: "demo-user-1",
-                firstName: "Leyla",
-                lastName: "Mammadova",
-                email: "leyla@aerova.com",
-                password: "Aerova123"
-            });
-            saveRegisteredUsers(users);
-        }
-    }
-
     function isLoggedIn() {
         return sessionStorage.getItem(LOGGED_IN_KEY) === "true";
     }
@@ -228,7 +210,6 @@
         var form = document.getElementById("login-form");
         if (!form) return;
 
-        ensureDemoUser();
         bindClearOnInput(form);
 
         form.addEventListener("submit", function (event) {
@@ -281,7 +262,6 @@
         var form = document.getElementById("register-form");
         if (!form) return;
 
-        ensureDemoUser();
         bindClearOnInput(form);
 
         form.addEventListener("submit", function (event) {
@@ -383,7 +363,6 @@
     }
 
     function init() {
-        ensureDemoUser();
         if (guardAuthenticatedPages()) return;
         updateNavigation();
         handleLoginForm();

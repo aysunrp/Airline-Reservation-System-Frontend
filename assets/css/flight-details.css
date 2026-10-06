@@ -67,6 +67,14 @@
     color: var(--color-ink);
 }
 
+.flight-details-page .flight-summary-card {
+    background-image:
+        linear-gradient(180deg, rgba(251, 247, 240, 0.88) 0%, rgba(243, 235, 224, 0.96) 55%, #f3ebe0 100%),
+        url("../images/hero-aircraft.jpg");
+    background-size: cover;
+    background-position: center 28%;
+}
+
 .flight-details-page .details-card-title {
     margin: 0 0 1.25rem;
     color: var(--color-ink);

@@ -272,7 +272,7 @@
 .about-premium-media {
     min-height: 320px;
     border-radius: 22px;
-    background-position: center;
+    background-position: center 32%;
     background-size: cover;
     border: 1px solid rgba(198, 163, 106, 0.28);
 }

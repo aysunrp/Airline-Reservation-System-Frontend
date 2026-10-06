@@ -219,7 +219,7 @@
         var extraServicesData = readJSON("extraServicesData");
 
         if (!copy.pnr) {
-            copy.pnr = MOCK_BOOKING.pnr;
+            copy.pnr = "—";
         }
 
         if (!Array.isArray(copy.baggage) && baggageData && Array.isArray(baggageData.passengers)) {
@@ -275,23 +275,67 @@
         return copy;
     }
 
+    function getPageParams() {
+        return new URLSearchParams(window.location.search);
+    }
+
+    function isCompletedBooking(booking) {
+        if (!booking || typeof booking !== "object") {
+            return false;
+        }
+
+        var paymentStatus = String(booking.paymentStatus || "").toLowerCase();
+        var status = String(booking.status || "").toLowerCase();
+
+        if (paymentStatus === "paid" || status === "confirmed" || status === "cancelled") {
+            return true;
+        }
+
+        return !!booking.pnr;
+    }
+
     function resolveBooking() {
+        var params = getPageParams();
+        var source = String(params.get("source") || "").toLowerCase();
         var managed = readJSON("managedBooking");
-        if (managed) {
+        var stored = readJSON("bookingData");
+
+        if (source === "manage" && managed) {
             return enrichBooking(managed);
         }
 
-        var stored = readJSON("bookingData");
-        if (stored) {
+        if ((source === "trips" || !source) && stored && isCompletedBooking(stored)) {
             return enrichBooking(stored);
         }
 
-        return JSON.parse(JSON.stringify(MOCK_BOOKING));
+        if (source !== "trips" && managed) {
+            return enrichBooking(managed);
+        }
+
+        if (stored && isCompletedBooking(stored)) {
+            return enrichBooking(stored);
+        }
+
+        return null;
     }
 
     function persistBooking(booking) {
-        var saved = writeJSON("bookingData", booking);
-        if (readJSON("managedBooking")) {
+        var params = getPageParams();
+        var source = String(params.get("source") || "").toLowerCase();
+        var current = readJSON("bookingData");
+        var managed = readJSON("managedBooking");
+        var saved = true;
+
+        if (source === "manage") {
+            saved = writeJSON("managedBooking", booking);
+            if (current && current.pnr && booking.pnr && current.pnr === booking.pnr) {
+                writeJSON("bookingData", booking);
+            }
+            return saved;
+        }
+
+        saved = writeJSON("bookingData", booking);
+        if (managed && managed.pnr && booking.pnr && managed.pnr === booking.pnr) {
             writeJSON("managedBooking", booking);
         }
         return saved;
@@ -853,11 +897,66 @@
         });
     }
 
+    function showEmptyBookingState() {
+        var container = document.querySelector(".booking-details-page .page-container");
+        var intro = document.querySelector(".details-intro");
+        if (!container) {
+            return;
+        }
+
+        Array.prototype.forEach.call(container.children, function (child) {
+            if (intro && child === intro) {
+                return;
+            }
+            child.hidden = true;
+        });
+
+        var empty = document.getElementById("booking-details-empty");
+        if (!empty) {
+            empty = document.createElement("section");
+            empty.id = "booking-details-empty";
+            empty.className = "details-card";
+            empty.innerHTML =
+                "<h2 class=\"details-card-title\">No Booking Found</h2>" +
+                "<p class=\"change-booking-intro\">There is no confirmed booking to display. Complete a booking or search by PNR in Manage Booking.</p>" +
+                "<div class=\"booking-actions-row\">" +
+                    "<a class=\"booking-action-button booking-action-button--primary\" href=\"my-trips.html\">My Trips</a>" +
+                    "<a class=\"booking-action-button booking-action-button--secondary\" href=\"manage-booking.html\">Manage Booking</a>" +
+                "</div>";
+            container.appendChild(empty);
+        } else {
+            empty.hidden = false;
+        }
+    }
+
+    function applyIntentActions() {
+        var intent = String(getPageParams().get("intent") || "").toLowerCase();
+        if (!activeBooking || !intent) {
+            return;
+        }
+
+        if (intent === "change") {
+            openChangePanel();
+            return;
+        }
+
+        if (intent === "cancel") {
+            openCancelModal();
+        }
+    }
+
     function init() {
         activeBooking = resolveBooking();
-        renderBooking(activeBooking);
         bindActions();
         initMenuToggle();
+
+        if (!activeBooking) {
+            showEmptyBookingState();
+            return;
+        }
+
+        renderBooking(activeBooking);
+        applyIntentActions();
     }
 
     if (document.readyState === "loading") {

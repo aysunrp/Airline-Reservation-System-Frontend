@@ -156,6 +156,18 @@
         message.hidden = !text;
     }
 
+    function updateContinueAvailability() {
+        var continueButton = document.getElementById("continue-button") ||
+            document.querySelector(".continue-button");
+        if (!continueButton) {
+            return;
+        }
+
+        var ready = selectedSeats.length === requiredSeats;
+        continueButton.disabled = !ready;
+        continueButton.setAttribute("aria-disabled", ready ? "false" : "true");
+    }
+
     function updateSelectedSeatSummary() {
         var seatsLabel = selectedSeats.length === 1 ? "Selected Seat" : "Selected Seats";
         setText("selected-seat-label", seatsLabel);
@@ -168,6 +180,7 @@
             selectedSeats.length + " of " + requiredSeats + " seats selected"
         );
         setText("selected-seat-price", "Included");
+        updateContinueAvailability();
     }
 
     function persistSelectedSeats(flightData) {

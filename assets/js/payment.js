@@ -732,6 +732,7 @@
         var prices = refreshTotals(bookingData);
 
         bookingData.paymentStatus = "Paid";
+        bookingData.status = "Confirmed";
         bookingData.paymentMethod = getPaymentMethodLabel(method);
         bookingData.totalPrice = prices.grandTotal;
         bookingData.baseFare = prices.baseFare;
@@ -739,6 +740,7 @@
         bookingData.mealTotal = prices.meals;
         bookingData.extraServicesTotal = prices.extraServices;
         bookingData.taxesAndFees = prices.taxes;
+        bookingData.taxesFees = prices.taxes;
         bookingData.preDiscountTotal = prices.subtotal;
 
         if (appliedPromo) {

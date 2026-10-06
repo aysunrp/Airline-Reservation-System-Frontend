@@ -94,9 +94,9 @@
 
 .service-card {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: 96px auto minmax(0, 1fr) auto;
     gap: 1rem 1.15rem;
-    align-items: start;
+    align-items: center;
     width: 100%;
     padding: 1.25rem 1.3rem;
     text-align: left;
@@ -109,6 +109,43 @@
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
     transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
     cursor: pointer;
+}
+
+.service-card-media {
+    display: block;
+    width: 96px;
+    height: 72px;
+    border-radius: 12px;
+    background-color: rgba(5, 12, 22, 0.65);
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(198, 163, 106, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(5, 12, 22, 0.2);
+}
+
+.service-card-media--priority-boarding {
+    background-image: url("../images/airport-premium.jpg");
+    background-position: center 40%;
+}
+
+.service-card-media--lounge-access {
+    background-image: url("../images/airport-lounge.jpg");
+    background-position: center 45%;
+}
+
+.service-card-media--extra-legroom {
+    background-image: url("../images/comfort.jpg");
+    background-position: center 40%;
+}
+
+.service-card-media--fast-track {
+    background-image: url("../images/airport-premium.jpg");
+    background-position: center 60%;
+}
+
+.service-card-media--travel-insurance {
+    background-image: url("../images/hero-aircraft.jpg");
+    background-position: center 35%;
 }
 
 .service-card:hover {
@@ -267,11 +304,22 @@
     }
 
     .service-card {
-        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-columns: 72px auto minmax(0, 1fr);
+        gap: 0.75rem;
+    }
+
+    .service-card-media {
+        width: 72px;
+        height: 58px;
+        grid-row: 1 / span 2;
+    }
+
+    .service-toggle {
+        display: none;
     }
 
     .service-card-price {
-        grid-column: 2;
+        grid-column: 3;
         margin-top: 0;
     }
 }

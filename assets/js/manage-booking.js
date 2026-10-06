@@ -375,21 +375,20 @@
             return;
         }
 
+        writeJSON("managedBooking", activeBooking);
+
         if (action === "view") {
-            writeJSON("managedBooking", activeBooking);
-            window.location.href = "booking-details.html";
+            window.location.href = "booking-details.html?source=manage&intent=view";
             return;
         }
 
         if (action === "change") {
-            writeJSON("managedBooking", activeBooking);
-            window.location.href = "booking-details.html";
+            window.location.href = "booking-details.html?source=manage&intent=change";
             return;
         }
 
         if (action === "cancel") {
-            writeJSON("managedBooking", activeBooking);
-            window.location.href = "booking-details.html";
+            window.location.href = "booking-details.html?source=manage&intent=cancel";
         }
     }
 

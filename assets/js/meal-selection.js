@@ -240,9 +240,12 @@
                     ' data-option-id="' + escapeHtml(option.id) + '"' +
                     ' aria-pressed="' + (isSelected ? "true" : "false") + '"' +
                 ">" +
-                    '<p class="meal-option-name">' + escapeHtml(option.name) + "</p>" +
-                    '<p class="meal-option-description">' + escapeHtml(option.description) + "</p>" +
-                    '<p class="meal-option-price">' + escapeHtml(formatPrice(option.price)) + "</p>" +
+                    '<span class="meal-option-media meal-option-media--' + escapeHtml(option.id) + '" aria-hidden="true"></span>' +
+                    '<span class="meal-option-copy">' +
+                        '<p class="meal-option-name">' + escapeHtml(option.name) + "</p>" +
+                        '<p class="meal-option-description">' + escapeHtml(option.description) + "</p>" +
+                        '<p class="meal-option-price">' + escapeHtml(formatPrice(option.price)) + "</p>" +
+                    "</span>" +
                 "</button>"
             );
         }).join("");
