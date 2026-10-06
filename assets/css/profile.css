@@ -1,0 +1,270 @@
+/* Profile — page content; header/footer from passenger-details.css */
+
+.profile-content {
+    flex: 1;
+}
+
+.profile-page {
+    width: min(920px, calc(100% - (var(--gutter) * 2)));
+    margin: 2.75rem auto 4.5rem;
+}
+
+.profile-intro {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+}
+
+.profile-title {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.profile-subtitle {
+    margin: 0.75rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+.profile-message {
+    margin: 0 0 1.25rem;
+    color: #f0c9a0;
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.profile-message.is-success {
+    color: var(--color-gold-light);
+}
+
+.profile-form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.section-header .details-card-title {
+    margin: 0;
+}
+
+.profile-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.65rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(198, 163, 106, 0.75);
+    color: var(--color-cream);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.profile-secondary-button:hover {
+    border-color: var(--color-gold-light);
+    color: var(--color-gold-light);
+    transform: translateY(-1px);
+}
+
+.saved-passengers-list {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.saved-passenger-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.15rem;
+    background: rgba(5, 12, 22, 0.55);
+    border: 1px solid rgba(246, 241, 231, 0.12);
+    border-radius: 14px;
+}
+
+.saved-passenger-name {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.saved-passenger-meta {
+    margin: 0.3rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.saved-passenger-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.passenger-card-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0.55rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    color: var(--color-cream);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.passenger-card-button:hover {
+    border-color: var(--color-gold-light);
+    color: var(--color-gold-light);
+}
+
+.passenger-card-button--danger:hover {
+    border-color: #c98a86;
+    color: #c98a86;
+}
+
+.saved-passengers-empty {
+    margin: 0;
+    color: rgba(246, 241, 231, 0.55);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.profile-form-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.profile-form-actions .continue-button {
+    width: auto;
+    min-width: 14rem;
+}
+
+.profile-modal[hidden] {
+    display: none;
+}
+
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+}
+
+.profile-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 12, 22, 0.72);
+}
+
+.profile-modal-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(520px, 100%);
+    padding: 1.5rem 1.45rem 1.55rem;
+    background:
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
+    border-radius: 20px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.35);
+}
+
+.passenger-modal-form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.profile-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.booking-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 46px;
+    padding: 0.75rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: transform 0.25s ease, filter 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.booking-action-button--primary {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+}
+
+.booking-action-button--secondary {
+    background: transparent;
+    border: 1px solid rgba(198, 163, 106, 0.75);
+    color: var(--color-cream);
+}
+
+.booking-action-button:hover {
+    transform: translateY(-2px);
+}
+
+.booking-action-button--primary:hover {
+    filter: brightness(1.06);
+}
+
+.booking-action-button--secondary:hover {
+    border-color: var(--color-gold-light);
+    color: var(--color-gold-light);
+}
+
+@media (max-width: 720px) {
+    .profile-page {
+        margin: 2rem auto 3.5rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .saved-passenger-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-form-actions .continue-button,
+    .profile-secondary-button {
+        width: 100%;
+    }
+
+    .profile-modal-actions {
+        grid-template-columns: 1fr;
+    }
+}
