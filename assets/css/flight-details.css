@@ -268,13 +268,15 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.15rem;
+    align-items: stretch;
 }
 
 .fare-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem 1.35rem 1.4rem;
+    height: 100%;
+    padding: 1.55rem 1.35rem 1.4rem;
     background: linear-gradient(180deg, #fbf7f0 0%, #f3ebe0 100%);
     border: 1px solid rgba(198, 163, 106, 0.42);
     border-radius: 18px;
@@ -282,20 +284,22 @@
     color: var(--color-ink);
 }
 
-.fare-card--selected {
+.fare-card--best-value {
+    z-index: 1;
+    transform: translateY(-6px);
     background:
-        radial-gradient(ellipse at 50% 0%, rgba(224, 196, 138, 0.32), transparent 55%),
+        radial-gradient(ellipse at 50% 0%, rgba(224, 196, 138, 0.36), transparent 55%),
         linear-gradient(180deg, #fffaf2 0%, #f4ebdf 100%);
-    border-color: rgba(198, 163, 106, 0.85);
+    border-color: rgba(198, 163, 106, 0.9);
     box-shadow:
-        0 0 0 1px rgba(198, 163, 106, 0.35),
-        0 20px 44px rgba(0, 0, 0, 0.22);
+        0 0 0 1px rgba(198, 163, 106, 0.4),
+        0 24px 48px rgba(0, 0, 0, 0.26);
 }
 
-.fare-selected-badge {
+.fare-best-value-badge {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 0.95rem;
+    right: 0.95rem;
     margin: 0;
     display: inline-flex;
     align-items: center;
@@ -310,6 +314,18 @@
     text-transform: uppercase;
 }
 
+.fare-card-header {
+    display: grid;
+    gap: 0.55rem;
+    min-height: 7.5rem;
+    padding-bottom: 1.15rem;
+    border-bottom: 1px solid rgba(28, 21, 12, 0.1);
+}
+
+.fare-card--best-value .fare-card-header {
+    padding-right: 5.75rem;
+}
+
 .fare-card-label {
     margin: 0;
     color: #9a7844;
@@ -320,7 +336,12 @@
 }
 
 .fare-card-price {
-    margin: 0.7rem 0 0;
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+}
+
+.fare-card-amount {
     color: var(--color-ink);
     font-family: var(--font-serif);
     font-size: 2.2rem;
@@ -329,32 +350,41 @@
     line-height: 1;
 }
 
+.fare-card-per {
+    color: rgba(28, 21, 12, 0.55);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
 .fare-card-note {
-    margin: 0.7rem 0 0;
+    margin: 0;
     color: rgba(28, 21, 12, 0.66);
     font-size: 0.95rem;
     font-weight: 300;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 .fare-card-features {
     display: grid;
-    gap: 0.85rem;
-    margin: 1.25rem 0 1.45rem;
+    grid-template-rows: repeat(5, minmax(4.1rem, auto));
+    gap: 0;
+    margin: 0 0 1.45rem;
     padding: 0;
     flex: 1;
 }
 
 .fare-feature {
     display: grid;
-    gap: 0.2rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(28, 21, 12, 0.08);
+    align-content: start;
+    gap: 0.25rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(28, 21, 12, 0.08);
 }
 
-.fare-feature:first-child {
-    padding-top: 0;
-    border-top: 0;
+.fare-feature:last-child {
+    border-bottom: 0;
 }
 
 .fare-feature dt {
@@ -371,7 +401,7 @@
     color: rgba(28, 21, 12, 0.82);
     font-size: 0.95rem;
     font-weight: 300;
-    line-height: 1.45;
+    line-height: 1.4;
 }
 
 .select-flight-button {
@@ -380,6 +410,7 @@
     justify-content: center;
     width: 100%;
     min-height: 48px;
+    margin-top: auto;
     padding: 0.8rem 1.2rem;
     border-radius: 10px;
     background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
@@ -405,8 +436,21 @@
         grid-template-columns: 1fr;
     }
 
-    .fare-card--selected {
+    .fare-card--best-value {
         order: -1;
+        transform: none;
+    }
+
+    .fare-card-header {
+        min-height: 0;
+    }
+
+    .fare-card--best-value .fare-card-header {
+        padding-right: 6rem;
+    }
+
+    .fare-card-features {
+        grid-template-rows: none;
     }
 }
 

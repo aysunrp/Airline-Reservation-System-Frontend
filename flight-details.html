@@ -136,17 +136,19 @@
                 <section class="fare-options" aria-labelledby="fare-options-title">
                     <header class="fare-options-intro">
                         <h2 class="fare-options-title" id="fare-options-title">Fare Options</h2>
-                        <p class="fare-options-subtitle">Select the cabin experience that matches your travel plans.</p>
+                        <p class="fare-options-subtitle">Compare cabins side by side and choose the experience that fits your journey.</p>
                     </header>
 
-                    <div class="fare-options-grid">
-                        <article class="fare-card">
-                            <p class="fare-card-label">Economy</p>
-                            <p class="fare-card-price">$420</p>
-                            <p class="fare-card-note">Essential comfort for every journey</p>
+                    <div class="fare-options-grid" role="list">
+                        <article class="fare-card" role="listitem">
+                            <div class="fare-card-header">
+                                <p class="fare-card-label">Economy</p>
+                                <p class="fare-card-price"><span class="fare-card-amount">$420</span><span class="fare-card-per">per passenger</span></p>
+                                <p class="fare-card-note">Essential comfort for every journey</p>
+                            </div>
                             <dl class="fare-card-features">
                                 <div class="fare-feature">
-                                    <dt>Baggage</dt>
+                                    <dt>Baggage allowance</dt>
                                     <dd>1 × 23 kg checked bag</dd>
                                 </div>
                                 <div class="fare-feature">
@@ -158,21 +160,27 @@
                                     <dd>Light meal and soft drinks</dd>
                                 </div>
                                 <div class="fare-feature">
-                                    <dt>Changes / cancellation</dt>
-                                    <dd>Changes from $60 · Cancellation fee applies</dd>
+                                    <dt>Change policy</dt>
+                                    <dd>Changes from $60</dd>
+                                </div>
+                                <div class="fare-feature">
+                                    <dt>Cancellation policy</dt>
+                                    <dd>Cancellation fee applies</dd>
                                 </div>
                             </dl>
                             <button class="select-flight-button" type="button">Select Flight</button>
                         </article>
 
-                        <article class="fare-card fare-card--selected" aria-current="true">
-                            <p class="fare-selected-badge">Selected</p>
-                            <p class="fare-card-label">Comfort</p>
-                            <p class="fare-card-price">$680</p>
-                            <p class="fare-card-note">Extra space with elevated service</p>
+                        <article class="fare-card fare-card--best-value" role="listitem" aria-labelledby="comfort-fare-label">
+                            <p class="fare-best-value-badge">Best Value</p>
+                            <div class="fare-card-header">
+                                <p class="fare-card-label" id="comfort-fare-label">Comfort</p>
+                                <p class="fare-card-price"><span class="fare-card-amount">$680</span><span class="fare-card-per">per passenger</span></p>
+                                <p class="fare-card-note">Recommended balance of space, service, and flexibility</p>
+                            </div>
                             <dl class="fare-card-features">
                                 <div class="fare-feature">
-                                    <dt>Baggage</dt>
+                                    <dt>Baggage allowance</dt>
                                     <dd>2 × 23 kg checked bags</dd>
                                 </div>
                                 <div class="fare-feature">
@@ -184,20 +192,26 @@
                                     <dd>Enhanced meal and priority boarding</dd>
                                 </div>
                                 <div class="fare-feature">
-                                    <dt>Changes / cancellation</dt>
-                                    <dd>Flexible changes · Reduced cancellation fee</dd>
+                                    <dt>Change policy</dt>
+                                    <dd>Flexible changes included</dd>
+                                </div>
+                                <div class="fare-feature">
+                                    <dt>Cancellation policy</dt>
+                                    <dd>Reduced cancellation fee</dd>
                                 </div>
                             </dl>
                             <button class="select-flight-button" type="button">Select Flight</button>
                         </article>
 
-                        <article class="fare-card">
-                            <p class="fare-card-label">Business Class</p>
-                            <p class="fare-card-price">$1,450</p>
-                            <p class="fare-card-note">Refined travel without compromise</p>
+                        <article class="fare-card" role="listitem">
+                            <div class="fare-card-header">
+                                <p class="fare-card-label">Business Class</p>
+                                <p class="fare-card-price"><span class="fare-card-amount">$1,450</span><span class="fare-card-per">per passenger</span></p>
+                                <p class="fare-card-note">Refined travel without compromise</p>
+                            </div>
                             <dl class="fare-card-features">
                                 <div class="fare-feature">
-                                    <dt>Baggage</dt>
+                                    <dt>Baggage allowance</dt>
                                     <dd>2 × 32 kg checked bags</dd>
                                 </div>
                                 <div class="fare-feature">
@@ -209,8 +223,12 @@
                                     <dd>Fine dining and lounge access</dd>
                                 </div>
                                 <div class="fare-feature">
-                                    <dt>Changes / cancellation</dt>
-                                    <dd>Free changes · Fully refundable</dd>
+                                    <dt>Change policy</dt>
+                                    <dd>Free changes anytime</dd>
+                                </div>
+                                <div class="fare-feature">
+                                    <dt>Cancellation policy</dt>
+                                    <dd>Fully refundable</dd>
                                 </div>
                             </dl>
                             <button class="select-flight-button" type="button">Select Flight</button>
