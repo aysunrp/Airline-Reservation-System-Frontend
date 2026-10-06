@@ -221,6 +221,78 @@
                     </div>
                 </form>
             </div>
+
+            <section class="price-calendar" id="price-calendar" aria-label="Flexible dates price calendar">
+                <button class="price-calendar-toggle" id="price-calendar-toggle" type="button" aria-expanded="true" aria-controls="price-calendar-body">
+                    <span>
+                        <span class="price-calendar-eyebrow">Flexible Dates</span>
+                        <span class="price-calendar-toggle-title">Price Calendar</span>
+                    </span>
+                    <span class="price-calendar-toggle-icon" aria-hidden="true"></span>
+                </button>
+
+                <div class="price-calendar-body" id="price-calendar-body">
+                    <header class="price-calendar-intro">
+                        <h2 class="price-calendar-title">Find the best fare by date</h2>
+                        <p class="price-calendar-subtitle" id="price-calendar-subtitle">Compare starting fares across the month, then search with your chosen departure date.</p>
+                    </header>
+
+                    <div class="price-calendar-mode" id="price-calendar-mode" role="tablist" aria-label="Date selection" hidden>
+                        <button class="price-calendar-mode-button is-active" id="calendar-mode-departure" type="button" role="tab" aria-selected="true" data-calendar-mode="departure">Departure</button>
+                        <button class="price-calendar-mode-button" id="calendar-mode-return" type="button" role="tab" aria-selected="false" data-calendar-mode="return">Return</button>
+                    </div>
+
+                    <div class="price-calendar-controls">
+                        <div class="field">
+                            <label class="field-label" for="calendar-from">Origin</label>
+                            <select class="field-input" id="calendar-from"></select>
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="calendar-to">Destination</label>
+                            <select class="field-input" id="calendar-to"></select>
+                        </div>
+                        <div class="field price-calendar-month-field">
+                            <span class="field-label">Month</span>
+                            <div class="price-calendar-month-nav">
+                                <button class="price-calendar-nav-button" id="calendar-prev-month" type="button" aria-label="Previous month">‹</button>
+                                <p class="price-calendar-month-label" id="calendar-month-label">October 2026</p>
+                                <button class="price-calendar-nav-button" id="calendar-next-month" type="button" aria-label="Next month">›</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="price-calendar-layout">
+                        <div class="price-calendar-grid-wrap">
+                            <div class="price-calendar-weekdays" aria-hidden="true">
+                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                            </div>
+                            <div class="price-calendar-grid" id="price-calendar-grid" role="grid" aria-labelledby="calendar-month-label"></div>
+                        </div>
+
+                        <aside class="price-calendar-summary" id="price-calendar-summary" aria-label="Trip fare summary">
+                            <p class="price-calendar-summary-eyebrow">Trip Summary</p>
+                            <div class="price-calendar-summary-block" id="summary-departure-block">
+                                <p class="price-calendar-summary-label">Departure</p>
+                                <p class="price-calendar-summary-route" id="summary-departure-route">—</p>
+                                <p class="price-calendar-summary-date" id="summary-departure-date">Select a date</p>
+                                <p class="price-calendar-summary-price" id="summary-departure-price">—</p>
+                            </div>
+                            <div class="price-calendar-summary-block" id="summary-return-block" hidden>
+                                <p class="price-calendar-summary-label">Return</p>
+                                <p class="price-calendar-summary-route" id="summary-return-route">—</p>
+                                <p class="price-calendar-summary-date" id="summary-return-date">Select a date</p>
+                                <p class="price-calendar-summary-price" id="summary-return-price">—</p>
+                            </div>
+                            <div class="price-calendar-summary-total" id="summary-total-block">
+                                <p class="price-calendar-summary-label">Flight Total</p>
+                                <p class="price-calendar-summary-price is-total" id="summary-total-price">—</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <p class="price-calendar-note" id="price-calendar-note">Select a date to update your departure date.</p>
+                </div>
+            </section>
         </section>
     </main>
 
