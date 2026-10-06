@@ -179,7 +179,7 @@
                         '<p class="trip-card-price-label">Total</p>' +
                         '<p class="trip-card-price-value">' + escapeHtml(formatPrice(bookingData.totalPrice)) + "</p>" +
                     "</div>" +
-                    '<a class="trip-card-button" href="confirmation.html">View Details</a>' +
+                    '<a class="trip-card-button" href="booking-details.html">View Details</a>' +
                 "</div>" +
             "</article>"
         );

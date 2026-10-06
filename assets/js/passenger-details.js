@@ -659,7 +659,7 @@
             return;
         }
 
-        window.location.href = "payment.html";
+        window.location.href = "baggage-selection.html";
     }
 
     function bindContinueButton() {

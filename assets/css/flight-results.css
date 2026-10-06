@@ -307,6 +307,19 @@ h2 {
     letter-spacing: 0.02em;
 }
 
+.results-back-link {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: var(--color-gold-light);
+    font-size: 0.9rem;
+    font-weight: 300;
+    transition: color 0.2s ease;
+}
+
+.results-back-link:hover {
+    color: var(--color-gold);
+}
+
 .results-layout {
     display: grid;
     grid-template-columns: minmax(15.5rem, 18rem) minmax(0, 1fr);

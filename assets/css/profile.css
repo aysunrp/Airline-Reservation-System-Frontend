@@ -22,6 +22,13 @@
     flex-wrap: wrap;
 }
 
+.profile-intro-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+}
+
 .profile-title {
     margin: 0;
     color: var(--color-cream);

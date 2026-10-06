@@ -382,12 +382,14 @@
         }
 
         if (action === "change") {
-            showMessage("Change requests are available through AEROVA support. Your booking remains confirmed.");
+            writeJSON("managedBooking", activeBooking);
+            window.location.href = "booking-details.html";
             return;
         }
 
         if (action === "cancel") {
-            showMessage("Cancellation is not completed online yet. Please contact AEROVA support with your PNR.");
+            writeJSON("managedBooking", activeBooking);
+            window.location.href = "booking-details.html";
         }
     }
 

@@ -363,11 +363,22 @@
 
     function guardAuthenticatedPages() {
         var path = window.location.pathname.toLowerCase();
-        var needsAuth = path.indexOf("profile.html") !== -1 || path.indexOf("notifications.html") !== -1;
+        var href = String(window.location.href || "").toLowerCase();
+        var protectedPages = [
+            "my-trips.html",
+            "profile.html",
+            "notifications.html",
+            "booking-details.html"
+        ];
+        var needsAuth = protectedPages.some(function (page) {
+            return path.indexOf(page) !== -1 || href.indexOf(page) !== -1;
+        });
+
         if (needsAuth && !isLoggedIn()) {
             window.location.replace("login.html");
             return true;
         }
+
         return false;
     }
 

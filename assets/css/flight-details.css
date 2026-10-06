@@ -37,6 +37,19 @@
     line-height: 1.1;
 }
 
+.flight-details-back {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: var(--color-gold-light);
+    font-size: 0.9rem;
+    font-weight: 300;
+    transition: color 0.2s ease;
+}
+
+.flight-details-back:hover {
+    color: var(--color-gold);
+}
+
 .flight-details-subtitle {
     margin: 0.75rem 0 0;
     color: var(--color-cream-muted);
