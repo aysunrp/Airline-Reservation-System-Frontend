@@ -60,6 +60,91 @@
 
                 <p class="details-message" id="details-message" aria-live="polite" hidden></p>
 
+                <section class="change-booking-panel details-card" id="change-booking-panel" aria-labelledby="change-booking-title" hidden>
+                    <h2 class="details-card-title" id="change-booking-title">Change Booking</h2>
+                    <p class="change-booking-intro">Update your flight date, cabin class, or seats. Your current booking details stay visible below.</p>
+
+                    <div class="change-compare-grid">
+                        <article class="change-compare-card">
+                            <h3 class="change-compare-heading">Current Selection</h3>
+                            <dl class="change-compare-list">
+                                <div class="change-compare-row">
+                                    <dt>Date</dt>
+                                    <dd id="change-current-date">—</dd>
+                                </div>
+                                <div class="change-compare-row">
+                                    <dt>Cabin</dt>
+                                    <dd id="change-current-cabin">—</dd>
+                                </div>
+                                <div class="change-compare-row">
+                                    <dt>Seats</dt>
+                                    <dd id="change-current-seats">—</dd>
+                                </div>
+                            </dl>
+                        </article>
+
+                        <article class="change-compare-card change-compare-card--new">
+                            <h3 class="change-compare-heading">New Selection</h3>
+                            <dl class="change-compare-list">
+                                <div class="change-compare-row">
+                                    <dt>Date</dt>
+                                    <dd id="change-new-date-display">—</dd>
+                                </div>
+                                <div class="change-compare-row">
+                                    <dt>Cabin</dt>
+                                    <dd id="change-new-cabin-display">—</dd>
+                                </div>
+                                <div class="change-compare-row">
+                                    <dt>Seats</dt>
+                                    <dd id="change-new-seats-display">—</dd>
+                                </div>
+                            </dl>
+                        </article>
+                    </div>
+
+                    <form id="change-booking-form" class="change-booking-form" novalidate>
+                        <div class="change-field-grid">
+                            <div class="change-field">
+                                <label class="change-field-label" for="change-flight-date">Flight Date</label>
+                                <input class="change-field-input" id="change-flight-date" name="flightDate" type="date" required>
+                            </div>
+                            <div class="change-field">
+                                <label class="change-field-label" for="change-cabin-class">Cabin Class</label>
+                                <select class="change-field-input" id="change-cabin-class" name="cabinClass" required>
+                                    <option value="Economy">Economy</option>
+                                    <option value="Comfort">Comfort</option>
+                                    <option value="Business">Business</option>
+                                </select>
+                            </div>
+                            <div class="change-field change-field--full">
+                                <label class="change-field-label" for="change-seats">Seat(s)</label>
+                                <input class="change-field-input" id="change-seats" name="seats" type="text" placeholder="e.g. 12A, 12B" autocomplete="off" required>
+                                <p class="change-field-hint">Enter seat codes separated by commas. Match the passenger count.</p>
+                            </div>
+                        </div>
+
+                        <div class="change-price-summary">
+                            <div class="change-price-row">
+                                <span>Current Total</span>
+                                <strong id="change-current-total">$0</strong>
+                            </div>
+                            <div class="change-price-row">
+                                <span>Estimated New Total</span>
+                                <strong id="change-estimated-total">$0</strong>
+                            </div>
+                            <div class="change-price-row change-price-row--difference">
+                                <span>Price Difference</span>
+                                <strong id="change-price-difference">$0</strong>
+                            </div>
+                        </div>
+
+                        <div class="change-booking-actions">
+                            <button class="booking-action-button booking-action-button--primary" id="confirm-changes-button" type="submit">Confirm Changes</button>
+                            <button class="booking-action-button booking-action-button--secondary" id="cancel-changes-button" type="button">Cancel</button>
+                        </div>
+                    </form>
+                </section>
+
                 <div class="details-layout">
                     <div class="details-main">
                         <article class="details-card" aria-labelledby="reference-title">
@@ -266,6 +351,21 @@
             </ul>
         </div>
     </footer>
+
+    <div class="booking-modal" id="cancel-booking-modal" hidden>
+        <div class="booking-modal-backdrop" data-close-cancel-modal></div>
+        <div class="booking-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cancel-booking-title">
+            <h2 class="booking-modal-title" id="cancel-booking-title">Cancel Booking</h2>
+            <p class="booking-modal-text">
+                This will cancel reservation <strong id="cancel-modal-pnr">—</strong>.
+                Cancelled bookings cannot be used for travel. Ancillary selections will no longer be active.
+            </p>
+            <div class="booking-modal-actions">
+                <button class="booking-action-button booking-action-button--secondary" type="button" data-close-cancel-modal>Keep Booking</button>
+                <button class="booking-action-button booking-action-button--danger" id="confirm-cancellation-button" type="button">Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
 
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/booking-details.js"></script>

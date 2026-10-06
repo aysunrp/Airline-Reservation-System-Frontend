@@ -4,8 +4,18 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
+    var CABIN_BASE_RATES = {
+        Economy: 520,
+        Comfort: 680,
+        Business: 980
+    };
+
+    var DATE_CHANGE_FEE = 50;
+    var SEAT_CHANGE_FEE = 25;
+
     var MOCK_BOOKING = {
         pnr: "AV7K92M",
+        status: "Confirmed",
         paymentStatus: "Confirmed",
         cabinClass: "Comfort",
         passengerCount: 2,
@@ -57,6 +67,11 @@
     };
 
     var activeBooking = null;
+    var changeEstimate = {
+        currentTotal: 0,
+        estimatedTotal: 0,
+        difference: 0
+    };
 
     function escapeHtml(value) {
         return String(value)
@@ -109,9 +124,24 @@
         return "$" + amount.toFixed(amount % 1 === 0 ? 0 : 2);
     }
 
+    function formatSignedPrice(amount) {
+        var value = Number(amount) || 0;
+        if (value > 0) {
+            return "+" + formatPrice(value);
+        }
+        if (value < 0) {
+            return "−" + formatPrice(Math.abs(value));
+        }
+        return formatPrice(0);
+    }
+
     function toNumber(value, fallback) {
         var amount = Number(value);
         return isFinite(amount) ? amount : fallback;
+    }
+
+    function roundMoney(amount) {
+        return Math.round(toNumber(amount, 0) * 100) / 100;
     }
 
     function readJSON(key) {
@@ -125,6 +155,15 @@
             return parsed && typeof parsed === "object" ? parsed : null;
         } catch (error) {
             return null;
+        }
+    }
+
+    function writeJSON(key, value) {
+        try {
+            sessionStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (error) {
+            return false;
         }
     }
 
@@ -152,15 +191,15 @@
             return "Confirmed";
         }
 
-        if (booking.paymentStatus === "Paid" || booking.paymentStatus === "Confirmed") {
+        var status = String(booking.status || booking.paymentStatus || "Confirmed");
+        if (status.toLowerCase() === "paid") {
             return "Confirmed";
         }
+        return status;
+    }
 
-        if (booking.paymentStatus) {
-            return String(booking.paymentStatus);
-        }
-
-        return "Confirmed";
+    function isCancelled(booking) {
+        return getBookingStatus(booking).toLowerCase() === "cancelled";
     }
 
     function showMessage(text) {
@@ -199,7 +238,7 @@
             if (typeof extraServicesData.baseFare === "number") {
                 copy.baseFare = extraServicesData.baseFare;
             }
-            if (typeof extraServicesData.grandTotal === "number") {
+            if (typeof extraServicesData.grandTotal === "number" && copy.totalPrice == null) {
                 copy.totalPrice = extraServicesData.grandTotal;
             }
         }
@@ -207,7 +246,10 @@
         copy.baggageTotal = toNumber(copy.baggageTotal, 0);
         copy.mealTotal = toNumber(copy.mealTotal, 0);
         copy.extraServicesTotal = toNumber(copy.extraServicesTotal, 0);
-        copy.taxesFees = toNumber(copy.taxesFees, Math.round(toNumber(copy.totalPrice, 0) * 0.08));
+        copy.taxesFees = toNumber(
+            copy.taxesFees != null ? copy.taxesFees : copy.taxesAndFees,
+            Math.round(toNumber(copy.baseFare, 0) * 0.1)
+        );
 
         if (typeof copy.baseFare !== "number") {
             var remainder = toNumber(copy.totalPrice, 0) -
@@ -226,6 +268,10 @@
                 copy.taxesFees;
         }
 
+        if (!copy.status) {
+            copy.status = getBookingStatus(copy);
+        }
+
         return copy;
     }
 
@@ -241,6 +287,84 @@
         }
 
         return JSON.parse(JSON.stringify(MOCK_BOOKING));
+    }
+
+    function persistBooking(booking) {
+        var saved = writeJSON("bookingData", booking);
+        if (readJSON("managedBooking")) {
+            writeJSON("managedBooking", booking);
+        }
+        return saved;
+    }
+
+    function getPassengerCount(booking) {
+        if (Array.isArray(booking.passengers) && booking.passengers.length) {
+            return booking.passengers.length;
+        }
+        var count = toNumber(booking.passengerCount, 0);
+        return count > 0 ? count : 1;
+    }
+
+    function parseSeats(value) {
+        return String(value || "")
+            .split(",")
+            .map(function (seat) {
+                return seat.trim().toUpperCase();
+            })
+            .filter(Boolean);
+    }
+
+    function seatsEqual(a, b) {
+        var left = (a || []).slice().sort().join("|");
+        var right = (b || []).slice().sort().join("|");
+        return left === right;
+    }
+
+    function normalizeCabin(cabin) {
+        var value = String(cabin || "Economy");
+        if (/business/i.test(value)) return "Business";
+        if (/comfort/i.test(value)) return "Comfort";
+        return "Economy";
+    }
+
+    function estimateChangedTotals(booking, nextDate, nextCabin, nextSeats) {
+        var passengerCount = getPassengerCount(booking);
+        var currentCabin = normalizeCabin(booking.cabinClass);
+        var cabin = normalizeCabin(nextCabin);
+        var currentDate = booking.flight && booking.flight.departureDate
+            ? String(booking.flight.departureDate)
+            : "";
+        var currentSeats = Array.isArray(booking.selectedSeats) ? booking.selectedSeats : [];
+
+        var currentBase = toNumber(booking.baseFare, CABIN_BASE_RATES[currentCabin] * passengerCount);
+        var rateRatio = CABIN_BASE_RATES[cabin] / CABIN_BASE_RATES[currentCabin];
+        var nextBase = roundMoney(currentBase * rateRatio);
+
+        var baggage = toNumber(booking.baggageTotal, 0);
+        var meals = toNumber(booking.mealTotal, 0);
+        var extras = toNumber(booking.extraServicesTotal, 0);
+        var taxes = roundMoney(nextBase * 0.1);
+
+        var fees = 0;
+        if (nextDate && currentDate && nextDate !== currentDate) {
+            fees += DATE_CHANGE_FEE;
+        }
+        if (!seatsEqual(currentSeats, nextSeats)) {
+            fees += SEAT_CHANGE_FEE;
+        }
+
+        var estimatedTotal = roundMoney(nextBase + baggage + meals + extras + taxes + fees);
+        var currentTotal = roundMoney(toNumber(booking.totalPrice, 0));
+        var difference = roundMoney(estimatedTotal - currentTotal);
+
+        return {
+            nextBase: nextBase,
+            taxes: taxes,
+            fees: fees,
+            estimatedTotal: estimatedTotal,
+            currentTotal: currentTotal,
+            difference: difference
+        };
     }
 
     function renderList(elementId, items, mapItem) {
@@ -329,15 +453,34 @@
         });
     }
 
+    function updateActionAvailability(booking) {
+        var changeButton = document.getElementById("change-booking-button");
+        var cancelButton = document.getElementById("cancel-booking-button");
+        var cancelled = isCancelled(booking);
+
+        if (changeButton) {
+            changeButton.disabled = cancelled;
+        }
+        if (cancelButton) {
+            cancelButton.disabled = cancelled;
+        }
+    }
+
     function renderBooking(booking) {
         var flight = booking.flight || {};
         var seats = Array.isArray(booking.selectedSeats) ? booking.selectedSeats.join(", ") : "—";
         var route = flight.from && flight.to
             ? flight.from + " → " + flight.to
             : (flight.route || "—");
+        var status = getBookingStatus(booking);
+        var statusBadge = document.getElementById("details-status");
 
         setText("details-pnr", booking.pnr || "—");
-        setText("details-status", getBookingStatus(booking));
+        setText("details-status", status);
+        if (statusBadge) {
+            statusBadge.classList.toggle("is-cancelled", status.toLowerCase() === "cancelled");
+        }
+
         setText("details-flight-number", flight.flightNumber || "—");
         setText("details-route", route);
         setText("details-date", formatDisplayDate(flight.departureDate));
@@ -358,6 +501,7 @@
         renderBaggage(booking);
         renderMeals(booking);
         renderExtras(booking);
+        updateActionAvailability(booking);
     }
 
     function buildConfirmationText(booking) {
@@ -407,22 +551,248 @@
         URL.revokeObjectURL(url);
     }
 
+    function getChangePanel() {
+        return document.getElementById("change-booking-panel");
+    }
+
+    function getCancelModal() {
+        return document.getElementById("cancel-booking-modal");
+    }
+
+    function closeChangePanel() {
+        var panel = getChangePanel();
+        if (panel) {
+            panel.hidden = true;
+        }
+    }
+
+    function openCancelModal() {
+        var modal = getCancelModal();
+        if (!modal || !activeBooking) {
+            return;
+        }
+        setText("cancel-modal-pnr", activeBooking.pnr || "—");
+        modal.hidden = false;
+    }
+
+    function closeCancelModal() {
+        var modal = getCancelModal();
+        if (modal) {
+            modal.hidden = true;
+        }
+    }
+
+    function refreshChangePreview() {
+        if (!activeBooking) {
+            return;
+        }
+
+        var dateInput = document.getElementById("change-flight-date");
+        var cabinInput = document.getElementById("change-cabin-class");
+        var seatsInput = document.getElementById("change-seats");
+
+        var nextDate = dateInput ? dateInput.value : "";
+        var nextCabin = cabinInput ? cabinInput.value : normalizeCabin(activeBooking.cabinClass);
+        var nextSeats = parseSeats(seatsInput ? seatsInput.value : "");
+
+        setText("change-new-date-display", nextDate ? formatDisplayDate(nextDate) : "—");
+        setText("change-new-cabin-display", nextCabin || "—");
+        setText("change-new-seats-display", nextSeats.length ? nextSeats.join(", ") : "—");
+
+        changeEstimate = estimateChangedTotals(activeBooking, nextDate, nextCabin, nextSeats);
+        setText("change-current-total", formatPrice(changeEstimate.currentTotal));
+        setText("change-estimated-total", formatPrice(changeEstimate.estimatedTotal));
+        setText("change-price-difference", formatSignedPrice(changeEstimate.difference));
+    }
+
+    function openChangePanel() {
+        if (!activeBooking || isCancelled(activeBooking)) {
+            showMessage("Cancelled bookings cannot be changed.");
+            return;
+        }
+
+        closeCancelModal();
+
+        var panel = getChangePanel();
+        var dateInput = document.getElementById("change-flight-date");
+        var cabinInput = document.getElementById("change-cabin-class");
+        var seatsInput = document.getElementById("change-seats");
+        var flight = activeBooking.flight || {};
+        var seats = Array.isArray(activeBooking.selectedSeats) ? activeBooking.selectedSeats : [];
+
+        setText("change-current-date", formatDisplayDate(flight.departureDate));
+        setText("change-current-cabin", activeBooking.cabinClass || "—");
+        setText("change-current-seats", seats.length ? seats.join(", ") : "—");
+
+        if (dateInput) {
+            dateInput.value = flight.departureDate || "";
+        }
+        if (cabinInput) {
+            cabinInput.value = normalizeCabin(activeBooking.cabinClass);
+        }
+        if (seatsInput) {
+            seatsInput.value = seats.join(", ");
+        }
+
+        if (panel) {
+            panel.hidden = false;
+            panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        refreshChangePreview();
+        showMessage("");
+    }
+
+    function confirmChanges(event) {
+        event.preventDefault();
+
+        if (!activeBooking || isCancelled(activeBooking)) {
+            showMessage("Cancelled bookings cannot be changed.");
+            return;
+        }
+
+        var dateInput = document.getElementById("change-flight-date");
+        var cabinInput = document.getElementById("change-cabin-class");
+        var seatsInput = document.getElementById("change-seats");
+
+        var nextDate = dateInput ? dateInput.value : "";
+        var nextCabin = cabinInput ? normalizeCabin(cabinInput.value) : "Economy";
+        var nextSeats = parseSeats(seatsInput ? seatsInput.value : "");
+        var passengerCount = getPassengerCount(activeBooking);
+
+        if (!nextDate) {
+            showMessage("Please choose a new flight date.");
+            if (dateInput) dateInput.focus();
+            return;
+        }
+
+        if (!nextSeats.length) {
+            showMessage("Please enter seat selections for your passengers.");
+            if (seatsInput) seatsInput.focus();
+            return;
+        }
+
+        if (nextSeats.length !== passengerCount) {
+            showMessage("Enter exactly " + passengerCount + " seat" + (passengerCount === 1 ? "" : "s") + ".");
+            if (seatsInput) seatsInput.focus();
+            return;
+        }
+
+        var estimate = estimateChangedTotals(activeBooking, nextDate, nextCabin, nextSeats);
+        var updated = JSON.parse(JSON.stringify(activeBooking));
+
+        if (!updated.flight) {
+            updated.flight = {};
+        }
+
+        updated.flight.departureDate = nextDate;
+        updated.cabinClass = nextCabin;
+        updated.selectedSeats = nextSeats;
+        updated.baseFare = estimate.nextBase;
+        updated.taxesFees = estimate.taxes;
+        updated.changeFee = estimate.fees;
+        updated.totalPrice = estimate.estimatedTotal;
+        updated.status = "Confirmed";
+        if (updated.paymentStatus === "Cancelled") {
+            updated.paymentStatus = "Paid";
+        }
+
+        if (!persistBooking(updated)) {
+            showMessage("Unable to save booking changes. Please try again.");
+            return;
+        }
+
+        activeBooking = enrichBooking(updated);
+        renderBooking(activeBooking);
+        closeChangePanel();
+
+        var differenceNote = estimate.difference === 0
+            ? "No fare difference."
+            : (estimate.difference > 0
+                ? "Additional amount due: " + formatPrice(estimate.difference) + "."
+                : "Estimated refund: " + formatPrice(Math.abs(estimate.difference)) + ".");
+
+        showMessage("Booking updated successfully. " + differenceNote);
+    }
+
+    function confirmCancellation() {
+        if (!activeBooking || isCancelled(activeBooking)) {
+            closeCancelModal();
+            return;
+        }
+
+        var updated = JSON.parse(JSON.stringify(activeBooking));
+        updated.status = "Cancelled";
+        updated.paymentStatus = "Cancelled";
+
+        if (!persistBooking(updated)) {
+            showMessage("Unable to cancel this booking. Please try again.");
+            closeCancelModal();
+            return;
+        }
+
+        activeBooking = enrichBooking(updated);
+        renderBooking(activeBooking);
+        closeChangePanel();
+        closeCancelModal();
+        showMessage("Booking " + (activeBooking.pnr || "") + " has been cancelled.");
+    }
+
     function bindActions() {
         var changeButton = document.getElementById("change-booking-button");
         var cancelButton = document.getElementById("cancel-booking-button");
         var downloadButton = document.getElementById("download-confirmation-button");
         var printButton = document.getElementById("print-confirmation-button");
+        var changeForm = document.getElementById("change-booking-form");
+        var cancelChangesButton = document.getElementById("cancel-changes-button");
+        var confirmCancellationButton = document.getElementById("confirm-cancellation-button");
+        var dateInput = document.getElementById("change-flight-date");
+        var cabinInput = document.getElementById("change-cabin-class");
+        var seatsInput = document.getElementById("change-seats");
 
         if (changeButton) {
-            changeButton.addEventListener("click", function () {
-                showMessage("Change requests are available through AEROVA support. Your booking remains confirmed.");
-            });
+            changeButton.addEventListener("click", openChangePanel);
         }
 
         if (cancelButton) {
             cancelButton.addEventListener("click", function () {
-                showMessage("Cancellation is not completed online yet. Please contact AEROVA support with your PNR.");
+                if (!activeBooking || isCancelled(activeBooking)) {
+                    showMessage("This booking is already cancelled.");
+                    return;
+                }
+                closeChangePanel();
+                openCancelModal();
             });
+        }
+
+        if (changeForm) {
+            changeForm.addEventListener("submit", confirmChanges);
+        }
+
+        if (cancelChangesButton) {
+            cancelChangesButton.addEventListener("click", function () {
+                closeChangePanel();
+                showMessage("");
+            });
+        }
+
+        if (confirmCancellationButton) {
+            confirmCancellationButton.addEventListener("click", confirmCancellation);
+        }
+
+        document.querySelectorAll("[data-close-cancel-modal]").forEach(function (el) {
+            el.addEventListener("click", closeCancelModal);
+        });
+
+        if (dateInput) {
+            dateInput.addEventListener("change", refreshChangePreview);
+            dateInput.addEventListener("input", refreshChangePreview);
+        }
+        if (cabinInput) {
+            cabinInput.addEventListener("change", refreshChangePreview);
+        }
+        if (seatsInput) {
+            seatsInput.addEventListener("input", refreshChangePreview);
         }
 
         if (downloadButton) {
@@ -434,6 +804,12 @@
                 window.print();
             });
         }
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeCancelModal();
+            }
+        });
     }
 
     function initMenuToggle() {
