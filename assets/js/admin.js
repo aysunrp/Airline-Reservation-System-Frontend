@@ -593,55 +593,19 @@
     }
 
     function clearLoginState() {
-        var authKeys = [
-            "isLoggedIn",
-            "loggedIn",
-            "currentUser",
-            "user",
-            "authToken",
-            "token",
-            "aerovaUser",
-            "aerovaAuth",
-            "aerovaSession",
-            "adminUser",
-            "adminSession",
-            "loginState",
-            "session"
-        ];
-
+        var authKeys = ["isLoggedIn", "aerovaUser", "currentUser", "aerovaAuth", "adminSession"];
         authKeys.forEach(function (key) {
             try { sessionStorage.removeItem(key); } catch (e) { /* ignore */ }
             try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
         });
-
-        function clearAuthLikeKeys(storage) {
-            var keysToRemove = [];
-            var i;
-            for (i = 0; i < storage.length; i += 1) {
-                var key = storage.key(i);
-                if (!key) continue;
-                var lower = key.toLowerCase();
-                if (
-                    lower.indexOf("login") !== -1 ||
-                    lower.indexOf("auth") !== -1 ||
-                    lower.indexOf("token") !== -1 ||
-                    lower.indexOf("session") !== -1 ||
-                    lower.indexOf("user") !== -1
-                ) {
-                    keysToRemove.push(key);
-                }
-            }
-            keysToRemove.forEach(function (key) {
-                storage.removeItem(key);
-            });
-        }
-
-        try { clearAuthLikeKeys(sessionStorage); } catch (e) { /* ignore */ }
-        try { clearAuthLikeKeys(localStorage); } catch (e) { /* ignore */ }
     }
 
     function handleLogout() {
-        clearLoginState();
+        if (window.AerovaAuth && typeof window.AerovaAuth.clearAuthState === "function") {
+            window.AerovaAuth.clearAuthState();
+        } else {
+            clearLoginState();
+        }
         window.location.href = "login.html";
     }
 
