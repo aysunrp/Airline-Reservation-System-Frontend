@@ -6,6 +6,16 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
+    var TAX_RATE = 0.1;
+    var priceState = {
+        baseFare: 0,
+        baggage: 0,
+        meals: 0,
+        extraServices: 0,
+        taxes: 0,
+        grandTotal: 0
+    };
+
     function setText(id, value) {
         var element = document.getElementById(id);
         if (element) {
@@ -23,12 +33,18 @@
         message.hidden = !text;
     }
 
+    function toNumber(value, fallback) {
+        var amount = Number(value);
+        return isFinite(amount) ? amount : fallback;
+    }
+
     function formatPrice(amount) {
-        var value = Number(amount);
-        if (!isFinite(value)) {
-            return "$0.00";
-        }
+        var value = toNumber(amount, 0);
         return "$" + value.toFixed(2);
+    }
+
+    function roundMoney(amount) {
+        return Math.round(toNumber(amount, 0) * 100) / 100;
     }
 
     function formatDisplayDate(dateValue) {
@@ -52,9 +68,9 @@
         return day + " " + MONTH_NAMES[month - 1] + " " + year;
     }
 
-    function readBookingData() {
+    function readJSON(key) {
         try {
-            var raw = sessionStorage.getItem("bookingData");
+            var raw = sessionStorage.getItem(key);
             if (!raw) {
                 return null;
             }
@@ -66,19 +82,121 @@
         }
     }
 
-    function calculatePriceBreakdown(totalPrice) {
-        var total = Number(totalPrice);
-        if (!isFinite(total) || total < 0) {
-            total = 0;
+    function readBookingData() {
+        return readJSON("bookingData");
+    }
+
+    function getPassengerCount(bookingData) {
+        if (!bookingData) {
+            return 1;
         }
 
-        var baseFare = total / 1.1;
-        var taxes = total - baseFare;
+        if (Array.isArray(bookingData.passengers) && bookingData.passengers.length) {
+            return bookingData.passengers.length;
+        }
+
+        var count = toNumber(bookingData.passengerCount, 0);
+        return count > 0 ? count : 1;
+    }
+
+    function getBaggageTotal(baggageData, bookingData, extraServicesData) {
+        if (baggageData && baggageData.totalBaggageCost != null) {
+            return roundMoney(toNumber(baggageData.totalBaggageCost, 0));
+        }
+        if (extraServicesData && extraServicesData.baggageTotal != null) {
+            return roundMoney(toNumber(extraServicesData.baggageTotal, 0));
+        }
+        if (bookingData && bookingData.baggageTotal != null) {
+            return roundMoney(toNumber(bookingData.baggageTotal, 0));
+        }
+        return 0;
+    }
+
+    function getMealTotal(mealData, bookingData, extraServicesData) {
+        if (mealData && mealData.totalMealCost != null) {
+            return roundMoney(toNumber(mealData.totalMealCost, 0));
+        }
+        if (extraServicesData && extraServicesData.mealTotal != null) {
+            return roundMoney(toNumber(extraServicesData.mealTotal, 0));
+        }
+        if (bookingData && bookingData.mealTotal != null) {
+            return roundMoney(toNumber(bookingData.mealTotal, 0));
+        }
+        return 0;
+    }
+
+    function getExtraServicesTotal(extraServicesData, bookingData) {
+        if (extraServicesData && extraServicesData.extraServicesTotal != null) {
+            return roundMoney(toNumber(extraServicesData.extraServicesTotal, 0));
+        }
+
+        if (extraServicesData && Array.isArray(extraServicesData.selectedServices)) {
+            return roundMoney(extraServicesData.selectedServices.reduce(function (sum, service) {
+                return sum + toNumber(service && service.price, 0);
+            }, 0));
+        }
+
+        if (bookingData && bookingData.extraServicesTotal != null) {
+            return roundMoney(toNumber(bookingData.extraServicesTotal, 0));
+        }
+
+        if (bookingData && Array.isArray(bookingData.extraServices)) {
+            return roundMoney(bookingData.extraServices.reduce(function (sum, service) {
+                return sum + toNumber(service && service.price, 0);
+            }, 0));
+        }
+
+        return 0;
+    }
+
+    function getBaseFare(bookingData, baggageTotal, mealTotal, extraServicesTotal, extraServicesData) {
+        if (extraServicesData && extraServicesData.baseFare != null) {
+            return roundMoney(toNumber(extraServicesData.baseFare, 0));
+        }
+
+        var selectedFlight = readJSON("aerovaSelectedFlight");
+        var passengerCount = getPassengerCount(bookingData);
+        var unitPrice = toNumber(selectedFlight && selectedFlight.price, NaN);
+
+        if (isFinite(unitPrice)) {
+            return roundMoney(unitPrice * passengerCount);
+        }
+
+        var storedTotal = toNumber(bookingData && bookingData.totalPrice, NaN);
+        if (!isFinite(storedTotal)) {
+            return 0;
+        }
+
+        // If add-on totals were already folded into bookingData.totalPrice, recover base fare.
+        if (
+            (bookingData && (bookingData.baggageTotal != null || bookingData.mealTotal != null || bookingData.extraServicesTotal != null)) ||
+            extraServicesData
+        ) {
+            return roundMoney(Math.max(0, storedTotal - baggageTotal - mealTotal - extraServicesTotal));
+        }
+
+        return roundMoney(storedTotal);
+    }
+
+    function calculatePriceBreakdown(bookingData) {
+        var baggageData = readJSON("baggageData");
+        var mealData = readJSON("mealData");
+        var extraServicesData = readJSON("extraServicesData");
+
+        var baggage = getBaggageTotal(baggageData, bookingData, extraServicesData);
+        var meals = getMealTotal(mealData, bookingData, extraServicesData);
+        var extraServices = getExtraServicesTotal(extraServicesData, bookingData);
+        var baseFare = getBaseFare(bookingData, baggage, meals, extraServices, extraServicesData);
+        var taxes = roundMoney(baseFare * TAX_RATE);
+        var grandTotal = roundMoney(baseFare + baggage + meals + extraServices + taxes);
 
         return {
             baseFare: baseFare,
+            baggage: baggage,
+            meals: meals,
+            extraServices: extraServices,
             taxes: taxes,
-            total: total
+            grandTotal: grandTotal
         };
     }
 
@@ -138,12 +256,14 @@
         var selectedSeats = Array.isArray(bookingData.selectedSeats)
             ? bookingData.selectedSeats
             : [];
-        var prices = calculatePriceBreakdown(bookingData.totalPrice);
+        var prices = calculatePriceBreakdown(bookingData);
         var route = flight.route || ((flight.from || "—") + " → " + (flight.to || "—"));
         var times = (flight.departure || "—") + " → " + (flight.arrival || "—");
         var payButton = document.getElementById("pay-button");
         var cardholderInput = document.getElementById("cardholder-name");
         var cardholderName = getPassengerOneName(bookingData);
+
+        priceState = prices;
 
         setText("payment-summary-airline", flight.airline || "AEROVA");
         setText("payment-summary-flight-number", flight.flightNumber || "—");
@@ -161,11 +281,14 @@
             selectedSeats.length ? selectedSeats.join(", ") : "—"
         );
         setText("payment-base-fare", formatPrice(prices.baseFare));
+        setText("payment-baggage", formatPrice(prices.baggage));
+        setText("payment-meals", formatPrice(prices.meals));
+        setText("payment-extra-services", formatPrice(prices.extraServices));
         setText("payment-taxes", formatPrice(prices.taxes));
-        setText("payment-total", formatPrice(prices.total));
+        setText("payment-total", formatPrice(prices.grandTotal));
 
         if (payButton) {
-            payButton.textContent = "Pay " + formatPrice(prices.total);
+            payButton.textContent = "Pay " + formatPrice(prices.grandTotal);
             payButton.disabled = false;
             payButton.removeAttribute("disabled");
         }
@@ -353,8 +476,17 @@
             return;
         }
 
+        var prices = calculatePriceBreakdown(bookingData);
+        priceState = prices;
+
         bookingData.paymentStatus = "Paid";
         bookingData.paymentMethod = getPaymentMethodLabel(method);
+        bookingData.totalPrice = prices.grandTotal;
+        bookingData.baseFare = prices.baseFare;
+        bookingData.baggageTotal = prices.baggage;
+        bookingData.mealTotal = prices.meals;
+        bookingData.extraServicesTotal = prices.extraServices;
+        bookingData.taxesAndFees = prices.taxes;
 
         try {
             sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
