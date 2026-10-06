@@ -548,7 +548,10 @@
             "</div>" +
             '<div class="flight-card-action">' +
                 '<p class="flight-price">$' + escapeHtml(String(price)) + "</p>" +
-                '<button class="select-flight-button" type="button">Select Flight</button>' +
+                '<div class="flight-card-buttons">' +
+                    '<button class="view-details-button" type="button">View Details</button>' +
+                    '<button class="select-flight-button" type="button">Select Flight</button>' +
+                "</div>" +
             "</div>";
 
         return article;
@@ -612,6 +615,22 @@
         window.location.href = "seat-selection.html";
     }
 
+    function openFlightDetails(flight, criteria) {
+        var params = new URLSearchParams({
+            flightNumber: flight.flightNumber || "",
+            from: flight.from || "",
+            to: flight.to || "",
+            departureDate: flight.date || criteria.departureDate || "",
+            departureTime: flight.departure || "",
+            arrivalTime: flight.arrival || "",
+            duration: flight.duration || "",
+            stops: flight.stops || "",
+            aircraft: flight.aircraft || ""
+        });
+
+        window.location.href = "flight-details.html?" + params.toString();
+    }
+
     function renderFlightCards(flights, criteria) {
         var container = document.querySelector(".flight-list");
         if (!container) {
@@ -630,6 +649,7 @@
         flights.forEach(function (flight) {
             var card = createFlightCard(flight, defaultCabin);
             var cabinButtons = card.querySelectorAll(".cabin-option");
+            var viewDetailsButton = card.querySelector(".view-details-button");
             var selectButton = card.querySelector(".select-flight-button");
 
             cabinButtons.forEach(function (button) {
@@ -638,6 +658,12 @@
                     updateCardCabinSelection(card, flight, cabinClass);
                 });
             });
+
+            if (viewDetailsButton) {
+                viewDetailsButton.addEventListener("click", function () {
+                    openFlightDetails(flight, criteria);
+                });
+            }
 
             if (selectButton) {
                 selectButton.addEventListener("click", function () {

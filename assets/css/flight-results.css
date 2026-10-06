@@ -482,6 +482,15 @@ h2 {
     line-height: 1;
 }
 
+.flight-card-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.7rem;
+}
+
+.view-details-button,
 .select-flight-button {
     display: inline-flex;
     align-items: center;
@@ -489,18 +498,36 @@ h2 {
     min-height: 48px;
     padding: 0.8rem 1.35rem;
     border-radius: 10px;
-    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
-    color: var(--color-ink);
     font-size: 0.74rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    transition: transform 0.25s ease, filter 0.25s ease;
+    transition: transform 0.25s ease, filter 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.select-flight-button {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+}
+
+.view-details-button {
+    background: transparent;
+    border: 1px solid rgba(198, 163, 106, 0.75);
+    color: var(--color-cream);
+}
+
+.select-flight-button:hover,
+.view-details-button:hover {
+    transform: translateY(-2px);
 }
 
 .select-flight-button:hover {
-    transform: translateY(-2px);
     filter: brightness(1.06);
+}
+
+.view-details-button:hover {
+    border-color: var(--color-gold-light);
+    color: var(--color-gold-light);
 }
 
 .results-empty {
@@ -548,6 +575,11 @@ h2 {
         justify-self: stretch;
     }
 
+    .flight-card-buttons {
+        justify-content: flex-end;
+    }
+
+    .view-details-button,
     .select-flight-button {
         width: auto;
         min-width: 10.5rem;
@@ -591,6 +623,12 @@ h2 {
         text-align: left;
     }
 
+    .flight-card-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .view-details-button,
     .select-flight-button {
         width: 100%;
     }
