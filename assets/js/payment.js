@@ -7,14 +7,26 @@
     ];
 
     var TAX_RATE = 0.1;
+    var PROMO_CODES = {
+        AEROVA10: 10,
+        FLYAEROVA: 15,
+        WELCOME20: 20
+    };
+
     var priceState = {
         baseFare: 0,
         baggage: 0,
         meals: 0,
         extraServices: 0,
         taxes: 0,
+        subtotal: 0,
+        discount: 0,
+        promoCode: "",
+        promoPercent: 0,
         grandTotal: 0
     };
+
+    var appliedPromo = null;
 
     function setText(id, value) {
         var element = document.getElementById(id);
@@ -154,6 +166,10 @@
             return roundMoney(toNumber(extraServicesData.baseFare, 0));
         }
 
+        if (bookingData && bookingData.baseFare != null) {
+            return roundMoney(toNumber(bookingData.baseFare, 0));
+        }
+
         var selectedFlight = readJSON("aerovaSelectedFlight");
         var passengerCount = getPassengerCount(bookingData);
         var unitPrice = toNumber(selectedFlight && selectedFlight.price, NaN);
@@ -172,10 +188,26 @@
             (bookingData && (bookingData.baggageTotal != null || bookingData.mealTotal != null || bookingData.extraServicesTotal != null)) ||
             extraServicesData
         ) {
-            return roundMoney(Math.max(0, storedTotal - baggageTotal - mealTotal - extraServicesTotal));
+            var discountAmount = toNumber(bookingData && bookingData.discountAmount, 0);
+            var taxesEstimate = toNumber(bookingData && bookingData.taxesAndFees, 0);
+            return roundMoney(Math.max(
+                0,
+                storedTotal - baggageTotal - mealTotal - extraServicesTotal - taxesEstimate + discountAmount
+            ));
         }
 
-        return roundMoney(storedTotal);
+        return roundMoney(storedTotal + toNumber(bookingData && bookingData.discountAmount, 0));
+    }
+
+    function normalizePromoCode(value) {
+        return String(value || "").trim().toUpperCase();
+    }
+
+    function getPromoPercent(code) {
+        var normalized = normalizePromoCode(code);
+        return Object.prototype.hasOwnProperty.call(PROMO_CODES, normalized)
+            ? PROMO_CODES[normalized]
+            : null;
     }
 
     function calculatePriceBreakdown(bookingData) {
@@ -188,7 +220,14 @@
         var extraServices = getExtraServicesTotal(extraServicesData, bookingData);
         var baseFare = getBaseFare(bookingData, baggage, meals, extraServices, extraServicesData);
         var taxes = roundMoney(baseFare * TAX_RATE);
-        var grandTotal = roundMoney(baseFare + baggage + meals + extraServices + taxes);
+        var subtotal = roundMoney(baseFare + baggage + meals + extraServices + taxes);
+
+        var promoCode = appliedPromo ? appliedPromo.code : "";
+        var promoPercent = appliedPromo ? appliedPromo.percent : 0;
+        var discount = appliedPromo
+            ? roundMoney(subtotal * (promoPercent / 100))
+            : 0;
+        var grandTotal = roundMoney(Math.max(0, subtotal - discount));
 
         return {
             baseFare: baseFare,
@@ -196,6 +235,10 @@
             meals: meals,
             extraServices: extraServices,
             taxes: taxes,
+            subtotal: subtotal,
+            discount: discount,
+            promoCode: promoCode,
+            promoPercent: promoPercent,
             grandTotal: grandTotal
         };
     }
@@ -251,19 +294,155 @@
         }
     }
 
+    function clearPromoError() {
+        var control = document.getElementById("promo-code-control");
+        var error = document.getElementById("promo-code-error");
+        var input = document.getElementById("promo-code-input");
+
+        if (control) {
+            control.classList.remove("is-invalid");
+        }
+        if (error) {
+            error.textContent = "";
+            error.hidden = true;
+        }
+        if (input) {
+            input.classList.remove("is-invalid");
+        }
+    }
+
+    function showPromoError(message) {
+        var control = document.getElementById("promo-code-control");
+        var error = document.getElementById("promo-code-error");
+        var input = document.getElementById("promo-code-input");
+
+        if (control) {
+            control.classList.add("is-invalid");
+        }
+        if (error) {
+            error.textContent = message || "Invalid promo code";
+            error.hidden = false;
+        }
+        if (input) {
+            input.classList.add("is-invalid");
+            input.focus();
+        }
+    }
+
+    function updatePromoUi() {
+        var input = document.getElementById("promo-code-input");
+        var applyButton = document.getElementById("promo-apply-button");
+        var appliedBlock = document.getElementById("promo-code-applied");
+        var success = document.getElementById("promo-code-success");
+        var discountRow = document.getElementById("payment-discount-row");
+        var discountCodeLabel = document.getElementById("payment-discount-code-label");
+
+        if (appliedPromo) {
+            if (input) {
+                input.value = appliedPromo.code;
+                input.disabled = true;
+            }
+            if (applyButton) {
+                applyButton.disabled = true;
+            }
+            if (appliedBlock) {
+                appliedBlock.hidden = false;
+            }
+            if (success) {
+                success.textContent = appliedPromo.code + " applied − " + appliedPromo.percent + "% off";
+            }
+            if (discountRow) {
+                discountRow.hidden = false;
+            }
+            if (discountCodeLabel) {
+                discountCodeLabel.textContent = "(" + appliedPromo.code + ")";
+            }
+        } else {
+            if (input) {
+                input.disabled = false;
+            }
+            if (applyButton) {
+                applyButton.disabled = false;
+            }
+            if (appliedBlock) {
+                appliedBlock.hidden = true;
+            }
+            if (success) {
+                success.textContent = "";
+            }
+            if (discountRow) {
+                discountRow.hidden = true;
+            }
+            if (discountCodeLabel) {
+                discountCodeLabel.textContent = "";
+            }
+        }
+    }
+
+    function persistPromoToBooking(bookingData, prices) {
+        if (!bookingData) {
+            return false;
+        }
+
+        if (appliedPromo) {
+            bookingData.promoCode = appliedPromo.code;
+            bookingData.discountPercent = appliedPromo.percent;
+            bookingData.discountAmount = prices.discount;
+        } else {
+            delete bookingData.promoCode;
+            delete bookingData.discountPercent;
+            delete bookingData.discountAmount;
+        }
+
+        bookingData.baseFare = prices.baseFare;
+        bookingData.baggageTotal = prices.baggage;
+        bookingData.mealTotal = prices.meals;
+        bookingData.extraServicesTotal = prices.extraServices;
+        bookingData.taxesAndFees = prices.taxes;
+        bookingData.preDiscountTotal = prices.subtotal;
+        bookingData.totalPrice = prices.grandTotal;
+
+        try {
+            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function refreshTotals(bookingData) {
+        var prices = calculatePriceBreakdown(bookingData || readBookingData() || {});
+        var payButton = document.getElementById("pay-button");
+
+        priceState = prices;
+
+        setText("payment-base-fare", formatPrice(prices.baseFare));
+        setText("payment-baggage", formatPrice(prices.baggage));
+        setText("payment-meals", formatPrice(prices.meals));
+        setText("payment-extra-services", formatPrice(prices.extraServices));
+        setText("payment-discount", prices.discount > 0 ? ("−" + formatPrice(prices.discount)) : formatPrice(0));
+        setText("payment-taxes", formatPrice(prices.taxes));
+        setText("payment-total", formatPrice(prices.grandTotal));
+
+        if (payButton) {
+            payButton.textContent = "Pay " + formatPrice(prices.grandTotal);
+            payButton.disabled = false;
+            payButton.removeAttribute("disabled");
+        }
+
+        updatePromoUi();
+        return prices;
+    }
+
     function populatePaymentSummary(bookingData) {
         var flight = bookingData.flight || {};
         var selectedSeats = Array.isArray(bookingData.selectedSeats)
             ? bookingData.selectedSeats
             : [];
-        var prices = calculatePriceBreakdown(bookingData);
         var route = flight.route || ((flight.from || "—") + " → " + (flight.to || "—"));
         var times = (flight.departure || "—") + " → " + (flight.arrival || "—");
-        var payButton = document.getElementById("pay-button");
         var cardholderInput = document.getElementById("cardholder-name");
         var cardholderName = getPassengerOneName(bookingData);
-
-        priceState = prices;
 
         setText("payment-summary-airline", flight.airline || "AEROVA");
         setText("payment-summary-flight-number", flight.flightNumber || "—");
@@ -280,21 +459,95 @@
             "payment-summary-seats",
             selectedSeats.length ? selectedSeats.join(", ") : "—"
         );
-        setText("payment-base-fare", formatPrice(prices.baseFare));
-        setText("payment-baggage", formatPrice(prices.baggage));
-        setText("payment-meals", formatPrice(prices.meals));
-        setText("payment-extra-services", formatPrice(prices.extraServices));
-        setText("payment-taxes", formatPrice(prices.taxes));
-        setText("payment-total", formatPrice(prices.grandTotal));
 
-        if (payButton) {
-            payButton.textContent = "Pay " + formatPrice(prices.grandTotal);
-            payButton.disabled = false;
-            payButton.removeAttribute("disabled");
-        }
+        refreshTotals(bookingData);
 
         if (cardholderInput && cardholderName) {
             cardholderInput.value = cardholderName;
+        }
+    }
+
+    function restoreAppliedPromo(bookingData) {
+        if (!bookingData || !bookingData.promoCode) {
+            appliedPromo = null;
+            return;
+        }
+
+        var percent = getPromoPercent(bookingData.promoCode);
+        if (percent == null) {
+            appliedPromo = null;
+            return;
+        }
+
+        appliedPromo = {
+            code: normalizePromoCode(bookingData.promoCode),
+            percent: percent
+        };
+    }
+
+    function applyPromoCode() {
+        clearPromoError();
+
+        var bookingData = readBookingData();
+        if (!bookingData) {
+            showPromoError("Booking not found");
+            return;
+        }
+
+        var input = document.getElementById("promo-code-input");
+        var code = normalizePromoCode(input ? input.value : "");
+
+        if (!code) {
+            showPromoError("Enter a promo code");
+            return;
+        }
+
+        if (appliedPromo && appliedPromo.code === code) {
+            showPromoError("Promo code already applied");
+            return;
+        }
+
+        if (appliedPromo) {
+            showPromoError("Remove the current code first");
+            return;
+        }
+
+        var percent = getPromoPercent(code);
+        if (percent == null) {
+            showPromoError("Invalid promo code");
+            return;
+        }
+
+        appliedPromo = {
+            code: code,
+            percent: percent
+        };
+
+        var prices = refreshTotals(bookingData);
+        if (!persistPromoToBooking(bookingData, prices)) {
+            showPromoError("Unable to save promo code");
+            return;
+        }
+
+        clearPromoError();
+    }
+
+    function removePromoCode() {
+        clearPromoError();
+
+        var bookingData = readBookingData();
+        var input = document.getElementById("promo-code-input");
+
+        appliedPromo = null;
+
+        if (input) {
+            input.value = "";
+            input.disabled = false;
+        }
+
+        var prices = refreshTotals(bookingData || {});
+        if (bookingData) {
+            persistPromoToBooking(bookingData, prices);
         }
     }
 
@@ -476,8 +729,7 @@
             return;
         }
 
-        var prices = calculatePriceBreakdown(bookingData);
-        priceState = prices;
+        var prices = refreshTotals(bookingData);
 
         bookingData.paymentStatus = "Paid";
         bookingData.paymentMethod = getPaymentMethodLabel(method);
@@ -487,6 +739,17 @@
         bookingData.mealTotal = prices.meals;
         bookingData.extraServicesTotal = prices.extraServices;
         bookingData.taxesAndFees = prices.taxes;
+        bookingData.preDiscountTotal = prices.subtotal;
+
+        if (appliedPromo) {
+            bookingData.promoCode = appliedPromo.code;
+            bookingData.discountPercent = appliedPromo.percent;
+            bookingData.discountAmount = prices.discount;
+        } else {
+            delete bookingData.promoCode;
+            delete bookingData.discountPercent;
+            delete bookingData.discountAmount;
+        }
 
         try {
             sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
@@ -501,8 +764,16 @@
     function bindClearInvalidOnInput() {
         document.addEventListener("input", function (event) {
             var target = event.target;
-            if (target && target.classList && target.classList.contains("payment-field-input")) {
+            if (!target || !target.classList) {
+                return;
+            }
+
+            if (target.classList.contains("payment-field-input")) {
                 clearFieldError(target);
+            }
+
+            if (target.id === "promo-code-input") {
+                clearPromoError();
             }
         });
     }
@@ -517,6 +788,29 @@
         }
     }
 
+    function bindPromoActions() {
+        var applyButton = document.getElementById("promo-apply-button");
+        var removeButton = document.getElementById("promo-remove-button");
+        var promoInput = document.getElementById("promo-code-input");
+
+        if (applyButton) {
+            applyButton.addEventListener("click", applyPromoCode);
+        }
+
+        if (removeButton) {
+            removeButton.addEventListener("click", removePromoCode);
+        }
+
+        if (promoInput) {
+            promoInput.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    applyPromoCode();
+                }
+            });
+        }
+    }
+
     function init() {
         var payButton = document.getElementById("pay-button");
         var layout = document.querySelector(".payment-layout");
@@ -524,6 +818,7 @@
 
         bindPaymentMethodSelection();
         bindClearInvalidOnInput();
+        bindPromoActions();
         updateWalletMethodMessage();
 
         if (payButton) {
@@ -542,6 +837,8 @@
         if (layout) {
             layout.hidden = false;
         }
+
+        restoreAppliedPromo(bookingData);
         populatePaymentSummary(bookingData);
     }
 

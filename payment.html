@@ -176,15 +176,35 @@
                                 <dt>Extra Services</dt>
                                 <dd id="payment-extra-services">$0.00</dd>
                             </div>
+                            <div class="price-row" id="payment-discount-row" hidden>
+                                <dt>Discount <span id="payment-discount-code-label"></span></dt>
+                                <dd id="payment-discount">−$0.00</dd>
+                            </div>
                             <div class="price-row">
                                 <dt>Taxes &amp; Fees</dt>
                                 <dd id="payment-taxes">$0.00</dd>
                             </div>
-                            <div class="price-row price-row--total">
-                                <dt>Grand Total</dt>
-                                <dd id="payment-total">$0.00</dd>
-                            </div>
                         </dl>
+
+                        <div class="promo-code-section" id="promo-code-section">
+                            <p class="promo-code-title">Promo Code</p>
+                            <div class="promo-code-row">
+                                <div class="promo-code-control" id="promo-code-control">
+                                    <input class="promo-code-input" id="promo-code-input" type="text" name="promoCode" placeholder="Enter promo code" autocomplete="off" maxlength="24">
+                                    <p class="promo-code-error" id="promo-code-error" hidden></p>
+                                </div>
+                                <button class="promo-code-button" id="promo-apply-button" type="button">Apply</button>
+                            </div>
+                            <div class="promo-code-applied" id="promo-code-applied" hidden>
+                                <p class="promo-code-success" id="promo-code-success"></p>
+                                <button class="promo-code-remove" id="promo-remove-button" type="button">Remove</button>
+                            </div>
+                        </div>
+
+                        <div class="price-row price-row--total payment-grand-total">
+                            <p class="payment-grand-total-label">Grand Total</p>
+                            <p class="payment-grand-total-value" id="payment-total">$0.00</p>
+                        </div>
 
                         <button class="pay-button" id="pay-button" type="button">Pay $0.00</button>
                         <p class="pay-terms">By clicking Pay, you agree to the terms and conditions.</p>

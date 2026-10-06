@@ -578,12 +578,218 @@
         });
     }
 
+    var searchCriteria = null;
+    var baseFlights = [];
+    var activeCabin = "Economy";
+
     function renderEmptyState(container) {
         container.innerHTML =
             '<div class="results-empty">' +
-                '<h2 class="results-empty-title">No flights found</h2>' +
-                '<p class="results-empty-text">Try changing your search criteria.</p>' +
+                '<h2 class="results-empty-title">No Flights Found</h2>' +
+                '<p class="results-empty-text">Try adjusting your filters or search criteria.</p>' +
             "</div>";
+    }
+
+    function getCheckedValues(name) {
+        return Array.prototype.slice
+            .call(document.querySelectorAll('input[name="' + name + '"]:checked'))
+            .map(function (input) {
+                return input.value;
+            });
+    }
+
+    function getSelectedRadioValue(name) {
+        var selected = document.querySelector('input[name="' + name + '"]:checked');
+        return selected ? selected.value : "";
+    }
+
+    function readFilterState() {
+        var sortSelect = document.getElementById("sort-by-select");
+        var priceDirection = getSelectedRadioValue("filter-price");
+        var durationDirection = getSelectedRadioValue("filter-duration");
+        var cabinFilter = resolveCabinName(getSelectedRadioValue("filter-cabin"));
+        var sortBy = sortSelect ? sortSelect.value : "recommended";
+
+        if (priceDirection === "asc") {
+            sortBy = "price-asc";
+        } else if (priceDirection === "desc") {
+            sortBy = "price-desc";
+        } else if (durationDirection === "asc") {
+            sortBy = "duration-asc";
+        } else if (durationDirection === "desc") {
+            sortBy = "duration-desc";
+        }
+
+        return {
+            airlines: getCheckedValues("filter-airline"),
+            stops: getCheckedValues("filter-stops"),
+            cabin: cabinFilter,
+            sortBy: sortBy
+        };
+    }
+
+    function getActiveCabin(filterState) {
+        if (filterState.cabin) {
+            return filterState.cabin;
+        }
+        return getDefaultCabin(searchCriteria || {});
+    }
+
+    function applyClientFilters(flights, filterState) {
+        return flights.filter(function (flight) {
+            if (filterState.airlines.length && filterState.airlines.indexOf(flight.airline) === -1) {
+                return false;
+            }
+
+            if (filterState.stops.length && filterState.stops.indexOf(flight.stops) === -1) {
+                return false;
+            }
+
+            if (filterState.cabin && typeof getCabinPrice(flight, filterState.cabin) !== "number") {
+                return false;
+            }
+
+            return true;
+        });
+    }
+
+    function compareRecommended(a, b, cabin) {
+        var scoreA = getCabinPrice(a, cabin) + (a.durationMinutes || 0) * 0.35 + parseDepartureMinutes(a.departure) * 0.05;
+        var scoreB = getCabinPrice(b, cabin) + (b.durationMinutes || 0) * 0.35 + parseDepartureMinutes(b.departure) * 0.05;
+        return scoreA - scoreB;
+    }
+
+    function sortFilteredFlights(flights, filterState, cabin) {
+        var sorted = flights.slice();
+
+        sorted.sort(function (a, b) {
+            var priceA = getCabinPrice(a, cabin) || 0;
+            var priceB = getCabinPrice(b, cabin) || 0;
+
+            switch (filterState.sortBy) {
+                case "cheapest":
+                case "price-asc":
+                    return priceA - priceB || parseDepartureMinutes(a.departure) - parseDepartureMinutes(b.departure);
+                case "price-desc":
+                    return priceB - priceA || parseDepartureMinutes(a.departure) - parseDepartureMinutes(b.departure);
+                case "fastest":
+                case "duration-asc":
+                    return (a.durationMinutes || 0) - (b.durationMinutes || 0) || priceA - priceB;
+                case "duration-desc":
+                    return (b.durationMinutes || 0) - (a.durationMinutes || 0) || priceA - priceB;
+                case "earliest":
+                    if (a.date !== b.date) {
+                        return a.date < b.date ? -1 : 1;
+                    }
+                    return parseDepartureMinutes(a.departure) - parseDepartureMinutes(b.departure);
+                case "recommended":
+                default:
+                    return compareRecommended(a, b, cabin);
+            }
+        });
+
+        return sorted;
+    }
+
+    function updateResultsCount(count) {
+        var countElement = document.getElementById("results-count");
+        if (!countElement) {
+            return;
+        }
+
+        if (count === 0) {
+            countElement.textContent = "0 flights match your filters";
+            return;
+        }
+
+        countElement.textContent = count + (count === 1 ? " flight found" : " flights found");
+    }
+
+    function refreshResults() {
+        var filterState = readFilterState();
+        activeCabin = getActiveCabin(filterState);
+
+        var filtered = applyClientFilters(baseFlights, filterState);
+        var sorted = sortFilteredFlights(filtered, filterState, activeCabin);
+
+        updateResultsCount(sorted.length);
+        renderFlightCards(sorted, searchCriteria, activeCabin);
+    }
+
+    function clearFilters() {
+        var sortSelect = document.getElementById("sort-by-select");
+        if (sortSelect) {
+            sortSelect.value = "recommended";
+        }
+
+        document.querySelectorAll('input[name="filter-airline"]').forEach(function (input) {
+            input.checked = input.value === "AEROVA";
+        });
+
+        document.querySelectorAll('input[name="filter-price"], input[name="filter-duration"], input[name="filter-stops"]').forEach(function (input) {
+            input.checked = false;
+        });
+
+        document.querySelectorAll('input[name="filter-cabin"]').forEach(function (input) {
+            input.checked = resolveCabinName(input.value) === getDefaultCabin(searchCriteria || {});
+        });
+
+        refreshResults();
+    }
+
+    function bindFilterControls() {
+        var panel = document.querySelector(".filters-panel");
+        var toggle = document.getElementById("filters-toggle");
+        var clearButton = document.getElementById("clear-filters-button");
+        var sortSelect = document.getElementById("sort-by-select");
+
+        if (toggle && panel) {
+            toggle.addEventListener("click", function () {
+                var isOpen = panel.classList.toggle("is-open");
+                toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            });
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener("click", clearFilters);
+        }
+
+        if (sortSelect) {
+            sortSelect.addEventListener("change", function () {
+                document.querySelectorAll('input[name="filter-price"], input[name="filter-duration"]').forEach(function (input) {
+                    input.checked = false;
+                });
+                refreshResults();
+            });
+        }
+
+        document.querySelectorAll('input[name="filter-airline"], input[name="filter-stops"], input[name="filter-cabin"]').forEach(function (input) {
+            input.addEventListener("change", refreshResults);
+        });
+
+        document.querySelectorAll('input[name="filter-price"]').forEach(function (input) {
+            input.addEventListener("change", function () {
+                document.querySelectorAll('input[name="filter-duration"]').forEach(function (durationInput) {
+                    durationInput.checked = false;
+                });
+                if (sortSelect) {
+                    sortSelect.value = "recommended";
+                }
+                refreshResults();
+            });
+        });
+
+        document.querySelectorAll('input[name="filter-duration"]').forEach(function (input) {
+            input.addEventListener("change", function () {
+                document.querySelectorAll('input[name="filter-price"]').forEach(function (priceInput) {
+                    priceInput.checked = false;
+                });
+                if (sortSelect) {
+                    sortSelect.value = "recommended";
+                }
+                refreshResults();
+            });
+        });
     }
 
     function saveSelectedFlight(flight, cabinClass, criteria) {
@@ -631,7 +837,7 @@
         window.location.href = "flight-details.html?" + params.toString();
     }
 
-    function renderFlightCards(flights, criteria) {
+    function renderFlightCards(flights, criteria, cabinClass) {
         var container = document.querySelector(".flight-list");
         if (!container) {
             return;
@@ -644,7 +850,7 @@
             return;
         }
 
-        var defaultCabin = getDefaultCabin(criteria);
+        var defaultCabin = cabinClass || getDefaultCabin(criteria);
 
         flights.forEach(function (flight) {
             var card = createFlightCard(flight, defaultCabin);
@@ -654,8 +860,8 @@
 
             cabinButtons.forEach(function (button) {
                 button.addEventListener("click", function () {
-                    var cabinClass = button.getAttribute("data-cabin");
-                    updateCardCabinSelection(card, flight, cabinClass);
+                    var selectedCabin = button.getAttribute("data-cabin");
+                    updateCardCabinSelection(card, flight, selectedCabin);
                 });
             });
 
@@ -676,12 +882,22 @@
         });
     }
 
-    function init() {
-        var criteria = readSearchCriteria();
-        var matchingFlights = filterFlights(criteria);
+    function initCabinFilterDefault(criteria) {
+        var defaultCabin = getDefaultCabin(criteria);
+        document.querySelectorAll('input[name="filter-cabin"]').forEach(function (input) {
+            input.checked = resolveCabinName(input.value) === defaultCabin;
+        });
+    }
 
-        updateResultsHeader(criteria);
-        renderFlightCards(matchingFlights, criteria);
+    function init() {
+        searchCriteria = readSearchCriteria();
+        baseFlights = filterFlights(searchCriteria);
+        activeCabin = getDefaultCabin(searchCriteria);
+
+        updateResultsHeader(searchCriteria);
+        initCabinFilterDefault(searchCriteria);
+        bindFilterControls();
+        refreshResults();
     }
 
     if (document.readyState === "loading") {

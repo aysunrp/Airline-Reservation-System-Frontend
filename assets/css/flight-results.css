@@ -307,6 +307,162 @@ h2 {
     letter-spacing: 0.02em;
 }
 
+.results-layout {
+    display: grid;
+    grid-template-columns: minmax(15.5rem, 18rem) minmax(0, 1fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+    align-items: start;
+}
+
+.filters-panel {
+    position: sticky;
+    top: calc(var(--header-height) + 1rem);
+    border-radius: 18px;
+    background:
+        radial-gradient(ellipse at 0% 0%, rgba(198, 163, 106, 0.12), transparent 45%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.3);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.filters-toggle {
+    display: none;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 52px;
+    padding: 0.9rem 1.15rem;
+    color: var(--color-cream);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.filters-toggle-icon {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 1.5px solid var(--color-gold);
+    border-bottom: 1.5px solid var(--color-gold);
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.filters-panel.is-open .filters-toggle-icon {
+    transform: rotate(-135deg);
+    margin-top: 0.35rem;
+}
+
+.filters-panel-body {
+    padding: 1.25rem 1.15rem 1.35rem;
+}
+
+.filters-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.filters-panel-title {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+}
+
+.filters-clear-button {
+    color: var(--color-gold-light);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.filters-clear-button:hover {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+}
+
+.filter-group + .filter-group {
+    margin-top: 1.2rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid rgba(246, 241, 231, 0.08);
+}
+
+.filter-group-title {
+    margin: 0 0 0.7rem;
+    color: var(--color-gold);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.filter-check {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 2rem;
+    color: var(--color-cream-muted);
+    font-size: 0.92rem;
+    cursor: pointer;
+}
+
+.filter-check + .filter-check {
+    margin-top: 0.2rem;
+}
+
+.filter-check input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--color-gold);
+    flex-shrink: 0;
+}
+
+.filter-check:hover {
+    color: var(--color-cream);
+}
+
+.filter-select-label {
+    display: block;
+}
+
+.filter-select {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    background: rgba(5, 12, 22, 0.55);
+    border: 1px solid rgba(246, 241, 231, 0.14);
+    color: var(--color-cream);
+    font: inherit;
+    font-size: 0.92rem;
+    color-scheme: dark;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--color-gold);
+}
+
+.results-main {
+    min-width: 0;
+}
+
+.results-count {
+    margin: 0 0 1rem;
+    color: var(--color-cream-muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
 .flight-list {
     display: flex;
     flex-direction: column;
@@ -551,6 +707,34 @@ h2 {
     color: var(--color-cream-muted);
     font-size: 1rem;
     font-weight: 300;
+}
+
+@media (max-width: 980px) {
+    .results-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-panel {
+        position: static;
+    }
+
+    .filters-toggle {
+        display: flex;
+    }
+
+    .filters-panel-body {
+        display: none;
+        padding-top: 0;
+        border-top: 1px solid rgba(246, 241, 231, 0.08);
+    }
+
+    .filters-panel.is-open .filters-panel-body {
+        display: block;
+    }
+
+    .filters-panel-header .filters-panel-title {
+        display: none;
+    }
 }
 
 @media (max-width: 1100px) {

@@ -1,55 +1,8 @@
 (function () {
     var STORAGE_KEY = "notificationsData";
 
-    var DEFAULT_NOTIFICATIONS = [
-        {
-            id: "notif-1",
-            type: "booking",
-            title: "Booking Confirmation",
-            message: "Your AEROVA reservation AV7K92M for Baku → London is confirmed.",
-            datetime: "2026-10-05T14:20:00",
-            read: false,
-            icon: "B"
-        },
-        {
-            id: "notif-2",
-            type: "flight",
-            title: "Flight Update",
-            message: "AV 101 is on schedule. Departure remains 09:30 from GYD.",
-            datetime: "2026-10-05T18:05:00",
-            read: false,
-            icon: "F"
-        },
-        {
-            id: "notif-3",
-            type: "payment",
-            title: "Payment Confirmation",
-            message: "Payment of $1,594.00 was received successfully for your booking.",
-            datetime: "2026-10-05T14:22:00",
-            read: true,
-            icon: "P"
-        },
-        {
-            id: "notif-4",
-            type: "checkin",
-            title: "Check-in Reminder",
-            message: "Online check-in opens 24 hours before departure for flight AV 101.",
-            datetime: "2026-10-06T09:00:00",
-            read: false,
-            icon: "C"
-        },
-        {
-            id: "notif-5",
-            type: "promo",
-            title: "Promotional Offer",
-            message: "Enjoy complimentary lounge access on your next Comfort booking this month.",
-            datetime: "2026-10-04T11:30:00",
-            read: true,
-            icon: "O"
-        }
-    ];
-
     var notificationsState = [];
+    var bookingFingerprint = "none";
 
     function escapeHtml(value) {
         return String(value)
@@ -93,6 +46,14 @@
         message.hidden = !text;
     }
 
+    function formatPrice(amount) {
+        var value = Number(amount);
+        if (!isFinite(value)) {
+            return "$0";
+        }
+        return "$" + value.toFixed(value % 1 === 0 ? 0 : 2);
+    }
+
     function formatDateTime(value) {
         if (!value) {
             return "—";
@@ -108,31 +69,244 @@
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
 
-        var day = date.getDate();
-        var month = months[date.getMonth()];
-        var year = date.getFullYear();
-        var hours = String(date.getHours()).padStart(2, "0");
-        var minutes = String(date.getMinutes()).padStart(2, "0");
-
-        return day + " " + month + " " + year + " · " + hours + ":" + minutes;
+        return date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear() +
+            " · " +
+            String(date.getHours()).padStart(2, "0") + ":" +
+            String(date.getMinutes()).padStart(2, "0");
     }
 
-    function loadNotifications() {
-        var stored = readJSON(STORAGE_KEY);
+    function formatFlightDate(dateValue) {
+        if (!dateValue) {
+            return "your departure date";
+        }
 
-        if (stored && Array.isArray(stored.notifications)) {
-            return stored.notifications;
+        var parts = String(dateValue).split("-");
+        if (parts.length !== 3) {
+            return String(dateValue);
+        }
+
+        var months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        var month = Number(parts[1]);
+        var day = Number(parts[2]);
+        var year = Number(parts[0]);
+
+        if (!month || !day || !year) {
+            return String(dateValue);
+        }
+
+        return day + " " + months[month - 1] + " " + year;
+    }
+
+    function getBookingData() {
+        return readJSON("bookingData");
+    }
+
+    function getBookingFingerprint(booking) {
+        if (!booking) {
+            return "none";
+        }
+
+        var flight = booking.flight || {};
+
+        return [
+            booking.pnr || "",
+            booking.status || "",
+            booking.paymentStatus || "",
+            flight.departureDate || "",
+            flight.flightNumber || "",
+            booking.cabinClass || "",
+            booking.totalPrice != null ? String(booking.totalPrice) : ""
+        ].join("|");
+    }
+
+    function isCancelled(booking) {
+        var status = String(booking.status || "").toLowerCase();
+        var payment = String(booking.paymentStatus || "").toLowerCase();
+        return status === "cancelled" || payment === "cancelled";
+    }
+
+    function isPaid(booking) {
+        var payment = String(booking.paymentStatus || "").toLowerCase();
+        return payment === "paid" || payment === "confirmed";
+    }
+
+    function isConfirmed(booking) {
+        if (isCancelled(booking)) {
+            return false;
+        }
+
+        var status = String(booking.status || "").toLowerCase();
+        return status === "confirmed" || isPaid(booking) || !!booking.pnr;
+    }
+
+    function buildNotification(id, type, title, message, icon, datetime) {
+        return {
+            id: id,
+            type: type,
+            title: title,
+            message: message,
+            icon: icon,
+            datetime: datetime || new Date().toISOString(),
+            read: false
+        };
+    }
+
+    function generateFromBooking(booking) {
+        if (!booking) {
+            return [];
+        }
+
+        var flight = booking.flight || {};
+        var pnr = booking.pnr || "your booking";
+        var flightNumber = flight.flightNumber || "your flight";
+        var route = flight.from && flight.to
+            ? flight.from + " → " + flight.to
+            : (flight.route || "your route");
+        var departureDate = flight.departureDate || "";
+        var departureTime = flight.departure || "";
+        var now = Date.now();
+        var items = [];
+
+        if (isCancelled(booking)) {
+            items.push(buildNotification(
+                "cancelled-" + pnr,
+                "cancelled",
+                "Booking Cancelled",
+                "Reservation " + pnr + " for " + route + " has been cancelled.",
+                "X",
+                new Date(now).toISOString()
+            ));
+            return items;
+        }
+
+        if (isConfirmed(booking)) {
+            items.push(buildNotification(
+                "confirmed-" + pnr,
+                "booking",
+                "Booking Confirmed",
+                "Your AEROVA reservation " + pnr + " for " + route + " is confirmed.",
+                "B",
+                new Date(now - 120000).toISOString()
+            ));
+        }
+
+        if (isPaid(booking)) {
+            items.push(buildNotification(
+                "payment-" + pnr,
+                "payment",
+                "Payment Successful",
+                "Payment of " + formatPrice(booking.totalPrice) + " was received successfully for booking " + pnr + ".",
+                "P",
+                new Date(now - 90000).toISOString()
+            ));
+        }
+
+        if (flight.flightNumber || departureDate) {
+            items.push(buildNotification(
+                "flight-update-" + pnr,
+                "flight",
+                "Flight Update",
+                flightNumber + " is scheduled for " + formatFlightDate(departureDate) +
+                    (departureTime ? " at " + departureTime : "") +
+                    ". Cabin: " + (booking.cabinClass || "Economy") + ".",
+                "F",
+                new Date(now - 60000).toISOString()
+            ));
+        }
+
+        if (departureDate) {
+            items.push(buildNotification(
+                "checkin-" + pnr,
+                "checkin",
+                "Check-in Reminder",
+                "Online check-in opens 24 hours before departure for flight " +
+                    flightNumber + " on " + formatFlightDate(departureDate) + ".",
+                "C",
+                new Date(now - 30000).toISOString()
+            ));
+        }
+
+        return items;
+    }
+
+    function mergeReadState(generated, previousNotifications) {
+        var readMap = {};
+
+        (previousNotifications || []).forEach(function (item) {
+            if (item && item.id) {
+                readMap[item.id] = !!item.read;
+            }
+        });
+
+        return generated.map(function (item) {
+            if (Object.prototype.hasOwnProperty.call(readMap, item.id)) {
+                return Object.assign({}, item, { read: readMap[item.id] });
+            }
+            return item;
+        });
+    }
+
+    function loadStoredPayload() {
+        var stored = readJSON(STORAGE_KEY);
+        if (!stored) {
+            return { notifications: [], clearedFingerprint: null };
         }
 
         if (Array.isArray(stored)) {
-            return stored;
+            return { notifications: stored, clearedFingerprint: null };
         }
 
-        return JSON.parse(JSON.stringify(DEFAULT_NOTIFICATIONS));
+        return {
+            notifications: Array.isArray(stored.notifications) ? stored.notifications : [],
+            clearedFingerprint: stored.clearedFingerprint || null
+        };
     }
 
-    function persistNotifications() {
-        writeJSON(STORAGE_KEY, { notifications: notificationsState });
+    function persistNotifications(options) {
+        var existing = loadStoredPayload();
+        var payload = {
+            notifications: notificationsState,
+            fingerprint: bookingFingerprint,
+            clearedFingerprint: existing.clearedFingerprint || null
+        };
+
+        if (options && Object.prototype.hasOwnProperty.call(options, "clearedFingerprint")) {
+            payload.clearedFingerprint = options.clearedFingerprint;
+        }
+
+        // If booking changed after a clear, drop the old clear lock.
+        if (payload.clearedFingerprint && payload.clearedFingerprint !== bookingFingerprint) {
+            payload.clearedFingerprint = null;
+        }
+
+        writeJSON(STORAGE_KEY, payload);
+    }
+
+    function loadNotifications() {
+        var booking = getBookingData();
+        bookingFingerprint = getBookingFingerprint(booking);
+        var stored = loadStoredPayload();
+
+        if (!booking) {
+            return stored.notifications.slice();
+        }
+
+        if (stored.clearedFingerprint && stored.clearedFingerprint === bookingFingerprint) {
+            return [];
+        }
+
+        var generated = generateFromBooking(booking);
+        return mergeReadState(generated, stored.notifications);
+    }
+
+    function countUnread() {
+        return notificationsState.filter(function (item) {
+            return !item.read;
+        }).length;
     }
 
     function renderNotifications() {
@@ -145,7 +319,7 @@
             list.innerHTML =
                 '<div class="notifications-empty">' +
                     '<h2 class="notifications-empty-title">No Notifications</h2>' +
-                    '<p class="notifications-empty-text">You are all caught up. New booking and flight updates will appear here.</p>' +
+                    '<p class="notifications-empty-text">You are all caught up. Booking and flight updates will appear here when available.</p>' +
                 "</div>";
             return;
         }
@@ -154,12 +328,16 @@
             var isUnread = !notification.read;
 
             return (
-                '<article class="notification-card' + (isUnread ? " is-unread" : "") + '" data-notification-id="' + escapeHtml(notification.id) + '">' +
-                    '<span class="notification-icon" aria-hidden="true">' + escapeHtml(notification.icon || "•") + "</span>" +
+                '<article class="notification-card' + (isUnread ? " is-unread" : "") +
+                    '" data-notification-id="' + escapeHtml(notification.id) + '">' +
+                    '<span class="notification-icon" aria-hidden="true">' +
+                        escapeHtml(notification.icon || "•") +
+                    "</span>" +
                     '<div class="notification-body">' +
                         '<div class="notification-title-row">' +
                             '<h2 class="notification-title">' + escapeHtml(notification.title) + "</h2>" +
-                            '<span class="notification-state ' + (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
+                            '<span class="notification-state ' +
+                                (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
                                 (isUnread ? "Unread" : "Read") +
                             "</span>" +
                         "</div>" +
@@ -174,17 +352,6 @@
                 "</article>"
             );
         }).join("");
-
-        list.querySelectorAll("[data-action='mark-read']").forEach(function (button) {
-            button.addEventListener("click", function () {
-                var card = button.closest(".notification-card");
-                if (!card) {
-                    return;
-                }
-
-                markAsRead(card.getAttribute("data-notification-id"));
-            });
-        });
     }
 
     function markAsRead(notificationId) {
@@ -214,11 +381,7 @@
             return;
         }
 
-        var hasUnread = notificationsState.some(function (notification) {
-            return !notification.read;
-        });
-
-        if (!hasUnread) {
+        if (!countUnread()) {
             showMessage("All notifications are already read.");
             return;
         }
@@ -239,9 +402,39 @@
         }
 
         notificationsState = [];
-        persistNotifications();
+        persistNotifications({ clearedFingerprint: bookingFingerprint });
         renderNotifications();
         showMessage("All notifications have been cleared.");
+    }
+
+    function bindActions() {
+        var list = document.getElementById("notifications-list");
+        var markAllButton = document.getElementById("mark-all-read-button");
+        var clearButton = document.getElementById("clear-notifications-button");
+
+        if (list) {
+            list.addEventListener("click", function (event) {
+                var button = event.target.closest("[data-action='mark-read']");
+                if (!button || button.disabled) {
+                    return;
+                }
+
+                var card = button.closest(".notification-card");
+                if (!card) {
+                    return;
+                }
+
+                markAsRead(card.getAttribute("data-notification-id"));
+            });
+        }
+
+        if (markAllButton) {
+            markAllButton.addEventListener("click", markAllAsRead);
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener("click", clearNotifications);
+        }
     }
 
     function initMenuToggle() {
@@ -288,17 +481,7 @@
     function init() {
         notificationsState = loadNotifications();
         renderNotifications();
-
-        var markAllButton = document.getElementById("mark-all-read-button");
-        if (markAllButton) {
-            markAllButton.addEventListener("click", markAllAsRead);
-        }
-
-        var clearButton = document.getElementById("clear-notifications-button");
-        if (clearButton) {
-            clearButton.addEventListener("click", clearNotifications);
-        }
-
+        bindActions();
         initMenuToggle();
     }
 

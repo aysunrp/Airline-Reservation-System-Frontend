@@ -57,7 +57,98 @@
                     <p class="results-meta"></p>
                 </header>
 
-                <div class="flight-list" aria-label="Flight options"></div>
+                <div class="results-layout">
+                    <aside class="filters-panel" aria-label="Flight filters and sorting">
+                        <button class="filters-toggle" id="filters-toggle" type="button" aria-expanded="false" aria-controls="filters-panel-body">
+                            <span>Filters &amp; Sort</span>
+                            <span class="filters-toggle-icon" aria-hidden="true"></span>
+                        </button>
+
+                        <div class="filters-panel-body" id="filters-panel-body">
+                            <div class="filters-panel-header">
+                                <h2 class="filters-panel-title">Filters &amp; Sort</h2>
+                                <button class="filters-clear-button" id="clear-filters-button" type="button">Clear Filters</button>
+                            </div>
+
+                            <div class="filter-group">
+                                <h3 class="filter-group-title">Sort By</h3>
+                                <label class="filter-select-label" for="sort-by-select">
+                                    <select class="filter-select" id="sort-by-select">
+                                        <option value="recommended">Recommended</option>
+                                        <option value="cheapest">Cheapest</option>
+                                        <option value="fastest">Fastest</option>
+                                        <option value="earliest">Earliest Departure</option>
+                                    </select>
+                                </label>
+                            </div>
+
+                            <div class="filter-group">
+                                <h3 class="filter-group-title">Airline</h3>
+                                <label class="filter-check">
+                                    <input type="checkbox" name="filter-airline" value="AEROVA" checked>
+                                    <span>AEROVA</span>
+                                </label>
+                            </div>
+
+                            <div class="filter-group">
+                                <h3 class="filter-group-title">Price</h3>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-price" value="asc">
+                                    <span>Lowest to Highest</span>
+                                </label>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-price" value="desc">
+                                    <span>Highest to Lowest</span>
+                                </label>
+                            </div>
+
+                            <div class="filter-group">
+                                <h3 class="filter-group-title">Duration</h3>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-duration" value="asc">
+                                    <span>Shortest</span>
+                                </label>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-duration" value="desc">
+                                    <span>Longest</span>
+                                </label>
+                            </div>
+
+                            <div class="filter-group">
+                                <h3 class="filter-group-title">Stops</h3>
+                                <label class="filter-check">
+                                    <input type="checkbox" name="filter-stops" value="Non-stop">
+                                    <span>Non-stop</span>
+                                </label>
+                                <label class="filter-check">
+                                    <input type="checkbox" name="filter-stops" value="1 Stop">
+                                    <span>1 Stop</span>
+                                </label>
+                            </div>
+
+                            <div class="filter-group">
+                                <h3 class="filter-group-title">Cabin Class</h3>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-cabin" value="Economy">
+                                    <span>Economy</span>
+                                </label>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-cabin" value="Comfort">
+                                    <span>Comfort</span>
+                                </label>
+                                <label class="filter-check">
+                                    <input type="radio" name="filter-cabin" value="Business">
+                                    <span>Business</span>
+                                </label>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div class="results-main">
+                        <p class="results-count" id="results-count" aria-live="polite"></p>
+                        <div class="flight-list" aria-label="Flight options"></div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
