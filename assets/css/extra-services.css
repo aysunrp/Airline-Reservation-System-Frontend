@@ -1,0 +1,277 @@
+/* Extra Services — page content; header/footer from passenger-details.css */
+
+.extra-services-content {
+    flex: 1;
+}
+
+.extra-services-page {
+    width: min(var(--page-width), calc(100% - (var(--gutter) * 2)));
+    margin: 2.75rem auto 4.5rem;
+}
+
+.services-intro {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+}
+
+.services-title {
+    margin: 0 0 0.9rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 4vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.services-subtitle {
+    margin: 0;
+    color: var(--color-cream-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+}
+
+.booking-overview-card {
+    margin-bottom: 1.5rem;
+}
+
+.booking-overview-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1.5rem 2rem;
+    align-items: start;
+}
+
+.overview-meta {
+    margin: 0.85rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+.overview-label {
+    margin: 0 0 0.75rem;
+    color: var(--color-gold);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.overview-passenger-list {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.overview-passenger-list li {
+    color: var(--color-cream);
+    font-size: 0.98rem;
+    font-weight: 300;
+    line-height: 1.4;
+}
+
+.services-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.85fr);
+    gap: clamp(1.4rem, 3vw, 2.25rem);
+    align-items: start;
+}
+
+.services-main {
+    min-width: 0;
+}
+
+.extra-services-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.service-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem 1.15rem;
+    align-items: start;
+    width: 100%;
+    padding: 1.25rem 1.3rem;
+    text-align: left;
+    background:
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.1), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
+    border-radius: 18px;
+    color: var(--color-cream);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+
+.service-card:hover {
+    border-color: rgba(198, 163, 106, 0.6);
+    transform: translateY(-2px);
+}
+
+.service-card.is-selected {
+    background:
+        radial-gradient(ellipse at 0% 0%, rgba(224, 196, 138, 0.18), transparent 55%),
+        linear-gradient(180deg, #142438 0%, #0a1624 100%);
+    border-color: rgba(198, 163, 106, 0.85);
+    box-shadow:
+        0 0 0 1px rgba(198, 163, 106, 0.28),
+        0 20px 44px rgba(0, 0, 0, 0.22);
+}
+
+.service-toggle {
+    position: relative;
+    display: inline-flex;
+    width: 44px;
+    height: 26px;
+    margin-top: 0.2rem;
+    border-radius: 999px;
+    background: rgba(246, 241, 231, 0.14);
+    border: 1px solid rgba(246, 241, 231, 0.18);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.service-toggle::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(246, 241, 231, 0.75);
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.service-card.is-selected .service-toggle {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    border-color: rgba(198, 163, 106, 0.85);
+}
+
+.service-card.is-selected .service-toggle::after {
+    transform: translateX(18px);
+    background: var(--color-ink);
+}
+
+.service-card-body {
+    min-width: 0;
+}
+
+.service-card-name {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.service-card-description {
+    margin: 0.45rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+.service-card-price {
+    margin: 0.15rem 0 0;
+    color: var(--color-gold-light);
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.services-summary {
+    position: sticky;
+    top: calc(var(--header-height) + 1.25rem);
+    padding: 1.5rem 1.45rem 1.55rem;
+    background:
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
+    border-radius: 20px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
+}
+
+.selected-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-height: 3rem;
+}
+
+.selected-services-empty {
+    margin: 0;
+    color: rgba(246, 241, 231, 0.55);
+    font-size: 0.92rem;
+    font-weight: 300;
+}
+
+.selected-service-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.selected-service-name {
+    color: var(--color-cream);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.selected-service-price {
+    color: var(--color-gold-light);
+    font-size: 0.92rem;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.cost-breakdown {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+@media (max-width: 980px) {
+    .services-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .services-summary {
+        position: static;
+        order: -1;
+    }
+
+    .booking-overview-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .extra-services-page {
+        margin: 2rem auto 3.5rem;
+    }
+
+    .service-card {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .service-card-price {
+        grid-column: 2;
+        margin-top: 0;
+    }
+}
