@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEROVA | Booking Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/booking-details.css">
+</head>
+<body>
+    <header id="site-header" class="site-header">
+        <div class="header-container">
+            <a class="logo" href="index.html" aria-label="AEROVA Home">
+                <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+                    <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+                </svg>
+                <span class="logo-text">Aerova</span>
+            </a>
+
+            <nav id="primary-navigation" class="main-navigation" aria-label="Primary">
+                <ul class="nav-list">
+                    <li class="nav-item"><a class="nav-link" href="booking.html">Book</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#destinations">Destinations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html">My Trips</a></li>
+                </ul>
+                <a class="login-button login-button--drawer" href="index.html#login">Login</a>
+            </nav>
+
+            <div class="header-actions">
+                <a class="trips-link" href="my-trips.html">My Trips</a>
+                <button class="search-button" type="button" aria-label="Search">
+                    <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <a class="login-button" href="index.html#login">Login</a>
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu">
+                    <span class="menu-toggle-bar"></span>
+                    <span class="menu-toggle-bar"></span>
+                    <span class="menu-toggle-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="booking-details-content" class="booking-details-content">
+        <section class="booking-details-page" aria-label="Booking details">
+            <div class="page-container">
+                <header class="details-intro">
+                    <p class="details-eyebrow">AEROVA</p>
+                    <h1 class="details-title">Booking Details</h1>
+                    <p class="details-subtitle">Review the full itinerary, ancillaries, and fare breakdown for this reservation.</p>
+                </header>
+
+                <p class="details-message" id="details-message" aria-live="polite" hidden></p>
+
+                <div class="details-layout">
+                    <div class="details-main">
+                        <article class="details-card" aria-labelledby="reference-title">
+                            <div class="reference-top">
+                                <div>
+                                    <h2 class="details-card-title" id="reference-title">Booking Reference</h2>
+                                    <p class="reference-pnr" id="details-pnr">AV7K92M</p>
+                                </div>
+                                <p class="booking-status-badge" id="details-status">Confirmed</p>
+                            </div>
+                        </article>
+
+                        <article class="details-card" aria-labelledby="flight-info-title">
+                            <h2 class="details-card-title" id="flight-info-title">Flight Information</h2>
+                            <dl class="info-grid">
+                                <div class="info-item">
+                                    <dt>Flight Number</dt>
+                                    <dd id="details-flight-number">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Route</dt>
+                                    <dd id="details-route">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Date</dt>
+                                    <dd id="details-date">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Departure</dt>
+                                    <dd id="details-departure">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Arrival</dt>
+                                    <dd id="details-arrival">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Aircraft</dt>
+                                    <dd id="details-aircraft">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Cabin</dt>
+                                    <dd id="details-cabin">—</dd>
+                                </div>
+                                <div class="info-item">
+                                    <dt>Selected Seats</dt>
+                                    <dd id="details-seats">—</dd>
+                                </div>
+                            </dl>
+                        </article>
+
+                        <article class="details-card" aria-labelledby="passengers-title">
+                            <h2 class="details-card-title" id="passengers-title">Passenger Information</h2>
+                            <ul class="detail-list" id="details-passengers"></ul>
+                        </article>
+
+                        <article class="details-card" aria-labelledby="baggage-title">
+                            <h2 class="details-card-title" id="baggage-title">Baggage</h2>
+                            <ul class="detail-list" id="details-baggage"></ul>
+                        </article>
+
+                        <article class="details-card" aria-labelledby="meals-title">
+                            <h2 class="details-card-title" id="meals-title">Meals</h2>
+                            <ul class="detail-list" id="details-meals"></ul>
+                        </article>
+
+                        <article class="details-card" aria-labelledby="extras-title">
+                            <h2 class="details-card-title" id="extras-title">Extra Services</h2>
+                            <ul class="detail-list" id="details-extras"></ul>
+                        </article>
+                    </div>
+
+                    <aside class="details-summary" aria-labelledby="price-breakdown-title">
+                        <h2 class="details-card-title" id="price-breakdown-title">Price Breakdown</h2>
+
+                        <dl class="cost-breakdown">
+                            <div class="summary-row">
+                                <dt>Base Fare</dt>
+                                <dd id="price-base-fare">$0</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Baggage</dt>
+                                <dd id="price-baggage">$0</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Meals</dt>
+                                <dd id="price-meals">$0</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Extra Services</dt>
+                                <dd id="price-extras">$0</dd>
+                            </div>
+                            <div class="summary-row">
+                                <dt>Taxes / Fees</dt>
+                                <dd id="price-taxes">$0</dd>
+                            </div>
+                        </dl>
+
+                        <div class="summary-divider" aria-hidden="true"></div>
+
+                        <div class="summary-total">
+                            <p class="summary-total-label">Grand Total</p>
+                            <p class="summary-total-value" id="price-grand-total">$0</p>
+                        </div>
+
+                        <div class="details-actions">
+                            <button class="booking-action-button booking-action-button--primary" id="change-booking-button" type="button">Change Booking</button>
+                            <button class="booking-action-button booking-action-button--secondary" id="cancel-booking-button" type="button">Cancel Booking</button>
+                            <button class="booking-action-button booking-action-button--secondary" id="download-confirmation-button" type="button">Download Confirmation</button>
+                            <button class="booking-action-button booking-action-button--secondary" id="print-confirmation-button" type="button">Print Confirmation</button>
+                            <a class="booking-action-button booking-action-button--secondary" href="my-trips.html">Back to My Trips</a>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="site-footer" class="site-footer">
+        <div class="footer-main">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <a class="logo" href="index.html">
+                        <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+                            <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+                        </svg>
+                        <span class="logo-text">Aerova</span>
+                    </a>
+                    <p class="footer-description">Fly beyond expectations.</p>
+                </div>
+
+                <div class="footer-column">
+                    <h2 class="footer-heading">Quick Links</h2>
+                    <ul class="footer-links">
+                        <li><a class="footer-link" href="index.html">Home</a></li>
+                        <li><a class="footer-link" href="booking.html">Flights</a></li>
+                        <li><a class="footer-link" href="index.html#destinations">Destinations</a></li>
+                        <li><a class="footer-link" href="index.html#about">About</a></li>
+                        <li><a class="footer-link" href="my-trips.html">My Trips</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h2 class="footer-heading">Support</h2>
+                    <ul class="footer-links">
+                        <li><a class="footer-link" href="index.html#help">Help Center</a></li>
+                        <li><a class="footer-link" href="index.html#contact">Contact Us</a></li>
+                        <li><a class="footer-link" href="index.html#travel-info">Travel Information</a></li>
+                        <li><a class="footer-link" href="index.html#faqs">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h2 class="footer-heading">Follow Us</h2>
+                    <ul class="social-list">
+                        <li>
+                            <a class="social-link" href="index.html#facebook" aria-label="Facebook">
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="social-link" href="index.html#instagram" aria-label="Instagram">
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                    <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                    <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="social-link" href="index.html#x" aria-label="X">
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="social-link" href="index.html#youtube" aria-label="YouTube">
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                    <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="social-link" href="index.html#linkedin" aria-label="LinkedIn">
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                    <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2026 AEROVA. All rights reserved.</p>
+            <ul class="footer-legal">
+                <li><a class="footer-legal-link" href="index.html#privacy">Privacy Policy</a></li>
+                <li><a class="footer-legal-link" href="index.html#terms">Terms &amp; Conditions</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="assets/js/booking-details.js"></script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+/* Booking Details — page content; header/footer from passenger-details.css */
+
+.booking-details-content {
+    flex: 1;
+}
+
+.booking-details-page {
+    width: min(var(--page-width), calc(100% - (var(--gutter) * 2)));
+    margin: 2.75rem auto 4.5rem;
+}
+
+.details-intro {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+}
+
+.details-eyebrow {
+    margin: 0 0 0.65rem;
+    color: var(--color-gold);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.details-title {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.details-subtitle {
+    margin: 0.75rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+.details-message {
+    margin: 0 0 1.25rem;
+    color: #f0c9a0;
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.details-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.85fr);
+    gap: clamp(1.4rem, 3vw, 2.25rem);
+    align-items: start;
+}
+
+.details-main {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.reference-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.reference-top .details-card-title {
+    margin-bottom: 0.45rem;
+}
+
+.reference-pnr {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+}
+
+.booking-status-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(198, 163, 106, 0.16);
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    color: var(--color-gold-light);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem 1.25rem;
+    margin: 0;
+}
+
+.info-item {
+    display: grid;
+    gap: 0.3rem;
+}
+
+.info-item dt {
+    margin: 0;
+    color: rgba(246, 241, 231, 0.55);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.info-item dd {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.detail-list {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.detail-list-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.detail-list-item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.detail-list-primary {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.detail-list-secondary {
+    margin: 0.25rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.detail-list-meta {
+    color: var(--color-gold-light);
+    font-size: 0.92rem;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.detail-list-empty {
+    margin: 0;
+    color: rgba(246, 241, 231, 0.55);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.details-summary {
+    position: sticky;
+    top: calc(var(--header-height) + 1.25rem);
+    padding: 1.5rem 1.45rem 1.55rem;
+    background:
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
+    border-radius: 20px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
+}
+
+.cost-breakdown {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.details-actions {
+    display: grid;
+    gap: 0.7rem;
+}
+
+.booking-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 46px;
+    padding: 0.75rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    transition: transform 0.25s ease, filter 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.booking-action-button--primary {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: var(--color-ink);
+}
+
+.booking-action-button--secondary {
+    background: transparent;
+    border: 1px solid rgba(198, 163, 106, 0.75);
+    color: var(--color-cream);
+}
+
+.booking-action-button:hover {
+    transform: translateY(-2px);
+}
+
+.booking-action-button--primary:hover {
+    filter: brightness(1.06);
+}
+
+.booking-action-button--secondary:hover {
+    border-color: var(--color-gold-light);
+    color: var(--color-gold-light);
+}
+
+@media print {
+    .site-header,
+    .site-footer,
+    .details-actions,
+    .details-message {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+        color: #1c150c;
+    }
+
+    .booking-details-page {
+        width: 100%;
+        margin: 0;
+    }
+
+    .details-layout {
+        display: block;
+    }
+
+    .details-card,
+    .details-summary {
+        break-inside: avoid;
+        box-shadow: none;
+        background: #fff;
+        border: 1px solid #d7c4a4;
+        color: #1c150c;
+    }
+
+    .details-title,
+    .details-card-title,
+    .reference-pnr,
+    .info-item dd,
+    .detail-list-primary,
+    .summary-total-value {
+        color: #1c150c;
+    }
+}
+
+@media (max-width: 980px) {
+    .details-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .details-summary {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .booking-details-page {
+        margin: 2rem auto 3.5rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reference-top {
+        flex-direction: column;
+    }
+
+    .detail-list-item {
+        flex-direction: column;
+    }
+}
