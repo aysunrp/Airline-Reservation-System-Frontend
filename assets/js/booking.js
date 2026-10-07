@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var header = document.getElementById("site-header");
     if (!header) {
         return;
@@ -13,7 +23,7 @@
     function setMenu(open) {
         header.classList.toggle("is-menu-open", open);
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        toggle.setAttribute("aria-label", open ? tr("nav.closeMenu", "Close menu") : tr("nav.openMenu", "Open menu"));
     }
 
     toggle.addEventListener("click", function () {
@@ -155,7 +165,7 @@
             var toMic = segment.querySelector('[data-voice="to"]');
             var removeButton = segment.querySelector(".segment-remove");
 
-            segment.querySelector(".segment-name").textContent = "Flight " + number;
+            segment.querySelector(".segment-name").textContent = tr("booking.flightN", "Flight " + number, { n: number });
             fromField.setAttribute("aria-label", "Flight " + number + " from");
             toField.setAttribute("aria-label", "Flight " + number + " to");
             dateField.setAttribute("aria-label", "Flight " + number + " departure date");
@@ -205,7 +215,7 @@
 
     function startVoiceInput(button) {
         if (!SpeechRecognition) {
-            showMessage("Voice search is not supported in this browser. Please type your city.");
+            showMessage(tr("booking.voiceUnsupported", "Voice search is not supported in this browser. Please type your city."));
             return;
         }
 
@@ -242,7 +252,7 @@
         };
 
         recognition.onerror = function () {
-            showMessage("Unable to capture voice input. Please try again.");
+            showMessage(tr("booking.voiceCaptureFail", "Unable to capture voice input. Please try again."));
         };
 
         recognition.onend = function () {
@@ -257,21 +267,21 @@
         } catch (error) {
             button.classList.remove("is-listening");
             activeRecognition = null;
-            showMessage("Unable to start voice search. Please try again.");
+            showMessage(tr("booking.voiceStartFail", "Unable to start voice search. Please try again."));
         }
     }
 
     function validateSharedOptions() {
         if (!passengersInput.value) {
             markInvalid(passengersInput);
-            showMessage("Please select the number of passengers.");
+            showMessage(tr("booking.needPassengers", "Please select the number of passengers."));
             passengersInput.focus();
             return false;
         }
 
         if (!cabinInput.value) {
             markInvalid(cabinInput);
-            showMessage("Please select a cabin class.");
+            showMessage(tr("booking.needCabin", "Please select a cabin class."));
             cabinInput.focus();
             return false;
         }
@@ -328,7 +338,7 @@
         }
 
         if (firstInvalid) {
-            showMessage("Please complete From, To and Departure Date for every flight.");
+            showMessage(tr("booking.completeMulti", "Please complete From, To and Departure Date for every flight."));
             firstInvalid.focus();
             return null;
         }
@@ -356,35 +366,35 @@
 
         if (!fromValue) {
             markInvalid(fromInput);
-            showMessage("Please enter a departure city or airport.");
+            showMessage(tr("booking.needFrom", "Please enter a departure city or airport."));
             fromInput.focus();
             return null;
         }
 
         if (!toValue) {
             markInvalid(toInput);
-            showMessage("Please enter a destination city or airport.");
+            showMessage(tr("booking.needTo", "Please enter a destination city or airport."));
             toInput.focus();
             return null;
         }
 
         if (!departureValue) {
             markInvalid(departureInput);
-            showMessage("Please select a departure date.");
+            showMessage(tr("booking.needDeparture", "Please select a departure date."));
             departureInput.focus();
             return null;
         }
 
         if (tripType === "round-trip" && !returnValue) {
             markInvalid(returnInput);
-            showMessage("Please select a return date.");
+            showMessage(tr("booking.needReturn", "Please select a return date."));
             returnInput.focus();
             return null;
         }
 
         if (tripType === "round-trip" && returnValue && returnValue < departureValue) {
             markInvalid(returnInput);
-            showMessage("Return date must be on or after the departure date.");
+            showMessage(tr("booking.returnAfter", "Return date must be on or after the departure date."));
             returnInput.focus();
             return null;
         }
@@ -820,13 +830,19 @@
         return new Date(year, month - 1, day);
     }
 
+    function translatedMonth(index) {
+        var key = "common.months." + String(index + 1);
+        var value = tr(key, MONTH_NAMES[index]);
+        return value && value !== key ? value : MONTH_NAMES[index];
+    }
+
     function formatDisplayDate(isoValue) {
         var date = parseISODate(isoValue);
         if (!date) {
-            return "Select a date";
+            return tr("booking.selectADate", "Select a date");
         }
 
-        return date.getDate() + " " + MONTH_NAMES[date.getMonth()] + " " + date.getFullYear();
+        return date.getDate() + " " + translatedMonth(date.getMonth()) + " " + date.getFullYear();
     }
 
     function normalizeCity(value) {
@@ -1154,7 +1170,7 @@
     }
 
     function updateMonthLabel() {
-        monthLabel.textContent = MONTH_NAMES[viewDate.getMonth()] + " " + viewDate.getFullYear();
+        monthLabel.textContent = translatedMonth(viewDate.getMonth()) + " " + viewDate.getFullYear();
     }
 
     function updateCopy() {
@@ -1165,12 +1181,12 @@
         if (calendarSubtitle) {
             if (tripType === "round-trip") {
                 if (selectionMode === "return") {
-                    calendarSubtitle.textContent = "Return fares for " + returnRouteLabel + ". Choose a return date on or after your departure.";
+                    calendarSubtitle.textContent = tr("booking.returnFares", "Return fares for " + returnRouteLabel + ". Choose a return date on or after your departure.", { route: returnRouteLabel });
                 } else {
-                    calendarSubtitle.textContent = "Departure fares for " + routeLabel + ". After you pick a departure date, select your return.";
+                    calendarSubtitle.textContent = tr("booking.depFaresRound", "Departure fares for " + routeLabel + ". After you pick a departure date, select your return.", { route: routeLabel });
                 }
             } else {
-                calendarSubtitle.textContent = "One-way starting fares for " + routeLabel + ". Click a date to set your departure date.";
+                calendarSubtitle.textContent = tr("booking.oneWayFares", "One-way starting fares for " + routeLabel + ". Click a date to set your departure date.", { route: routeLabel });
             }
         }
 
@@ -1180,34 +1196,34 @@
 
         if (selectionMode === "return") {
             if (returnDate && returnPrice != null) {
-                calendarNote.textContent = "Selected return " + returnDate + " from " + formatFare(returnPrice) + ".";
+                calendarNote.textContent = tr("booking.selectedReturn", "Selected return " + returnDate + " from " + formatFare(returnPrice) + ".", { date: returnDate, price: formatFare(returnPrice) });
             } else if (!departureDate) {
-                calendarNote.textContent = "Select a departure date first, then choose your return.";
+                calendarNote.textContent = tr("booking.selectDepFirst", "Select a departure date first, then choose your return.");
             } else {
-                calendarNote.textContent = "Showing return fares for " + returnRouteLabel + ". Click a date to set your return date.";
+                calendarNote.textContent = tr("booking.showReturnFares", "Showing return fares for " + returnRouteLabel + ". Click a date to set your return date.", { route: returnRouteLabel });
             }
             return;
         }
 
         if (departureDate && departurePrice != null) {
-            calendarNote.textContent = "Selected departure " + departureDate + " from " + formatFare(departurePrice) + ".";
+            calendarNote.textContent = tr("booking.selectedDep", "Selected departure " + departureDate + " from " + formatFare(departurePrice) + ".", { date: departureDate, price: formatFare(departurePrice) });
             return;
         }
 
-        calendarNote.textContent = "Click a date to set your departure date.";
+        calendarNote.textContent = tr("booking.clickDeparture", "Click a date to set your departure date.");
     }
 
     function updateSummary() {
         var outbound = getOutboundCities();
 
         summaryDepartureRoute.textContent = outbound.from + " → " + outbound.to;
-        summaryDepartureDate.textContent = departureDate ? formatDisplayDate(departureDate) : "Select a date";
+        summaryDepartureDate.textContent = departureDate ? formatDisplayDate(departureDate) : tr("booking.selectADate", "Select a date");
         summaryDeparturePrice.textContent = formatFare(departurePrice);
 
         if (tripType === "round-trip") {
             summaryReturnBlock.hidden = false;
             summaryReturnRoute.textContent = outbound.to + " → " + outbound.from;
-            summaryReturnDate.textContent = returnDate ? formatDisplayDate(returnDate) : "Select a date";
+            summaryReturnDate.textContent = returnDate ? formatDisplayDate(returnDate) : tr("booking.selectADate", "Select a date");
             summaryReturnPrice.textContent = formatFare(returnPrice);
 
             if (departurePrice != null && returnPrice != null) {
@@ -1388,7 +1404,7 @@
             if (!departureDate) {
                 setSelectionMode("departure");
                 if (calendarNote) {
-                    calendarNote.textContent = "Select a departure date first, then choose your return.";
+                    calendarNote.textContent = tr("booking.selectDepFirst", "Select a departure date first, then choose your return.");
                 }
                 return;
             }
@@ -1532,4 +1548,13 @@
     } else {
         initCalendar();
     }
+
+    window.addEventListener("aerova:languagechange", function () {
+        try {
+            if (typeof renderCalendar === "function") renderCalendar();
+            if (typeof updateCopy === "function") updateCopy();
+            if (typeof updateSummary === "function") updateSummary();
+        } catch (e) {}
+        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+    });
 })();

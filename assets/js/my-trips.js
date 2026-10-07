@@ -1,4 +1,21 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
+    function monthName(index) {
+        var key = "common.months." + String(index + 1);
+        var translated = tr(key, "");
+        if (translated && translated !== key) return translated;
+        return MONTH_NAMES[index];
+    }
+
     "use strict";
 
     var MONTH_NAMES = [
@@ -41,7 +58,7 @@
             return String(dateValue);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return day + " " + monthName(month - 1) + " " + year;
     }
 
     function parseFlightDate(dateValue) {
@@ -117,18 +134,18 @@
     function getBookingStatus(bookingData) {
         var status = String(bookingData.status || "").toLowerCase();
         if (status === "cancelled") {
-            return "Cancelled";
+            return tr("common.statusCancelled", "Cancelled");
         }
 
         if (bookingData.paymentStatus === "Paid" || status === "confirmed") {
-            return "Confirmed";
+            return tr("common.statusConfirmed", "Confirmed");
         }
 
         if (bookingData.paymentStatus) {
             return String(bookingData.paymentStatus);
         }
 
-        return "Confirmed";
+        return tr("common.statusConfirmed", "Confirmed");
     }
 
     function buildTripCard(bookingData) {
@@ -152,54 +169,54 @@
                     '<div class="trip-card-identity">' +
                         '<p class="trip-card-airline">' + escapeHtml(flight.airline || "AEROVA") + "</p>" +
                         '<h2 class="trip-card-route">' + escapeHtml(route) + "</h2>" +
-                        '<p class="trip-card-flight">Flight ' + escapeHtml(flight.flightNumber || "—") + "</p>" +
+                        '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + (flight.flightNumber || "—"), { number: flight.flightNumber || "—" })) + "</p>" +
                     "</div>" +
                     '<div class="trip-card-status trip-card-status--confirmed">' + escapeHtml(status) + "</div>" +
                 "</div>" +
                 '<dl class="trip-card-meta">' +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Booking Reference</dt>" +
+                        "<dt>" + tr("trips.bookingReference", "Booking Reference") + "</dt>" +
                         "<dd>" + escapeHtml(pnr) + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Flight Date</dt>" +
+                        "<dt>" + tr("trips.flightDate", "Flight Date") + "</dt>" +
                         "<dd>" + escapeHtml(formatDisplayDate(flight.departureDate)) + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Departure</dt>" +
+                        "<dt>" + tr("trips.departure", "Departure") + "</dt>" +
                         "<dd>" + escapeHtml(flight.departure || "—") + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Arrival</dt>" +
+                        "<dt>" + tr("trips.arrival", "Arrival") + "</dt>" +
                         "<dd>" + escapeHtml(flight.arrival || "—") + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Duration</dt>" +
+                        "<dt>" + tr("trips.duration", "Duration") + "</dt>" +
                         "<dd>" + escapeHtml(flight.duration || "—") + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Aircraft</dt>" +
+                        "<dt>" + tr("trips.aircraft", "Aircraft") + "</dt>" +
                         "<dd>" + escapeHtml(flight.aircraft || "—") + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Cabin Class</dt>" +
+                        "<dt>" + tr("trips.cabinClass", "Cabin Class") + "</dt>" +
                         "<dd>" + escapeHtml(bookingData.cabinClass || "—") + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Passenger Count</dt>" +
+                        "<dt>" + tr("trips.passengerCount", "Passenger Count") + "</dt>" +
                         "<dd>" + escapeHtml(String(passengerCount || "—")) + "</dd>" +
                     "</div>" +
                     '<div class="trip-card-meta-item">' +
-                        "<dt>Selected Seats</dt>" +
+                        "<dt>" + tr("trips.selectedSeats", "Selected Seats") + "</dt>" +
                         "<dd>" + escapeHtml(seatsText) + "</dd>" +
                     "</div>" +
                 "</dl>" +
                 '<div class="trip-card-footer">' +
                     '<div class="trip-card-price">' +
-                        '<p class="trip-card-price-label">Total</p>' +
+                        '<p class="trip-card-price-label">' + tr("trips.total", "Total") + "</p>" +
                         '<p class="trip-card-price-value">' + escapeHtml(formatPrice(bookingData.totalPrice)) + "</p>" +
                     "</div>" +
-                    '<a class="trip-card-button" href="booking-details.html?source=trips">View Details</a>' +
+                    '<a class="trip-card-button" href="booking-details.html?source=trips">' + tr("trips.viewDetails", "View Details") + "</a>" +
                 "</div>" +
             "</article>"
         );
@@ -267,4 +284,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", init);
+    window.addEventListener("aerova:languagechange", function () {
+        if (typeof init === "function") { try { init(); } catch (e) {} }
+        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+    });
 })();

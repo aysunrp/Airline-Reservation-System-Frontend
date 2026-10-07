@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var STORAGE_KEY = "profileData";
 
     var DEFAULT_PROFILE = {
@@ -137,7 +147,7 @@
         if (input.tagName === "SELECT") {
             var option = getSelectPlaceholderOption(input);
             if (option) {
-                option.textContent = message || "This field is required";
+                option.textContent = message || tr("profile.fieldRequired", "This field is required");
             }
 
             if (!String(input.value || "").trim()) {
@@ -212,7 +222,7 @@
         var passengers = profileState.savedPassengers || [];
 
         if (!passengers.length) {
-            list.innerHTML = '<p class="saved-passengers-empty">No saved passengers yet. Add one to speed up future bookings.</p>';
+            list.innerHTML = '<p class="saved-passengers-empty">' + tr("profile.noSaved", "No saved passengers yet. Add one to speed up future bookings.") + '</p>';
             return;
         }
 
@@ -306,18 +316,18 @@
         showMessage("");
 
         if (!validateProfileForm()) {
-            showMessage("Please complete the highlighted fields.");
+            showMessage(tr("profile.completeFields", "Please complete the highlighted fields."));
             return;
         }
 
         profileState = collectProfileFromForm();
 
         if (!writeJSON(STORAGE_KEY, profileState)) {
-            showMessage("Unable to save your profile right now.");
+            showMessage(tr("profile.saveFail", "Unable to save your profile right now."));
             return;
         }
 
-        showMessage("Your profile changes have been saved.", true);
+        showMessage(tr("profile.saved", "Your profile changes have been saved."), true);
     }
 
     function openPassengerModal(passengerId) {
@@ -339,7 +349,7 @@
         }
 
         if (title) {
-            title.textContent = passenger ? "Edit Passenger" : "Add Passenger";
+            title.textContent = passenger ? tr("profile.editPassenger", "Edit Passenger") : tr("profile.addPassenger", "Add Passenger");
         }
 
         if (editId) {
@@ -413,7 +423,7 @@
         writeJSON(STORAGE_KEY, collectProfileFromForm());
         renderSavedPassengers();
         closePassengerModal();
-        showMessage("Saved passenger profile updated.", true);
+        showMessage(tr("profile.passengerUpdated", "Saved passenger profile updated."), true);
     }
 
     function deletePassenger(passengerId) {
@@ -423,7 +433,7 @@
 
         writeJSON(STORAGE_KEY, collectProfileFromForm());
         renderSavedPassengers();
-        showMessage("Passenger removed from your saved profiles.", true);
+        showMessage(tr("profile.passengerRemoved", "Passenger removed from your saved profiles."), true);
     }
 
     function initMenuToggle() {
@@ -511,4 +521,7 @@
     } else {
         init();
     }
+    window.addEventListener("aerova:languagechange", function () {
+        if (typeof renderSavedPassengers === 'function') { try { renderSavedPassengers(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+    });
 })();

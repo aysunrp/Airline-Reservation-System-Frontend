@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -350,7 +360,7 @@
 
         if (list) {
             if (!selected.length) {
-                list.innerHTML = '<li class="selected-services-empty">No extra services selected</li>';
+                list.innerHTML = '<li class="selected-services-empty">' + tr("extras.noneSelected", "No extra services selected") + '</li>';
             } else {
                 list.innerHTML = selected.map(function (service) {
                     return (
@@ -501,4 +511,7 @@
     } else {
         init();
     }
+    window.addEventListener("aerova:languagechange", function () {
+        if (typeof renderSelectedServices === 'function') { try { renderSelectedServices(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+    });
 })();

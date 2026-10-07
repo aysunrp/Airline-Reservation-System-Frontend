@@ -472,7 +472,7 @@
         var selectedDate = parseISODate(criteria.departureDate);
 
         if (eyebrowElement) {
-            eyebrowElement.textContent = "Available Flights";
+            eyebrowElement.textContent = (typeof t === "function" ? t("results.eyebrow") : "Available Flights");
         }
 
         if (routeElement) {
@@ -485,7 +485,7 @@
             if (selectedDate) {
                 metaElement.textContent = formatDisplayDate(toISODate(selectedDate));
             } else {
-                metaElement.textContent = "Available flights in the next 30 days";
+                metaElement.textContent = (typeof t === "function" ? t("results.availableNext30") : "Available flights in the next 30 days");
             }
         }
     }
@@ -496,6 +496,12 @@
             var isSelected = cabin === selectedCabin;
             var price = getCabinPrice(flight, cabin);
             var disabled = typeof price !== "number";
+            var cabinLabel = cabin;
+            if (typeof t === "function") {
+                if (cabin === "Economy") cabinLabel = t("results.economy");
+                else if (cabin === "Comfort") cabinLabel = t("results.comfort");
+                else if (cabin === "Business") cabinLabel = t("results.business");
+            }
 
             return (
                 '<button' +
@@ -506,14 +512,15 @@
                     ' data-cabin="' + escapeHtml(cabin) + '"' +
                     (disabled ? " disabled" : "") +
                 ">" +
-                    escapeHtml(cabin) +
+                    escapeHtml(cabinLabel) +
                 "</button>"
             );
         }).join("");
 
+        var cabinLabel = typeof t === "function" ? t("results.cabinClass") : "Cabin Class";
         return (
             '<div class="cabin-selection">' +
-                '<p class="cabin-selection-label" id="' + groupId + '-label">Cabin Class</p>' +
+                '<p class="cabin-selection-label" id="' + groupId + '-label">' + escapeHtml(cabinLabel) + "</p>" +
                 '<div class="cabin-options" role="radiogroup" aria-labelledby="' + groupId + '-label">' +
                     optionsMarkup +
                 "</div>" +
@@ -541,16 +548,21 @@
                 '<p class="journey-route">' + escapeHtml(flight.from) + " → " + escapeHtml(flight.to) + "</p>" +
             "</div>" +
             '<div class="flight-card-details">' +
-                '<p class="detail-item"><span class="detail-label">Duration</span> ' + escapeHtml(flight.duration) + "</p>" +
-                '<p class="detail-item"><span class="detail-label">Stops</span> ' + escapeHtml(flight.stops) + "</p>" +
-                '<p class="detail-item"><span class="detail-label">Aircraft</span> ' + escapeHtml(flight.aircraft) + "</p>" +
+                '<p class="detail-item"><span class="detail-label">' + escapeHtml(typeof t === "function" ? t("results.duration") : "Duration") + '</span> ' + escapeHtml(flight.duration) + "</p>" +
+                '<p class="detail-item"><span class="detail-label">' + escapeHtml(typeof t === "function" ? t("results.stops") : "Stops") + '</span> ' + escapeHtml((function () {
+                    if (typeof t !== "function") return flight.stops;
+                    if (flight.stops === "Non-stop") return t("results.nonstop");
+                    if (flight.stops === "1 Stop") return t("results.oneStop");
+                    return flight.stops;
+                })()) + "</p>" +
+                '<p class="detail-item"><span class="detail-label">' + escapeHtml(typeof t === "function" ? t("flightDetails.aircraft") : "Aircraft") + '</span> ' + escapeHtml(flight.aircraft) + "</p>" +
                 buildCabinOptionsMarkup(flight, selectedCabin) +
             "</div>" +
             '<div class="flight-card-action">' +
                 '<p class="flight-price">$' + escapeHtml(String(price)) + "</p>" +
                 '<div class="flight-card-buttons">' +
-                    '<button class="view-details-button" type="button">View Details</button>' +
-                    '<button class="select-flight-button" type="button">Select Flight</button>' +
+                    '<button class="view-details-button" type="button">' + escapeHtml(typeof t === "function" ? t("results.viewDetails") : "View Details") + '</button>' +
+                    '<button class="select-flight-button" type="button">' + escapeHtml(typeof t === "function" ? t("results.selectFlight") : "Select Flight") + '</button>' +
                 "</div>" +
             "</div>";
 
@@ -585,8 +597,8 @@
     function renderEmptyState(container) {
         container.innerHTML =
             '<div class="results-empty">' +
-                '<h2 class="results-empty-title">No Flights Found</h2>' +
-                '<p class="results-empty-text">Try adjusting your filters or search criteria.</p>' +
+                '<h2 class="results-empty-title">' + (typeof t === "function" ? t("results.noResultsTitle") : "No Flights Found") + '</h2>' +
+                '<p class="results-empty-text">' + (typeof t === "function" ? t("results.noResultsText") : "Try adjusting your filters or search criteria.") + '</p>' +
             "</div>";
     }
 
@@ -621,7 +633,6 @@
         }
 
         return {
-            airlines: getCheckedValues("filter-airline"),
             stops: getCheckedValues("filter-stops"),
             cabin: cabinFilter,
             sortBy: sortBy
@@ -637,10 +648,6 @@
 
     function applyClientFilters(flights, filterState) {
         return flights.filter(function (flight) {
-            if (filterState.airlines.length && filterState.airlines.indexOf(flight.airline) === -1) {
-                return false;
-            }
-
             if (filterState.stops.length && filterState.stops.indexOf(flight.stops) === -1) {
                 return false;
             }
@@ -698,11 +705,15 @@
         }
 
         if (count === 0) {
-            countElement.textContent = "0 flights match your filters";
+            countElement.textContent = typeof t === "function" ? t("results.foundNone") : "0 flights match your filters";
             return;
         }
 
-        countElement.textContent = count + (count === 1 ? " flight found" : " flights found");
+        if (typeof t === "function") {
+            countElement.textContent = count === 1 ? t("results.foundOne") : t("results.foundMany", { count: count });
+        } else {
+            countElement.textContent = count + (count === 1 ? " flight found" : " flights found");
+        }
     }
 
     function refreshResults() {
@@ -721,10 +732,6 @@
         if (sortSelect) {
             sortSelect.value = "recommended";
         }
-
-        document.querySelectorAll('input[name="filter-airline"]').forEach(function (input) {
-            input.checked = input.value === "AEROVA";
-        });
 
         document.querySelectorAll('input[name="filter-price"], input[name="filter-duration"], input[name="filter-stops"]').forEach(function (input) {
             input.checked = false;
@@ -763,7 +770,7 @@
             });
         }
 
-        document.querySelectorAll('input[name="filter-airline"], input[name="filter-stops"], input[name="filter-cabin"]').forEach(function (input) {
+        document.querySelectorAll('input[name="filter-stops"], input[name="filter-cabin"]').forEach(function (input) {
             input.addEventListener("change", refreshResults);
         });
 
@@ -898,6 +905,14 @@
         initCabinFilterDefault(searchCriteria);
         bindFilterControls();
         refreshResults();
+
+        window.addEventListener("aerova:languagechange", function () {
+            updateResultsHeader(searchCriteria || {});
+            refreshResults();
+            if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
+                window.AEROVA_I18N.applyTranslations(document);
+            }
+        });
     }
 
     if (document.readyState === "loading") {

@@ -76,11 +76,19 @@
         window.location.href = "login.html";
     }
 
+    function tr(key, fallback) {
+        if (typeof window.t === "function") {
+            var value = window.t(key);
+            if (value && value !== key) return value;
+        }
+        return fallback;
+    }
+
     function displayName(user) {
-        if (!user) return "Profile";
+        if (!user) return tr("nav.profile", "Profile");
         var first = String(user.firstName || "").trim();
         if (first) return first;
-        return "Profile";
+        return tr("nav.profile", "Profile");
     }
 
     function findLoginButtons() {
@@ -98,14 +106,16 @@
                 button.href = "profile.html";
                 button.textContent = displayName(user);
                 button.setAttribute("data-auth-state", "profile");
+                button.removeAttribute("data-i18n");
                 button.removeAttribute("aria-current");
                 if (/profile\.html$/i.test(window.location.pathname) || window.location.href.indexOf("profile.html") !== -1) {
                     button.setAttribute("aria-current", "page");
                 }
             } else {
                 button.href = "login.html";
-                button.textContent = "Login";
+                button.textContent = tr("nav.login", "Login");
                 button.setAttribute("data-auth-state", "login");
+                button.setAttribute("data-i18n", "nav.login");
                 button.removeAttribute("aria-current");
             }
         });
@@ -119,13 +129,16 @@
                     notifyDesktop = document.createElement("a");
                     notifyDesktop.className = "trips-link auth-nav-notifications";
                     notifyDesktop.href = "notifications.html";
-                    notifyDesktop.textContent = "Notifications";
+                    notifyDesktop.setAttribute("data-i18n", "nav.notifications");
+                    notifyDesktop.textContent = tr("nav.notifications", "Notifications");
                     var profileBtn = headerActions.querySelector(".login-button:not(.login-button--drawer)");
                     if (profileBtn) headerActions.insertBefore(notifyDesktop, profileBtn);
                     else headerActions.appendChild(notifyDesktop);
                 } else {
                     notifyDesktop.hidden = false;
                     notifyDesktop.href = "notifications.html";
+                    notifyDesktop.setAttribute("data-i18n", "nav.notifications");
+                    notifyDesktop.textContent = tr("nav.notifications", "Notifications");
                 }
             } else {
                 if (notifyDesktop) notifyDesktop.remove();
@@ -142,21 +155,28 @@
                     notifyDrawer = document.createElement("a");
                     notifyDrawer.className = "login-button login-button--drawer auth-nav-notifications-drawer";
                     notifyDrawer.href = "notifications.html";
-                    notifyDrawer.textContent = "Notifications";
+                    notifyDrawer.setAttribute("data-i18n", "nav.notifications");
+                    notifyDrawer.textContent = tr("nav.notifications", "Notifications");
                     var drawerLogin = drawerNav.querySelector(".login-button--drawer");
                     if (drawerLogin) drawerNav.insertBefore(notifyDrawer, drawerLogin);
                     else drawerNav.appendChild(notifyDrawer);
                 } else {
                     notifyDrawer.hidden = false;
+                    notifyDrawer.setAttribute("data-i18n", "nav.notifications");
+                    notifyDrawer.textContent = tr("nav.notifications", "Notifications");
                 }
 
                 if (!logoutDrawer) {
                     logoutDrawer = document.createElement("button");
                     logoutDrawer.type = "button";
                     logoutDrawer.className = "login-button login-button--drawer auth-nav-logout-drawer";
-                    logoutDrawer.textContent = "Logout";
+                    logoutDrawer.setAttribute("data-i18n", "nav.logout");
+                    logoutDrawer.textContent = tr("nav.logout", "Logout");
                     logoutDrawer.addEventListener("click", logout);
                     drawerNav.appendChild(logoutDrawer);
+                } else {
+                    logoutDrawer.setAttribute("data-i18n", "nav.logout");
+                    logoutDrawer.textContent = tr("nav.logout", "Logout");
                 }
             } else {
                 if (notifyDrawer) notifyDrawer.remove();
@@ -225,18 +245,18 @@
             clearFieldError(passwordInput);
 
             if (!email) {
-                setFieldError(emailInput, "Email is required");
+                setFieldError(emailInput, tr("auth.emailRequired", "Email is required"));
                 valid = false;
             } else if (!isValidEmail(email)) {
-                setFieldError(emailInput, "Enter a valid email");
+                setFieldError(emailInput, tr("auth.emailInvalid", "Enter a valid email address"));
                 valid = false;
             }
 
             if (!password) {
-                setFieldError(passwordInput, "Password is required");
+                setFieldError(passwordInput, tr("auth.passwordRequired", "Password is required"));
                 valid = false;
             } else if (password.length < 6) {
-                setFieldError(passwordInput, "At least 6 characters");
+                setFieldError(passwordInput, tr("auth.passwordShort", "Password must be at least 6 characters"));
                 valid = false;
             }
 
@@ -248,8 +268,8 @@
             });
 
             if (!match) {
-                setFieldError(emailInput, "Invalid email or password");
-                setFieldError(passwordInput, "Invalid email or password");
+                setFieldError(emailInput, tr("auth.loginFailed", "Incorrect email or password"));
+                setFieldError(passwordInput, tr("auth.loginFailed", "Incorrect email or password"));
                 return;
             }
 
@@ -283,36 +303,36 @@
             [firstInput, lastInput, emailInput, passwordInput, confirmInput].forEach(clearFieldError);
 
             if (!firstName) {
-                setFieldError(firstInput, "First name is required");
+                setFieldError(firstInput, tr("auth.firstRequired", "First name is required"));
                 valid = false;
             }
 
             if (!lastName) {
-                setFieldError(lastInput, "Last name is required");
+                setFieldError(lastInput, tr("auth.lastRequired", "Last name is required"));
                 valid = false;
             }
 
             if (!email) {
-                setFieldError(emailInput, "Email is required");
+                setFieldError(emailInput, tr("auth.emailRequired", "Email is required"));
                 valid = false;
             } else if (!isValidEmail(email)) {
-                setFieldError(emailInput, "Enter a valid email");
+                setFieldError(emailInput, tr("auth.emailInvalid", "Enter a valid email address"));
                 valid = false;
             }
 
             if (!password) {
-                setFieldError(passwordInput, "Password is required");
+                setFieldError(passwordInput, tr("auth.passwordRequired", "Password is required"));
                 valid = false;
             } else if (password.length < 6) {
-                setFieldError(passwordInput, "At least 6 characters");
+                setFieldError(passwordInput, tr("auth.passwordShort", "Password must be at least 6 characters"));
                 valid = false;
             }
 
             if (!confirm) {
-                setFieldError(confirmInput, "Confirm your password");
+                setFieldError(confirmInput, tr("auth.confirmRequired", "Please confirm your password"));
                 valid = false;
             } else if (password && confirm !== password) {
-                setFieldError(confirmInput, "Passwords do not match");
+                setFieldError(confirmInput, tr("auth.passwordMismatch", "Passwords do not match"));
                 valid = false;
             }
 
@@ -324,7 +344,7 @@
             });
 
             if (exists) {
-                setFieldError(emailInput, "Email already registered");
+                setFieldError(emailInput, tr("auth.emailExists", "An account with this email already exists"));
                 return;
             }
 
@@ -367,6 +387,9 @@
         updateNavigation();
         handleLoginForm();
         handleRegisterForm();
+        window.addEventListener("aerova:languagechange", function () {
+            updateNavigation();
+        });
     }
 
     window.AerovaAuth = {

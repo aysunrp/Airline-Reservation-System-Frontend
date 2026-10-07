@@ -1,4 +1,12 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return fallback;
+    }
+
     var header = document.getElementById("site-header");
     if (!header) {
         return;
@@ -13,7 +21,7 @@
     function setMenu(open) {
         header.classList.toggle("is-menu-open", open);
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        toggle.setAttribute("aria-label", open ? (typeof t === "function" ? t("nav.closeMenu") : "Close menu") : (typeof t === "function" ? t("nav.openMenu") : "Open menu"));
     }
 
     toggle.addEventListener("click", function () {
@@ -340,7 +348,7 @@
 
     function setListening(isListening) {
         micButton.classList.toggle("is-listening", isListening);
-        micButton.setAttribute("aria-label", isListening ? "Stop voice search" : "Start voice search");
+        micButton.setAttribute("aria-label", isListening ? (typeof t === "function" ? t("home.voiceStop") : "Stop voice search") : (typeof t === "function" ? t("home.voiceStart") : "Start voice search"));
         form.classList.toggle("is-listening", isListening);
 
         if (status) {
@@ -368,7 +376,7 @@
 
     function startVoice() {
         if (!SpeechRecognition) {
-            showMessage("Voice search is not supported in this browser. Please type your request.");
+            showMessage(typeof t === "function" ? t("home.voiceUnsupported") : "Voice search is not supported in this browser. Please type your request.");
             return;
         }
 
@@ -399,7 +407,7 @@
         };
 
         recognition.onerror = function () {
-            showMessage("Unable to capture voice input. Please try again or type your request.");
+            showMessage(typeof t === "function" ? t("home.voiceCaptureFail") : "Unable to capture voice input. Please try again or type your request.");
         };
 
         recognition.onend = function () {
@@ -414,7 +422,7 @@
         } catch (error) {
             setListening(false);
             activeRecognition = null;
-            showMessage("Unable to start voice search. Please try again or type your request.");
+            showMessage(typeof t === "function" ? t("home.voiceStartFail") : "Unable to start voice search. Please try again or type your request.");
         }
     }
 
@@ -429,7 +437,7 @@
         input.value = query;
 
         if (!query) {
-            showMessage("Please say or type where you would like to fly.");
+            showMessage(typeof t === "function" ? t("home.voiceEmpty") : "Please say or type where you would like to fly.");
             input.focus();
             return;
         }
@@ -437,13 +445,13 @@
         var parsed = parseVoiceQuery(query);
 
         if (!parsed.from) {
-            showMessage("Please provide your origin.");
+            showMessage(typeof t === "function" ? t("home.voiceNeedFrom") : "Please provide your origin.");
             input.focus();
             return;
         }
 
         if (!parsed.to) {
-            showMessage("Please provide your destination.");
+            showMessage(typeof t === "function" ? t("home.voiceNeedTo") : "Please provide your destination.");
             input.focus();
             return;
         }
@@ -539,18 +547,18 @@
         input.value = email;
 
         if (!email) {
-            showMessage("Please enter your email address.", true);
+            showMessage(typeof t === "function" ? t("home.newsletterError") : "Please enter your email address.", true);
             input.focus();
             return;
         }
 
         if (!emailPattern.test(email)) {
-            showMessage("Please enter a valid email address.", true);
+            showMessage(typeof t === "function" ? t("home.newsletterError") : "Please enter a valid email address.", true);
             input.focus();
             return;
         }
 
-        showMessage("You're subscribed. Welcome to AEROVA.", false);
+        showMessage(typeof t === "function" ? t("home.newsletterSuccess") : "You're subscribed. Welcome to AEROVA.", false);
         input.value = "";
     });
 })();

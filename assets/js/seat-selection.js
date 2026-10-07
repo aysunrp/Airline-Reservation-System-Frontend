@@ -1,4 +1,12 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return fallback;
+    }
+
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -7,7 +15,7 @@
     var CABIN_LAYOUTS = {
         Business: {
             key: "business",
-            label: "Business Class",
+            label: "Business Class", labelKey: "seats.businessClass",
             startRow: 1,
             endRow: 3,
             groups: [["A", "B"], ["C", "D"]],
@@ -17,7 +25,7 @@
         },
         Comfort: {
             key: "comfort",
-            label: "Comfort",
+            label: "Comfort", labelKey: "common.comfort",
             startRow: 5,
             endRow: 9,
             groups: [["A", "B"], ["C"], ["D", "E"]],
@@ -27,7 +35,7 @@
         },
         Economy: {
             key: "economy",
-            label: "Economy",
+            label: "Economy", labelKey: "common.economy",
             startRow: 11,
             endRow: 20,
             groups: [["A", "B", "C"], ["D", "E", "F"]],
@@ -56,7 +64,7 @@
 
     function formatDisplayDate(dateValue) {
         if (!dateValue) {
-            return "Date not selected";
+            return tr("seats.dateNotSelected", "Date not selected");
         }
 
         var parts = String(dateValue).split("-");
@@ -72,7 +80,13 @@
             return dateValue;
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        var monthLabel = (typeof tr === "function")
+            ? tr("common.months." + String(month), MONTH_NAMES[month - 1])
+            : MONTH_NAMES[month - 1];
+        if (!monthLabel || monthLabel === ("common.months." + String(month))) {
+            monthLabel = MONTH_NAMES[month - 1];
+        }
+        return day + " " + monthLabel + " " + year;
     }
 
     function readSelectedFlight() {
@@ -169,17 +183,17 @@
     }
 
     function updateSelectedSeatSummary() {
-        var seatsLabel = selectedSeats.length === 1 ? "Selected Seat" : "Selected Seats";
+        var seatsLabel = selectedSeats.length === 1 ? tr("seats.selectedSeat", "Selected Seat") : tr("seats.selectedSeats", "Selected Seats");
         setText("selected-seat-label", seatsLabel);
         setText(
             "selected-seat-value",
-            selectedSeats.length ? selectedSeats.join(", ") : "No seat selected"
+            selectedSeats.length ? selectedSeats.join(", ") : tr("seats.noSeat", "No seat selected")
         );
         setText(
             "seat-progress",
-            selectedSeats.length + " of " + requiredSeats + " seats selected"
+            tr("seats.ofSelected", selectedSeats.length + " of " + requiredSeats + " seats selected", { selected: selectedSeats.length, total: requiredSeats })
         );
-        setText("selected-seat-price", "Included");
+        setText("selected-seat-price", tr("seats.priceIncluded", "Included"));
         updateContinueAvailability();
     }
 
@@ -218,7 +232,7 @@
                 ((flightData && flightData.arrival) || "13:10")
         );
         setText("summary-aircraft", (flightData && flightData.aircraft) || "AEROVA 787-9");
-        setText("summary-cabin", layout.label);
+        setText("summary-cabin", (layout.labelKey && typeof tr === "function") ? tr(layout.labelKey, layout.label) : layout.label);
     }
 
     function buildColumnHeaders(layout) {
@@ -246,9 +260,9 @@
 
         if (isOccupied) {
             button.disabled = true;
-            button.setAttribute("aria-label", "Seat " + seatId + " occupied");
+            button.setAttribute("aria-label", tr("seats.seatOccupiedAria", "Seat " + seatId + " occupied", { id: seatId }));
         } else {
-            button.setAttribute("aria-label", "Seat " + seatId);
+            button.setAttribute("aria-label", tr("seats.seatAria", "Seat " + seatId, { id: seatId }));
             button.setAttribute("aria-pressed", "false");
         }
 
@@ -361,9 +375,9 @@
         } else {
             if (selectedSeats.length >= requiredSeats) {
                 showMessage(
-                    "You can select up to " +
-                        requiredSeats +
-                        (requiredSeats === 1 ? " seat." : " seats.")
+                    requiredSeats === 1
+                        ? tr("seats.maxSeatOne", "You can select up to 1 seat.")
+                        : tr("seats.maxSeats", "You can select up to " + requiredSeats + " seats.", { count: requiredSeats })
                 );
                 return;
             }
@@ -402,13 +416,13 @@
 
         if (selectedSeats.length === 0) {
             return requiredSeats === 1
-                ? "Please select a seat to continue."
-                : "Please select " + requiredSeats + " seats to continue.";
+                ? tr("seats.validation", "Please select a seat to continue.")
+                : tr("seats.selectN", "Please select " + requiredSeats + " seats to continue.", { count: requiredSeats });
         }
 
         return remaining === 1
-            ? "Please select 1 more seat."
-            : "Please select " + remaining + " more seats.";
+            ? tr("seats.selectOneMore", "Please select 1 more seat.")
+            : tr("seats.selectMore", "Please select " + remaining + " more seats.", { count: remaining });
     }
 
     function bindContinue(flightData) {
@@ -451,4 +465,7 @@
     } else {
         init();
     }
+    window.addEventListener("aerova:languagechange", function () {
+        if (typeof refreshSummary === 'function') { /* noop */ } if (typeof renderSeatMap === 'function') { try { init(); } catch (e) {} }
+    });
 })();

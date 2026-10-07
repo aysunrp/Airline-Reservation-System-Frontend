@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -418,7 +428,7 @@
         }
 
         if (!items.length) {
-            list.innerHTML = '<li class="detail-list-empty">None selected</li>';
+            list.innerHTML = '<li class="detail-list-empty">' + tr("bookingDetails.noneSelected", "None selected") + '</li>';
             return;
         }
 
@@ -651,7 +661,7 @@
 
     function openChangePanel() {
         if (!activeBooking || isCancelled(activeBooking)) {
-            showMessage("Cancelled bookings cannot be changed.");
+            showMessage(tr("bookingDetails.cancelledNoChange", "Cancelled bookings cannot be changed."));
             return;
         }
 
@@ -691,7 +701,7 @@
         event.preventDefault();
 
         if (!activeBooking || isCancelled(activeBooking)) {
-            showMessage("Cancelled bookings cannot be changed.");
+            showMessage(tr("bookingDetails.cancelledNoChange", "Cancelled bookings cannot be changed."));
             return;
         }
 
@@ -705,19 +715,19 @@
         var passengerCount = getPassengerCount(activeBooking);
 
         if (!nextDate) {
-            showMessage("Please choose a new flight date.");
+            showMessage(tr("bookingDetails.chooseDate", "Please choose a new flight date."));
             if (dateInput) dateInput.focus();
             return;
         }
 
         if (!nextSeats.length) {
-            showMessage("Please enter seat selections for your passengers.");
+            showMessage(tr("bookingDetails.enterSeats", "Please enter seat selections for your passengers."));
             if (seatsInput) seatsInput.focus();
             return;
         }
 
         if (nextSeats.length !== passengerCount) {
-            showMessage("Enter exactly " + passengerCount + " seat" + (passengerCount === 1 ? "" : "s") + ".");
+            showMessage(tr("bookingDetails.exactSeats", "Enter exactly " + passengerCount + " seats.", { count: passengerCount }));
             if (seatsInput) seatsInput.focus();
             return;
         }
@@ -742,7 +752,7 @@
         }
 
         if (!persistBooking(updated)) {
-            showMessage("Unable to save booking changes. Please try again.");
+            showMessage(tr("bookingDetails.saveFail", "Unable to save booking changes. Please try again."));
             return;
         }
 
@@ -756,7 +766,7 @@
                 ? "Additional amount due: " + formatPrice(estimate.difference) + "."
                 : "Estimated refund: " + formatPrice(Math.abs(estimate.difference)) + ".");
 
-        showMessage("Booking updated successfully. " + differenceNote);
+        showMessage(tr("bookingDetails.updated", "Booking updated successfully. " + differenceNote, { note: differenceNote }));
     }
 
     function confirmCancellation() {
@@ -770,7 +780,7 @@
         updated.paymentStatus = "Cancelled";
 
         if (!persistBooking(updated)) {
-            showMessage("Unable to cancel this booking. Please try again.");
+            showMessage(tr("bookingDetails.cancelFail", "Unable to cancel this booking. Please try again."));
             closeCancelModal();
             return;
         }
@@ -779,7 +789,7 @@
         renderBooking(activeBooking);
         closeChangePanel();
         closeCancelModal();
-        showMessage("Booking " + (activeBooking.pnr || "") + " has been cancelled.");
+        showMessage(tr("bookingDetails.cancelled", "Booking " + (activeBooking.pnr || "") + " has been cancelled.", { pnr: activeBooking.pnr || "" }));
     }
 
     function bindActions() {
@@ -801,7 +811,7 @@
         if (cancelButton) {
             cancelButton.addEventListener("click", function () {
                 if (!activeBooking || isCancelled(activeBooking)) {
-                    showMessage("This booking is already cancelled.");
+                    showMessage(tr("bookingDetails.alreadyCancelled", "This booking is already cancelled."));
                     return;
                 }
                 closeChangePanel();

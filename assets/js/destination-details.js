@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var DESTINATIONS = {
         baku: {
             id: "baku",
@@ -195,7 +205,7 @@
         }
 
         if (!flights.length) {
-            container.innerHTML = '<p class="section-copy">No scheduled departures at this time.</p>';
+            container.innerHTML = '<p class="section-copy">' + tr("destinationDetails.noDepartures", "No scheduled departures at this time.") + '</p>';
             return;
         }
 
@@ -250,7 +260,7 @@
             taglineEl.textContent = destination.tagline;
         }
         if (aboutTitle) {
-            aboutTitle.textContent = "Discover " + destination.name;
+            aboutTitle.textContent = tr("destinationDetails.discover", "Discover " + destination.name, { name: destination.name });
         }
         if (descriptionEl) {
             descriptionEl.textContent = destination.description;
@@ -285,7 +295,7 @@
         var asideDuration = byId("destination-aside-duration");
 
         if (asideTitle) {
-            asideTitle.textContent = "Fly to " + destination.name;
+            asideTitle.textContent = tr("destinationDetails.flyTo", "Fly to " + destination.name, { name: destination.name });
         }
         if (asideText) {
             asideText.textContent = destination.id === "baku"

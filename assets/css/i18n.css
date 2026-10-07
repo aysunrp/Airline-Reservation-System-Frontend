@@ -1,0 +1,91 @@
+/* AEROVA language switcher — compact, navy / cream / gold */
+
+.lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.2rem 0.35rem;
+    border: 1px solid rgba(198, 163, 106, 0.35);
+    border-radius: 999px;
+    background: rgba(5, 12, 22, 0.35);
+    flex-shrink: 0;
+}
+
+.lang-switcher-btn {
+    appearance: none;
+    margin: 0;
+    padding: 0.35rem 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(246, 241, 231, 0.72);
+    font-family: inherit;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.lang-switcher-btn:hover,
+.lang-switcher-btn:focus-visible {
+    color: var(--color-gold-light, #e0c48a);
+}
+
+.lang-switcher-btn.is-active {
+    color: var(--color-navy, #07111d);
+    background: var(--color-gold, #c6a36a);
+}
+
+.lang-switcher-divider {
+    width: 1px;
+    height: 0.7rem;
+    background: rgba(198, 163, 106, 0.35);
+}
+
+.auth-header .lang-switcher {
+    margin-left: auto;
+    margin-right: 0.75rem;
+}
+
+.auth-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.admin-topbar .lang-switcher {
+    margin-left: 0.75rem;
+}
+
+.admin-topbar-meta-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .lang-switcher {
+        padding: 0.15rem 0.25rem;
+        gap: 0.1rem;
+    }
+
+    .lang-switcher-btn {
+        padding: 0.3rem 0.4rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.1em;
+    }
+
+    .header-actions {
+        gap: 0.55rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .lang-switcher-btn {
+        padding: 0.28rem 0.34rem;
+    }
+}

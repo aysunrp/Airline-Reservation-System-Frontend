@@ -1,4 +1,12 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return fallback;
+    }
+
     "use strict";
 
     var MONTH_NAMES = [
@@ -270,12 +278,12 @@
 
     function getPaymentMethodLabel(method) {
         if (method === "apple") {
-            return "Apple Pay";
+            return tr("payment.applePayLabel", "Apple Pay");
         }
         if (method === "google") {
-            return "Google Pay";
+            return tr("payment.googlePayLabel", "Google Pay");
         }
-        return "Credit / Debit Card";
+        return tr("payment.cardLabel", "Credit / Debit Card");
     }
 
     function updateWalletMethodMessage() {
@@ -286,9 +294,9 @@
         }
 
         if (method === "apple") {
-            messageText.textContent = "Continue with Apple Pay to complete your payment securely.";
+            messageText.textContent = typeof t === "function" ? t("payment.applePay") : "Continue with Apple Pay to complete your payment securely.";
         } else if (method === "google") {
-            messageText.textContent = "Continue with Google Pay to complete your payment securely.";
+            messageText.textContent = typeof t === "function" ? t("payment.googlePay") : "Continue with Google Pay to complete your payment securely.";
         } else {
             messageText.textContent = "";
         }
@@ -320,7 +328,7 @@
             control.classList.add("is-invalid");
         }
         if (error) {
-            error.textContent = message || "Invalid promo code";
+            error.textContent = message || (typeof t === "function" ? t("payment.invalidPromo") : "Invalid promo code");
             error.hidden = false;
         }
         if (input) {
@@ -425,7 +433,7 @@
         setText("payment-total", formatPrice(prices.grandTotal));
 
         if (payButton) {
-            payButton.textContent = "Pay " + formatPrice(prices.grandTotal);
+            payButton.textContent = (typeof t === "function" ? t("payment.pay", { amount: formatPrice(prices.grandTotal) }) : ("Pay " + formatPrice(prices.grandTotal)));
             payButton.disabled = false;
             payButton.removeAttribute("disabled");
         }
@@ -490,7 +498,7 @@
 
         var bookingData = readBookingData();
         if (!bookingData) {
-            showPromoError("Booking not found");
+            showPromoError(tr("payment.bookingNotFound", "Booking not found"));
             return;
         }
 
@@ -498,23 +506,23 @@
         var code = normalizePromoCode(input ? input.value : "");
 
         if (!code) {
-            showPromoError("Enter a promo code");
+            showPromoError(tr("payment.enterPromo", "Enter a promo code"));
             return;
         }
 
         if (appliedPromo && appliedPromo.code === code) {
-            showPromoError("Promo code already applied");
+            showPromoError(tr("payment.promoAlready", "Promo code already applied"));
             return;
         }
 
         if (appliedPromo) {
-            showPromoError("Remove the current code first");
+            showPromoError(tr("payment.removeCodeFirst", "Remove the current code first"));
             return;
         }
 
         var percent = getPromoPercent(code);
         if (percent == null) {
-            showPromoError("Invalid promo code");
+            showPromoError(typeof t === "function" ? t("payment.invalidPromo") : "Invalid promo code");
             return;
         }
 
@@ -525,7 +533,7 @@
 
         var prices = refreshTotals(bookingData);
         if (!persistPromoToBooking(bookingData, prices)) {
-            showPromoError("Unable to save promo code");
+            showPromoError(tr("payment.promoSaveFail", "Unable to save promo code"));
             return;
         }
 
@@ -599,7 +607,7 @@
 
         rememberOriginalPlaceholder(input);
         input.classList.add("is-invalid");
-        input.setAttribute("placeholder", message || "This field is required");
+        input.setAttribute("placeholder", message || tr("payment.fieldRequired", "This field is required"));
 
         if (!getTrimmedValue(input)) {
             input.value = "";
@@ -650,19 +658,19 @@
         var cvv = getTrimmedValue(cvvInput);
 
         if (!cardholderName) {
-            markInvalid(cardholderInput, "Enter cardholder name");
+            markInvalid(cardholderInput, tr("payment.cardholder", "Enter cardholder name"));
             focusField = cardholderInput;
             isValid = false;
         }
 
         if (!cardNumber) {
-            markInvalid(cardNumberInput, "Enter card number");
+            markInvalid(cardNumberInput, tr("payment.enterCard", "Enter card number"));
             if (!focusField) {
                 focusField = cardNumberInput;
             }
             isValid = false;
         } else if (!isValidCardNumber(cardNumber)) {
-            markInvalid(cardNumberInput, "Enter a valid card number");
+            markInvalid(cardNumberInput, tr("payment.validCard", "Enter a valid card number"));
             cardNumberInput.value = "";
             if (!focusField) {
                 focusField = cardNumberInput;
@@ -671,13 +679,13 @@
         }
 
         if (!expiry) {
-            markInvalid(expiryInput, "Enter expiry date");
+            markInvalid(expiryInput, tr("payment.enterExpiry", "Enter expiry date"));
             if (!focusField) {
                 focusField = expiryInput;
             }
             isValid = false;
         } else if (!isValidExpiry(expiry)) {
-            markInvalid(expiryInput, "Enter a valid expiry date");
+            markInvalid(expiryInput, tr("payment.validExpiry", "Enter a valid expiry date"));
             expiryInput.value = "";
             if (!focusField) {
                 focusField = expiryInput;
@@ -686,13 +694,13 @@
         }
 
         if (!cvv) {
-            markInvalid(cvvInput, "Enter CVV");
+            markInvalid(cvvInput, tr("payment.enterCvv", "Enter CVV"));
             if (!focusField) {
                 focusField = cvvInput;
             }
             isValid = false;
         } else if (!isValidCvv(cvv)) {
-            markInvalid(cvvInput, "Enter a valid CVV");
+            markInvalid(cvvInput, tr("payment.validCvv", "Enter a valid CVV"));
             cvvInput.value = "";
             if (!focusField) {
                 focusField = cvvInput;
@@ -725,7 +733,7 @@
 
         var bookingData = readBookingData();
         if (!bookingData) {
-            showMessage("Booking information could not be found. Please complete passenger details first.");
+            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
             return;
         }
 
@@ -756,7 +764,7 @@
         try {
             sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
         } catch (error) {
-            showMessage("Unable to save payment status. Please try again.");
+            showMessage(typeof t === "function" ? t("payment.saveError") : "Unable to save payment status. Please try again.");
             return;
         }
 
@@ -828,7 +836,7 @@
         }
 
         if (!bookingData) {
-            showMessage("Booking information could not be found. Please complete passenger details first.");
+            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
             if (layout) {
                 layout.hidden = true;
             }
@@ -845,4 +853,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", init);
+    window.addEventListener("aerova:languagechange", function () {
+        if (typeof updatePaymentSummary === 'function') { try { updatePaymentSummary(); } catch (e) {} } if (typeof updateWalletMethodMessage === 'function') { try { updateWalletMethodMessage(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+    });
 })();

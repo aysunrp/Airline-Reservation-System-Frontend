@@ -1,395 +1,1601 @@
 <!DOCTYPE html>
+
+
+
 <html lang="en">
+
+
+
 <head>
+
+
+
     <meta charset="UTF-8">
+
+
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
     <title>AEROVA | Book</title>
+
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
+
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
+
+
     <link rel="stylesheet" href="assets/css/booking.css">
+
+
+    <link rel="stylesheet" href="assets/css/i18n.css">
+
+
+
 </head>
+
+
+
 <body>
+
+
+
     <header id="site-header" class="site-header">
+
+
+
         <div class="header-container">
-            <a class="logo" href="index.html" aria-label="AEROVA Home">
+
+
+
+            <a class="logo" href="index.html" aria-label="AEROVA Home" data-i18n-aria="nav.homeAria">
+
+
+
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+
+
+
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
+
+
                 </svg>
+
+
+
                 <span class="logo-text">Aerova</span>
+
+
+
             </a>
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary">
+
+
+
+
+
+
+            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+
+
+
                 <ul class="nav-list">
-                    <li class="nav-item"><a class="nav-link is-current" href="booking.html" aria-current="page">Book</a></li>
-                    <li class="nav-item"><a class="nav-link" href="destinations.html">Destinations</a></li>
-                    <li class="nav-item"><a class="nav-link" href="experience.html">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html">My Trips</a></li>
+
+
+
+                    <li class="nav-item"><a class="nav-link is-current" href="booking.html" aria-current="page" data-i18n="nav.booking">Booking</a></li>
+
+
+
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+
+
+
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+
+
+
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+
+
+
+                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a></li>
+
+
+
                 </ul>
-                <a class="login-button login-button--drawer" href="login.html">Login</a>
+
+
+
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+
+
+
             </nav>
 
+
+
+
+
+
+
             <div class="header-actions">
-                <a class="trips-link" href="my-trips.html">My Trips</a>
-                <button class="search-button" type="button" aria-label="Search">
+
+
+
+                <a class="trips-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
+
+
+
+                <button class="search-button" type="button" aria-label="Search" data-i18n-aria="nav.search">
+
+
+
                     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                         <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+
+
+
                         <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+
+
+
                     </svg>
+
+
+
                 </button>
-                <a class="login-button" href="login.html">Login</a>
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu">
+
+
+
+                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
+
+
+
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+
+
+
                     <span class="menu-toggle-bar"></span>
+
+
+
                     <span class="menu-toggle-bar"></span>
+
+
+
                     <span class="menu-toggle-bar"></span>
+
+
+
                 </button>
+
+
+
             </div>
+
+
+
         </div>
+
+
+
     </header>
 
+
+
+
+
+
+
     <main id="booking-content" class="booking-content">
-        <section class="booking-page" aria-label="Flight booking">
+
+
+
+        <section class="booking-page" aria-label="Flight booking" data-i18n-aria="booking.pageAria">
+
+
+
             <div class="booking-intro">
-                <p class="booking-eyebrow">Book Your Flight</p>
-                <h1 class="booking-title">Find Your AEROVA Flight</h1>
-                <p class="booking-subtitle">Search, compare and book your perfect journey.</p>
+
+
+
+                <p class="booking-eyebrow" data-i18n="booking.eyebrow">Book Your Flight</p>
+
+
+
+                <h1 class="booking-title" data-i18n="booking.title">Find Your AEROVA Flight</h1>
+
+
+
+                <p class="booking-subtitle" data-i18n="booking.subtitle">Search, compare and book your perfect journey.</p>
+
+
+
             </div>
 
+
+
+
+
+
+
             <div class="booking-card">
+
+
+
                 <form id="booking-form" class="booking-form is-round-trip" novalidate>
-                    <div class="booking-tabs" role="tablist" aria-label="Trip type">
-                        <button class="booking-tab is-active" type="button" role="tab" aria-selected="true" data-trip="round-trip">Round Trip</button>
-                        <button class="booking-tab" type="button" role="tab" aria-selected="false" data-trip="one-way">One Way</button>
-                        <button class="booking-tab" type="button" role="tab" aria-selected="false" data-trip="multi-city">Multi City</button>
+
+
+
+                    <div class="booking-tabs" role="tablist" aria-label="Trip type" data-i18n-aria="booking.tripType">
+
+
+
+                        <button class="booking-tab is-active" type="button" role="tab" aria-selected="true" data-trip="round-trip" data-i18n="booking.roundTrip">Round Trip</button>
+
+
+
+                        <button class="booking-tab" type="button" role="tab" aria-selected="false" data-trip="one-way" data-i18n="booking.oneWay">One Way</button>
+
+
+
+                        <button class="booking-tab" type="button" role="tab" aria-selected="false" data-trip="multi-city" data-i18n="booking.multiCity">Multi City</button>
+
+
+
                     </div>
+
+
+
+
+
+
 
                     <div class="route-pair">
+
+
+
                         <div class="field">
-                            <label class="field-label" for="booking-from">From</label>
+
+
+
+                            <label class="field-label" for="booking-from" data-i18n="booking.from">From</label>
+
+
+
                             <div class="field-control">
-                                <input id="booking-from" class="field-input from-input" type="text" name="from" placeholder="City or airport" autocomplete="off">
-                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for departure">
+
+
+
+                                <input id="booking-from" class="field-input from-input" type="text" name="from" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" placeholder="City or airport" autocomplete="off">
+
+
+
+                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for departure" data-i18n-aria="booking.voiceFrom">
+
+
+
                                     <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                         <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                         <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+
+
                                     </svg>
+
+
+
                                 </button>
+
+
+
                             </div>
+
+
+
                         </div>
 
-                        <button class="swap-button" type="button" aria-label="Swap departure and destination">
+
+
+
+
+
+
+                        <button class="swap-button" type="button" aria-label="Swap departure and destination" data-i18n-aria="booking.swap">
+
+
+
                             <svg class="swap-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                 <path d="M2 7h16M14 3.5 18 7l-4 3.5M22 17H6M10 13.5 6 17l4 3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+
+
+
                             </svg>
+
+
+
                         </button>
 
+
+
+
+
+
+
                         <div class="field">
-                            <label class="field-label" for="booking-to">To</label>
+
+
+
+                            <label class="field-label" for="booking-to" data-i18n="booking.to">To</label>
+
+
+
                             <div class="field-control">
-                                <input id="booking-to" class="field-input to-input" type="text" name="to" placeholder="City or airport" autocomplete="off">
-                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for destination">
+
+
+
+                                <input id="booking-to" class="field-input to-input" type="text" name="to" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" placeholder="City or airport" autocomplete="off">
+
+
+
+                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for destination" data-i18n-aria="booking.voiceTo">
+
+
+
                                     <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                         <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                         <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+
+
                                     </svg>
+
+
+
                                 </button>
+
+
+
                             </div>
+
+
+
                         </div>
+
+
+
                     </div>
+
+
+
+
+
+
 
                     <div id="multi-city" class="booking-multi" hidden>
+
+
+
                         <div id="segment-list" class="segment-list">
-                            <article class="flight-segment">
-                                <div class="segment-head">
-                                    <p class="segment-name">Flight 1</p>
-                                    <button class="segment-remove" type="button" hidden>Remove</button>
-                                </div>
-                                <div class="segment-layout">
-                                    <div class="route-pair">
-                                        <div class="field">
-                                            <span class="field-label">From</span>
-                                            <div class="field-control">
-                                                <input class="field-input from-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 from">
-                                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for flight 1 departure">
-                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="field">
-                                            <span class="field-label">To</span>
-                                            <div class="field-control">
-                                                <input class="field-input to-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 to">
-                                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for flight 1 destination">
-                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <span class="field-label">Departure Date</span>
-                                        <input class="field-input segment-date" type="date" aria-label="Flight 1 departure date">
-                                    </div>
-                                </div>
-                            </article>
+
+
 
                             <article class="flight-segment">
+
+
+
                                 <div class="segment-head">
-                                    <p class="segment-name">Flight 2</p>
-                                    <button class="segment-remove" type="button" hidden>Remove</button>
+
+
+
+                                    <p class="segment-name" data-i18n="ui.flight1">Flight 1</p>
+
+
+
+                                    <button class="segment-remove" type="button" hidden data-i18n="booking.remove">Remove</button>
+
+
+
                                 </div>
+
+
+
                                 <div class="segment-layout">
+
+
+
                                     <div class="route-pair">
+
+
+
                                         <div class="field">
-                                            <span class="field-label">From</span>
+
+
+
+                                            <span class="field-label" data-i18n="common.from">From</span>
+
+
+
                                             <div class="field-control">
-                                                <input class="field-input from-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 from">
-                                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for flight 2 departure">
+
+
+
+                                                <input class="field-input from-input" type="text" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 from">
+
+
+
+                                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for flight 1 departure">
+
+
+
                                                     <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                                         <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                                         <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+
+
                                                     </svg>
+
+
+
                                                 </button>
+
+
+
                                             </div>
+
+
+
                                         </div>
+
+
+
                                         <div class="field">
-                                            <span class="field-label">To</span>
+
+
+
+                                            <span class="field-label" data-i18n="common.to">To</span>
+
+
+
                                             <div class="field-control">
-                                                <input class="field-input to-input" type="text" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 to">
-                                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for flight 2 destination">
+
+
+
+                                                <input class="field-input to-input" type="text" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" placeholder="City or airport" autocomplete="off" aria-label="Flight 1 to">
+
+
+
+                                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for flight 1 destination">
+
+
+
                                                     <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                                         <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                                         <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+
+
                                                     </svg>
+
+
+
                                                 </button>
+
+
+
                                             </div>
+
+
+
                                         </div>
+
+
+
                                     </div>
+
+
+
                                     <div class="field">
-                                        <span class="field-label">Departure Date</span>
-                                        <input class="field-input segment-date" type="date" aria-label="Flight 2 departure date">
+
+
+
+                                        <span class="field-label" data-i18n="booking.departureDate">Departure Date</span>
+
+
+
+                                        <input class="field-input segment-date" type="date" aria-label="Flight 1 departure date">
+
+
+
                                     </div>
+
+
+
                                 </div>
+
+
+
                             </article>
+
+
+
+
+
+
+
+                            <article class="flight-segment">
+
+
+
+                                <div class="segment-head">
+
+
+
+                                    <p class="segment-name" data-i18n="ui.flight2">Flight 2</p>
+
+
+
+                                    <button class="segment-remove" type="button" hidden data-i18n="booking.remove">Remove</button>
+
+
+
+                                </div>
+
+
+
+                                <div class="segment-layout">
+
+
+
+                                    <div class="route-pair">
+
+
+
+                                        <div class="field">
+
+
+
+                                            <span class="field-label" data-i18n="common.from">From</span>
+
+
+
+                                            <div class="field-control">
+
+
+
+                                                <input class="field-input from-input" type="text" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 from">
+
+
+
+                                                <button class="mic-button" type="button" data-voice="from" aria-label="Voice input for flight 2 departure">
+
+
+
+                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+
+
+                                                    </svg>
+
+
+
+                                                </button>
+
+
+
+                                            </div>
+
+
+
+                                        </div>
+
+
+
+                                        <div class="field">
+
+
+
+                                            <span class="field-label" data-i18n="common.to">To</span>
+
+
+
+                                            <div class="field-control">
+
+
+
+                                                <input class="field-input to-input" type="text" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" data-i18n-placeholder="booking.cityPlaceholder" placeholder="City or airport" autocomplete="off" aria-label="Flight 2 to">
+
+
+
+                                                <button class="mic-button" type="button" data-voice="to" aria-label="Voice input for flight 2 destination">
+
+
+
+                                                    <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
+                                                        <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
+                                                        <path d="M6.5 11a5.5 5.5 0 0 0 11 0M12 16.5V20M9 20h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+
+
+                                                    </svg>
+
+
+
+                                                </button>
+
+
+
+                                            </div>
+
+
+
+                                        </div>
+
+
+
+                                    </div>
+
+
+
+                                    <div class="field">
+
+
+
+                                        <span class="field-label" data-i18n="booking.departureDate">Departure Date</span>
+
+
+
+                                        <input class="field-input segment-date" type="date" aria-label="Flight 2 departure date">
+
+
+
+                                    </div>
+
+
+
+                                </div>
+
+
+
+                            </article>
+
+
+
                         </div>
-                        <button id="add-segment" class="add-segment" type="button">+ Add Flight</button>
+
+
+
+                        <button id="add-segment" class="add-segment" type="button" data-i18n="ui.addFlight">+ Add Flight</button>
+
+
+
                     </div>
+
+
+
+
+
+
 
                     <div class="booking-fields">
+
+
+
                         <div class="field booking-departure">
-                            <label class="field-label" for="booking-departure">Departure Date</label>
+
+
+
+                            <label class="field-label" for="booking-departure" data-i18n="booking.departureDate">Departure Date</label>
+
+
+
                             <input id="booking-departure" class="field-input" type="date" name="departure">
+
+
+
                         </div>
+
+
+
                         <div class="field booking-return">
-                            <label class="field-label" for="booking-return">Return Date</label>
+
+
+
+                            <label class="field-label" for="booking-return" data-i18n="booking.returnDate">Return Date</label>
+
+
+
                             <input id="booking-return" class="field-input" type="date" name="return">
+
+
+
                         </div>
+
+
+
                         <div class="field">
-                            <label class="field-label" for="booking-passengers">Passengers</label>
+
+
+
+                            <label class="field-label" for="booking-passengers" data-i18n="booking.passengers">Passengers</label>
+
+
+
                             <select id="booking-passengers" class="field-input" name="passengers">
-                                <option value="1" selected>1 Passenger</option>
-                                <option value="2">2 Passengers</option>
-                                <option value="3">3 Passengers</option>
-                                <option value="4">4 Passengers</option>
-                                <option value="5">5 Passengers</option>
-                                <option value="6">6 Passengers</option>
-                                <option value="7">7 Passengers</option>
-                                <option value="8">8 Passengers</option>
-                                <option value="9">9 Passengers</option>
+
+
+
+                                <option value="1" selected data-i18n="ui.1Passenger">1 Passenger</option>
+
+
+
+                                <option value="2" data-i18n="ui.2Passengers">2 Passengers</option>
+
+
+
+                                <option value="3" data-i18n="ui.3Passengers">3 Passengers</option>
+
+
+
+                                <option value="4" data-i18n="ui.4Passengers">4 Passengers</option>
+
+
+
+                                <option value="5" data-i18n="ui.5Passengers">5 Passengers</option>
+
+
+
+                                <option value="6" data-i18n="ui.6Passengers">6 Passengers</option>
+
+
+
+                                <option value="7" data-i18n="ui.7Passengers">7 Passengers</option>
+
+
+
+                                <option value="8" data-i18n="ui.8Passengers">8 Passengers</option>
+
+
+
+                                <option value="9" data-i18n="ui.9Passengers">9 Passengers</option>
+
+
+
                             </select>
+
+
+
                         </div>
+
+
+
                         <div class="field">
-                            <label class="field-label" for="booking-cabin">Cabin Class</label>
+
+
+
+                            <label class="field-label" for="booking-cabin" data-i18n="booking.cabinClass">Cabin Class</label>
+
+
+
                             <select id="booking-cabin" class="field-input" name="cabinClass">
-                                <option value="Economy" selected>Economy</option>
-                                <option value="Comfort">Comfort</option>
-                                <option value="Business">Business Class</option>
+
+
+
+                                <option value="Economy" selected data-i18n="common.economy">Economy</option>
+
+
+
+                                <option value="Comfort" data-i18n="common.comfort">Comfort</option>
+
+
+
+                                <option value="Business" data-i18n="home.businessTitle">Business Class</option>
+
+
+
                             </select>
+
+
+
                         </div>
+
+
+
                     </div>
+
+
+
+
+
+
 
                     <p id="booking-message" class="booking-message" hidden></p>
 
+
+
+
+
+
+
                     <div class="booking-actions">
-                        <button class="booking-submit" type="submit">Search Flights</button>
+
+
+
+                        <button class="booking-submit" type="submit" data-i18n="home.searchButton">Search Flights</button>
+
+
+
                     </div>
+
+
+
                 </form>
+
+
+
             </div>
 
-            <section class="price-calendar" id="price-calendar" aria-label="Flexible dates price calendar">
+
+
+
+
+
+
+            <section class="price-calendar" id="price-calendar" aria-label="Flexible dates price calendar" data-i18n-aria="ui.priceCalendar">
+
+
+
                 <button class="price-calendar-toggle" id="price-calendar-toggle" type="button" aria-expanded="true" aria-controls="price-calendar-body">
+
+
+
                     <span>
-                        <span class="price-calendar-eyebrow">Flexible Dates</span>
-                        <span class="price-calendar-toggle-title">Price Calendar</span>
+
+
+
+                        <span class="price-calendar-eyebrow" data-i18n="ui.flexibleDates">Flexible Dates</span>
+
+
+
+                        <span class="price-calendar-toggle-title" data-i18n="ui.priceCalendar">Price Calendar</span>
+
+
+
                     </span>
+
+
+
                     <span class="price-calendar-toggle-icon" aria-hidden="true"></span>
+
+
+
                 </button>
 
+
+
+
+
+
+
                 <div class="price-calendar-body" id="price-calendar-body">
+
+
+
                     <header class="price-calendar-intro">
-                        <h2 class="price-calendar-title">Find the best fare by date</h2>
-                        <p class="price-calendar-subtitle" id="price-calendar-subtitle">Compare starting fares across the month, then search with your chosen departure date.</p>
+
+
+
+                        <h2 class="price-calendar-title" data-i18n="ui.findTheBestFareByDate">Find the best fare by date</h2>
+
+
+
+                        <p class="price-calendar-subtitle" id="price-calendar-subtitle" data-i18n="ui.compareStartingFaresAcrossTheMonth">Compare starting fares across the month, then search with your chosen departure date.</p>
+
+
+
                     </header>
 
+
+
+
+
+
+
                     <div class="price-calendar-mode" id="price-calendar-mode" role="tablist" aria-label="Date selection" hidden>
-                        <button class="price-calendar-mode-button is-active" id="calendar-mode-departure" type="button" role="tab" aria-selected="true" data-calendar-mode="departure">Departure</button>
-                        <button class="price-calendar-mode-button" id="calendar-mode-return" type="button" role="tab" aria-selected="false" data-calendar-mode="return">Return</button>
+
+
+
+                        <button class="price-calendar-mode-button is-active" id="calendar-mode-departure" type="button" role="tab" aria-selected="true" data-calendar-mode="departure" data-i18n="admin.departure">Departure</button>
+
+
+
+                        <button class="price-calendar-mode-button" id="calendar-mode-return" type="button" role="tab" aria-selected="false" data-calendar-mode="return" data-i18n="common.return">Return</button>
+
+
+
                     </div>
+
+
+
+
+
+
 
                     <div class="price-calendar-controls">
+
+
+
                         <div class="field">
-                            <label class="field-label" for="calendar-from">Origin</label>
+
+
+
+                            <label class="field-label" for="calendar-from" data-i18n="common.origin">Origin</label>
+
+
+
                             <select class="field-input" id="calendar-from"></select>
+
+
+
                         </div>
+
+
+
                         <div class="field">
-                            <label class="field-label" for="calendar-to">Destination</label>
+
+
+
+                            <label class="field-label" for="calendar-to" data-i18n="common.destination">Destination</label>
+
+
+
                             <select class="field-input" id="calendar-to"></select>
+
+
+
                         </div>
+
+
+
                         <div class="field price-calendar-month-field">
-                            <span class="field-label">Month</span>
+
+
+
+                            <span class="field-label" data-i18n="ui.month">Month</span>
+
+
+
                             <div class="price-calendar-month-nav">
-                                <button class="price-calendar-nav-button" id="calendar-prev-month" type="button" aria-label="Previous month">‹</button>
+
+
+
+                                <button class="price-calendar-nav-button" id="calendar-prev-month" type="button" aria-label="Previous month" data-i18n-aria="booking.prevMonth">‹</button>
+
+
+
                                 <p class="price-calendar-month-label" id="calendar-month-label">October 2026</p>
-                                <button class="price-calendar-nav-button" id="calendar-next-month" type="button" aria-label="Next month">›</button>
+
+
+
+                                <button class="price-calendar-nav-button" id="calendar-next-month" type="button" aria-label="Next month" data-i18n-aria="booking.nextMonth">›</button>
+
+
+
                             </div>
+
+
+
                         </div>
+
+
+
                     </div>
+
+
+
+
+
+
 
                     <div class="price-calendar-layout">
+
+
+
                         <div class="price-calendar-grid-wrap">
+
+
+
                             <div class="price-calendar-weekdays" aria-hidden="true">
-                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+
+
+
+                                <span data-i18n="ui.mon">Mon</span><span data-i18n="ui.tue">Tue</span><span data-i18n="ui.wed">Wed</span><span data-i18n="ui.thu">Thu</span><span data-i18n="ui.fri">Fri</span><span data-i18n="ui.sat">Sat</span><span data-i18n="ui.sun">Sun</span>
+
+
+
                             </div>
+
+
+
                             <div class="price-calendar-grid" id="price-calendar-grid" role="grid" aria-labelledby="calendar-month-label"></div>
+
+
+
                         </div>
 
+
+
+
+
+
+
                         <aside class="price-calendar-summary" id="price-calendar-summary" aria-label="Trip fare summary">
-                            <p class="price-calendar-summary-eyebrow">Trip Summary</p>
+
+
+
+                            <p class="price-calendar-summary-eyebrow" data-i18n="ui.tripSummary">Trip Summary</p>
+
+
+
                             <div class="price-calendar-summary-block" id="summary-departure-block">
-                                <p class="price-calendar-summary-label">Departure</p>
+
+
+
+                                <p class="price-calendar-summary-label" data-i18n="admin.departure">Departure</p>
+
+
+
                                 <p class="price-calendar-summary-route" id="summary-departure-route">—</p>
-                                <p class="price-calendar-summary-date" id="summary-departure-date">Select a date</p>
+
+
+
+                                <p class="price-calendar-summary-date" id="summary-departure-date" data-i18n="booking.selectADate">Select a date</p>
+
+
+
                                 <p class="price-calendar-summary-price" id="summary-departure-price">—</p>
+
+
+
                             </div>
+
+
+
                             <div class="price-calendar-summary-block" id="summary-return-block" hidden>
-                                <p class="price-calendar-summary-label">Return</p>
+
+
+
+                                <p class="price-calendar-summary-label" data-i18n="common.return">Return</p>
+
+
+
                                 <p class="price-calendar-summary-route" id="summary-return-route">—</p>
-                                <p class="price-calendar-summary-date" id="summary-return-date">Select a date</p>
+
+
+
+                                <p class="price-calendar-summary-date" id="summary-return-date" data-i18n="booking.selectADate">Select a date</p>
+
+
+
                                 <p class="price-calendar-summary-price" id="summary-return-price">—</p>
+
+
+
                             </div>
+
+
+
                             <div class="price-calendar-summary-total" id="summary-total-block">
-                                <p class="price-calendar-summary-label">Flight Total</p>
+
+
+
+                                <p class="price-calendar-summary-label" data-i18n="ui.flightTotal">Flight Total</p>
+
+
+
                                 <p class="price-calendar-summary-price is-total" id="summary-total-price">—</p>
+
+
+
                             </div>
+
+
+
                         </aside>
+
+
+
                     </div>
 
-                    <p class="price-calendar-note" id="price-calendar-note">Select a date to update your departure date.</p>
+
+
+
+
+
+
+                    <p class="price-calendar-note" id="price-calendar-note" data-i18n="ui.selectADateToUpdateYour">Select a date to update your departure date.</p>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
         </section>
+
+
+
     </main>
 
+
+
+
+
+
+
     <footer id="site-footer" class="site-footer">
+
+
+
         <div class="footer-main">
+
+
+
             <div class="footer-container">
+
+
+
                 <div class="footer-brand">
+
+
+
                     <a class="logo" href="index.html">
+
+
+
                         <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+
+
+
                             <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
+
+
                         </svg>
+
+
+
                         <span class="logo-text">Aerova</span>
+
+
+
                     </a>
-                    <p class="footer-description">Fly beyond expectations.</p>
+
+
+
+                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+
+
+
                 </div>
 
+
+
+
+
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Quick Links</h2>
+
+
+
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+
+
+
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="index.html">Home</a></li>
-                        <li><a class="footer-link" href="booking.html">Flights</a></li>
-                        <li><a class="footer-link" href="destinations.html">Destinations</a></li>
-                        <li><a class="footer-link" href="about.html">About</a></li>
-                        <li><a class="footer-link" href="my-trips.html">My Trips</a></li>
+
+
+
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+
+
+
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+
+
+
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+
+
+
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
+
+
+
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+
+
+
                     </ul>
+
+
+
                 </div>
 
+
+
+
+
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Support</h2>
+
+
+
+                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+
+
+
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="index.html#help">Help Center</a></li>
-                        <li><a class="footer-link" href="index.html#contact">Contact Us</a></li>
-                        <li><a class="footer-link" href="index.html#travel-info">Travel Information</a></li>
-                        <li><a class="footer-link" href="index.html#faqs">FAQs</a></li>
+
+
+
+                        <li><a class="footer-link" href="index.html#help" data-i18n="footer.help">Help Center</a></li>
+
+
+
+                        <li><a class="footer-link" href="index.html#contact" data-i18n="footer.contact">Contact Us</a></li>
+
+
+
+                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Travel Information</a></li>
+
+
+
+                        <li><a class="footer-link" href="index.html#faqs" data-i18n="footer.faqs">FAQs</a></li>
+
+
+
                     </ul>
+
+
+
                 </div>
 
+
+
+
+
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Follow Us</h2>
+
+
+
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+
+
+
                     <ul class="social-list">
+
+
+
                         <li>
+
+
+
                             <a class="social-link" href="index.html#facebook" aria-label="Facebook">
+
+
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                     <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
+
+
+
                                 </svg>
+
+
+
                             </a>
+
+
+
                         </li>
+
+
+
                         <li>
+
+
+
                             <a class="social-link" href="index.html#instagram" aria-label="Instagram">
+
+
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                     <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                     <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                     <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
+
+
+
                                 </svg>
+
+
+
                             </a>
+
+
+
                         </li>
+
+
+
                         <li>
+
+
+
                             <a class="social-link" href="index.html#x" aria-label="X">
+
+
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                     <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
+
+
+
                                 </svg>
+
+
+
                             </a>
+
+
+
                         </li>
+
+
+
                         <li>
+
+
+
                             <a class="social-link" href="index.html#youtube" aria-label="YouTube">
+
+
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                     <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                     <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
+
+
+
                                 </svg>
+
+
+
                             </a>
+
+
+
                         </li>
+
+
+
                         <li>
+
+
+
                             <a class="social-link" href="index.html#linkedin" aria-label="LinkedIn">
+
+
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+
+
                                     <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+
+
                                     <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
+
+
+
                                 </svg>
+
+
+
                             </a>
+
+
+
                         </li>
+
+
+
                     </ul>
+
+
+
                 </div>
+
+
+
             </div>
+
+
+
         </div>
+
+
+
+
+
+
 
         <div class="footer-bottom">
-            <p class="footer-copyright">© 2026 AEROVA. All rights reserved.</p>
+
+
+
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+
+
+
             <ul class="footer-legal">
-                <li><a class="footer-legal-link" href="index.html#privacy">Privacy Policy</a></li>
-                <li><a class="footer-legal-link" href="index.html#terms">Terms &amp; Conditions</a></li>
+
+
+
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+
+
+
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+
+
+
             </ul>
+
+
+
         </div>
+
+
+
     </footer>
 
+
+
+
+
+
+
+        <script src="assets/js/locales/en.js"></script>
+
+
+    <script src="assets/js/locales/az.js"></script>
+
+
+    <script src="assets/js/locales/ru.js"></script>
+
+
+    <script src="assets/js/i18n.js"></script>
+
+
     <script src="assets/js/auth.js"></script>
+
+
+
     <script src="assets/js/booking.js?v=autocomplete1"></script>
+
+
+
 </body>
+
+
+
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,259 +1,523 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>AEROVA | About</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/i18n.css">
+
     <link rel="stylesheet" href="assets/css/about.css">
+
 </head>
+
 <body class="about-body">
+
     <header id="site-header" class="site-header site-header--transparent">
+
         <div class="header-container">
-            <a class="logo" href="index.html" aria-label="AEROVA Home">
+
+            <a class="logo" href="index.html" aria-label="AEROVA Home" data-i18n-aria="nav.homeAria">
+
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
                 </svg>
+
                 <span class="logo-text">Aerova</span>
+
             </a>
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary">
+
+
+            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+
                 <ul class="nav-list">
-                    <li class="nav-item"><a class="nav-link" href="booking.html">Book</a></li>
-                    <li class="nav-item"><a class="nav-link" href="destinations.html">Destinations</a></li>
-                    <li class="nav-item"><a class="nav-link" href="experience.html">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link is-current" href="about.html" aria-current="page">About</a></li>
-                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html">My Trips</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+
+                    <li class="nav-item"><a class="nav-link is-current" href="about.html" aria-current="page" data-i18n="nav.about">About</a></li>
+
+                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a></li>
+
                 </ul>
-                <a class="login-button login-button--drawer" href="login.html">Login</a>
+
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+
             </nav>
 
+
+
             <div class="header-actions">
-                <a class="trips-link" href="my-trips.html">My Trips</a>
-                <button class="search-button" type="button" aria-label="Search">
+
+                <a class="trips-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
+
+                <button class="search-button" type="button" aria-label="Search" data-i18n-aria="nav.search">
+
                     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                         <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+
                         <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+
                     </svg>
+
                 </button>
-                <a class="login-button" href="login.html">Login</a>
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu">
+
+                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
+
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+
                     <span class="menu-toggle-bar"></span>
+
                     <span class="menu-toggle-bar"></span>
+
                     <span class="menu-toggle-bar"></span>
+
                 </button>
+
             </div>
+
         </div>
+
     </header>
 
+
+
     <main>
-        <section class="page-hero about-hero" aria-label="About AEROVA">
+
+        <section class="page-hero about-hero" aria-label="About AEROVA" data-i18n-aria="about.heroTitle">
+
             <div class="page-hero-media" style="background-image: url('assets/images/hero-aircraft.jpg'); background-position: center 45%;" role="img" aria-label="AEROVA aircraft in flight"></div>
+
             <div class="page-hero-overlay" aria-hidden="true"></div>
+
             <div class="page-hero-content">
+
                 <p class="page-hero-brand">AEROVA</p>
-                <h1 class="page-hero-title">About AEROVA</h1>
-                <p class="page-hero-text">An airline built on composure, clarity, and the belief that every journey should feel considered.</p>
-                <a class="page-cta" href="booking.html">Start Your Journey</a>
+
+                <h1 class="page-hero-title" data-i18n="about.heroTitle">About AEROVA</h1>
+
+                <p class="page-hero-text" data-i18n="about.heroText">An airline built on composure, clarity, and the belief that every journey should feel considered.</p>
+
+                <a class="page-cta" href="booking.html" data-i18n="about.startJourney">Start Your Journey</a>
+
             </div>
+
         </section>
+
+
 
         <section class="about-section" aria-labelledby="our-story-title">
+
             <div class="page-shell about-story-grid">
+
                 <div>
-                    <p class="section-eyebrow">Our Story</p>
-                    <h2 class="section-heading" id="our-story-title">Crafted for Modern Travel</h2>
+
+                    <p class="section-eyebrow" data-i18n="about.storyTitle">Our Story</p>
+
+                    <h2 class="section-heading" id="our-story-title" data-i18n="home.craftedTitle">Crafted for Modern Travel</h2>
+
                     <p class="section-copy">AEROVA began with a simple ambition: to make premium air travel feel effortless. From our home in Baku, we connect cities and coastlines with a quieter kind of luxury — one defined by service, design, and trust.</p>
-                    <p class="section-copy">Today, travelers choose AEROVA for journeys that are as thoughtfully prepared as the destinations they seek.</p>
+
+                    <p class="section-copy" data-i18n="about.storyText">Today, travelers choose AEROVA for journeys that are as thoughtfully prepared as the destinations they seek.</p>
+
                 </div>
+
                 <div class="about-story-visual" style="background-image: url('assets/images/baku.jpg'); background-position: center 35%;" role="img" aria-label="Baku, home of AEROVA"></div>
+
             </div>
+
         </section>
+
+
 
         <section class="about-section about-section--soft" aria-label="Mission and vision">
+
             <div class="page-shell about-pillars">
+
                 <article class="about-pillar">
-                    <p class="section-eyebrow">Our Mission</p>
-                    <h3 class="about-pillar-title">Elevate Every Flight</h3>
-                    <p class="about-pillar-text">To deliver safe, seamless, and beautifully composed travel — from the first search to the final arrival gate.</p>
+
+                    <p class="section-eyebrow" data-i18n="home.missionTitle">Our Mission</p>
+
+                    <h3 class="about-pillar-title" data-i18n="home.missionHeading">Elevate Every Flight</h3>
+
+                    <p class="about-pillar-text" data-i18n="ui.toDeliverSafeSeamlessAndBeautifully">To deliver safe, seamless, and beautifully composed travel — from the first search to the final arrival gate.</p>
+
                 </article>
+
                 <article class="about-pillar">
-                    <p class="section-eyebrow">Our Vision</p>
-                    <h3 class="about-pillar-title">Set the Standard for Calm Luxury</h3>
-                    <p class="about-pillar-text">To become the airline travelers trust when comfort, clarity, and connection matter most.</p>
+
+                    <p class="section-eyebrow" data-i18n="home.visionTitle">Our Vision</p>
+
+                    <h3 class="about-pillar-title" data-i18n="home.visionHeading">Set the Standard for Calm Luxury</h3>
+
+                    <p class="about-pillar-text" data-i18n="about.visionText">To become the airline travelers trust when comfort, clarity, and connection matter most.</p>
+
                 </article>
+
             </div>
+
         </section>
+
+
 
         <section class="about-stats" aria-label="AEROVA at a glance">
+
             <div class="page-shell">
+
                 <header class="section-intro section-intro--center">
-                    <h2 class="section-heading">AEROVA by the Numbers</h2>
-                    <p class="section-copy">Realistic milestones that reflect our growing network and the travelers who fly with us.</p>
+
+                    <h2 class="section-heading" data-i18n="home.numbersTitle">AEROVA by the Numbers</h2>
+
+                    <p class="section-copy" data-i18n="ui.realisticMilestonesThatReflectOurGrowing">Realistic milestones that reflect our growing network and the travelers who fly with us.</p>
+
                 </header>
+
+
 
                 <dl class="stats-grid">
+
                     <div class="stat-item">
-                        <dt class="stat-label">Destinations</dt>
+
+                        <dt class="stat-label" data-i18n="nav.destinations">Destinations</dt>
+
                         <dd class="stat-value">48</dd>
+
                     </div>
+
                     <div class="stat-item">
-                        <dt class="stat-label">Flights</dt>
+
+                        <dt class="stat-label" data-i18n="footer.flights">Flights</dt>
+
                         <dd class="stat-value">120+</dd>
+
                     </div>
+
                     <div class="stat-item">
-                        <dt class="stat-label">Passengers</dt>
+
+                        <dt class="stat-label" data-i18n="booking.passengers">Passengers</dt>
+
                         <dd class="stat-value">2.4M</dd>
+
                     </div>
+
                     <div class="stat-item">
-                        <dt class="stat-label">Countries</dt>
+
+                        <dt class="stat-label" data-i18n="ui.countries">Countries</dt>
+
                         <dd class="stat-value">26</dd>
+
                     </div>
+
                 </dl>
+
             </div>
+
         </section>
+
+
 
         <section class="about-section" aria-labelledby="why-aerova-title">
+
             <div class="page-shell">
+
                 <header class="section-intro">
-                    <p class="section-eyebrow">Why Choose AEROVA</p>
-                    <h2 class="section-heading" id="why-aerova-title">Travel With Intention</h2>
+
+                    <p class="section-eyebrow" data-i18n="ui.whyChooseAerova">Why Choose AEROVA</p>
+
+                    <h2 class="section-heading" id="why-aerova-title" data-i18n="ui.travelWithIntention">Travel With Intention</h2>
+
                 </header>
 
+
+
                 <div class="why-grid">
+
                     <article class="why-card">
-                        <h3 class="why-card-title">Effortless Booking</h3>
-                        <p class="why-card-text">A clear path from search to seat — designed to feel intuitive at every step.</p>
+
+                        <h3 class="why-card-title" data-i18n="home.whyEasyTitle">Effortless Booking</h3>
+
+                        <p class="why-card-text" data-i18n="ui.aClearPathFromSearchTo">A clear path from search to seat — designed to feel intuitive at every step.</p>
+
                     </article>
+
                     <article class="why-card">
-                        <h3 class="why-card-title">Flexible Journeys</h3>
-                        <p class="why-card-text">Manage reservations, preferences, and extras with tools built around real travel needs.</p>
+
+                        <h3 class="why-card-title" data-i18n="ui.flexibleJourneys">Flexible Journeys</h3>
+
+                        <p class="why-card-text" data-i18n="ui.manageReservationsPreferencesAndExtrasWith">Manage reservations, preferences, and extras with tools built around real travel needs.</p>
+
                     </article>
+
                     <article class="why-card">
-                        <h3 class="why-card-title">Attentive Service</h3>
-                        <p class="why-card-text">Crew and ground teams trained to anticipate, not interrupt, your rhythm of travel.</p>
+
+                        <h3 class="why-card-title" data-i18n="ui.attentiveService">Attentive Service</h3>
+
+                        <p class="why-card-text" data-i18n="ui.crewAndGroundTeamsTrainedTo">Crew and ground teams trained to anticipate, not interrupt, your rhythm of travel.</p>
+
                     </article>
+
                 </div>
+
             </div>
+
         </section>
+
+
 
         <section class="about-section about-section--soft" aria-labelledby="premium-title">
+
             <div class="page-shell about-premium">
+
                 <div class="about-premium-media" style="background-image: url('assets/images/business-class.jpg');" role="img" aria-label="Premium cabin experience"></div>
+
                 <div class="about-premium-copy">
-                    <p class="section-eyebrow">Premium Travel Experience</p>
-                    <h2 class="section-heading" id="premium-title">Luxury Without Noise</h2>
-                    <p class="section-copy">Champagne-gold details, considered cabins, and dining that respects both appetite and altitude. AEROVA is premium travel refined to its essentials.</p>
+
+                    <p class="section-eyebrow" data-i18n="ui.premiumTravelExperience">Premium Travel Experience</p>
+
+                    <h2 class="section-heading" id="premium-title" data-i18n="ui.luxuryWithoutNoise">Luxury Without Noise</h2>
+
+                    <p class="section-copy" data-i18n="ui.champagneGoldDetailsConsideredCabinsAnd">Champagne-gold details, considered cabins, and dining that respects both appetite and altitude. AEROVA is premium travel refined to its essentials.</p>
+
                 </div>
+
             </div>
+
         </section>
+
+
 
         <section class="page-cta-band" aria-label="Start your journey">
+
             <div class="page-shell page-cta-band-inner">
+
                 <div>
+
                     <p class="page-cta-eyebrow">AEROVA</p>
-                    <h2 class="page-cta-title">Your Next Chapter Begins Onboard</h2>
-                    <p class="page-cta-text">From Baku to the world beyond — start a journey shaped with calm precision.</p>
+
+                    <h2 class="page-cta-title" data-i18n="ui.yourNextChapterBeginsOnboard">Your Next Chapter Begins Onboard</h2>
+
+                    <p class="page-cta-text" data-i18n="ui.fromBakuToTheWorldBeyond">From Baku to the world beyond — start a journey shaped with calm precision.</p>
+
                 </div>
-                <a class="page-cta" href="booking.html">Start Your Journey</a>
+
+                <a class="page-cta" href="booking.html" data-i18n="about.startJourney">Start Your Journey</a>
+
             </div>
+
         </section>
+
     </main>
 
+
+
     <footer id="site-footer" class="site-footer">
+
         <div class="footer-main">
+
             <div class="footer-container">
+
                 <div class="footer-brand">
+
                     <a class="logo" href="index.html">
+
                         <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+
                             <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
                         </svg>
+
                         <span class="logo-text">Aerova</span>
+
                     </a>
-                    <p class="footer-description">Fly beyond expectations.</p>
+
+                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+
                 </div>
 
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Quick Links</h2>
+
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="index.html">Home</a></li>
-                        <li><a class="footer-link" href="booking.html">Flights</a></li>
-                        <li><a class="footer-link" href="destinations.html">Destinations</a></li>
-                        <li><a class="footer-link" href="experience.html">Experience</a></li>
-                        <li><a class="footer-link" href="about.html">About</a></li>
+
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+
+                        <li><a class="footer-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
+
                     </ul>
+
                 </div>
 
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Support</h2>
+
+                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="manage-booking.html">Manage Booking</a></li>
-                        <li><a class="footer-link" href="my-trips.html">My Trips</a></li>
-                        <li><a class="footer-link" href="notifications.html">Notifications</a></li>
-                        <li><a class="footer-link" href="index.html#faqs">FAQs</a></li>
+
+                        <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Manage Booking</a></li>
+
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+
+                        <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
+
+                        <li><a class="footer-link" href="index.html#faqs" data-i18n="footer.faqs">FAQs</a></li>
+
                     </ul>
+
                 </div>
 
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Follow Us</h2>
+
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+
                     <ul class="social-list">
+
                         <li>
+
                             <a class="social-link" href="index.html#facebook" aria-label="Facebook">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#instagram" aria-label="Instagram">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#x" aria-label="X">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#youtube" aria-label="YouTube">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#linkedin" aria-label="LinkedIn">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                     </ul>
+
                 </div>
+
             </div>
+
         </div>
+
+
 
         <div class="footer-bottom">
-            <p class="footer-copyright">© 2026 AEROVA. All rights reserved.</p>
+
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+
             <ul class="footer-legal">
-                <li><a class="footer-legal-link" href="index.html#privacy">Privacy Policy</a></li>
-                <li><a class="footer-legal-link" href="index.html#terms">Terms &amp; Conditions</a></li>
+
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+
             </ul>
+
         </div>
+
     </footer>
 
+
+
+        <script src="assets/js/locales/en.js"></script>
+    <script src="assets/js/locales/az.js"></script>
+    <script src="assets/js/locales/ru.js"></script>
+    <script src="assets/js/i18n.js"></script>
     <script src="assets/js/auth.js"></script>
+
     <script src="assets/js/home.js"></script>
+
 </body>
+
 </html>
+

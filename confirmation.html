@@ -1,249 +1,503 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>AEROVA | Confirmation</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/i18n.css">
+
     <link rel="stylesheet" href="assets/css/confirmation.css">
+
 </head>
+
 <body>
+
     <header id="site-header" class="site-header">
+
         <div class="header-container">
-            <a class="logo" href="index.html" aria-label="AEROVA Home">
+
+            <a class="logo" href="index.html" aria-label="AEROVA Home" data-i18n-aria="nav.homeAria">
+
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
                 </svg>
+
                 <span class="logo-text">Aerova</span>
+
             </a>
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary">
+
+
+            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+
                 <ul class="nav-list">
-                    <li class="nav-item"><a class="nav-link" href="booking.html">Book</a></li>
-                    <li class="nav-item"><a class="nav-link" href="destinations.html">Destinations</a></li>
-                    <li class="nav-item"><a class="nav-link" href="experience.html">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html">My Trips</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+
+                    <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a></li>
+
                 </ul>
-                <a class="login-button login-button--drawer" href="login.html">Login</a>
+
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+
             </nav>
 
+
+
             <div class="header-actions">
-                <a class="trips-link" href="my-trips.html">My Trips</a>
-                <button class="search-button" type="button" aria-label="Search">
+
+                <a class="trips-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
+
+                <button class="search-button" type="button" aria-label="Search" data-i18n-aria="nav.search">
+
                     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                         <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+
                         <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+
                     </svg>
+
                 </button>
-                <a class="login-button" href="login.html">Login</a>
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu">
+
+                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
+
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+
                     <span class="menu-toggle-bar"></span>
+
                     <span class="menu-toggle-bar"></span>
+
                     <span class="menu-toggle-bar"></span>
+
                 </button>
+
             </div>
+
         </div>
+
     </header>
 
+
+
     <main id="confirmation-content" class="confirmation-content">
+
         <section class="confirmation-page" aria-label="Booking confirmation">
+
             <div class="confirmation-container">
+
                 <header class="confirmation-status">
+
                     <div class="confirmation-check" aria-hidden="true">✓</div>
-                    <h1 class="confirmation-title">Booking Confirmed</h1>
-                    <p class="confirmation-message">Your reservation has been successfully created.</p>
+
+                    <h1 class="confirmation-title" data-i18n="confirmation.title">Booking Confirmed</h1>
+
+                    <p class="confirmation-message" data-i18n="ui.yourReservationHasBeenSuccessfullyCreated">Your reservation has been successfully created.</p>
+
                 </header>
 
+
+
                 <article class="confirmation-card confirmation-card--pnr" aria-labelledby="booking-reference-label">
-                    <p class="confirmation-card-label" id="booking-reference-label">Booking Reference</p>
+
+                    <p class="confirmation-card-label" id="booking-reference-label" data-i18n="confirmation.reference">Booking Reference</p>
+
                     <p class="confirmation-pnr" id="confirmation-pnr">AV7K92M</p>
-                    <p class="confirmation-pnr-note">Keep this reference for managing your trip.</p>
+
+                    <p class="confirmation-pnr-note" data-i18n="ui.keepThisReferenceForManagingYour">Keep this reference for managing your trip.</p>
+
                 </article>
+
+
 
                 <article class="confirmation-card" aria-labelledby="flight-details-title">
-                    <h2 class="confirmation-card-title" id="flight-details-title">Flight Details</h2>
+
+                    <h2 class="confirmation-card-title" id="flight-details-title" data-i18n="flightDetails.title">Flight Details</h2>
+
+
 
                     <div class="flight-overview">
+
                         <p class="flight-airline">AEROVA</p>
+
                         <p class="flight-number">Flight Number: <span id="confirmation-flight-number">AV 101</span></p>
+
                         <p class="flight-route" id="confirmation-route">Baku → London</p>
+
                     </div>
 
+
+
                     <dl class="confirmation-meta">
+
                         <div class="confirmation-meta-item">
-                            <dt>Date</dt>
+
+                            <dt data-i18n="common.date">Date</dt>
+
                             <dd id="confirmation-departure-date">10 October 2026</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Departure</dt>
+
+                            <dt data-i18n="admin.departure">Departure</dt>
+
                             <dd id="confirmation-departure-time">09:30</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Arrival</dt>
+
+                            <dt data-i18n="trips.arrival">Arrival</dt>
+
                             <dd id="confirmation-arrival-time">13:10</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Aircraft</dt>
+
+                            <dt data-i18n="flightDetails.aircraft">Aircraft</dt>
+
                             <dd id="confirmation-aircraft">AEROVA 787-9</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Cabin Class</dt>
-                            <dd id="confirmation-cabin">Economy</dd>
+
+                            <dt data-i18n="booking.cabinClass">Cabin Class</dt>
+
+                            <dd id="confirmation-cabin" data-i18n="common.economy">Economy</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Passenger Count</dt>
+
+                            <dt data-i18n="trips.passengerCount">Passenger Count</dt>
+
                             <dd id="confirmation-passenger-count">1</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Selected Seats</dt>
+
+                            <dt data-i18n="seats.selectedSeats">Selected Seats</dt>
+
                             <dd id="confirmation-selected-seats">16F</dd>
+
                         </div>
+
                         <div class="confirmation-meta-item">
-                            <dt>Total Price</dt>
+
+                            <dt data-i18n="ui.totalPrice">Total Price</dt>
+
                             <dd id="confirmation-total-price">$420.00</dd>
+
                         </div>
+
                     </dl>
+
                 </article>
+
+
 
                 <article class="confirmation-card" aria-labelledby="passenger-seat-title">
-                    <h2 class="confirmation-card-title" id="passenger-seat-title">Passenger &amp; Seat</h2>
+
+                    <h2 class="confirmation-card-title" id="passenger-seat-title" data-i18n="ui.passengerSeat">Passenger &amp; Seat</h2>
+
+
 
                     <ul class="confirmation-passenger-list" id="confirmation-passenger-list">
+
                         <li class="confirmation-passenger-item">
-                            <p class="passenger-label">Passenger 1</p>
+
+                            <p class="passenger-label" data-i18n="ui.passenger1">Passenger 1</p>
+
                             <p class="passenger-name">Aysun Panahli</p>
+
                             <p class="passenger-seat">Seat: <span>16F</span></p>
+
                         </li>
+
                     </ul>
+
                 </article>
+
+
 
                 <article class="confirmation-card confirmation-card--price" aria-labelledby="price-summary-title">
-                    <h2 class="confirmation-card-title" id="price-summary-title">Price Summary</h2>
+
+                    <h2 class="confirmation-card-title" id="price-summary-title" data-i18n="ui.priceSummary">Price Summary</h2>
+
+
 
                     <dl class="price-summary-list">
+
                         <div class="price-summary-row">
-                            <dt>Passengers</dt>
+
+                            <dt data-i18n="booking.passengers">Passengers</dt>
+
                             <dd>1</dd>
+
                         </div>
+
                         <div class="price-summary-row">
-                            <dt>Cabin</dt>
-                            <dd id="confirmation-price-cabin">Economy</dd>
+
+                            <dt data-i18n="admin.cabin">Cabin</dt>
+
+                            <dd id="confirmation-price-cabin" data-i18n="common.economy">Economy</dd>
+
                         </div>
+
                         <div class="price-summary-row">
-                            <dt>Selected Seats</dt>
+
+                            <dt data-i18n="seats.selectedSeats">Selected Seats</dt>
+
                             <dd>16F</dd>
+
                         </div>
+
                         <div class="price-summary-row price-summary-row--total">
-                            <dt>Total</dt>
+
+                            <dt data-i18n="payment.grandTotal">Total</dt>
+
                             <dd>$420.00</dd>
+
                         </div>
+
                     </dl>
+
                 </article>
 
+
+
                 <div class="confirmation-actions">
-                    <a class="confirmation-button confirmation-button--primary" href="my-trips.html">View My Trips</a>
-                    <a class="confirmation-button confirmation-button--secondary" href="booking-details.html?source=trips">Booking Details</a>
-                    <a class="confirmation-button confirmation-button--secondary" href="index.html">Back to Home</a>
+
+                    <a class="confirmation-button confirmation-button--primary" href="my-trips.html" data-i18n="ui.viewMyTrips">View My Trips</a>
+
+                    <a class="confirmation-button confirmation-button--secondary" href="booking-details.html?source=trips" data-i18n="confirmation.viewDetails">Booking Details</a>
+
+                    <a class="confirmation-button confirmation-button--secondary" href="index.html" data-i18n="auth.backHome">Back to Home</a>
+
                 </div>
+
             </div>
+
         </section>
+
     </main>
 
+
+
     <footer id="site-footer" class="site-footer">
+
         <div class="footer-main">
+
             <div class="footer-container">
+
                 <div class="footer-brand">
+
                     <a class="logo" href="index.html">
+
                         <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
+
                             <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
                         </svg>
+
                         <span class="logo-text">Aerova</span>
+
                     </a>
-                    <p class="footer-description">Fly beyond expectations.</p>
+
+                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+
                 </div>
 
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Quick Links</h2>
+
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="index.html">Home</a></li>
-                        <li><a class="footer-link" href="booking.html">Flights</a></li>
-                        <li><a class="footer-link" href="destinations.html">Destinations</a></li>
-                        <li><a class="footer-link" href="about.html">About</a></li>
-                        <li><a class="footer-link" href="my-trips.html">My Trips</a></li>
+
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
+
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+
                     </ul>
+
                 </div>
 
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Support</h2>
+
+                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="index.html#help">Help Center</a></li>
-                        <li><a class="footer-link" href="index.html#contact">Contact Us</a></li>
-                        <li><a class="footer-link" href="index.html#travel-info">Travel Information</a></li>
-                        <li><a class="footer-link" href="index.html#faqs">FAQs</a></li>
+
+                        <li><a class="footer-link" href="index.html#help" data-i18n="footer.help">Help Center</a></li>
+
+                        <li><a class="footer-link" href="index.html#contact" data-i18n="footer.contact">Contact Us</a></li>
+
+                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Travel Information</a></li>
+
+                        <li><a class="footer-link" href="index.html#faqs" data-i18n="footer.faqs">FAQs</a></li>
+
                     </ul>
+
                 </div>
 
+
+
                 <div class="footer-column">
-                    <h2 class="footer-heading">Follow Us</h2>
+
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+
                     <ul class="social-list">
+
                         <li>
+
                             <a class="social-link" href="index.html#facebook" aria-label="Facebook">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#instagram" aria-label="Instagram">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#x" aria-label="X">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#youtube" aria-label="YouTube">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                         <li>
+
                             <a class="social-link" href="index.html#linkedin" aria-label="LinkedIn">
+
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
                                     <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
                                     <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
+
                                 </svg>
+
                             </a>
+
                         </li>
+
                     </ul>
+
                 </div>
+
             </div>
+
         </div>
+
+
 
         <div class="footer-bottom">
-            <p class="footer-copyright">© 2026 AEROVA. All rights reserved.</p>
+
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+
             <ul class="footer-legal">
-                <li><a class="footer-legal-link" href="index.html#privacy">Privacy Policy</a></li>
-                <li><a class="footer-legal-link" href="index.html#terms">Terms &amp; Conditions</a></li>
+
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+
             </ul>
+
         </div>
+
     </footer>
 
+
+
+        <script src="assets/js/locales/en.js"></script>
+    <script src="assets/js/locales/az.js"></script>
+    <script src="assets/js/locales/ru.js"></script>
+    <script src="assets/js/i18n.js"></script>
     <script src="assets/js/auth.js"></script>
+
     <script src="assets/js/confirmation.js"></script>
+
 </body>
+
 </html>
+

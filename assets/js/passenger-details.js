@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -103,7 +113,7 @@
         if (input.tagName === "SELECT") {
             var option = getSelectPlaceholderOption(input);
             if (option) {
-                option.textContent = message || "This field is required";
+                option.textContent = message || tr("passengers.requiredField", "This field is required");
             }
 
             if (!getTrimmedValue(input)) {
@@ -612,7 +622,7 @@
         showMessage("");
 
         if (!activeFlightData || !activeSelectedSeats.length) {
-            showMessage("Booking data is incomplete. Please return to seat selection.");
+            showMessage(tr("passengers.incompleteBooking", "Booking data is incomplete. Please return to seat selection."));
             return;
         }
 
@@ -655,7 +665,7 @@
         bookingData = buildBookingData(passengers, contactResult.contact);
 
         if (!saveBookingData(bookingData)) {
-            showMessage("Unable to save booking details. Please try again.");
+            showMessage(tr("passengers.saveFail", "Unable to save booking details. Please try again."));
             return;
         }
 
@@ -706,7 +716,7 @@
         bindClearInvalidOnInput();
 
         if (!flightData) {
-            showMessage("No booking data found. Please select a flight and seats first.");
+            showMessage(tr("passengers.noBooking", "No booking data found. Please select a flight and seats first."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -715,7 +725,7 @@
         }
 
         if (!passengerCount) {
-            showMessage("Passenger count is missing. Please return to booking and try again.");
+            showMessage(tr("passengers.missingCount", "Passenger count is missing. Please return to booking and try again."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -724,7 +734,7 @@
         }
 
         if (!selectedSeats.length) {
-            showMessage("No seats selected. Please return to seat selection and choose seats.");
+            showMessage(tr("passengers.noSeats", "No seats selected. Please return to seat selection and choose seats."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -733,7 +743,7 @@
         }
 
         if (hasDuplicateSeats(selectedSeats)) {
-            showMessage("Duplicate seats were found. Please return to seat selection and choose unique seats.");
+            showMessage(tr("passengers.duplicateSeats", "Duplicate seats were found. Please return to seat selection and choose unique seats."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";

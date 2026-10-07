@@ -1,4 +1,14 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+            : fallback;
+    }
+
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -285,7 +295,7 @@
         }
 
         input.classList.add("is-invalid");
-        input.setAttribute("placeholder", message || "This field is required");
+        input.setAttribute("placeholder", message || tr("manage.fieldRequired", "This field is required"));
 
         if (!String(input.value || "").trim()) {
             input.value = "";
@@ -301,12 +311,12 @@
         clearFieldError(lastNameInput);
 
         if (!pnrInput || !String(pnrInput.value || "").trim()) {
-            markInvalid(pnrInput, "Enter your booking reference");
+            markInvalid(pnrInput, tr("manage.enterPnr", "Enter your booking reference"));
             isValid = false;
         }
 
         if (!lastNameInput || !String(lastNameInput.value || "").trim()) {
-            markInvalid(lastNameInput, "Enter the passenger last name");
+            markInvalid(lastNameInput, tr("manage.enterLastName", "Enter the passenger last name"));
             isValid = false;
         }
 
@@ -322,8 +332,8 @@
         results.hidden = false;
         results.innerHTML =
             '<div class="booking-not-found">' +
-                '<h2 class="booking-not-found-title">Booking Not Found</h2>' +
-                '<p class="booking-not-found-text">We could not find a reservation matching that reference and last name. Please check your details and try again.</p>' +
+                '<h2 class="booking-not-found-title">' + tr("manage.notFoundTitle", "Booking Not Found") + '</h2>' +
+                '<p class="booking-not-found-text">' + tr("manage.notFoundText", "We could not find a reservation matching that reference and last name. Please check your details and try again.") + '</p>' +
             "</div>";
     }
 
@@ -342,24 +352,24 @@
 
         results.hidden = false;
         results.innerHTML =
-            '<article class="booking-result-card" aria-label="Booking result">' +
+            '<article class="booking-result-card" aria-label="' + tr("manage.resultAria", "Booking result") + '">' +
                 '<div class="booking-result-top">' +
                     "<div>" +
-                        '<p class="booking-result-pnr-label">Booking Reference</p>' +
+                        '<p class="booking-result-pnr-label">' + tr("manage.bookingReference", "Booking Reference") + '</p>' +
                         '<p class="booking-result-pnr">' + escapeHtml(booking.pnr || "—") + "</p>" +
                     "</div>" +
                     '<p class="booking-status-badge">' + escapeHtml(getBookingStatus(booking)) + "</p>" +
                 "</div>" +
                 '<dl class="booking-result-meta">' +
-                    '<div class="booking-result-meta-item"><dt>Passenger</dt><dd>' + escapeHtml(primaryPassenger) + "</dd></div>" +
-                    '<div class="booking-result-meta-item"><dt>Flight</dt><dd>' + escapeHtml(flight.flightNumber || "—") + "</dd></div>" +
-                    '<div class="booking-result-meta-item"><dt>Route</dt><dd>' + escapeHtml(route) + "</dd></div>" +
-                    '<div class="booking-result-meta-item"><dt>Date</dt><dd>' + escapeHtml(formatDisplayDate(flight.departureDate)) + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.passenger", "Passenger") + '</dt><dd>' + escapeHtml(primaryPassenger) + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.flight", "Flight") + '</dt><dd>' + escapeHtml(flight.flightNumber || "—") + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.route", "Route") + '</dt><dd>' + escapeHtml(route) + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.date", "Date") + '</dt><dd>' + escapeHtml(formatDisplayDate(flight.departureDate)) + "</dd></div>" +
                 "</dl>" +
                 '<div class="booking-result-actions">' +
-                    '<button class="booking-action-button booking-action-button--primary" type="button" data-action="view">View Booking</button>' +
-                    '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="change">Change Booking</button>' +
-                    '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="cancel">Cancel Booking</button>' +
+                    '<button class="booking-action-button booking-action-button--primary" type="button" data-action="view">' + tr("manage.viewBooking", "View Booking") + '</button>' +
+                    '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="change">' + tr("manage.changeBooking", "Change Booking") + '</button>' +
+                    '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="cancel">' + tr("manage.cancelBooking", "Cancel Booking") + '</button>' +
                 "</div>" +
             "</article>";
 
@@ -437,7 +447,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            toggle.setAttribute("aria-label", open ? tr("manage.closeMenu", "Close menu") : tr("manage.openMenu", "Open menu"));
         }
 
         toggle.addEventListener("click", function () {

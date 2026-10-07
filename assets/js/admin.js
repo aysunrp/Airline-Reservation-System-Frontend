@@ -1,14 +1,46 @@
 (function () {
-    var SECTION_META = {
-        dashboard: { title: "Dashboard", subtitle: "Airline operations overview" },
-        flights: { title: "Flights", subtitle: "Manage flight operations and status" },
-        routes: { title: "Routes", subtitle: "Network route management" },
-        schedules: { title: "Schedules", subtitle: "Departure planning and timetable control" },
-        aircraft: { title: "Aircraft", subtitle: "Fleet configuration and seat capacity" },
-        seats: { title: "Seat Inventory", subtitle: "Cabin availability by flight" },
-        bookings: { title: "Bookings", subtitle: "Reservation management and cancellations" },
-        passengers: { title: "Passengers", subtitle: "Traveler records and document details" }
-    };
+    function tr(key, fallback) {
+        if (typeof window.t === "function") {
+            var value = window.t(key);
+            if (value && value !== key) return value;
+        }
+        return fallback;
+    }
+
+    
+    function translateStatus(status) {
+        var map = {
+            "On Time": "common.statusOnTime",
+            "Delayed": "common.statusDelayed",
+            "Scheduled": "common.statusScheduled",
+            "Cancelled": "common.statusCancelled",
+            "Confirmed": "common.statusConfirmed",
+            "Pending": "common.statusPending",
+            "Active": "common.statusActive",
+            "Inactive": "common.statusInactive",
+            "Completed": "common.statusCompleted",
+            "Available": "common.available",
+            "Occupied": "common.occupied",
+            "Reserved": "common.reserved",
+            "Blocked": "common.blocked"
+        };
+        var key = map[status];
+        return key ? tr(key, status) : status;
+    }
+function getSectionMeta() {
+        return {
+            dashboard: { title: tr("admin.dashboard", "Dashboard"), subtitle: tr("admin.dashboardSub", "Airline operations overview") },
+            flights: { title: tr("admin.flights", "Flights"), subtitle: tr("admin.flightsSub", "Manage flight operations and status") },
+            routes: { title: tr("admin.routes", "Routes"), subtitle: tr("admin.routesSub", "Network route management") },
+            schedules: { title: tr("admin.schedules", "Schedules"), subtitle: tr("admin.schedulesSub", "Departure planning and timetable control") },
+            aircraft: { title: tr("admin.aircraft", "Aircraft"), subtitle: tr("admin.aircraftSub", "Fleet configuration and seat capacity") },
+            seats: { title: tr("admin.seats", "Seat Inventory"), subtitle: tr("admin.seatsSub", "Cabin availability by flight") },
+            bookings: { title: tr("admin.bookings", "Bookings"), subtitle: tr("admin.bookingsSub", "Reservation management and cancellations") },
+            passengers: { title: tr("admin.passengers", "Passengers"), subtitle: tr("admin.passengersSub", "Traveler records and contact details") }
+        };
+    }
+
+    var SECTION_META = getSectionMeta();
 
     var CABIN_LAYOUTS = {
         Business: {
@@ -134,6 +166,7 @@
     }
 
     function showSection(sectionId) {
+        SECTION_META = getSectionMeta();
         var meta = SECTION_META[sectionId] || SECTION_META.dashboard;
 
         document.querySelectorAll("[data-section-panel]").forEach(function (panel) {
@@ -215,7 +248,7 @@
 
     function openEntityForm(config, item) {
         state.formContext = { type: config.type, id: item ? item.id : null, fields: config.fields };
-        document.getElementById("entity-modal-title").textContent = (item ? "Edit " : "Add ") + config.title;
+        document.getElementById("entity-modal-title").textContent = (item ? tr("admin.editPrefix", "Edit ") : tr("admin.addPrefix", "Add ")) + config.title;
         document.getElementById("entity-form-fields").innerHTML = buildFields(config.fields, item || {});
         openModal();
     }
@@ -248,7 +281,7 @@
 
         var body = document.getElementById("flights-body");
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">No flights found.</td></tr>';
+            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + tr("admin.noFlights", "No flights found.") + '</td></tr>';
             return;
         }
 
@@ -276,7 +309,7 @@
         });
         var body = document.getElementById("routes-body");
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="7" class="admin-empty">No routes found.</td></tr>';
+            body.innerHTML = '<tr><td colspan="7" class="admin-empty">' + tr("admin.noRoutes", "No routes found.") + '</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (item) {
@@ -302,7 +335,7 @@
         });
         var body = document.getElementById("schedules-body");
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="8" class="admin-empty">No schedules found.</td></tr>';
+            body.innerHTML = '<tr><td colspan="8" class="admin-empty">' + tr("admin.noSchedules", "No schedules found.") + '</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (item) {
@@ -328,7 +361,7 @@
         });
         var body = document.getElementById("aircraft-body");
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">No aircraft found.</td></tr>';
+            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + tr("admin.noAircraft", "No aircraft found.") + '</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (item) {
@@ -470,7 +503,7 @@
         });
         var body = document.getElementById("bookings-body");
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="10" class="admin-empty">No bookings found.</td></tr>';
+            body.innerHTML = '<tr><td colspan="10" class="admin-empty">' + tr("admin.noBookings", "No bookings found.") + '</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (item) {
@@ -501,7 +534,7 @@
         });
         var body = document.getElementById("passengers-body");
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">No passengers found.</td></tr>';
+            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + tr("admin.noPassengers", "No passengers found.") + '</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (item) {
@@ -530,7 +563,7 @@
                 { key: "origin", label: "Origin" },
                 { key: "destination", label: "Destination" },
                 { key: "date", label: "Departure Date", type: "date" },
-                { key: "status", label: "Status", type: "select", options: ["Scheduled", "On Time", "Delayed", "Cancelled"] },
+                { key: "status", label: tr("admin.status", "Status"), type: "select", options: ["Scheduled", "On Time", "Delayed", "Cancelled"] },
                 { key: "departure", label: "Departure Time", type: "time" },
                 { key: "arrival", label: "Arrival Time", type: "time" },
                 { key: "basePrice", label: "Base Price", type: "number", full: true }
@@ -544,7 +577,7 @@
                 { key: "destination", label: "Destination" },
                 { key: "distance", label: "Distance" },
                 { key: "duration", label: "Duration" },
-                { key: "status", label: "Status", type: "select", options: ["Active", "Inactive"], full: true }
+                { key: "status", label: tr("admin.status", "Status"), type: "select", options: ["Active", "Inactive"], full: true }
             ]
         },
         schedule: {
@@ -555,7 +588,7 @@
                 { key: "aircraft", label: "Aircraft" },
                 { key: "route", label: "Route", full: true },
                 { key: "date", label: "Date", type: "date" },
-                { key: "status", label: "Status", type: "select", options: ["Scheduled", "On Time", "Delayed", "Cancelled"] },
+                { key: "status", label: tr("admin.status", "Status"), type: "select", options: ["Scheduled", "On Time", "Delayed", "Cancelled"] },
                 { key: "departure", label: "Departure", type: "time" },
                 { key: "arrival", label: "Arrival", type: "time" }
             ]
@@ -567,7 +600,7 @@
                 { key: "name", label: "Aircraft" },
                 { key: "model", label: "Model" },
                 { key: "registration", label: "Registration Number" },
-                { key: "status", label: "Status", type: "select", options: ["Active", "Maintenance", "Inactive"] },
+                { key: "status", label: tr("admin.status", "Status"), type: "select", options: ["Active", "Maintenance", "Inactive"] },
                 { key: "business", label: "Business Seats", type: "number" },
                 { key: "comfort", label: "Comfort Seats", type: "number" },
                 { key: "economy", label: "Economy Seats", type: "number" },
@@ -696,7 +729,7 @@
                 if (!aircraft) return;
                 openDetails("Aircraft Details", detailsGrid([
                     { label: "Aircraft", value: escapeHtml(aircraft.name) },
-                    { label: "Status", value: statusBadge(aircraft.status) },
+                    { label: tr("admin.status", "Status"), value: statusBadge(aircraft.status) },
                     { label: "Model", value: escapeHtml(aircraft.model) },
                     { label: "Registration", value: escapeHtml(aircraft.registration) },
                     { label: "Business Seats", value: String(aircraft.business) },
@@ -720,7 +753,7 @@
                 if (!booking) return;
                 openDetails("Booking Details", detailsGrid([
                     { label: "PNR", value: escapeHtml(booking.pnr) },
-                    { label: "Status", value: statusBadge(booking.status) },
+                    { label: tr("admin.status", "Status"), value: statusBadge(booking.status) },
                     { label: "Passenger", value: escapeHtml(booking.passenger) },
                     { label: "Flight", value: escapeHtml(booking.flight) },
                     { label: "Route", value: escapeHtml(booking.route) },
@@ -734,7 +767,7 @@
                 var target = findById(state.bookings, cancelId);
                 if (!target || target.status === "Cancelled") return;
                 target.status = "Cancelled";
-                showMessage("Booking " + target.pnr + " cancelled.");
+                showMessage(tr("admin.bookingCancelledMsg", "Booking " + target.pnr + " cancelled.", { pnr: target.pnr }));
                 renderBookings();
                 renderDashboard();
             }
@@ -747,7 +780,7 @@
             if (!passenger) return;
             openDetails("Passenger Details", detailsGrid([
                 { label: "Passenger Name", value: escapeHtml(passenger.name) },
-                { label: "Status", value: statusBadge(passenger.status) },
+                { label: tr("admin.status", "Status"), value: statusBadge(passenger.status) },
                 { label: "Email", value: escapeHtml(passenger.email) },
                 { label: "Phone", value: escapeHtml(passenger.phone) },
                 { label: "Nationality", value: escapeHtml(passenger.nationality) },
@@ -836,6 +869,14 @@
     function init() {
         bindUi();
         showSection("dashboard");
+        window.addEventListener("aerova:languagechange", function () {
+            var active = document.querySelector(".admin-nav-link.is-active");
+            var sectionId = active ? active.getAttribute("data-section") : "dashboard";
+            showSection(sectionId || "dashboard");
+            if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
+                window.AEROVA_I18N.applyTranslations(document);
+            }
+        });
     }
 
     if (document.readyState === "loading") {

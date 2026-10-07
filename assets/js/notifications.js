@@ -1,4 +1,12 @@
 (function () {
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) return value;
+        }
+        return fallback;
+    }
+
     var STORAGE_KEY = "notificationsData";
 
     var notificationsState = [];
@@ -175,8 +183,8 @@
             items.push(buildNotification(
                 "cancelled-" + pnr,
                 "cancelled",
-                "Booking Cancelled",
-                "Reservation " + pnr + " for " + route + " has been cancelled.",
+                tr("notifications.cancelledTitle", "Booking Cancelled"),
+                tr("notifications.cancelledBody", "Reservation " + pnr + " for " + route + " has been cancelled.", { pnr: pnr, route: route }),
                 "X",
                 new Date(now).toISOString()
             ));
@@ -187,8 +195,8 @@
             items.push(buildNotification(
                 "confirmed-" + pnr,
                 "booking",
-                "Booking Confirmed",
-                "Your AEROVA reservation " + pnr + " for " + route + " is confirmed.",
+                tr("notifications.confirmedTitle", "Booking Confirmed"),
+                tr("notifications.confirmedBody", "Your AEROVA reservation " + pnr + " for " + route + " is confirmed.", { pnr: pnr, route: route }),
                 "B",
                 new Date(now - 120000).toISOString()
             ));
@@ -198,8 +206,8 @@
             items.push(buildNotification(
                 "payment-" + pnr,
                 "payment",
-                "Payment Successful",
-                "Payment of " + formatPrice(booking.totalPrice) + " was received successfully for booking " + pnr + ".",
+                tr("notifications.paymentTitle", "Payment Successful"),
+                tr("notifications.paymentBody", "Payment of " + formatPrice(booking.totalPrice) + " was received successfully for booking " + pnr + ".", { amount: formatPrice(booking.totalPrice), pnr: pnr }),
                 "P",
                 new Date(now - 90000).toISOString()
             ));
@@ -209,7 +217,7 @@
             items.push(buildNotification(
                 "flight-update-" + pnr,
                 "flight",
-                "Flight Update",
+                tr("notifications.flightUpdateTitle", "Flight Update"),
                 flightNumber + " is scheduled for " + formatFlightDate(departureDate) +
                     (departureTime ? " at " + departureTime : "") +
                     ". Cabin: " + (booking.cabinClass || "Economy") + ".",
@@ -222,7 +230,7 @@
             items.push(buildNotification(
                 "checkin-" + pnr,
                 "checkin",
-                "Check-in Reminder",
+                tr("notifications.checkinTitle", "Check-in Reminder"),
                 "Online check-in opens 24 hours before departure for flight " +
                     flightNumber + " on " + formatFlightDate(departureDate) + ".",
                 "C",
@@ -318,8 +326,8 @@
         if (!notificationsState.length) {
             list.innerHTML =
                 '<div class="notifications-empty">' +
-                    '<h2 class="notifications-empty-title">No Notifications</h2>' +
-                    '<p class="notifications-empty-text">You are all caught up. Booking and flight updates will appear here when available.</p>' +
+                    '<h2 class="notifications-empty-title">' + (typeof t === "function" ? t("notifications.emptyTitle") : "No Notifications") + '</h2>' +
+                    '<p class="notifications-empty-text">' + (typeof t === "function" ? t("notifications.emptyText") : "You are all caught up. Booking and flight updates will appear here when available.") + '</p>' +
                 "</div>";
             return;
         }
@@ -338,7 +346,7 @@
                             '<h2 class="notification-title">' + escapeHtml(notification.title) + "</h2>" +
                             '<span class="notification-state ' +
                                 (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
-                                (isUnread ? "Unread" : "Read") +
+                                (isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) +
                             "</span>" +
                         "</div>" +
                         '<p class="notification-message">' + escapeHtml(notification.message) + "</p>" +
@@ -372,17 +380,17 @@
 
         persistNotifications();
         renderNotifications();
-        showMessage("Notification marked as read.");
+        showMessage(tr("notifications.markedRead", "Notification marked as read."));
     }
 
     function markAllAsRead() {
         if (!notificationsState.length) {
-            showMessage("There are no notifications to update.");
+            showMessage(tr("notifications.noneToUpdate", "There are no notifications to update."));
             return;
         }
 
         if (!countUnread()) {
-            showMessage("All notifications are already read.");
+            showMessage(tr("notifications.allAlreadyRead", "All notifications are already read."));
             return;
         }
 
@@ -392,19 +400,19 @@
 
         persistNotifications();
         renderNotifications();
-        showMessage("All notifications marked as read.");
+        showMessage(tr("notifications.allMarkedRead", "All notifications marked as read."));
     }
 
     function clearNotifications() {
         if (!notificationsState.length) {
-            showMessage("There are no notifications to clear.");
+            showMessage(tr("notifications.noneToClear", "There are no notifications to clear."));
             return;
         }
 
         notificationsState = [];
         persistNotifications({ clearedFingerprint: bookingFingerprint });
         renderNotifications();
-        showMessage("All notifications have been cleared.");
+        showMessage(tr("notifications.allCleared", "All notifications have been cleared."));
     }
 
     function bindActions() {
@@ -452,7 +460,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            toggle.setAttribute("aria-label", open ? tr("nav.closeMenu", "Close menu") : tr("nav.openMenu", "Open menu"));
         }
 
         toggle.addEventListener("click", function () {
@@ -490,4 +498,7 @@
     } else {
         init();
     }
+    window.addEventListener("aerova:languagechange", function () {
+        if (typeof renderNotifications === 'function') { try { renderNotifications(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+    });
 })();

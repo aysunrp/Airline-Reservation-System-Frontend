@@ -1,306 +1,1239 @@
 <!DOCTYPE html>
+
+
+
 <html lang="en">
+
+
+
 <head>
+
+
+
     <meta charset="UTF-8">
+
+
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
     <title>AEROVA | Admin</title>
+
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
+
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
+
+
     <link rel="stylesheet" href="assets/css/admin.css">
+
+
+    <link rel="stylesheet" href="assets/css/i18n.css">
+
+
+
 </head>
+
+
+
 <body class="admin-body">
+
+
+
     <div class="admin-shell" id="admin-shell">
+
+
+
         <div class="admin-sidebar-backdrop" id="admin-sidebar-backdrop" aria-hidden="true"></div>
 
+
+
+
+
+
+
         <aside class="admin-sidebar" aria-label="Admin navigation">
+
+
+
             <div class="admin-brand">
+
+
+
                 <svg class="admin-brand-mark" viewBox="0 0 64 32" aria-hidden="true">
+
+
+
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
+
+
+
                 </svg>
+
+
+
                 <div>
+
+
+
                     <p class="admin-brand-text">AEROVA</p>
-                    <p class="admin-brand-sub">Admin</p>
+
+
+
+                    <p class="admin-brand-sub" data-i18n="admin.brandSub">Admin</p>
+
+
+
                 </div>
+
+
+
             </div>
+
+
+
+
+
+
 
             <nav class="admin-nav" id="admin-nav">
-                <button class="admin-nav-link is-active" type="button" data-section="dashboard">Dashboard</button>
-                <button class="admin-nav-link" type="button" data-section="flights">Flights</button>
-                <button class="admin-nav-link" type="button" data-section="routes">Routes</button>
-                <button class="admin-nav-link" type="button" data-section="schedules">Schedules</button>
-                <button class="admin-nav-link" type="button" data-section="aircraft">Aircraft</button>
-                <button class="admin-nav-link" type="button" data-section="seats">Seat Inventory</button>
-                <button class="admin-nav-link" type="button" data-section="bookings">Bookings</button>
-                <button class="admin-nav-link" type="button" data-section="passengers">Passengers</button>
+
+
+
+                <button class="admin-nav-link is-active" type="button" data-section="dashboard" data-i18n="admin.dashboard">Dashboard</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="flights" data-i18n="admin.flights">Flights</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="routes" data-i18n="admin.routes">Routes</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="schedules" data-i18n="admin.schedules">Schedules</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="aircraft" data-i18n="admin.aircraft">Aircraft</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="seats" data-i18n="admin.seats">Seat Inventory</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="bookings" data-i18n="admin.bookings">Bookings</button>
+
+
+
+                <button class="admin-nav-link" type="button" data-section="passengers" data-i18n="admin.passengers">Passengers</button>
+
+
+
             </nav>
 
+
+
+
+
+
+
             <div class="admin-nav-footer">
-                <button class="admin-nav-link" id="admin-logout-btn" type="button">Logout</button>
+
+
+
+                <button class="admin-nav-link" id="admin-logout-btn" type="button" data-i18n="admin.logout">Logout</button>
+
+
+
             </div>
+
+
+
         </aside>
 
+
+
+
+
+
+
         <main class="admin-main">
+
+
+
             <header class="admin-topbar">
+
+
+
                 <div class="admin-topbar-left">
-                    <button class="admin-menu-toggle" id="admin-menu-toggle" type="button" aria-expanded="false" aria-label="Open menu"><span></span></button>
+
+
+
+                    <button class="admin-menu-toggle" id="admin-menu-toggle" type="button" aria-expanded="false" aria-label="Open menu" data-i18n-aria="nav.openMenu"><span></span></button>
+
+
+
                     <div>
-                        <h1 class="admin-page-title" id="admin-page-title">Dashboard</h1>
-                        <p class="admin-page-subtitle" id="admin-page-subtitle">Airline operations overview</p>
+
+
+
+                        <h1 class="admin-page-title" id="admin-page-title" data-i18n="admin.dashboard">Dashboard</h1>
+
+
+
+                        <p class="admin-page-subtitle" id="admin-page-subtitle" data-i18n="admin.dashboardSub">Airline operations overview</p>
+
+
+
                     </div>
+
+
+
                 </div>
-                <p class="admin-topbar-meta">AEROVA Operations Control</p>
+
+
+
+                <p class="admin-topbar-meta" data-i18n="admin.topbarMeta">AEROVA Operations Control</p>
+
+
+
             </header>
+
+
+
+
+
+
 
             <p class="admin-message" id="admin-message" hidden></p>
 
+
+
+
+
+
+
             <!-- DASHBOARD -->
+
+
+
             <section class="admin-section is-active" id="section-dashboard" data-section-panel="dashboard">
+
+
+
                 <div class="admin-stats-grid">
-                    <article class="admin-stat-card"><p class="admin-stat-label">Total Flights</p><p class="admin-stat-value">128</p></article>
-                    <article class="admin-stat-card"><p class="admin-stat-label">Active Routes</p><p class="admin-stat-value">42</p></article>
-                    <article class="admin-stat-card"><p class="admin-stat-label">Aircraft</p><p class="admin-stat-value">12</p></article>
-                    <article class="admin-stat-card"><p class="admin-stat-label">Total Bookings</p><p class="admin-stat-value">2,846</p></article>
-                    <article class="admin-stat-card"><p class="admin-stat-label">Available Seats</p><p class="admin-stat-value">4,320</p></article>
-                    <article class="admin-stat-card"><p class="admin-stat-label">Passengers</p><p class="admin-stat-value">1,964</p></article>
+
+
+
+                    <article class="admin-stat-card"><p class="admin-stat-label" data-i18n="admin.totalFlights">Total Flights</p><p class="admin-stat-value">128</p></article>
+
+
+
+                    <article class="admin-stat-card"><p class="admin-stat-label" data-i18n="admin.activeRoutes">Active Routes</p><p class="admin-stat-value">42</p></article>
+
+
+
+                    <article class="admin-stat-card"><p class="admin-stat-label" data-i18n="flightDetails.aircraft">Aircraft</p><p class="admin-stat-value">12</p></article>
+
+
+
+                    <article class="admin-stat-card"><p class="admin-stat-label" data-i18n="admin.totalBookings">Total Bookings</p><p class="admin-stat-value">2,846</p></article>
+
+
+
+                    <article class="admin-stat-card"><p class="admin-stat-label" data-i18n="admin.availableSeats">Available Seats</p><p class="admin-stat-value">4,320</p></article>
+
+
+
+                    <article class="admin-stat-card"><p class="admin-stat-label" data-i18n="booking.passengers">Passengers</p><p class="admin-stat-value">1,964</p></article>
+
+
+
                 </div>
+
+
+
+
+
+
 
                 <div class="admin-dashboard-grid">
+
+
+
                     <div class="admin-panel admin-panel--cream">
-                        <div class="admin-panel-header"><h2 class="admin-panel-title">Recent Bookings</h2></div>
+
+
+
+                        <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="admin.recentBookings">Recent Bookings</h2></div>
+
+
+
                         <div class="admin-table-wrap">
+
+
+
                             <table class="admin-table">
+
+
+
                                 <thead>
-                                    <tr><th>PNR</th><th>Passenger</th><th>Flight</th><th>Total</th><th>Status</th></tr>
+
+
+
+                                    <tr><th>PNR</th><th data-i18n="manage.passenger">Passenger</th><th data-i18n="manage.flight">Flight</th><th data-i18n="payment.grandTotal">Total</th><th data-i18n="admin.status">Status</th></tr>
+
+
+
                                 </thead>
+
+
+
                                 <tbody id="dashboard-bookings-body"></tbody>
+
+
+
                             </table>
+
+
+
                         </div>
+
+
+
                     </div>
+
+
+
                     <div class="admin-panel admin-panel--cream">
-                        <div class="admin-panel-header"><h2 class="admin-panel-title">Upcoming Flights</h2></div>
+
+
+
+                        <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="admin.upcomingFlights">Upcoming Flights</h2></div>
+
+
+
                         <div class="admin-table-wrap">
+
+
+
                             <table class="admin-table">
+
+
+
                                 <thead>
-                                    <tr><th>Flight</th><th>Route</th><th>Departure</th><th>Aircraft</th><th>Status</th></tr>
+
+
+
+                                    <tr><th data-i18n="manage.flight">Flight</th><th data-i18n="admin.route">Route</th><th data-i18n="admin.departure">Departure</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="admin.status">Status</th></tr>
+
+
+
                                 </thead>
+
+
+
                                 <tbody id="dashboard-flights-body"></tbody>
+
+
+
                             </table>
+
+
+
                         </div>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- FLIGHTS -->
+
+
+
             <section class="admin-section" id="section-flights" data-section-panel="flights" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream">
+
+
+
                     <div class="admin-toolbar">
-                        <input class="admin-search" id="flight-search" type="search" placeholder="Search flight, origin, destination">
+
+
+
+                        <input class="admin-search" id="flight-search" type="search" data-i18n-placeholder="admin.searchFlights" placeholder="Search flight, origin, destination"">
+
+
+
                         <select class="admin-select" id="flight-status-filter">
-                            <option value="">All statuses</option>
-                            <option>Scheduled</option>
-                            <option>On Time</option>
-                            <option>Delayed</option>
-                            <option>Cancelled</option>
+
+
+
+                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+
+
+
+                            <option data-i18n="common.statusScheduled">Scheduled</option>
+
+
+
+                            <option data-i18n="admin.onTime">On Time</option>
+
+
+
+                            <option data-i18n="admin.delayed">Delayed</option>
+
+
+
+                            <option data-i18n="trips.cancelled">Cancelled</option>
+
+
+
                         </select>
-                        <button class="admin-btn admin-btn--primary" id="add-flight-btn" type="button">Add Flight</button>
+
+
+
+                        <button class="admin-btn admin-btn--primary" id="add-flight-btn" type="button" data-i18n="booking.addFlight">Add Flight</button>
+
+
+
                     </div>
+
+
+
                     <div class="admin-table-wrap">
+
+
+
                         <table class="admin-table">
+
+
+
                             <thead>
+
+
+
                                 <tr>
-                                    <th>Flight Number</th><th>Origin</th><th>Destination</th><th>Date</th>
-                                    <th>Departure</th><th>Arrival</th><th>Aircraft</th><th>Status</th><th>Actions</th>
+
+
+
+                                    <th data-i18n="admin.flightNumber">Flight Number</th><th data-i18n="common.origin">Origin</th><th data-i18n="common.destination">Destination</th><th data-i18n="common.date">Date</th>
+
+
+
+                                    <th data-i18n="admin.departure">Departure</th><th data-i18n="trips.arrival">Arrival</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+
+
+
                                 </tr>
+
+
+
                             </thead>
+
+
+
                             <tbody id="flights-body"></tbody>
+
+
+
                         </table>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- ROUTES -->
+
+
+
             <section class="admin-section" id="section-routes" data-section-panel="routes" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream">
+
+
+
                     <div class="admin-toolbar">
+
+
+
                         <input class="admin-search" id="route-search" type="search" placeholder="Search route, origin, destination">
-                        <button class="admin-btn admin-btn--primary" id="add-route-btn" type="button">Add Route</button>
+
+
+
+                        <button class="admin-btn admin-btn--primary" id="add-route-btn" type="button" data-i18n="admin.addRoute">Add Route</button>
+
+
+
                     </div>
+
+
+
                     <div class="admin-table-wrap">
+
+
+
                         <table class="admin-table">
+
+
+
                             <thead>
+
+
+
                                 <tr>
-                                    <th>Route ID</th><th>Origin</th><th>Destination</th><th>Distance</th>
-                                    <th>Duration</th><th>Status</th><th>Actions</th>
+
+
+
+                                    <th data-i18n="admin.routeId">Route ID</th><th data-i18n="common.origin">Origin</th><th data-i18n="common.destination">Destination</th><th data-i18n="admin.distance">Distance</th>
+
+
+
+                                    <th data-i18n="results.duration">Duration</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+
+
+
                                 </tr>
+
+
+
                             </thead>
+
+
+
                             <tbody id="routes-body"></tbody>
+
+
+
                         </table>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- SCHEDULES -->
+
+
+
             <section class="admin-section" id="section-schedules" data-section-panel="schedules" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream">
+
+
+
                     <div class="admin-toolbar">
+
+
+
                         <input class="admin-select" id="schedule-date-filter" type="date">
+
+
+
                         <select class="admin-select" id="schedule-status-filter">
-                            <option value="">All statuses</option>
-                            <option>Scheduled</option>
-                            <option>On Time</option>
-                            <option>Delayed</option>
-                            <option>Cancelled</option>
+
+
+
+                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+
+
+
+                            <option data-i18n="common.statusScheduled">Scheduled</option>
+
+
+
+                            <option data-i18n="admin.onTime">On Time</option>
+
+
+
+                            <option data-i18n="admin.delayed">Delayed</option>
+
+
+
+                            <option data-i18n="trips.cancelled">Cancelled</option>
+
+
+
                         </select>
-                        <button class="admin-btn admin-btn--primary" id="add-schedule-btn" type="button">Add Schedule</button>
+
+
+
+                        <button class="admin-btn admin-btn--primary" id="add-schedule-btn" type="button" data-i18n="admin.addSchedule">Add Schedule</button>
+
+
+
                     </div>
+
+
+
                     <div class="admin-table-wrap">
+
+
+
                         <table class="admin-table">
+
+
+
                             <thead>
+
+
+
                                 <tr>
-                                    <th>Flight Number</th><th>Route</th><th>Aircraft</th><th>Date</th>
-                                    <th>Departure</th><th>Arrival</th><th>Status</th><th>Actions</th>
+
+
+
+                                    <th data-i18n="admin.flightNumber">Flight Number</th><th data-i18n="admin.route">Route</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="common.date">Date</th>
+
+
+
+                                    <th data-i18n="admin.departure">Departure</th><th data-i18n="trips.arrival">Arrival</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+
+
+
                                 </tr>
+
+
+
                             </thead>
+
+
+
                             <tbody id="schedules-body"></tbody>
+
+
+
                         </table>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- AIRCRAFT -->
+
+
+
             <section class="admin-section" id="section-aircraft" data-section-panel="aircraft" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream">
+
+
+
                     <div class="admin-toolbar">
+
+
+
                         <input class="admin-search" id="aircraft-search" type="search" placeholder="Search aircraft, model, registration">
-                        <button class="admin-btn admin-btn--primary" id="add-aircraft-btn" type="button">Add Aircraft</button>
+
+
+
+                        <button class="admin-btn admin-btn--primary" id="add-aircraft-btn" type="button" data-i18n="admin.addAircraft">Add Aircraft</button>
+
+
+
                     </div>
+
+
+
                     <div class="admin-table-wrap">
+
+
+
                         <table class="admin-table">
+
+
+
                             <thead>
+
+
+
                                 <tr>
-                                    <th>Aircraft</th><th>Model</th><th>Registration Number</th><th>Total Seats</th>
-                                    <th>Business Seats</th><th>Comfort Seats</th><th>Economy Seats</th><th>Status</th><th>Actions</th>
+
+
+
+                                    <th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="admin.model">Model</th><th data-i18n="ui.registrationNumber">Registration Number</th><th data-i18n="ui.totalSeats">Total Seats</th>
+
+
+
+                                    <th data-i18n="ui.businessSeats">Business Seats</th><th data-i18n="ui.comfortSeats">Comfort Seats</th><th data-i18n="ui.economySeats">Economy Seats</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+
+
+
                                 </tr>
+
+
+
                             </thead>
+
+
+
                             <tbody id="aircraft-body"></tbody>
+
+
+
                         </table>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- SEAT INVENTORY -->
+
+
+
             <section class="admin-section" id="section-seats" data-section-panel="seats" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream" style="margin-bottom:1.15rem;">
+
+
+
                     <div class="admin-toolbar">
+
+
+
                         <select class="admin-select" id="seat-flight-select" aria-label="Select flight"></select>
+
+
+
                         <select class="admin-select" id="seat-cabin-select" aria-label="Select cabin">
-                            <option value="Business">Business</option>
-                            <option value="Comfort">Comfort</option>
-                            <option value="Economy" selected>Economy</option>
+
+
+
+                            <option value="Business" data-i18n="common.business">Business</option>
+
+
+
+                            <option value="Comfort" data-i18n="common.comfort">Comfort</option>
+
+
+
+                            <option value="Economy" selected data-i18n="common.economy">Economy</option>
+
+
+
                         </select>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
                 <div class="seat-inventory-layout">
+
+
+
                     <div class="admin-panel admin-panel--cream">
+
+
+
                         <div class="admin-panel-header">
-                            <h2 class="admin-panel-title" id="seat-map-title">Seat Map</h2>
+
+
+
+                            <h2 class="admin-panel-title" id="seat-map-title" data-i18n="ui.seatMap">Seat Map</h2>
+
+
+
                         </div>
+
+
+
                         <div class="seat-legend">
+
+
+
                             <span class="seat-legend-item"><span class="seat-swatch seat-swatch--available"></span>Available</span>
+
+
+
                             <span class="seat-legend-item"><span class="seat-swatch seat-swatch--occupied"></span>Occupied</span>
+
+
+
                             <span class="seat-legend-item"><span class="seat-swatch seat-swatch--reserved"></span>Reserved</span>
+
+
+
                             <span class="seat-legend-item"><span class="seat-swatch seat-swatch--blocked"></span>Blocked</span>
+
+
+
                         </div>
+
+
+
                         <div class="aircraft-deck" id="aircraft-deck"></div>
-                        <p class="seat-hint">Click an available seat to cycle its state.</p>
+
+
+
+                        <p class="seat-hint" data-i18n="ui.clickAnAvailableSeatToCycle">Click an available seat to cycle its state.</p>
+
+
+
                     </div>
+
+
+
                     <aside class="admin-panel admin-panel--cream">
-                        <h2 class="admin-panel-title">Availability</h2>
+
+
+
+                        <h2 class="admin-panel-title" data-i18n="ui.availability">Availability</h2>
+
+
+
                         <dl class="seat-summary-list" id="seat-summary-list"></dl>
+
+
+
                     </aside>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- BOOKINGS -->
+
+
+
             <section class="admin-section" id="section-bookings" data-section-panel="bookings" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream">
+
+
+
                     <div class="admin-toolbar">
+
+
+
                         <input class="admin-search" id="booking-pnr-search" type="search" placeholder="Search by PNR">
+
+
+
                         <input class="admin-search" id="booking-passenger-search" type="search" placeholder="Search by passenger">
+
+
+
                         <select class="admin-select" id="booking-status-filter">
-                            <option value="">All statuses</option>
-                            <option>Confirmed</option>
-                            <option>Pending</option>
-                            <option>Cancelled</option>
+
+
+
+                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+
+
+
+                            <option data-i18n="trips.statusConfirmed">Confirmed</option>
+
+
+
+                            <option data-i18n="common.statusPending">Pending</option>
+
+
+
+                            <option data-i18n="trips.cancelled">Cancelled</option>
+
+
+
                         </select>
+
+
+
                     </div>
+
+
+
                     <div class="admin-table-wrap">
+
+
+
                         <table class="admin-table">
+
+
+
                             <thead>
+
+
+
                                 <tr>
-                                    <th>PNR</th><th>Passenger</th><th>Flight</th><th>Route</th><th>Date</th>
-                                    <th>Cabin</th><th>Seats</th><th>Total</th><th>Status</th><th>Actions</th>
+
+
+
+                                    <th>PNR</th><th data-i18n="manage.passenger">Passenger</th><th data-i18n="manage.flight">Flight</th><th data-i18n="admin.route">Route</th><th data-i18n="common.date">Date</th>
+
+
+
+                                    <th data-i18n="admin.cabin">Cabin</th><th data-i18n="payment.seats">Seats</th><th data-i18n="payment.grandTotal">Total</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+
+
+
                                 </tr>
+
+
+
                             </thead>
+
+
+
                             <tbody id="bookings-body"></tbody>
+
+
+
                         </table>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
+
+
+
 
             <!-- PASSENGERS -->
+
+
+
             <section class="admin-section" id="section-passengers" data-section-panel="passengers" hidden>
+
+
+
                 <div class="admin-panel admin-panel--cream">
+
+
+
                     <div class="admin-toolbar">
+
+
+
                         <input class="admin-search" id="passenger-search" type="search" placeholder="Search name, email, document">
+
+
+
                         <select class="admin-select" id="passenger-status-filter">
-                            <option value="">All statuses</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
+
+
+
+                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+
+
+
+                            <option data-i18n="common.statusActive">Active</option>
+
+
+
+                            <option data-i18n="common.statusInactive">Inactive</option>
+
+
+
                         </select>
+
+
+
                     </div>
+
+
+
                     <div class="admin-table-wrap">
+
+
+
                         <table class="admin-table">
+
+
+
                             <thead>
+
+
+
                                 <tr>
-                                    <th>Passenger Name</th><th>Email</th><th>Phone</th><th>Nationality</th>
-                                    <th>Document Type</th><th>Document Number</th><th>Total Trips</th><th>Status</th><th>Actions</th>
+
+
+
+                                    <th data-i18n="ui.passengerName">Passenger Name</th><th data-i18n="auth.email">Email</th><th data-i18n="passengers.phone">Phone</th><th data-i18n="passengers.nationality">Nationality</th>
+
+
+
+                                    <th data-i18n="admin.documentType">Document Type</th><th data-i18n="admin.documentNumber">Document Number</th><th data-i18n="ui.totalTrips">Total Trips</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+
+
+
                                 </tr>
+
+
+
                             </thead>
+
+
+
                             <tbody id="passengers-body"></tbody>
+
+
+
                         </table>
+
+
+
                     </div>
+
+
+
                 </div>
+
+
+
             </section>
+
+
+
         </main>
+
+
+
     </div>
+
+
+
+
+
+
 
     <div class="admin-modal" id="entity-modal" hidden>
+
+
+
         <div class="admin-modal-backdrop" data-close-modal></div>
+
+
+
         <div class="admin-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="entity-modal-title">
-            <h2 class="admin-modal-title" id="entity-modal-title">Form</h2>
+
+
+
+            <h2 class="admin-modal-title" id="entity-modal-title" data-i18n="ui.form">Form</h2>
+
+
+
             <form id="entity-form">
+
+
+
                 <div class="admin-form-grid" id="entity-form-fields"></div>
+
+
+
                 <div class="admin-modal-actions">
-                    <button class="admin-btn admin-btn--secondary" type="button" data-close-modal>Cancel</button>
-                    <button class="admin-btn admin-btn--primary" type="submit">Save</button>
+
+
+
+                    <button class="admin-btn admin-btn--secondary" type="button" data-close-modal data-i18n="common.cancel">Cancel</button>
+
+
+
+                    <button class="admin-btn admin-btn--primary" type="submit" data-i18n="common.save">Save</button>
+
+
+
                 </div>
+
+
+
             </form>
+
+
+
         </div>
+
+
+
     </div>
+
+
+
+
+
+
 
     <div class="admin-modal" id="details-modal" hidden>
+
+
+
         <div class="admin-modal-backdrop" data-close-details></div>
+
+
+
         <div class="admin-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="details-modal-title">
-            <h2 class="admin-modal-title" id="details-modal-title">Details</h2>
+
+
+
+            <h2 class="admin-modal-title" id="details-modal-title" data-i18n="common.details">Details</h2>
+
+
+
             <div id="details-modal-body"></div>
+
+
+
             <div class="admin-modal-actions">
-                <button class="admin-btn admin-btn--secondary" type="button" data-close-details>Close</button>
+
+
+
+                <button class="admin-btn admin-btn--secondary" type="button" data-close-details data-i18n="common.close">Close</button>
+
+
+
             </div>
+
+
+
         </div>
+
+
+
     </div>
 
+
+
+
+
+
+
+        <script src="assets/js/locales/en.js"></script>
+
+
+    <script src="assets/js/locales/az.js"></script>
+
+
+    <script src="assets/js/locales/ru.js"></script>
+
+
+    <script src="assets/js/i18n.js"></script>
+
+
     <script src="assets/js/admin.js"></script>
+
+
+
 </body>
+
+
+
 </html>
+
+
+
