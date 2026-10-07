@@ -1,499 +1,263 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>AEROVA | Experience</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="assets/css/passenger-details.css">
     <link rel="stylesheet" href="assets/css/i18n.css">
-
-    <link rel="stylesheet" href="assets/css/experience.css">
-
+    <link rel="stylesheet" href="assets/css/experience.css?v=editorial4">
 </head>
-
 <body class="experience-body">
-
     <header id="site-header" class="site-header site-header--transparent">
-
         <div class="header-container">
-
             <a class="logo" href="index.html" aria-label="AEROVA Home" data-i18n-aria="nav.homeAria">
-
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
-
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
-
                 </svg>
-
                 <span class="logo-text">Aerova</span>
-
             </a>
-
-
-
             <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
-
                 <ul class="nav-list">
-
                     <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
-
                     <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
-
                     <li class="nav-item"><a class="nav-link is-current" href="experience.html" aria-current="page" data-i18n="nav.experience">Experience</a></li>
-
                     <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
-
                     <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a></li>
-
                 </ul>
-
                 <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
-
             </nav>
-
-
-
             <div class="header-actions">
-
                 <a class="trips-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
-
                 <button class="search-button" type="button" aria-label="Search" data-i18n-aria="nav.search">
-
                     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-
                         <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
-
                         <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-
                     </svg>
-
                 </button>
-
                 <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
-
                 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
-
                     <span class="menu-toggle-bar"></span>
-
                     <span class="menu-toggle-bar"></span>
-
                     <span class="menu-toggle-bar"></span>
-
                 </button>
-
             </div>
-
         </div>
-
     </header>
 
-
-
     <main>
-
-        <section class="page-hero experience-hero" aria-label="The AEROVA Experience" data-i18n-aria="experience.heroTitle">
-
-            <div class="page-hero-media" style="background-image: url('assets/images/hero-aircraft.jpg'); background-position: center 45%;" role="img" aria-label="AEROVA aircraft in flight"></div>
-
-            <div class="page-hero-overlay" aria-hidden="true"></div>
-
-            <div class="page-hero-content">
-
-                <p class="page-hero-brand">AEROVA</p>
-
-                <h1 class="page-hero-title" data-i18n="experience.heroTitle">The AEROVA Experience</h1>
-
-                <p class="page-hero-text" data-i18n="ui.thoughtfulCabinsConsideredDiningAndService">Thoughtful cabins, considered dining, and service that stays quietly ahead of every moment aloft.</p>
-
-                <a class="page-cta" href="booking.html" data-i18n="experience.bookJourney">Book Your Journey</a>
-
+        <section class="exp-hero" aria-label="The AEROVA Experience" data-i18n-aria="experience.heroTitle">
+            <div class="exp-hero__media" role="img" aria-label="Aircraft wing above the clouds at golden hour"></div>
+            <div class="exp-hero__veil" aria-hidden="true"></div>
+            <div class="exp-hero__content">
+                <p class="exp-hero__kicker">AEROVA</p>
+                <h1 class="exp-hero__title" data-i18n="experience.heroTitle">The AEROVA Experience</h1>
+                <p class="exp-hero__text" data-i18n="experience.heroText">Flying with AEROVA is an experience — cabins, cuisine, and care composed with quiet intention.</p>
             </div>
-
         </section>
 
+        <section id="economy" class="exp-split exp-split--economy" aria-labelledby="economy-title">
+            <div class="exp-split__media">
+                <img src="assets/images/exp-economy.jpg" alt="Modern economy class cabin aisle">
+            </div>
+            <div class="exp-split__copy">
+                <p class="exp-eyebrow" data-i18n="common.economy">Economy</p>
+                <h2 id="economy-title" class="exp-split__title" data-i18n="experience.economyTitle">Economy Experience</h2>
+                <p class="exp-split__text" data-i18n="experience.economyText">Ergonomic seating, thoughtful lighting, and essentials arranged so every journey feels composed from the first moment onboard.</p>
+                <ul class="exp-split__list">
+                    <li data-i18n="experience.economyPoint1">Comfortable seating for every journey</li>
+                    <li data-i18n="experience.economyPoint4">Personal space designed for calm</li>
+                    <li data-i18n="experience.economyPoint2">Thoughtful dining and soft drinks</li>
+                    <li data-i18n="experience.economyPoint3">Entertainment when you want it</li>
+                </ul>
+            </div>
+        </section>
 
+        <section id="comfort" class="exp-split exp-split--comfort exp-split--reverse" aria-labelledby="comfort-title">
+            <div class="exp-split__media exp-split__media--tall">
+                <img src="assets/images/comfort.jpg" alt="Premium comfort cabin with extra space">
+            </div>
+            <div class="exp-split__copy">
+                <p class="exp-eyebrow" data-i18n="common.comfort">Comfort</p>
+                <h2 id="comfort-title" class="exp-split__title" data-i18n="experience.comfortTitle">Comfort Experience</h2>
+                <p class="exp-split__text" data-i18n="experience.comfortText">Extra room to settle in, preferred seating options, and a calmer cabin rhythm for travelers who value space and ease.</p>
+                <ul class="exp-split__list">
+                    <li data-i18n="experience.comfortPoint1">More space to settle in</li>
+                    <li data-i18n="experience.comfortPoint2">Priority boarding and services</li>
+                    <li data-i18n="experience.comfortPoint3">Enhanced comfort throughout</li>
+                </ul>
+            </div>
+        </section>
 
-        <section class="experience-section" aria-label="Cabin experiences">
+        <section id="business" class="exp-split exp-split--business" aria-labelledby="business-title">
+            <div class="exp-split__media exp-split__media--luxe">
+                <img src="assets/images/exp-hero.jpg" alt="Business class lie-flat suite">
+                <span class="exp-split__goldline" aria-hidden="true"></span>
+            </div>
+            <div class="exp-split__copy exp-split__copy--luxe">
+                <p class="exp-eyebrow" data-i18n="common.business">Business</p>
+                <h2 id="business-title" class="exp-split__title" data-i18n="experience.businessTitle">Business Class Experience</h2>
+                <p class="exp-split__text" data-i18n="experience.businessText">Private repose, lie-flat comfort, and attentive service that turns long-haul hours into a quiet continuation of your day.</p>
+                <ul class="exp-split__list">
+                    <li data-i18n="experience.businessPoint1">Premium seating and privacy</li>
+                    <li data-i18n="experience.businessPoint2">Lounge access before departure</li>
+                    <li data-i18n="experience.businessPoint3">Refined multi-course dining</li>
+                    <li data-i18n="experience.businessPoint4">Attentive premium service</li>
+                </ul>
+            </div>
+        </section>
 
-            <div class="page-shell">
+        <section class="exp-dining" aria-labelledby="dining-title">
+            <div class="exp-dining__frame">
+                <img src="assets/images/exp-dining-meal.jpg" alt="Premium business class meal served onboard">
+                <div class="exp-dining__veil" aria-hidden="true"></div>
+            </div>
+            <div class="exp-dining__content">
+                <p class="exp-eyebrow" data-i18n="experience.onboardDining">Onboard Dining</p>
+                <h2 id="dining-title" class="exp-dining__title" data-i18n="experience.diningHeading">Thoughtfully Served</h2>
+                <p class="exp-dining__text" data-i18n="experience.diningText">Seasonal menus and cabin-specific service, from light plates in Economy to multi-course dining in Business Class.</p>
+            </div>
+        </section>
 
-                <header class="section-intro">
-
-                    <h2 class="section-heading" data-i18n="ui.cabinsDesignedForTheWayYou">Cabins Designed for the Way You Travel</h2>
-
-                    <p class="section-copy" data-i18n="ui.chooseTheAtmosphereThatSuitsYour">Choose the atmosphere that suits your journey — essential comfort, elevated space, or refined repose.</p>
-
-                </header>
-
-
-
-                <div class="experience-feature-grid">
-
-                    <article class="experience-feature" id="economy">
-
-                        <img class="experience-feature-image" src="assets/images/economy-class.jpg" alt="AEROVA Economy cabin seating">
-
-                        <div class="experience-feature-body">
-
-                            <h3 class="experience-feature-title" data-i18n="experience.economyTitle">Economy Experience</h3>
-
-                            <p class="experience-feature-text" data-i18n="experience.economyText">Ergonomic seating, thoughtful lighting, and essentials arranged so every journey feels composed from the first moment onboard.</p>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="experience-feature" id="comfort">
-
-                        <img class="experience-feature-image" src="assets/images/comfort.jpg" alt="AEROVA Comfort cabin with extra space">
-
-                        <div class="experience-feature-body">
-
-                            <h3 class="experience-feature-title" data-i18n="experience.comfortTitle">Comfort Experience</h3>
-
-                            <p class="experience-feature-text" data-i18n="experience.comfortText">Extra room to settle in, preferred seating options, and a calmer cabin rhythm for travelers who value space and ease.</p>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="experience-feature experience-feature--wide" id="business">
-
-                        <img class="experience-feature-image" src="assets/images/business-class.jpg" alt="AEROVA Business Class cabin">
-
-                        <div class="experience-feature-body">
-
-                            <h3 class="experience-feature-title" data-i18n="experience.businessTitle">Business Class Experience</h3>
-
-                            <p class="experience-feature-text" data-i18n="experience.businessText">Private repose, lie-flat comfort, and attentive service that turns long-haul hours into a quiet continuation of your day.</p>
-
-                        </div>
-
-                    </article>
-
+        <section class="exp-lounge" aria-labelledby="lounge-title">
+            <div class="exp-shell exp-lounge__inner">
+                <div class="exp-lounge__media">
+                    <img src="assets/images/exp-lounge.jpg" alt="Luxury airport lounge interior">
                 </div>
-
-            </div>
-
-        </section>
-
-
-
-        <section class="experience-section experience-section--soft" aria-label="Onboard lifestyle">
-
-            <div class="page-shell">
-
-                <header class="section-intro">
-
-                    <h2 class="section-heading" data-i18n="ui.lifeAboveTheClouds">Life Above the Clouds</h2>
-
-                    <p class="section-copy" data-i18n="ui.diningEntertainmentAndLoungeMomentsCurated">Dining, entertainment, and lounge moments curated to feel unhurried and distinctly AEROVA.</p>
-
-                </header>
-
-
-
-                <div class="experience-split-grid">
-
-                    <article class="experience-split">
-
-                        <img class="experience-split-image" src="assets/images/inflight-dining.jpg" alt="Premium in-flight dining service">
-
-                        <div class="experience-split-body">
-
-                            <h3 class="experience-split-title" data-i18n="experience.dining">Dining</h3>
-
-                            <p class="experience-split-text" data-i18n="experience.diningText">Seasonal menus and cabin-specific service, from light plates in Economy to multi-course dining in Business Class.</p>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="experience-split">
-
-                        <img class="experience-split-image" src="assets/images/cabin-entertainment.jpg" alt="Seatback entertainment in an AEROVA cabin">
-
-                        <div class="experience-split-body">
-
-                            <h3 class="experience-split-title" data-i18n="experience.entertainment">Entertainment</h3>
-
-                            <p class="experience-split-text" data-i18n="experience.entertainmentText">A curated library of films, music, and quiet reading modes — available when you want them, invisible when you do not.</p>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="experience-split">
-
-                        <img class="experience-split-image" src="assets/images/airport-lounge.jpg" alt="AEROVA premium airport lounge">
-
-                        <div class="experience-split-body">
-
-                            <h3 class="experience-split-title" data-i18n="experience.lounge">Airport Lounge</h3>
-
-                            <p class="experience-split-text" data-i18n="experience.loungeText">Calm seating, refined refreshments, and a seamless prelude to boarding for eligible Comfort and Business travelers.</p>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="experience-split">
-
-                        <img class="experience-split-image" src="assets/images/airport-premium.jpg" alt="Priority boarding and premium airport services">
-
-                        <div class="experience-split-body">
-
-                            <h3 class="experience-split-title" data-i18n="experience.premium">Premium Services</h3>
-
-                            <p class="experience-split-text" data-i18n="experience.premiumText">Priority boarding, Fast Track, and tailored extras that keep your journey moving with quiet efficiency.</p>
-
-                        </div>
-
-                    </article>
-
+                <div class="exp-lounge__copy">
+                    <p class="exp-eyebrow" data-i18n="experience.lounge">Airport Lounge</p>
+                    <h2 id="lounge-title" class="exp-lounge__title" data-i18n="experience.relaxBefore">Relax Before You Fly</h2>
+                    <p class="exp-lounge__text" data-i18n="experience.loungeText">Calm seating, refined refreshments, and a seamless prelude to boarding for eligible Comfort and Business travelers.</p>
                 </div>
-
             </div>
-
         </section>
 
-
-
-        <section class="page-cta-band" aria-label="Book your journey">
-
-            <div class="page-shell page-cta-band-inner">
-
-                <div>
-
-                    <p class="page-cta-eyebrow">AEROVA</p>
-
-                    <h2 class="page-cta-title" data-i18n="ui.beginAJourneyThatFeelsConsidered">Begin a Journey That Feels Considered</h2>
-
-                    <p class="page-cta-text" data-i18n="ui.chooseYourCabinSetYourCourse">Choose your cabin, set your course, and travel with the composure AEROVA is known for.</p>
-
+        <section class="exp-entertainment" aria-labelledby="entertainment-title">
+            <div class="exp-shell exp-entertainment__inner">
+                <div class="exp-entertainment__copy">
+                    <p class="exp-eyebrow" data-i18n="experience.entertainment">Entertainment</p>
+                    <h2 id="entertainment-title" class="exp-entertainment__title" data-i18n="experience.entertainmentHeading">A Quiet Companion</h2>
+                    <p class="exp-entertainment__text" data-i18n="experience.entertainmentText">A curated library of films, music, and quiet reading modes — available when you want them, invisible when you do not.</p>
                 </div>
-
-                <a class="page-cta" href="booking.html" data-i18n="destinationDetails.bookJourney">Book Your Journey</a>
-
+                <div class="exp-entertainment__media">
+                    <img src="assets/images/cabin-entertainment.jpg" alt="Seatback entertainment screen onboard">
+                </div>
             </div>
-
         </section>
 
+        <section class="exp-services" aria-labelledby="services-title">
+            <div class="exp-shell">
+                <p class="exp-eyebrow" data-i18n="experience.premium">Premium Services</p>
+                <h2 id="services-title" class="exp-services__title" data-i18n="experience.designedAroundYou">Designed Around You</h2>
+                <p class="exp-services__lead" data-i18n="experience.premiumText">Priority boarding, Fast Track, and tailored extras that keep your journey moving with quiet efficiency.</p>
+                <ol class="exp-services__list">
+                    <li>
+                        <span class="exp-services__num">01</span>
+                        <span class="exp-services__name" data-i18n="common.priorityBoarding">Priority Boarding</span>
+                    </li>
+                    <li>
+                        <span class="exp-services__num">02</span>
+                        <span class="exp-services__name" data-i18n="experience.loungeAccess">Lounge Access</span>
+                    </li>
+                    <li>
+                        <span class="exp-services__num">03</span>
+                        <span class="exp-services__name" data-i18n="experience.extraLegroom">Extra Legroom</span>
+                    </li>
+                    <li>
+                        <span class="exp-services__num">04</span>
+                        <span class="exp-services__name" data-i18n="common.fastTrack">Fast Track</span>
+                    </li>
+                    <li>
+                        <span class="exp-services__num">05</span>
+                        <span class="exp-services__name" data-i18n="experience.personalService">Personal Service</span>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="exp-cta" aria-label="Book your journey">
+            <div class="exp-cta__media" role="img" aria-label="Commercial aircraft in flight"></div>
+            <div class="exp-cta__veil" aria-hidden="true"></div>
+            <div class="exp-cta__content">
+                <h2 class="exp-cta__title" data-i18n="experience.ctaTitle">Your Journey Starts With AEROVA</h2>
+                <a class="exp-cta__btn" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
+            </div>
+        </section>
     </main>
 
-
-
     <footer id="site-footer" class="site-footer">
-
         <div class="footer-main">
-
             <div class="footer-container">
-
                 <div class="footer-brand">
-
                     <a class="logo" href="index.html">
-
                         <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
-
                             <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
-
                         </svg>
-
                         <span class="logo-text">Aerova</span>
-
                     </a>
-
                     <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
-
                 </div>
-
-
-
                 <div class="footer-column">
-
                     <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
-
                     <ul class="footer-links">
-
                         <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
-
                         <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
-
                         <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
-
                         <li><a class="footer-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
-
                         <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
-
                     </ul>
-
                 </div>
-
-
-
                 <div class="footer-column">
-
                     <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
-
                     <ul class="footer-links">
-
                         <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Manage Booking</a></li>
-
                         <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
-
                         <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
-
                         <li><a class="footer-link" href="index.html#faqs" data-i18n="footer.faqs">FAQs</a></li>
-
                     </ul>
-
                 </div>
-
-
-
                 <div class="footer-column">
-
                     <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
-
                     <ul class="social-list">
-
                         <li>
-
                             <a class="social-link" href="index.html#facebook" aria-label="Facebook">
-
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
                                     <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
-
                                 </svg>
-
                             </a>
-
                         </li>
-
                         <li>
-
                             <a class="social-link" href="index.html#instagram" aria-label="Instagram">
-
                                 <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
                                     <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
                                     <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
                                     <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
-
                                 </svg>
-
                             </a>
-
                         </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#x" aria-label="X">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#youtube" aria-label="YouTube">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
-                                    <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#linkedin" aria-label="LinkedIn">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
-                                    <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
                     </ul>
-
                 </div>
-
             </div>
-
         </div>
-
-
-
         <div class="footer-bottom">
-
-            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
-
-            <ul class="footer-legal">
-
-                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
-
-                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
-
-            </ul>
-
+            <div class="footer-bottom-container">
+                <p class="copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+                <ul class="legal-links">
+                    <li><a class="legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+                    <li><a class="legal-link" href="index.html#terms" data-i18n="footer.terms">Terms & Conditions</a></li>
+                </ul>
+            </div>
         </div>
-
     </footer>
 
-
-
-        <script src="assets/js/locales/en.js"></script>
+    <script src="assets/js/locales/en.js"></script>
     <script src="assets/js/locales/az.js"></script>
     <script src="assets/js/locales/ru.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/auth.js"></script>
-
     <script src="assets/js/home.js"></script>
-
 </body>
-
 </html>
-

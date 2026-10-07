@@ -2,7 +2,7 @@
 
 .destination-details-body {
     background:
-        radial-gradient(ellipse at 80% 0%, rgba(198, 163, 106, 0.08), transparent 40%),
+        radial-gradient(ellipse at 80% 0%, rgba(198, 163, 106, 0.06), transparent 42%),
         var(--color-navy);
 }
 
@@ -16,8 +16,8 @@
     position: relative;
     display: flex;
     align-items: flex-end;
-    min-height: min(88vh, 760px);
-    padding: calc(var(--header-height) + 3rem) var(--gutter) 4.5rem;
+    min-height: min(82vh, 720px);
+    padding: calc(var(--header-height) + 3rem) var(--gutter) 4.25rem;
     overflow: hidden;
 }
 
@@ -36,56 +36,55 @@
 
 .page-hero-overlay {
     background:
-        linear-gradient(180deg, rgba(5, 12, 22, 0.42) 0%, rgba(5, 12, 22, 0.74) 55%, rgba(5, 12, 22, 0.95) 100%),
-        linear-gradient(90deg, rgba(5, 12, 22, 0.62), transparent 58%);
+        linear-gradient(180deg, rgba(5, 12, 22, 0.38) 0%, rgba(5, 12, 22, 0.72) 52%, rgba(5, 12, 22, 0.96) 100%),
+        linear-gradient(90deg, rgba(5, 12, 22, 0.55), transparent 62%);
 }
 
 .page-hero-content {
     position: relative;
     z-index: 1;
-    width: min(640px, 100%);
+    width: min(560px, 100%);
 }
 
-.page-hero-brand {
-    margin: 0 0 0.85rem;
+.page-hero-kicker {
+    margin: 0 0 0.75rem;
     color: var(--color-gold-light);
-    font-family: var(--font-display);
-    font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+    font-size: 0.72rem;
     font-weight: 500;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     animation: destination-fade-up 0.9s ease both;
-}
-
-.destination-country {
-    margin: 0 0 0.55rem;
-    color: rgba(246, 241, 231, 0.72);
-    font-size: 0.78rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    animation: destination-fade-up 0.9s ease 0.06s both;
 }
 
 .page-hero-title {
     margin: 0;
     color: var(--color-cream);
     font-family: var(--font-serif);
-    font-size: clamp(2.8rem, 6vw, 4.4rem);
+    font-size: clamp(2.9rem, 6.2vw, 4.5rem);
     font-weight: 500;
     letter-spacing: 0.02em;
     line-height: 1.05;
-    animation: destination-fade-up 0.9s ease 0.1s both;
+    animation: destination-fade-up 0.9s ease 0.08s both;
+}
+
+.page-hero-meta {
+    margin: 0.85rem 0 0;
+    color: rgba(246, 241, 231, 0.7);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    animation: destination-fade-up 0.9s ease 0.14s both;
 }
 
 .page-hero-text {
-    margin: 1.1rem 0 0;
-    max-width: 34rem;
+    margin: 1.15rem 0 0;
+    max-width: 32rem;
     color: var(--color-cream-muted);
-    font-size: 1.1rem;
+    font-size: 1.08rem;
     font-weight: 300;
     line-height: 1.65;
-    animation: destination-fade-up 0.9s ease 0.18s both;
+    animation: destination-fade-up 0.9s ease 0.2s both;
 }
 
 .page-cta {
@@ -93,7 +92,7 @@
     align-items: center;
     justify-content: center;
     min-height: 50px;
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
     padding: 0.85rem 1.55rem;
     border-radius: 10px;
     background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
@@ -103,7 +102,6 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     transition: transform 0.25s ease, filter 0.25s ease;
-    animation: destination-fade-up 0.9s ease 0.26s both;
 }
 
 .page-cta:hover {
@@ -116,120 +114,106 @@
     margin-inline: auto;
 }
 
-.section-eyebrow {
-    margin: 0 0 0.7rem;
-    color: var(--color-gold);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+.destination-details-content {
+    padding: 3.25rem 0 5rem;
 }
 
-.section-heading {
+.destination-details-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.8fr);
+    gap: 2.75rem;
+    align-items: start;
+}
+
+.destination-details-main-col {
+    min-width: 0;
+}
+
+.dd-section-title {
     margin: 0;
     color: var(--color-cream);
     font-family: var(--font-serif);
-    font-size: clamp(2rem, 3.5vw, 2.6rem);
+    font-size: clamp(1.65rem, 2.8vw, 2.05rem);
     font-weight: 500;
+    letter-spacing: 0.01em;
 }
 
-.section-heading--sm {
-    font-size: clamp(1.55rem, 2.6vw, 1.9rem);
-}
-
-.section-copy {
-    margin: 0.85rem 0 0;
+.dd-intro {
+    margin: 0.9rem 0 0;
+    max-width: 40rem;
     color: var(--color-cream-muted);
     font-size: 1.05rem;
     font-weight: 300;
     line-height: 1.7;
 }
 
-.destination-details-content {
-    padding: 3.5rem 0 5rem;
+.dd-info {
+    padding-bottom: 2.25rem;
+    border-bottom: 1px solid rgba(246, 241, 231, 0.1);
 }
 
-.destination-details-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.85fr);
-    gap: 1.5rem;
-    align-items: start;
-}
-
-.destination-section-intro {
-    margin-bottom: 1.75rem;
-}
-
-.destination-facts {
+.dd-info-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.9rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem 2rem;
+    margin: 1.75rem 0 0;
 }
 
-.destination-fact {
-    padding: 1.25rem 1.2rem 1.3rem;
-    border-radius: 18px;
-    background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.1), transparent 48%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.28);
+.dd-info-item {
+    min-width: 0;
 }
 
-.destination-fact-label {
-    margin: 0 0 0.55rem;
-    color: rgba(246, 241, 231, 0.55);
+.dd-info-item dt {
+    margin: 0 0 0.4rem;
+    color: rgba(246, 241, 231, 0.5);
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
-.destination-fact-value {
+.dd-info-item dd {
     margin: 0;
     color: var(--color-cream);
-    font-family: var(--font-serif);
-    font-size: 1.35rem;
-    font-weight: 500;
-    line-height: 1.25;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.45;
 }
 
-.destination-fact-value--fare {
-    color: var(--color-gold-light);
-}
-
-.destination-fact-meta {
-    margin: 0.35rem 0 0;
+.dd-info-code {
+    display: block;
+    margin-top: 0.25rem;
     color: var(--color-gold);
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
 }
 
-.destination-panel {
-    margin-top: 1.5rem;
-    padding: 1.5rem 1.4rem 1.55rem;
-    border-radius: 20px;
-    background: rgba(246, 241, 231, 0.03);
-    border: 1px solid rgba(198, 163, 106, 0.24);
+.dd-baggage {
+    padding-top: 2.25rem;
 }
 
 .destination-baggage-list {
     display: grid;
-    gap: 0.75rem;
-    margin: 1.1rem 0 0;
+    gap: 0;
+    margin: 1.25rem 0 0;
+    max-width: 36rem;
 }
 
 .destination-baggage-list li {
     display: grid;
-    grid-template-columns: 7.5rem minmax(0, 1fr);
-    gap: 0.75rem;
-    padding-bottom: 0.75rem;
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.85rem 0;
     border-bottom: 1px solid rgba(246, 241, 231, 0.08);
     color: var(--color-cream-muted);
     font-size: 0.98rem;
     font-weight: 300;
     line-height: 1.5;
+}
+
+.destination-baggage-list li:first-child {
+    padding-top: 0;
 }
 
 .destination-baggage-list li:last-child {
@@ -245,69 +229,18 @@
     text-transform: uppercase;
 }
 
-.destination-flights {
-    display: grid;
-    gap: 0.8rem;
-    margin-top: 1.1rem;
-}
-
-.destination-flight {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) auto auto;
-    gap: 0.85rem;
-    align-items: center;
-    padding: 1rem 1.05rem;
-    border-radius: 14px;
-    background: rgba(5, 12, 22, 0.45);
-    border: 1px solid rgba(246, 241, 231, 0.1);
-}
-
-.destination-flight-route {
-    margin: 0;
-    color: var(--color-cream);
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
-    font-weight: 500;
-}
-
-.destination-flight-meta {
-    margin: 0.25rem 0 0;
-    color: rgba(246, 241, 231, 0.62);
-    font-size: 0.85rem;
-}
-
-.destination-flight-time,
-.destination-flight-price {
-    margin: 0;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.destination-flight-time {
-    color: var(--color-cream-muted);
-    font-size: 0.9rem;
-}
-
-.destination-flight-price {
-    color: var(--color-gold-light);
-    font-size: 1rem;
-    font-weight: 500;
-}
-
 .destination-aside {
     position: sticky;
     top: calc(var(--header-height) + 1rem);
-    padding: 1.55rem 1.4rem 1.5rem;
-    border-radius: 22px;
+    padding: 1.65rem 1.45rem 1.55rem;
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 4px;
     background:
-        radial-gradient(ellipse at 0% 0%, rgba(198, 163, 106, 0.14), transparent 45%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.34);
-    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
+        linear-gradient(180deg, rgba(16, 30, 48, 0.95) 0%, rgba(7, 17, 29, 0.98) 100%);
 }
 
 .destination-aside-eyebrow {
-    margin: 0 0 0.55rem;
+    margin: 0 0 0.65rem;
     color: var(--color-gold);
     font-size: 0.68rem;
     font-weight: 500;
@@ -319,28 +252,29 @@
     margin: 0;
     color: var(--color-cream);
     font-family: var(--font-serif);
-    font-size: 1.85rem;
+    font-size: 1.75rem;
     font-weight: 500;
+    line-height: 1.2;
 }
 
 .destination-aside-text {
-    margin: 0.7rem 0 0;
+    margin: 0.75rem 0 0;
     color: var(--color-cream-muted);
-    font-size: 0.98rem;
+    font-size: 0.95rem;
     font-weight: 300;
     line-height: 1.6;
 }
 
 .destination-aside-meta {
     display: grid;
-    gap: 0.85rem;
-    margin: 1.25rem 0 0;
+    gap: 0.9rem;
+    margin: 1.35rem 0 0;
 }
 
 .destination-aside-meta div {
     display: grid;
-    gap: 0.2rem;
-    padding-bottom: 0.85rem;
+    gap: 0.25rem;
+    padding-bottom: 0.9rem;
     border-bottom: 1px solid rgba(246, 241, 231, 0.1);
 }
 
@@ -361,13 +295,12 @@
 
 .destination-aside-cta {
     width: 100%;
-    margin-top: 1.35rem;
-    animation: none;
+    margin-top: 1.4rem;
 }
 
 .destination-back-link {
     display: inline-flex;
-    margin-top: 1rem;
+    margin-top: 1.05rem;
     color: rgba(246, 241, 231, 0.68);
     font-size: 0.9rem;
     font-weight: 300;
@@ -389,8 +322,29 @@
     max-width: 36rem;
 }
 
-.destination-not-found .page-cta {
-    animation: none;
+.section-eyebrow {
+    margin: 0 0 0.7rem;
+    color: var(--color-gold);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.section-heading {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.5vw, 2.6rem);
+    font-weight: 500;
+}
+
+.section-copy {
+    margin: 0.85rem 0 0;
+    color: var(--color-cream-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.7;
 }
 
 @keyframes destination-hero-pan {
@@ -412,6 +366,7 @@
 @media (max-width: 960px) {
     .destination-details-layout {
         grid-template-columns: 1fr;
+        gap: 2.25rem;
     }
 
     .destination-aside {
@@ -421,26 +376,21 @@
 
 @media (max-width: 720px) {
     .page-hero {
-        min-height: min(78vh, 640px);
-        padding-bottom: 3.25rem;
+        min-height: min(72vh, 580px);
+        padding-bottom: 3rem;
     }
 
-    .destination-facts {
+    .dd-info-grid {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
     }
 
     .destination-baggage-list li {
         grid-template-columns: 1fr;
-        gap: 0.25rem;
+        gap: 0.3rem;
     }
 
-    .destination-flight {
-        grid-template-columns: 1fr;
-        gap: 0.35rem;
-    }
-
-    .destination-flight-time,
-    .destination-flight-price {
-        text-align: left;
+    .destination-details-content {
+        padding: 2.5rem 0 4rem;
     }
 }

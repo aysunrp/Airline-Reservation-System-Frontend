@@ -1,23 +1,8 @@
 <!DOCTYPE html>
-
-
-
 <html lang="en">
-
-
-
 <head>
-
-
-
     <meta charset="UTF-8">
-
-
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
     <title>AEROVA | Book</title>
 
 
@@ -34,7 +19,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/css/booking.css">
+    <link rel="stylesheet" href="assets/css/booking.css?v=calendar-select1">
 
 
     <link rel="stylesheet" href="assets/css/i18n.css">
@@ -745,7 +730,7 @@
 
 
 
-                            <input id="booking-departure" class="field-input" type="date" name="departure">
+                            <input id="booking-departure" class="field-input is-calendar-driven" type="text" name="departure" readonly inputmode="none" autocomplete="off" data-i18n-placeholder="booking.selectDeparture" placeholder="Select departure date">
 
 
 
@@ -761,7 +746,7 @@
 
 
 
-                            <input id="booking-return" class="field-input" type="date" name="return">
+                            <input id="booking-return" class="field-input is-calendar-driven" type="text" name="return" readonly inputmode="none" autocomplete="off" data-i18n-placeholder="booking.selectReturn" placeholder="Select return date">
 
 
 
@@ -1105,7 +1090,7 @@
 
 
 
-                                <p class="price-calendar-summary-date" id="summary-departure-date" data-i18n="booking.selectADate">Select a date</p>
+                                <p class="price-calendar-summary-date" id="summary-departure-date">Select a departure date</p>
 
 
 
@@ -1129,7 +1114,7 @@
 
 
 
-                                <p class="price-calendar-summary-date" id="summary-return-date" data-i18n="booking.selectADate">Select a date</p>
+                                <p class="price-calendar-summary-date" id="summary-return-date">Select a date</p>
 
 
 
@@ -1569,7 +1554,7 @@
 
 
 
-    <script src="assets/js/booking.js?v=autocomplete1"></script>
+    <script src="assets/js/booking.js?v=calendar-select1"></script>
 
 
 

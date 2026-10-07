@@ -1,14 +1,14 @@
-(function () {
-    function tr(key, fallback, vars) {
-        if (typeof window.t === "function") {
-            var value = window.t(key, vars);
-            if (value && value !== key) return value;
-        }
-        return typeof vars === "object" && vars
-            ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
-            : fallback;
+function tr(key, fallback, vars) {
+    if (typeof window.t === "function") {
+        var value = window.t(key, vars);
+        if (value && value !== key) return value;
     }
+    return typeof vars === "object" && vars
+        ? String(fallback).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] != null ? String(vars[k]) : "{" + k + "}"; })
+        : fallback;
+}
 
+(function () {
     var header = document.getElementById("site-header");
     if (!header) {
         return;
@@ -355,6 +355,12 @@
         };
     }
 
+    function openPriceCalendar(mode) {
+        document.dispatchEvent(new CustomEvent("aerova:openPriceCalendar", {
+            detail: { mode: mode || "departure" }
+        }));
+    }
+
     function validateSimpleTrip() {
         var fromValue = fromInput.value.trim();
         var toValue = toInput.value.trim();
@@ -381,21 +387,21 @@
         if (!departureValue) {
             markInvalid(departureInput);
             showMessage(tr("booking.needDeparture", "Please select a departure date."));
-            departureInput.focus();
+            openPriceCalendar("departure");
             return null;
         }
 
         if (tripType === "round-trip" && !returnValue) {
             markInvalid(returnInput);
             showMessage(tr("booking.needReturn", "Please select a return date."));
-            returnInput.focus();
+            openPriceCalendar("return");
             return null;
         }
 
         if (tripType === "round-trip" && returnValue && returnValue < departureValue) {
             markInvalid(returnInput);
             showMessage(tr("booking.returnAfter", "Return date must be on or after the departure date."));
-            returnInput.focus();
+            openPriceCalendar("return");
             return null;
         }
 
@@ -1079,11 +1085,9 @@
     function clearReturnSelection() {
         returnDate = "";
         returnPrice = null;
-        if (!syncing) {
-            syncing = true;
-            bookingReturn.value = "";
-            syncing = false;
-        }
+        syncing = true;
+        bookingReturn.value = "";
+        syncing = false;
     }
 
     function ensureReturnStillValid() {
@@ -1145,16 +1149,20 @@
         tripType = type || "round-trip";
         var isMulti = tripType === "multi-city";
         var isRoundTrip = tripType === "round-trip";
+        var isOneWay = tripType === "one-way";
 
         calendarSection.hidden = isMulti;
-        modePanel.hidden = !isRoundTrip;
+        modePanel.hidden = isMulti;
+        modeReturnButton.hidden = !isRoundTrip;
         summaryReturnBlock.hidden = !isRoundTrip;
 
-        if (!isRoundTrip) {
+        if (isOneWay || isMulti) {
             selectionMode = "departure";
             clearReturnSelection();
         } else if (!departureDate) {
             selectionMode = "departure";
+        } else if (!returnDate) {
+            selectionMode = "return";
         }
 
         modeDepartureButton.classList.toggle("is-active", selectionMode === "departure");
@@ -1165,8 +1173,41 @@
         ensureReturnStillValid();
         refreshDeparturePrice();
         refreshReturnPrice();
+        syncFormDateFields();
         persistSelection();
         renderCalendar();
+    }
+
+    function syncFormDateFields() {
+        syncing = true;
+        bookingDeparture.value = departureDate || "";
+        bookingReturn.value = tripType === "round-trip" ? (returnDate || "") : "";
+        syncing = false;
+    }
+
+    function openCalendar(mode) {
+        if (calendarSection.hidden) {
+            return;
+        }
+
+        calendarSection.classList.remove("is-collapsed");
+        calendarToggle.setAttribute("aria-expanded", "true");
+
+        if (mode === "return" && tripType === "round-trip") {
+            if (!departureDate) {
+                setSelectionMode("departure");
+            } else {
+                setSelectionMode("return");
+            }
+        } else {
+            setSelectionMode("departure");
+        }
+
+        try {
+            calendarSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } catch (error) {
+            calendarSection.scrollIntoView(true);
+        }
     }
 
     function updateMonthLabel() {
@@ -1215,15 +1256,21 @@
 
     function updateSummary() {
         var outbound = getOutboundCities();
+        var emptyDeparture = tr("booking.selectDeparture", "Select a departure date");
+        var emptyReturn = tr("booking.selectReturn", "Select a return date");
 
-        summaryDepartureRoute.textContent = outbound.from + " → " + outbound.to;
-        summaryDepartureDate.textContent = departureDate ? formatDisplayDate(departureDate) : tr("booking.selectADate", "Select a date");
+        summaryDepartureRoute.textContent = (outbound.from && outbound.to)
+            ? outbound.from + " → " + outbound.to
+            : "—";
+        summaryDepartureDate.textContent = departureDate ? formatDisplayDate(departureDate) : emptyDeparture;
         summaryDeparturePrice.textContent = formatFare(departurePrice);
 
         if (tripType === "round-trip") {
             summaryReturnBlock.hidden = false;
-            summaryReturnRoute.textContent = outbound.to + " → " + outbound.from;
-            summaryReturnDate.textContent = returnDate ? formatDisplayDate(returnDate) : tr("booking.selectADate", "Select a date");
+            summaryReturnRoute.textContent = (outbound.from && outbound.to)
+                ? outbound.to + " → " + outbound.from
+                : "—";
+            summaryReturnDate.textContent = returnDate ? formatDisplayDate(returnDate) : emptyReturn;
             summaryReturnPrice.textContent = formatFare(returnPrice);
 
             if (departurePrice != null && returnPrice != null) {
@@ -1245,7 +1292,6 @@
         var daysInMonth = new Date(year, month + 1, 0).getDate();
         var startOffset = (firstDay.getDay() + 6) % 7;
         var route = getActiveRouteCities();
-        var activeSelected = selectionMode === "return" ? returnDate : departureDate;
         var html = "";
         var day;
 
@@ -1261,6 +1307,9 @@
             var unavailable = fare == null || beforeDeparture;
             var classes = ["price-calendar-day"];
             var label = "Date " + iso;
+            var isDeparture = departureDate && iso === departureDate;
+            var isReturn = tripType === "round-trip" && returnDate && iso === returnDate;
+            var inRange = tripType === "round-trip" && departureDate && returnDate && iso > departureDate && iso < returnDate;
 
             if (unavailable) {
                 classes.push("is-unavailable");
@@ -1271,9 +1320,18 @@
                     : ", departure fare from " + formatFare(fare);
             }
 
-            if (activeSelected && iso === activeSelected) {
-                classes.push("is-selected");
-                label += ", selected";
+            if (inRange) {
+                classes.push("is-in-range");
+            }
+
+            if (isDeparture) {
+                classes.push("is-selected", "is-range-start");
+                label += ", departure selected";
+            }
+
+            if (isReturn) {
+                classes.push("is-selected", "is-range-end");
+                label += ", return selected";
             }
 
             html +=
@@ -1293,6 +1351,7 @@
         updateMonthLabel();
         updateCopy();
         updateSummary();
+        syncFormDateFields();
     }
 
     function selectDepartureDate(isoDate) {
@@ -1304,8 +1363,10 @@
 
         departureDate = isoDate;
         departurePrice = fare;
+        syncing = true;
         bookingDeparture.value = isoDate;
         bookingDeparture.classList.remove("is-invalid");
+        syncing = false;
         syncBookingFromCalendar();
         ensureReturnStillValid();
         refreshReturnPrice();
@@ -1340,8 +1401,10 @@
 
         returnDate = isoDate;
         returnPrice = fare;
+        syncing = true;
         bookingReturn.value = isoDate;
         bookingReturn.classList.remove("is-invalid");
+        syncing = false;
         syncBookingFromCalendar();
         persistSelection();
         renderCalendar();
@@ -1458,47 +1521,43 @@
         bookingFrom.addEventListener("blur", onBookingCityEdit);
         bookingTo.addEventListener("blur", onBookingCityEdit);
 
-        bookingDeparture.addEventListener("change", function () {
-            if (syncing) {
+        function bindCalendarDrivenField(input, mode) {
+            if (!input) {
                 return;
             }
 
-            departureDate = bookingDeparture.value || "";
-            refreshDeparturePrice();
-            ensureReturnStillValid();
-            refreshReturnPrice();
+            input.setAttribute("readonly", "readonly");
+            input.classList.add("is-calendar-driven");
 
-            var parsed = parseISODate(departureDate);
-            if (parsed) {
-                viewDate = new Date(parsed.getFullYear(), parsed.getMonth(), 1);
-            }
+            input.addEventListener("mousedown", function (event) {
+                event.preventDefault();
+                openCalendar(mode);
+            });
 
-            persistSelection();
-            renderCalendar();
-        });
+            input.addEventListener("click", function (event) {
+                event.preventDefault();
+                openCalendar(mode);
+            });
 
-        bookingReturn.addEventListener("change", function () {
-            if (syncing) {
-                return;
-            }
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+                    event.preventDefault();
+                    openCalendar(mode);
+                }
+            });
+        }
 
-            var nextReturn = bookingReturn.value || "";
-            if (nextReturn && departureDate && nextReturn < departureDate) {
-                clearReturnSelection();
-                persistSelection();
-                renderCalendar();
-                return;
-            }
-
-            returnDate = nextReturn;
-            refreshReturnPrice();
-            persistSelection();
-            renderCalendar();
-        });
+        bindCalendarDrivenField(bookingDeparture, "departure");
+        bindCalendarDrivenField(bookingReturn, "return");
 
         document.addEventListener("aerova:tripTypeChange", function (event) {
             var nextType = event && event.detail ? event.detail.tripType : "round-trip";
             applyTripType(nextType);
+        });
+
+        document.addEventListener("aerova:openPriceCalendar", function (event) {
+            var mode = event && event.detail ? event.detail.mode : "departure";
+            openCalendar(mode);
         });
     }
 
@@ -1550,11 +1609,9 @@
     }
 
     window.addEventListener("aerova:languagechange", function () {
+        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
         try {
             if (typeof renderCalendar === "function") renderCalendar();
-            if (typeof updateCopy === "function") updateCopy();
-            if (typeof updateSummary === "function") updateSummary();
         } catch (e) {}
-        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
     });
 })();

@@ -12,145 +12,158 @@
     var DESTINATIONS = {
         baku: {
             id: "baku",
+            nameKey: "destinationDetails.places.baku.name",
             name: "Baku",
-            country: "Azerbaijan",
+            regionKey: "destinations.countryAzerbaijan",
+            region: "Azerbaijan",
+            taglineKey: "destinationDetails.places.baku.tagline",
             tagline: "Flame Towers, Caspian breezes, and a city where heritage meets modern light.",
+            descriptionKey: "destinationDetails.places.baku.description",
             description: "AEROVA’s home city unfolds between the Caspian shoreline and the Old City’s stone lanes. Evenings glow against the Flame Towers, while modern avenues and quiet courtyards share the same horizon. Begin or continue your journey from the heart of our network.",
             image: "assets/images/baku.jpg",
+            imageAltKey: "destinationDetails.places.baku.imageAlt",
             imageAlt: "Baku skyline on the Caspian coast",
+            airportNameKey: "destinationDetails.places.baku.airportName",
             airportName: "Heydar Aliyev International Airport",
             iata: "GYD",
+            airportLocationKey: "destinationDetails.places.baku.airportLocation",
             airportLocation: "Baku, Azerbaijan",
+            durationKey: "destinationDetails.places.baku.duration",
             durationFromBaku: "Home base",
-            startingFare: 180,
             baggage: [
-                { label: "Cabin", text: "1 × 8 kg hand baggage" },
-                { label: "Checked", text: "1 × 23 kg included on Economy" },
-                { label: "Extra", text: "Additional pieces available at booking" }
-            ],
-            flights: [
-                { flightNo: "AV 101", route: "Baku → London", departs: "08:40", arrives: "12:05", price: 420 },
-                { flightNo: "AV 220", route: "Baku → Dubai", departs: "11:15", arrives: "14:05", price: 310 },
-                { flightNo: "AV 318", route: "Baku → Istanbul", departs: "16:30", arrives: "18:45", price: 260 }
+                { labelKey: "destinationDetails.bagCabin", label: "Cabin", textKey: "destinationDetails.bagCabinText", text: "1 × 8 kg hand baggage" },
+                { labelKey: "destinationDetails.bagChecked", label: "Checked", textKey: "destinationDetails.bagCheckedText", text: "1 × 23 kg included on Economy" },
+                { labelKey: "destinationDetails.bagExtra", label: "Extra", textKey: "destinationDetails.places.baku.bagExtra", text: "Additional pieces available at booking" }
             ]
         },
         london: {
             id: "london",
+            nameKey: "destinationDetails.places.london.name",
             name: "London",
-            country: "United Kingdom",
+            regionKey: "destinations.countryUk",
+            region: "United Kingdom",
+            taglineKey: "destinationDetails.places.london.tagline",
             tagline: "Royal avenues, river mist, and a capital of quiet, enduring grandeur.",
+            descriptionKey: "destinationDetails.places.london.description",
             description: "Arrive into a city of measured elegance — museums at dawn, the Thames at dusk, and neighborhoods that reward unhurried wandering. AEROVA connects Baku to London with service shaped for composure from gate to gate.",
             image: "assets/images/london.jpg",
+            imageAltKey: "destinationDetails.places.london.imageAlt",
             imageAlt: "London along the River Thames",
+            airportNameKey: "destinationDetails.places.london.airportName",
             airportName: "London Heathrow Airport",
             iata: "LHR",
+            airportLocationKey: "destinationDetails.places.london.airportLocation",
             airportLocation: "Hounslow, Greater London",
+            durationKey: "destinationDetails.places.london.duration",
             durationFromBaku: "Approx. 5h 25m",
-            startingFare: 420,
             baggage: [
-                { label: "Cabin", text: "1 × 8 kg hand baggage" },
-                { label: "Checked", text: "1 × 23 kg included on Economy" },
-                { label: "Comfort+", text: "2 × 23 kg on Comfort and Business" }
-            ],
-            flights: [
-                { flightNo: "AV 101", route: "Baku → London", departs: "08:40", arrives: "12:05", price: 420 },
-                { flightNo: "AV 105", route: "Baku → London", departs: "14:20", arrives: "17:45", price: 465 },
-                { flightNo: "AV 109", route: "Baku → London", departs: "21:10", arrives: "00:35", price: 395 }
+                { labelKey: "destinationDetails.bagCabin", label: "Cabin", textKey: "destinationDetails.bagCabinText", text: "1 × 8 kg hand baggage" },
+                { labelKey: "destinationDetails.bagChecked", label: "Checked", textKey: "destinationDetails.bagCheckedText", text: "1 × 23 kg included on Economy" },
+                { labelKey: "destinationDetails.bagComfortPlus", label: "Comfort+", textKey: "destinationDetails.places.london.bagExtra", text: "2 × 23 kg on Comfort and Business" }
             ]
         },
         dubai: {
             id: "dubai",
+            nameKey: "destinationDetails.places.dubai.name",
             name: "Dubai",
-            country: "United Arab Emirates",
+            regionKey: "destinations.countryUae",
+            region: "United Arab Emirates",
+            taglineKey: "destinationDetails.places.dubai.tagline",
             tagline: "Skyline brilliance, desert calm, and evenings composed for arrival.",
+            descriptionKey: "destinationDetails.places.dubai.description",
             description: "From desert light to waterfront towers, Dubai balances spectacle with stillness. AEROVA’s short hop from Baku places you at the gateway to Gulf hospitality, shopping, and shoreline evenings.",
             image: "assets/images/dubai.jpg",
+            imageAltKey: "destinationDetails.places.dubai.imageAlt",
             imageAlt: "Dubai skyline at dusk",
+            airportNameKey: "destinationDetails.places.dubai.airportName",
             airportName: "Dubai International Airport",
             iata: "DXB",
+            airportLocationKey: "destinationDetails.places.dubai.airportLocation",
             airportLocation: "Garhoud, Dubai",
+            durationKey: "destinationDetails.places.dubai.duration",
             durationFromBaku: "Approx. 3h 10m",
-            startingFare: 310,
             baggage: [
-                { label: "Cabin", text: "1 × 8 kg hand baggage" },
-                { label: "Checked", text: "1 × 23 kg included on Economy" },
-                { label: "Sports", text: "Golf and water sports equipment on request" }
-            ],
-            flights: [
-                { flightNo: "AV 220", route: "Baku → Dubai", departs: "11:15", arrives: "14:05", price: 310 },
-                { flightNo: "AV 224", route: "Baku → Dubai", departs: "18:50", arrives: "21:40", price: 345 },
-                { flightNo: "AV 228", route: "Baku → Dubai", departs: "23:30", arrives: "02:20", price: 295 }
+                { labelKey: "destinationDetails.bagCabin", label: "Cabin", textKey: "destinationDetails.bagCabinText", text: "1 × 8 kg hand baggage" },
+                { labelKey: "destinationDetails.bagChecked", label: "Checked", textKey: "destinationDetails.bagCheckedText", text: "1 × 23 kg included on Economy" },
+                { labelKey: "destinationDetails.bagSports", label: "Sports", textKey: "destinationDetails.places.dubai.bagExtra", text: "Golf and water sports equipment on request" }
             ]
         },
         paris: {
             id: "paris",
+            nameKey: "destinationDetails.places.paris.name",
             name: "Paris",
-            country: "France",
+            regionKey: "destinations.countryFrance",
+            region: "France",
+            taglineKey: "destinationDetails.places.paris.tagline",
             tagline: "Couture, cafés, and the soft gold of the Seine as night gathers.",
+            descriptionKey: "destinationDetails.places.paris.description",
             description: "Paris rewards travelers who arrive with time to spare — galleries, quiet side streets, and the river’s evening light. Fly AEROVA from Baku and step into a city composed for lingering.",
             image: "assets/images/paris.jpg",
+            imageAltKey: "destinationDetails.places.paris.imageAlt",
             imageAlt: "Paris in the evening",
+            airportNameKey: "destinationDetails.places.paris.airportName",
             airportName: "Paris Charles de Gaulle Airport",
             iata: "CDG",
+            airportLocationKey: "destinationDetails.places.paris.airportLocation",
             airportLocation: "Roissy-en-France, Île-de-France",
+            durationKey: "destinationDetails.places.paris.duration",
             durationFromBaku: "Approx. 5h 40m",
-            startingFare: 390,
             baggage: [
-                { label: "Cabin", text: "1 × 8 kg hand baggage" },
-                { label: "Checked", text: "1 × 23 kg included on Economy" },
-                { label: "Business", text: "2 × 32 kg on Business Class" }
-            ],
-            flights: [
-                { flightNo: "AV 410", route: "Baku → Paris", departs: "07:55", arrives: "11:35", price: 390 },
-                { flightNo: "AV 414", route: "Baku → Paris", departs: "13:40", arrives: "17:20", price: 430 },
-                { flightNo: "AV 418", route: "Baku → Paris", departs: "19:05", arrives: "22:45", price: 405 }
+                { labelKey: "destinationDetails.bagCabin", label: "Cabin", textKey: "destinationDetails.bagCabinText", text: "1 × 8 kg hand baggage" },
+                { labelKey: "destinationDetails.bagChecked", label: "Checked", textKey: "destinationDetails.bagCheckedText", text: "1 × 23 kg included on Economy" },
+                { labelKey: "destinationDetails.bagBusiness", label: "Business", textKey: "destinationDetails.places.paris.bagExtra", text: "2 × 32 kg on Business Class" }
             ]
         },
         istanbul: {
             id: "istanbul",
+            nameKey: "destinationDetails.places.istanbul.name",
             name: "Istanbul",
-            country: "Türkiye",
+            regionKey: "destinationDetails.places.istanbul.region",
+            region: "Türkiye",
+            taglineKey: "destinationDetails.places.istanbul.tagline",
             tagline: "Domes, bazaars, and waters that join two continents in one evening.",
+            descriptionKey: "destinationDetails.places.istanbul.description",
             description: "Istanbul gathers continents along the Bosphorus — spice markets, hillside neighborhoods, and ferry crossings at dusk. AEROVA’s frequent service from Baku makes this classic route effortless.",
             image: "assets/images/istanbul.jpg",
+            imageAltKey: "destinationDetails.places.istanbul.imageAlt",
             imageAlt: "Istanbul and the Bosphorus",
+            airportNameKey: "destinationDetails.places.istanbul.airportName",
             airportName: "Istanbul Airport",
             iata: "IST",
+            airportLocationKey: "destinationDetails.places.istanbul.airportLocation",
             airportLocation: "Arnavutköy, Istanbul",
+            durationKey: "destinationDetails.places.istanbul.duration",
             durationFromBaku: "Approx. 2h 45m",
-            startingFare: 260,
             baggage: [
-                { label: "Cabin", text: "1 × 8 kg hand baggage" },
-                { label: "Checked", text: "1 × 23 kg included on Economy" },
-                { label: "Family", text: "Strollers and infant seats at no extra charge" }
-            ],
-            flights: [
-                { flightNo: "AV 318", route: "Baku → Istanbul", departs: "06:20", arrives: "08:35", price: 260 },
-                { flightNo: "AV 322", route: "Baku → Istanbul", departs: "12:10", arrives: "14:25", price: 285 },
-                { flightNo: "AV 326", route: "Baku → Istanbul", departs: "20:45", arrives: "23:00", price: 245 }
+                { labelKey: "destinationDetails.bagCabin", label: "Cabin", textKey: "destinationDetails.bagCabinText", text: "1 × 8 kg hand baggage" },
+                { labelKey: "destinationDetails.bagChecked", label: "Checked", textKey: "destinationDetails.bagCheckedText", text: "1 × 23 kg included on Economy" },
+                { labelKey: "destinationDetails.bagFamily", label: "Family", textKey: "destinationDetails.places.istanbul.bagExtra", text: "Strollers and infant seats at no extra charge" }
             ]
         },
         maldives: {
             id: "maldives",
+            nameKey: "destinationDetails.places.maldives.name",
             name: "Maldives",
-            country: "Maldives",
+            regionKey: "destinations.countryMaldives",
+            region: "Indian Ocean",
+            taglineKey: "destinationDetails.places.maldives.tagline",
             tagline: "Still lagoons, private shores, and horizons reserved for pause.",
+            descriptionKey: "destinationDetails.places.maldives.description",
             description: "Turquoise water, overwater villas, and silence broken only by the tide. AEROVA’s service toward the Maldives is designed for travelers seeking distance, light, and unhurried arrival.",
             image: "assets/images/maldives.jpg",
+            imageAltKey: "destinationDetails.places.maldives.imageAlt",
             imageAlt: "A Maldives lagoon",
+            airportNameKey: "destinationDetails.places.maldives.airportName",
             airportName: "Velana International Airport",
             iata: "MLE",
+            airportLocationKey: "destinationDetails.places.maldives.airportLocation",
             airportLocation: "Hulhulé, Malé Atoll",
+            durationKey: "destinationDetails.places.maldives.duration",
             durationFromBaku: "Approx. 6h 50m",
-            startingFare: 780,
             baggage: [
-                { label: "Cabin", text: "1 × 8 kg hand baggage" },
-                { label: "Checked", text: "1 × 23 kg included on Economy" },
-                { label: "Resort", text: "Snorkel gear and soft cases welcome as checked items" }
-            ],
-            flights: [
-                { flightNo: "AV 560", route: "Baku → Malé", departs: "09:30", arrives: "16:55", price: 780 },
-                { flightNo: "AV 564", route: "Baku → Malé", departs: "22:15", arrives: "05:40", price: 820 }
+                { labelKey: "destinationDetails.bagCabin", label: "Cabin", textKey: "destinationDetails.bagCabinText", text: "1 × 8 kg hand baggage" },
+                { labelKey: "destinationDetails.bagChecked", label: "Checked", textKey: "destinationDetails.bagCheckedText", text: "1 × 23 kg included on Economy" },
+                { labelKey: "destinationDetails.bagResort", label: "Resort / Special Information", textKey: "destinationDetails.places.maldives.bagExtra", text: "Snorkel gear and soft cases welcome as checked items" }
             ]
         }
     };
@@ -159,14 +172,13 @@
         return document.getElementById(id);
     }
 
-    function formatFare(amount) {
-        return "$" + amount;
-    }
-
     function getDestinationId() {
         var params = new URLSearchParams(window.location.search);
-        var id = (params.get("id") || "").trim().toLowerCase();
-        return id;
+        return (params.get("id") || "").trim().toLowerCase();
+    }
+
+    function localized(destination, field, fallbackField) {
+        return tr(destination[field], destination[fallbackField || field.replace(/Key$/, "")]);
     }
 
     function showNotFound() {
@@ -174,60 +186,39 @@
         var content = byId("destination-content");
         var notFound = byId("destination-not-found");
 
-        if (hero) {
-            hero.hidden = true;
-        }
-        if (content) {
-            content.hidden = true;
-        }
-        if (notFound) {
-            notFound.hidden = false;
-        }
+        if (hero) hero.hidden = true;
+        if (content) content.hidden = true;
+        if (notFound) notFound.hidden = false;
 
-        document.title = "AEROVA | Destination Not Found";
+        document.title = "AEROVA | " + tr("ui.destinationNotFound", "Destination Not Found");
     }
 
     function renderBaggage(items) {
         var list = byId("destination-baggage");
-        if (!list) {
-            return;
-        }
+        if (!list) return;
 
         list.innerHTML = items.map(function (item) {
-            return "<li><strong>" + item.label + "</strong><span>" + item.text + "</span></li>";
-        }).join("");
-    }
-
-    function renderFlights(flights) {
-        var container = byId("destination-flights");
-        if (!container) {
-            return;
-        }
-
-        if (!flights.length) {
-            container.innerHTML = '<p class="section-copy">' + tr("destinationDetails.noDepartures", "No scheduled departures at this time.") + '</p>';
-            return;
-        }
-
-        container.innerHTML = flights.map(function (flight) {
-            return (
-                '<article class="destination-flight">' +
-                    '<div>' +
-                        '<p class="destination-flight-route">' + flight.route + "</p>" +
-                        '<p class="destination-flight-meta">' + flight.flightNo + "</p>" +
-                    "</div>" +
-                    '<p class="destination-flight-time">' + flight.departs + " → " + flight.arrives + "</p>" +
-                    '<p class="destination-flight-price">From ' + formatFare(flight.price) + "</p>" +
-                "</article>"
-            );
+            var label = tr(item.labelKey, item.label);
+            var text = tr(item.textKey, item.text);
+            return "<li><strong>" + label + "</strong><span>" + text + "</span></li>";
         }).join("");
     }
 
     function renderDestination(destination) {
+        var name = localized(destination, "nameKey", "name");
+        var region = tr(destination.regionKey, destination.region);
+        var tagline = localized(destination, "taglineKey", "tagline");
+        var description = localized(destination, "descriptionKey", "description");
+        var airportName = localized(destination, "airportNameKey", "airportName");
+        var airportLocation = localized(destination, "airportLocationKey", "airportLocation");
+        var duration = localized(destination, "durationKey", "durationFromBaku");
+        var imageAlt = localized(destination, "imageAltKey", "imageAlt");
+        var route = destination.id === "baku"
+            ? tr("destinationDetails.routeHub", "Baku hub · {iata}", { iata: destination.iata })
+            : tr("destinationDetails.routeTo", "Baku → {name}", { name: name });
         var bookUrl = "booking.html?to=" + encodeURIComponent(destination.name);
-        var fareText = "From " + formatFare(destination.startingFare);
 
-        document.title = "AEROVA | " + destination.name;
+        document.title = "AEROVA | " + name;
 
         var heroMedia = byId("destination-hero-media");
         if (heroMedia) {
@@ -241,90 +232,41 @@
             };
             heroMedia.style.backgroundImage = "url('" + destination.image + "')";
             heroMedia.style.backgroundPosition = positions[destination.id] || "center";
-            heroMedia.setAttribute("aria-label", destination.imageAlt);
+            heroMedia.setAttribute("aria-label", imageAlt);
         }
 
         var nameEl = byId("destination-name");
-        var countryEl = byId("destination-country");
+        var heroMeta = byId("destination-hero-meta");
         var taglineEl = byId("destination-tagline");
-        var aboutTitle = byId("destination-about-title");
         var descriptionEl = byId("destination-description");
 
-        if (nameEl) {
-            nameEl.textContent = destination.name;
-        }
-        if (countryEl) {
-            countryEl.textContent = destination.country;
-        }
-        if (taglineEl) {
-            taglineEl.textContent = destination.tagline;
-        }
-        if (aboutTitle) {
-            aboutTitle.textContent = tr("destinationDetails.discover", "Discover " + destination.name, { name: destination.name });
-        }
-        if (descriptionEl) {
-            descriptionEl.textContent = destination.description;
-        }
+        if (nameEl) nameEl.textContent = name;
+        if (heroMeta) heroMeta.textContent = region + " · " + destination.iata;
+        if (taglineEl) taglineEl.textContent = tagline;
+        if (descriptionEl) descriptionEl.textContent = description;
 
-        var airportName = byId("destination-airport-name");
+        var airportNameEl = byId("destination-airport-name");
         var airportCode = byId("destination-airport-code");
-        var airportLocation = byId("destination-airport-location");
-        var duration = byId("destination-duration");
-        var fare = byId("destination-fare");
+        var airportLocationEl = byId("destination-airport-location");
+        var durationEl = byId("destination-duration");
 
-        if (airportName) {
-            airportName.textContent = destination.airportName;
-        }
-        if (airportCode) {
-            airportCode.textContent = destination.iata;
-        }
-        if (airportLocation) {
-            airportLocation.textContent = destination.airportLocation;
-        }
-        if (duration) {
-            duration.textContent = destination.durationFromBaku;
-        }
-        if (fare) {
-            fare.textContent = fareText;
-        }
+        if (airportNameEl) airportNameEl.textContent = airportName;
+        if (airportCode) airportCode.textContent = destination.iata;
+        if (airportLocationEl) airportLocationEl.textContent = airportLocation;
+        if (durationEl) durationEl.textContent = duration;
 
-        var asideTitle = byId("destination-aside-title");
-        var asideText = byId("destination-aside-text");
         var asideRoute = byId("destination-aside-route");
-        var asideFare = byId("destination-aside-fare");
+        var asideRouteMeta = byId("destination-aside-route-meta");
         var asideDuration = byId("destination-aside-duration");
 
-        if (asideTitle) {
-            asideTitle.textContent = tr("destinationDetails.flyTo", "Fly to " + destination.name, { name: destination.name });
-        }
-        if (asideText) {
-            asideText.textContent = destination.id === "baku"
-                ? "Explore connections from AEROVA’s home city, or begin a new journey outward."
-                : "Book your AEROVA flight from Baku to " + destination.name + " with calm precision.";
-        }
-        if (asideRoute) {
-            asideRoute.textContent = destination.id === "baku"
-                ? "Baku hub · " + destination.iata
-                : "Baku → " + destination.name;
-        }
-        if (asideFare) {
-            asideFare.textContent = fareText;
-        }
-        if (asideDuration) {
-            asideDuration.textContent = destination.durationFromBaku;
-        }
+        if (asideRoute) asideRoute.textContent = route;
+        if (asideRouteMeta) asideRouteMeta.textContent = route;
+        if (asideDuration) asideDuration.textContent = duration;
 
-        var bookHero = byId("destination-book-hero");
         var bookAside = byId("destination-book-aside");
-        if (bookHero) {
-            bookHero.href = bookUrl;
-        }
-        if (bookAside) {
-            bookAside.href = bookUrl;
-        }
+        if (bookAside) bookAside.href = bookUrl;
 
         renderBaggage(destination.baggage);
-        renderFlights(destination.flights);
     }
 
     function init() {
@@ -336,6 +278,13 @@
             return;
         }
 
+        var hero = byId("destination-hero");
+        var content = byId("destination-content");
+        var notFound = byId("destination-not-found");
+        if (hero) hero.hidden = false;
+        if (content) content.hidden = false;
+        if (notFound) notFound.hidden = true;
+
         renderDestination(destination);
     }
 
@@ -344,4 +293,11 @@
     } else {
         init();
     }
+
+    window.addEventListener("aerova:languagechange", function () {
+        if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
+            window.AEROVA_I18N.applyTranslations(document);
+        }
+        init();
+    });
 })();

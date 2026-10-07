@@ -1,485 +1,255 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>AEROVA | Destinations</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="assets/css/passenger-details.css">
     <link rel="stylesheet" href="assets/css/i18n.css">
-
     <link rel="stylesheet" href="assets/css/destinations.css">
-
 </head>
-
 <body class="destinations-body">
-
     <header id="site-header" class="site-header site-header--transparent">
-
         <div class="header-container">
-
             <a class="logo" href="index.html" aria-label="AEROVA Home" data-i18n-aria="nav.homeAria">
-
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
-
                     <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
-
                 </svg>
-
                 <span class="logo-text">Aerova</span>
-
             </a>
-
-
-
             <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
-
                 <ul class="nav-list">
-
                     <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
-
                     <li class="nav-item"><a class="nav-link is-current" href="destinations.html" aria-current="page" data-i18n="nav.destinations">Destinations</a></li>
-
                     <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
-
                     <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
-
                     <li class="nav-item nav-item--drawer"><a class="nav-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a></li>
-
                 </ul>
-
                 <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
-
             </nav>
-
-
-
             <div class="header-actions">
-
                 <a class="trips-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
-
                 <button class="search-button" type="button" aria-label="Search" data-i18n-aria="nav.search">
-
                     <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-
                         <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
-
                         <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-
                     </svg>
-
                 </button>
-
                 <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
-
                 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
-
                     <span class="menu-toggle-bar"></span>
-
                     <span class="menu-toggle-bar"></span>
-
                     <span class="menu-toggle-bar"></span>
-
                 </button>
-
             </div>
-
         </div>
-
     </header>
 
-
-
     <main>
-
-        <section class="page-hero destinations-hero" aria-label="Explore destinations">
-
-            <div class="page-hero-media" style="background-image: url('assets/images/maldives.jpg'); background-position: center 42%;" role="img" aria-label="Maldives lagoon from above"></div>
-
-            <div class="page-hero-overlay" aria-hidden="true"></div>
-
-            <div class="page-hero-content">
-
-                <p class="page-hero-brand">AEROVA</p>
-
-                <h1 class="page-hero-title" data-i18n="ui.exploreDestinations">Explore Destinations</h1>
-
-                <p class="page-hero-text" data-i18n="ui.fromCaspianShoresToDistantCapitals">From Caspian shores to distant capitals, discover journeys shaped with calm precision.</p>
-
-                <a class="page-cta" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
-
+        <section class="dest-hero" aria-label="Discover destinations">
+            <div class="dest-hero__media" role="img" aria-label="Maldives lagoon from above"></div>
+            <div class="dest-hero__veil" aria-hidden="true"></div>
+            <div class="dest-hero__content">
+                <p class="dest-hero__kicker">AEROVA</p>
+                <h1 class="dest-hero__title" data-i18n="destinations.discoverTitle">Discover the World with AEROVA</h1>
+                <p class="dest-hero__text" data-i18n="destinations.discoverText">An editorial guide to cities and shores chosen for atmosphere, culture, and the journey between them.</p>
+                <a class="dest-hero__cta" href="#magazine" data-i18n="destinations.browseGuide">Browse the Guide</a>
             </div>
-
         </section>
 
+        <div class="dest-filter">
+            <div class="dest-shell dest-filter__inner" role="group" aria-label="Destination filter" data-i18n-aria="destinations.filterLabel">
+                <span class="dest-filter__label" data-i18n="destinations.filterLabel">Explore</span>
+                <button class="dest-filter__chip is-active" type="button" data-filter="all" data-i18n="destinations.filterAll">All</button>
+                <button class="dest-filter__chip" type="button" data-filter="london" data-i18n="destinationDetails.places.london.name">London</button>
+                <button class="dest-filter__chip" type="button" data-filter="dubai" data-i18n="destinationDetails.places.dubai.name">Dubai</button>
+                <button class="dest-filter__chip" type="button" data-filter="paris" data-i18n="destinationDetails.places.paris.name">Paris</button>
+                <button class="dest-filter__chip" type="button" data-filter="istanbul" data-i18n="destinationDetails.places.istanbul.name">Istanbul</button>
+                <button class="dest-filter__chip" type="button" data-filter="maldives" data-i18n="destinationDetails.places.maldives.name">Maldives</button>
+            </div>
+        </div>
 
-
-        <section class="destinations-catalog" aria-label="Destination collection">
-
-            <div class="page-shell">
-
-                <header class="section-intro">
-
-                    <h2 class="section-heading" data-i18n="ui.whereWillYouFlyNext">Where Will You Fly Next?</h2>
-
-                    <p class="section-copy" data-i18n="destinations.catalogDesc">Six signature destinations, each with its own atmosphere and an AEROVA fare to begin the journey.</p>
-
+        <section id="magazine" class="dest-magazine" aria-label="Destination collection">
+            <div class="dest-shell">
+                <header class="dest-magazine__intro">
+                    <p class="dest-magazine__eyebrow" data-i18n="destinations.guideEyebrow">Destination Guide</p>
+                    <h2 class="dest-magazine__heading" data-i18n="ui.whereWillYouFlyNext">Where Will You Fly Next?</h2>
+                    <p class="dest-magazine__copy" data-i18n="destinations.catalogDesc">Six signature destinations, each with its own atmosphere and an AEROVA fare to begin the journey.</p>
                 </header>
 
-
-
-                <div class="destination-cards">
-
-                    <article class="destination-card">
-
-                        <img class="destination-card-image" src="assets/images/baku.jpg" alt="Baku skyline on the Caspian coast">
-
-                        <div class="destination-card-body">
-
-                            <h3 class="destination-card-name">Baku</h3>
-
-                            <p class="destination-card-text" data-i18n="ui.flameTowersHeritage">Flame Towers, Caspian breezes, and a city where heritage meets modern light.</p>
-
-                            <p class="destination-card-fare">From <span>$180</span></p>
-
-                            <a class="destination-card-button" href="destination-details.html?id=baku" data-i18n="home.explore">Explore</a>
-
+                <div class="dest-editorial">
+                    <article class="dest-feature" data-destination="maldives">
+                        <img class="dest-feature__img" src="assets/images/maldives.jpg" alt="Maldives lagoon and overwater villas">
+                        <div class="dest-feature__veil" aria-hidden="true"></div>
+                        <div class="dest-feature__body">
+                            <p class="dest-country" data-i18n="destinations.countryMaldives">Indian Ocean</p>
+                            <h3 class="dest-city">Maldives</h3>
+                            <p class="dest-desc" data-i18n="ui.stillLagoonsPause">Still lagoons, private shores, and horizons reserved for pause.</p>
+                            <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$780</span></p>
+                            <div class="dest-actions">
+                                <a class="dest-btn dest-btn--primary" href="destination-details.html?id=maldives" data-i18n="destinations.explore">Explore</a>
+                                <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                            </div>
                         </div>
-
                     </article>
 
+                    <div class="dest-pair">
+                        <article class="dest-tile dest-tile--tall" data-destination="london">
+                            <img class="dest-tile__img" src="assets/images/london.jpg" alt="London along the River Thames">
+                            <div class="dest-tile__veil" aria-hidden="true"></div>
+                            <div class="dest-tile__body">
+                                <p class="dest-country" data-i18n="destinations.countryUk">United Kingdom</p>
+                                <h3 class="dest-city">London</h3>
+                                <p class="dest-desc" data-i18n="ui.royalAvenuesEnduring">Royal avenues, river mist, and a capital of quiet, enduring grandeur.</p>
+                                <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$420</span></p>
+                                <div class="dest-actions">
+                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=london" data-i18n="destinations.explore">Explore</a>
+                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="dest-tile" data-destination="dubai">
+                            <img class="dest-tile__img" src="assets/images/dubai.jpg" alt="Dubai skyline at dusk">
+                            <div class="dest-tile__veil" aria-hidden="true"></div>
+                            <div class="dest-tile__body">
+                                <p class="dest-country" data-i18n="destinations.countryUae">United Arab Emirates</p>
+                                <h3 class="dest-city">Dubai</h3>
+                                <p class="dest-desc" data-i18n="ui.skylineBrilliance">Skyline brilliance, desert calm, and evenings composed for arrival.</p>
+                                <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$310</span></p>
+                                <div class="dest-actions">
+                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=dubai" data-i18n="destinations.explore">Explore</a>
+                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
 
-
-                    <article class="destination-card">
-
-                        <img class="destination-card-image" src="assets/images/london.jpg" alt="London along the River Thames">
-
-                        <div class="destination-card-body">
-
-                            <h3 class="destination-card-name">London</h3>
-
-                            <p class="destination-card-text" data-i18n="ui.royalAvenuesEnduring">Royal avenues, river mist, and a capital of quiet, enduring grandeur.</p>
-
-                            <p class="destination-card-fare">From <span>$420</span></p>
-
-                            <a class="destination-card-button" href="destination-details.html?id=london" data-i18n="home.explore">Explore</a>
-
+                    <article class="dest-wide" data-destination="paris">
+                        <img class="dest-wide__img" src="assets/images/paris.jpg" alt="Paris in the evening">
+                        <div class="dest-wide__veil" aria-hidden="true"></div>
+                        <div class="dest-wide__body">
+                            <div>
+                                <p class="dest-country" data-i18n="destinations.countryFrance">France</p>
+                                <h3 class="dest-city">Paris</h3>
+                                <p class="dest-desc" data-i18n="ui.coutureCafesSoft">Couture, cafés, and the soft gold of the Seine as night gathers.</p>
+                                <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$390</span></p>
+                                <div class="dest-actions">
+                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=paris" data-i18n="destinations.explore">Explore</a>
+                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                                </div>
+                            </div>
+                            <aside class="dest-wide__aside">
+                                <p data-i18n="destinations.parisNote">Arrive with time to spare — galleries at dawn, quiet side streets, and the river’s evening light.</p>
+                            </aside>
                         </div>
-
                     </article>
 
-
-
-                    <article class="destination-card">
-
-                        <img class="destination-card-image" src="assets/images/dubai.jpg" alt="Dubai skyline at dusk">
-
-                        <div class="destination-card-body">
-
-                            <h3 class="destination-card-name">Dubai</h3>
-
-                            <p class="destination-card-text" data-i18n="ui.skylineBrilliance">Skyline brilliance, desert calm, and evenings composed for arrival.</p>
-
-                            <p class="destination-card-fare">From <span>$310</span></p>
-
-                            <a class="destination-card-button" href="destination-details.html?id=dubai" data-i18n="home.explore">Explore</a>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="destination-card">
-
-                        <img class="destination-card-image" src="assets/images/paris.jpg" alt="Paris in the evening">
-
-                        <div class="destination-card-body">
-
-                            <h3 class="destination-card-name">Paris</h3>
-
-                            <p class="destination-card-text" data-i18n="ui.coutureCafesSoft">Couture, cafés, and the soft gold of the Seine as night gathers.</p>
-
-                            <p class="destination-card-fare">From <span>$390</span></p>
-
-                            <a class="destination-card-button" href="destination-details.html?id=paris" data-i18n="home.explore">Explore</a>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="destination-card">
-
-                        <img class="destination-card-image" src="assets/images/istanbul.jpg" alt="Istanbul and the Bosphorus">
-
-                        <div class="destination-card-body">
-
-                            <h3 class="destination-card-name">Istanbul</h3>
-
-                            <p class="destination-card-text" data-i18n="ui.domesBazaarsWaters">Domes, bazaars, and waters that join two continents in one evening.</p>
-
-                            <p class="destination-card-fare">From <span>$260</span></p>
-
-                            <a class="destination-card-button" href="destination-details.html?id=istanbul" data-i18n="home.explore">Explore</a>
-
-                        </div>
-
-                    </article>
-
-
-
-                    <article class="destination-card">
-
-                        <img class="destination-card-image" src="assets/images/maldives.jpg" alt="A Maldives lagoon">
-
-                        <div class="destination-card-body">
-
-                            <h3 class="destination-card-name">Maldives</h3>
-
-                            <p class="destination-card-text" data-i18n="ui.stillLagoonsPause">Still lagoons, private shores, and horizons reserved for pause.</p>
-
-                            <p class="destination-card-fare">From <span>$780</span></p>
-
-                            <a class="destination-card-button" href="destination-details.html?id=maldives" data-i18n="home.explore">Explore</a>
-
-                        </div>
-
-                    </article>
-
+                    <div class="dest-strip">
+                        <article class="dest-tile" data-destination="baku">
+                            <img class="dest-tile__img" src="assets/images/baku.jpg" alt="Baku skyline on the Caspian coast">
+                            <div class="dest-tile__veil" aria-hidden="true"></div>
+                            <div class="dest-tile__body">
+                                <p class="dest-country" data-i18n="destinations.countryAzerbaijan">Azerbaijan</p>
+                                <h3 class="dest-city">Baku</h3>
+                                <p class="dest-desc" data-i18n="ui.flameTowersHeritage">Flame Towers, Caspian breezes, and a city where heritage meets modern light.</p>
+                                <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$180</span></p>
+                                <div class="dest-actions">
+                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=baku" data-i18n="destinations.explore">Explore</a>
+                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="dest-tile dest-tile--tall" data-destination="istanbul">
+                            <img class="dest-tile__img" src="assets/images/istanbul.jpg" alt="Istanbul and the Bosphorus">
+                            <div class="dest-tile__veil" aria-hidden="true"></div>
+                            <div class="dest-tile__body">
+                                <p class="dest-country">Türkiye</p>
+                                <h3 class="dest-city">Istanbul</h3>
+                                <p class="dest-desc" data-i18n="ui.domesBazaarsWaters">Domes, bazaars, and waters that join two continents in one evening.</p>
+                                <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$260</span></p>
+                                <div class="dest-actions">
+                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=istanbul" data-i18n="destinations.explore">Explore</a>
+                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
                 </div>
-
             </div>
-
         </section>
 
-
-
-        <section class="page-cta-band" aria-label="Book a flight">
-
-            <div class="page-shell page-cta-band-inner">
-
+        <section class="dest-next" aria-label="Book a flight">
+            <div class="dest-shell dest-next__inner">
                 <div>
-
-                    <p class="page-cta-eyebrow">AEROVA</p>
-
-                    <h2 class="page-cta-title" data-i18n="ui.readyToChooseYourHorizon">Ready to Choose Your Horizon?</h2>
-
-                    <p class="page-cta-text" data-i18n="ui.selectYourDestinationAndBeginA">Select your destination and begin a journey designed with composure and care.</p>
-
+                    <h2 class="dest-next__title" data-i18n="destinations.nextTitle">Where will you go next?</h2>
+                    <p class="dest-next__text" data-i18n="destinations.nextText">Choose a horizon, set your departure, and begin a journey composed with calm precision.</p>
                 </div>
-
-                <a class="page-cta" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
-
+                <a class="dest-btn dest-btn--primary" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
             </div>
-
         </section>
-
     </main>
 
-
-
     <footer id="site-footer" class="site-footer">
-
         <div class="footer-main">
-
             <div class="footer-container">
-
                 <div class="footer-brand">
-
                     <a class="logo" href="index.html">
-
                         <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
-
                             <path d="M2 15h20l6-8h4l-4 8h16l4-5h4l-3 5h11v3H49l3 5h-4l-4-5H28l4 8h-4l-6-8H2v-3z"/>
-
                         </svg>
-
                         <span class="logo-text">Aerova</span>
-
                     </a>
-
                     <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
-
                 </div>
-
-
-
                 <div class="footer-column">
-
                     <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
-
                     <ul class="footer-links">
-
                         <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
-
                         <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
-
                         <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
-
                         <li><a class="footer-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
-
                         <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
-
                     </ul>
-
                 </div>
-
-
-
                 <div class="footer-column">
-
                     <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
-
                     <ul class="footer-links">
-
                         <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Manage Booking</a></li>
-
                         <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
-
                         <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
-
                         <li><a class="footer-link" href="index.html#faqs" data-i18n="footer.faqs">FAQs</a></li>
-
                     </ul>
-
                 </div>
-
-
-
                 <div class="footer-column">
-
                     <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
-
                     <ul class="social-list">
-
-                        <li>
-
-                            <a class="social-link" href="index.html#facebook" aria-label="Facebook">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#instagram" aria-label="Instagram">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
-                                    <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
-                                    <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#x" aria-label="X">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#youtube" aria-label="YouTube">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
-                                    <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
-                        <li>
-
-                            <a class="social-link" href="index.html#linkedin" aria-label="LinkedIn">
-
-                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
-
-                                    <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
-
-                                </svg>
-
-                            </a>
-
-                        </li>
-
+                        <li><a class="social-link" href="index.html#facebook" aria-label="Facebook"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/></svg></a></li>
+                        <li><a class="social-link" href="index.html#instagram" aria-label="Instagram"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/></svg></a></li>
+                        <li><a class="social-link" href="index.html#x" aria-label="X"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/></svg></a></li>
+                        <li><a class="social-link" href="index.html#youtube" aria-label="YouTube"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/></svg></a></li>
+                        <li><a class="social-link" href="index.html#linkedin" aria-label="LinkedIn"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/></svg></a></li>
                     </ul>
-
                 </div>
-
             </div>
-
         </div>
-
-
-
         <div class="footer-bottom">
-
             <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
-
             <ul class="footer-legal">
-
                 <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
-
                 <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
-
             </ul>
-
         </div>
-
     </footer>
-
-
-
-        <script src="assets/js/locales/en.js"></script>
+    <script src="assets/js/locales/en.js"></script>
     <script src="assets/js/locales/az.js"></script>
     <script src="assets/js/locales/ru.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/auth.js"></script>
-
     <script src="assets/js/home.js"></script>
+    <script src="assets/js/destinations.js"></script>
 
 </body>
-
 </html>
-

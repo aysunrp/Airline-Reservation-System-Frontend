@@ -104,157 +104,65 @@
     <main id="destination-details-main">
 
         <section class="page-hero destination-details-hero" id="destination-hero" aria-label="Destination hero">
-
             <div class="page-hero-media" id="destination-hero-media" role="img" aria-label="Destination" data-i18n-aria="common.destination"></div>
-
             <div class="page-hero-overlay" aria-hidden="true"></div>
-
             <div class="page-hero-content">
-
-                <p class="page-hero-brand">AEROVA</p>
-
-                <p class="destination-country" id="destination-country">—</p>
-
-                <h1 class="page-hero-title" id="destination-name" data-i18n="common.destination">Destination</h1>
-
-                <p class="page-hero-text" id="destination-tagline" data-i18n="ui.loadingDestination">Loading destination details…</p>
-
-                <a class="page-cta" id="destination-book-hero" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
-
+                <p class="page-hero-kicker" data-i18n="common.destination">Destination</p>
+                <h1 class="page-hero-title" id="destination-name">—</h1>
+                <p class="page-hero-meta" id="destination-hero-meta">—</p>
+                <p class="page-hero-text" id="destination-tagline">Loading destination details…</p>
             </div>
-
         </section>
 
-
-
         <section class="destination-details-content" id="destination-content" aria-label="Destination details">
-
             <div class="page-shell destination-details-layout">
-
                 <div class="destination-details-main-col">
+                    <section class="dd-info" aria-labelledby="dd-info-title">
+                        <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinationDetails.infoTitle">Destination Information</h2>
+                        <p class="dd-intro" id="destination-description"></p>
+                        <dl class="dd-info-grid">
+                            <div class="dd-info-item">
+                                <dt data-i18n="ui.mainAirport">Main Airport</dt>
+                                <dd>
+                                    <span id="destination-airport-name">—</span>
+                                    <span class="dd-info-code" id="destination-airport-code">—</span>
+                                </dd>
+                            </div>
+                            <div class="dd-info-item">
+                                <dt data-i18n="destinationDetails.durationFromBaku">Flight Duration from Baku</dt>
+                                <dd id="destination-duration">—</dd>
+                            </div>
+                            <div class="dd-info-item">
+                                <dt data-i18n="ui.airportLocation">Airport Location</dt>
+                                <dd id="destination-airport-location">—</dd>
+                            </div>
+                        </dl>
+                    </section>
 
-                    <header class="destination-section-intro">
-
-                        <p class="section-eyebrow" data-i18n="ui.aboutTheDestination">About the Destination</p>
-
-                        <h2 class="section-heading" id="destination-about-title" data-i18n="ui.discover">Discover</h2>
-
-                        <p class="section-copy" id="destination-description"></p>
-
-                    </header>
-
-
-
-                    <div class="destination-facts" aria-label="Key facts">
-
-                        <article class="destination-fact">
-
-                            <p class="destination-fact-label" data-i18n="ui.mainAirport">Main Airport</p>
-
-                            <p class="destination-fact-value" id="destination-airport-name">—</p>
-
-                            <p class="destination-fact-meta" id="destination-airport-code">—</p>
-
-                        </article>
-
-                        <article class="destination-fact">
-
-                            <p class="destination-fact-label" data-i18n="ui.airportLocation">Airport Location</p>
-
-                            <p class="destination-fact-value" id="destination-airport-location">—</p>
-
-                        </article>
-
-                        <article class="destination-fact">
-
-                            <p class="destination-fact-label" data-i18n="ui.flightFromBaku">Flight from Baku</p>
-
-                            <p class="destination-fact-value" id="destination-duration">—</p>
-
-                        </article>
-
-                        <article class="destination-fact">
-
-                            <p class="destination-fact-label" data-i18n="ui.startingFare">Starting Fare</p>
-
-                            <p class="destination-fact-value destination-fact-value--fare" id="destination-fare">—</p>
-
-                        </article>
-
-                    </div>
-
-
-
-                    <section class="destination-panel" aria-labelledby="baggage-title">
-
-                        <p class="section-eyebrow" data-i18n="flightDetails.baggage">Baggage</p>
-
-                        <h2 class="section-heading section-heading--sm" id="baggage-title" data-i18n="ui.allowance">Allowance</h2>
-
+                    <section class="dd-baggage" aria-labelledby="baggage-title">
+                        <h2 class="dd-section-title" id="baggage-title" data-i18n="destinationDetails.baggageTitle">Baggage Information</h2>
                         <ul class="destination-baggage-list" id="destination-baggage"></ul>
-
                     </section>
-
-
-
-                    <section class="destination-panel" aria-labelledby="flights-title">
-
-                        <p class="section-eyebrow" data-i18n="footer.flights">Flights</p>
-
-                        <h2 class="section-heading section-heading--sm" id="flights-title" data-i18n="ui.availableDepartures">Available Departures</h2>
-
-                        <div class="destination-flights" id="destination-flights"></div>
-
-                    </section>
-
                 </div>
 
-
-
                 <aside class="destination-aside" aria-label="Book this destination">
-
-                    <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Ready to Fly</p>
-
-                    <h2 class="destination-aside-title" id="destination-aside-title" data-i18n="destinationDetails.bookJourney">Book Your Journey</h2>
-
-                    <p class="destination-aside-text" id="destination-aside-text" data-i18n="ui.beginYourAerovaFlightFromBaku">Begin your AEROVA flight from Baku with calm precision.</p>
-
+                    <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Ready to Fly?</p>
+                    <h2 class="destination-aside-title" id="destination-aside-route">Baku → —</h2>
+                    <p class="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Choose your travel date and find available flights.</p>
                     <dl class="destination-aside-meta">
-
                         <div>
-
                             <dt data-i18n="admin.route">Route</dt>
-
-                            <dd id="destination-aside-route">Baku → —</dd>
-
+                            <dd id="destination-aside-route-meta">Baku → —</dd>
                         </div>
-
                         <div>
-
-                            <dt data-i18n="common.from">From</dt>
-
-                            <dd id="destination-aside-fare">—</dd>
-
-                        </div>
-
-                        <div>
-
-                            <dt data-i18n="results.duration">Duration</dt>
-
+                            <dt data-i18n="destinationDetails.approxDuration">Approximate Duration</dt>
                             <dd id="destination-aside-duration">—</dd>
-
                         </div>
-
                     </dl>
-
                     <a class="page-cta destination-aside-cta" id="destination-book-aside" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
-
                     <a class="destination-back-link" href="destinations.html" data-i18n="ui.allDestinations">← All Destinations</a>
-
                 </aside>
-
             </div>
-
         </section>
 
 

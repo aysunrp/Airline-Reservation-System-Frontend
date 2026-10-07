@@ -808,8 +808,8 @@ select.field-input {
 
 .price-calendar-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(220px, 0.85fr);
-    gap: 1rem;
+    grid-template-columns: minmax(0, 1.75fr) minmax(240px, 0.85fr);
+    gap: 1.15rem;
     align-items: start;
 }
 
@@ -852,22 +852,24 @@ select.field-input {
 }
 
 .price-calendar-grid-wrap {
-    padding: 1.1rem;
-    border-radius: 18px;
-    background: linear-gradient(180deg, #f8f3ea 0%, #efe6d6 100%);
-    border: 1px solid rgba(28, 21, 12, 0.08);
+    min-width: 0;
+    height: fit-content;
+    padding: 1rem 1rem 1.05rem;
+    border-radius: 14px;
+    background: rgba(5, 12, 22, 0.55);
+    border: 1px solid rgba(198, 163, 106, 0.22);
 }
 
 .price-calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0.4rem;
-    margin-bottom: 0.45rem;
+    gap: 0.35rem;
+    margin-bottom: 0.4rem;
 }
 
 .price-calendar-weekdays span {
     text-align: center;
-    color: rgba(28, 21, 12, 0.45);
+    color: rgba(246, 241, 231, 0.5);
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.1em;
@@ -877,7 +879,8 @@ select.field-input {
 .price-calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0.4rem;
+    gap: 0.35rem;
+    height: auto;
 }
 
 .price-calendar-day {
@@ -885,62 +888,93 @@ select.field-input {
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
-    min-height: 74px;
-    padding: 0.55rem 0.5rem;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(28, 21, 12, 0.08);
-    color: var(--color-ink);
+    min-height: 64px;
+    min-width: 0;
+    padding: 0.45rem 0.4rem;
+    border-radius: 10px;
+    background: rgba(246, 241, 231, 0.04);
+    border: 1px solid rgba(246, 241, 231, 0.1);
+    color: var(--color-cream);
     text-align: left;
-    transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .price-calendar-day:not(:disabled):hover {
-    transform: translateY(-1px);
     border-color: rgba(198, 163, 106, 0.45);
+    background: rgba(198, 163, 106, 0.08);
 }
 
 .price-calendar-day.is-outside {
-    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
+    border-color: transparent;
+    background: transparent;
+    min-height: 64px;
 }
 
 .price-calendar-day.is-unavailable {
-    opacity: 0.45;
-    background: rgba(28, 21, 12, 0.04);
-    border-color: rgba(28, 21, 12, 0.06);
-    color: rgba(28, 21, 12, 0.38);
+    opacity: 0.38;
+    background: rgba(5, 12, 22, 0.35);
+    border-color: rgba(246, 241, 231, 0.06);
+    color: rgba(246, 241, 231, 0.42);
     cursor: default;
 }
 
-.price-calendar-day.is-selected {
-    background: rgba(255, 255, 255, 0.55);
+.price-calendar-day.is-in-range {
+    background: rgba(198, 163, 106, 0.07);
+    border-color: rgba(198, 163, 106, 0.2);
+    color: var(--color-cream);
+}
+
+.price-calendar-day.is-in-range .price-calendar-day-price {
+    color: rgba(224, 196, 138, 0.75);
+}
+
+.price-calendar-day.is-selected,
+.price-calendar-day.is-range-start,
+.price-calendar-day.is-range-end {
+    background: rgba(198, 163, 106, 0.14);
     border-color: var(--color-gold);
-    box-shadow: inset 0 0 0 1px rgba(198, 163, 106, 0.55);
-    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px rgba(198, 163, 106, 0.35);
+    color: var(--color-cream);
+    opacity: 1;
+}
+
+.price-calendar-mode-button[hidden] {
+    display: none !important;
+}
+
+.field-input.is-calendar-driven {
+    cursor: pointer;
+    caret-color: transparent;
 }
 
 .price-calendar-day-number {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 500;
     line-height: 1;
+    color: inherit;
 }
 
 .price-calendar-day-price {
-    margin-top: 0.55rem;
-    font-size: 0.78rem;
-    font-weight: 500;
+    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 400;
     letter-spacing: 0.02em;
+    color: var(--color-gold-light);
 }
 
 .price-calendar-day.is-unavailable .price-calendar-day-price {
-    font-weight: 400;
+    color: rgba(246, 241, 231, 0.35);
+    font-weight: 300;
 }
 
 .price-calendar-summary {
+    min-width: 0;
+    height: fit-content;
     padding: 1.15rem 1.1rem;
-    border-radius: 18px;
-    background: rgba(5, 12, 22, 0.45);
+    border-radius: 14px;
+    background: rgba(5, 12, 22, 0.55);
     border: 1px solid rgba(198, 163, 106, 0.28);
 }
 
@@ -1054,35 +1088,47 @@ select.field-input {
     }
 
     .price-calendar-grid-wrap {
-        padding: 0.85rem;
+        padding: 0.8rem;
+        overflow-x: hidden;
     }
 
     .price-calendar-day {
-        min-height: 64px;
-        padding: 0.45rem 0.35rem;
+        min-height: 58px;
+        padding: 0.4rem 0.3rem;
+    }
+
+    .price-calendar-day.is-outside {
+        min-height: 58px;
     }
 
     .price-calendar-day-price {
-        font-size: 0.68rem;
+        font-size: 0.64rem;
     }
 }
 
 @media (max-width: 480px) {
     .price-calendar-weekdays span:nth-child(n) {
-        font-size: 0.6rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.06em;
     }
 
     .price-calendar-day {
-        min-height: 58px;
-        border-radius: 10px;
+        min-height: 52px;
+        border-radius: 8px;
+        padding: 0.35rem 0.25rem;
+    }
+
+    .price-calendar-day.is-outside {
+        min-height: 52px;
     }
 
     .price-calendar-day-number {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
     }
 
     .price-calendar-day-price {
-        font-size: 0.62rem;
+        font-size: 0.58rem;
+        margin-top: 0.3rem;
     }
 }
 
