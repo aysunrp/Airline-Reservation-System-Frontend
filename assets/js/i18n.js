@@ -166,7 +166,7 @@
     var headerActions = document.querySelector(".header-actions");
     if (headerActions) {
       var switcher = buildSwitcher();
-      var insertBefore = headerActions.querySelector(".trips-link, .search-button, .login-button, .menu-toggle");
+      var insertBefore = headerActions.querySelector(".trips-link, .login-button, .menu-toggle");
       if (insertBefore) headerActions.insertBefore(switcher, insertBefore);
       else headerActions.appendChild(switcher);
       return;

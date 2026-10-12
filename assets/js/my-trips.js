@@ -148,6 +148,21 @@
         return tr("common.statusConfirmed", "Confirmed");
     }
 
+    function buildRefundMarkup(refund) {
+        var key = String(refund.status || "").toLowerCase().replace(/[^a-z]/g, "");
+        key = key === "processing" ? "processing" : (key === "completed" ? "completed" : (key === "noteligible" ? "notEligible" : "pending"));
+        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible" }[key];
+
+        return (
+            '<p class="trip-card-refund">' +
+                '<span class="trip-card-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Refund status")) + "</span>" +
+                '<span class="trip-card-refund-status trip-card-refund-status--' + key + '">' + escapeHtml(tr("cancellation.status." + key, fallback)) + "</span>" +
+                (key === "notEligible" ? "" : '<span class="trip-card-refund-amount">' + escapeHtml(formatPrice(refund.amount)) + "</span>") +
+                '<span class="trip-card-refund-demo">' + escapeHtml(tr("cancellation.demoTag", "Demo")) + "</span>" +
+            "</p>"
+        );
+    }
+
     function buildTripCard(bookingData) {
         var flight = bookingData.flight || {};
         var selectedSeats = Array.isArray(bookingData.selectedSeats)
@@ -162,6 +177,8 @@
         var seatsText = selectedSeats.length ? selectedSeats.join(", ") : "—";
         var pnr = bookingData.pnr || "—";
         var status = getBookingStatus(bookingData);
+        var cancelled = String(bookingData.status || "").toLowerCase() === "cancelled";
+        var refundMarkup = cancelled && bookingData.refund ? buildRefundMarkup(bookingData.refund) : "";
 
         return (
             '<article class="trip-card">' +
@@ -171,7 +188,7 @@
                         '<h2 class="trip-card-route">' + escapeHtml(route) + "</h2>" +
                         '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + (flight.flightNumber || "—"), { number: flight.flightNumber || "—" })) + "</p>" +
                     "</div>" +
-                    '<div class="trip-card-status trip-card-status--confirmed">' + escapeHtml(status) + "</div>" +
+                    '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(status) + "</div>" +
                 "</div>" +
                 '<dl class="trip-card-meta">' +
                     '<div class="trip-card-meta-item">' +
@@ -211,6 +228,7 @@
                         "<dd>" + escapeHtml(seatsText) + "</dd>" +
                     "</div>" +
                 "</dl>" +
+                refundMarkup +
                 '<div class="trip-card-footer">' +
                     '<div class="trip-card-price">' +
                         '<p class="trip-card-price-label">' + tr("trips.total", "Total") + "</p>" +

@@ -71,18 +71,6 @@
 
                 <a class="trips-link" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
 
-                <button class="search-button" type="button" aria-label="Search" data-i18n-aria="nav.search">
-
-                    <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-
-                        <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
-
-                        <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-
-                    </svg>
-
-                </button>
-
                 <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
 
                 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
@@ -125,176 +113,6 @@
 
 
 
-                <section class="change-booking-panel details-card" id="change-booking-panel" aria-labelledby="change-booking-title" hidden>
-
-                    <h2 class="details-card-title" id="change-booking-title" data-i18n="trips.changeBooking">Change Booking</h2>
-
-                    <p class="change-booking-intro" data-i18n="ui.updateYourFlightDateCabinClass">Update your flight date, cabin class, or seats. Your current booking details stay visible below.</p>
-
-
-
-                    <div class="change-compare-grid">
-
-                        <article class="change-compare-card">
-
-                            <h3 class="change-compare-heading" data-i18n="ui.currentSelection">Current Selection</h3>
-
-                            <dl class="change-compare-list">
-
-                                <div class="change-compare-row">
-
-                                    <dt data-i18n="common.date">Date</dt>
-
-                                    <dd id="change-current-date">—</dd>
-
-                                </div>
-
-                                <div class="change-compare-row">
-
-                                    <dt data-i18n="admin.cabin">Cabin</dt>
-
-                                    <dd id="change-current-cabin">—</dd>
-
-                                </div>
-
-                                <div class="change-compare-row">
-
-                                    <dt data-i18n="payment.seats">Seats</dt>
-
-                                    <dd id="change-current-seats">—</dd>
-
-                                </div>
-
-                            </dl>
-
-                        </article>
-
-
-
-                        <article class="change-compare-card change-compare-card--new">
-
-                            <h3 class="change-compare-heading" data-i18n="ui.newSelection">New Selection</h3>
-
-                            <dl class="change-compare-list">
-
-                                <div class="change-compare-row">
-
-                                    <dt data-i18n="common.date">Date</dt>
-
-                                    <dd id="change-new-date-display">—</dd>
-
-                                </div>
-
-                                <div class="change-compare-row">
-
-                                    <dt data-i18n="admin.cabin">Cabin</dt>
-
-                                    <dd id="change-new-cabin-display">—</dd>
-
-                                </div>
-
-                                <div class="change-compare-row">
-
-                                    <dt data-i18n="payment.seats">Seats</dt>
-
-                                    <dd id="change-new-seats-display">—</dd>
-
-                                </div>
-
-                            </dl>
-
-                        </article>
-
-                    </div>
-
-
-
-                    <form id="change-booking-form" class="change-booking-form" novalidate>
-
-                        <div class="change-field-grid">
-
-                            <div class="change-field">
-
-                                <label class="change-field-label" for="change-flight-date" data-i18n="trips.flightDate">Flight Date</label>
-
-                                <input class="change-field-input" id="change-flight-date" name="flightDate" type="date" required>
-
-                            </div>
-
-                            <div class="change-field">
-
-                                <label class="change-field-label" for="change-cabin-class" data-i18n="booking.cabinClass">Cabin Class</label>
-
-                                <select class="change-field-input" id="change-cabin-class" name="cabinClass" required>
-
-                                    <option value="Economy" data-i18n="common.economy">Economy</option>
-
-                                    <option value="Comfort" data-i18n="common.comfort">Comfort</option>
-
-                                    <option value="Business" data-i18n="common.business">Business</option>
-
-                                </select>
-
-                            </div>
-
-                            <div class="change-field change-field--full">
-
-                                <label class="change-field-label" for="change-seats" data-i18n="ui.seatS">Seat(s)</label>
-
-                                <input class="change-field-input" id="change-seats" name="seats" type="text" placeholder="e.g. 12A, 12B" autocomplete="off" required>
-
-                                <p class="change-field-hint" data-i18n="ui.enterSeatCodesSeparatedByCommas">Enter seat codes separated by commas. Match the passenger count.</p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="change-price-summary">
-
-                            <div class="change-price-row">
-
-                                <span data-i18n="ui.currentTotal">Current Total</span>
-
-                                <strong id="change-current-total">$0</strong>
-
-                            </div>
-
-                            <div class="change-price-row">
-
-                                <span data-i18n="ui.estimatedNewTotal">Estimated New Total</span>
-
-                                <strong id="change-estimated-total">$0</strong>
-
-                            </div>
-
-                            <div class="change-price-row change-price-row--difference">
-
-                                <span data-i18n="ui.priceDifference">Price Difference</span>
-
-                                <strong id="change-price-difference">$0</strong>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="change-booking-actions">
-
-                            <button class="booking-action-button booking-action-button--primary" id="confirm-changes-button" type="submit" data-i18n="bookingDetails.confirmChange">Confirm Changes</button>
-
-                            <button class="booking-action-button booking-action-button--secondary" id="cancel-changes-button" type="button" data-i18n="common.cancel">Cancel</button>
-
-                        </div>
-
-                    </form>
-
-                </section>
-
-
-
                 <div class="details-layout">
 
                     <div class="details-main">
@@ -314,6 +132,7 @@
                                 <p class="booking-status-badge" id="details-status" data-i18n="trips.statusConfirmed">Confirmed</p>
 
                             </div>
+                            <div class="details-refund" id="details-refund" aria-live="polite" hidden></div>
 
                         </article>
 
@@ -425,14 +244,6 @@
 
 
 
-                        <article class="details-card" aria-labelledby="extras-title">
-
-                            <h2 class="details-card-title" id="extras-title" data-i18n="extras.title">Extra Services</h2>
-
-                            <ul class="detail-list" id="details-extras"></ul>
-
-                        </article>
-
                     </div>
 
 
@@ -471,14 +282,6 @@
 
                             <div class="summary-row">
 
-                                <dt data-i18n="extras.title">Extra Services</dt>
-
-                                <dd id="price-extras">$0</dd>
-
-                            </div>
-
-                            <div class="summary-row">
-
                                 <dt data-i18n="ui.taxesFees2">Taxes / Fees</dt>
 
                                 <dd id="price-taxes">$0</dd>
@@ -505,9 +308,7 @@
 
                         <div class="details-actions">
 
-                            <button class="booking-action-button booking-action-button--primary" id="change-booking-button" type="button" data-i18n="trips.changeBooking">Change Booking</button>
-
-                            <button class="booking-action-button booking-action-button--secondary" id="cancel-booking-button" type="button" data-i18n="trips.cancelBooking">Cancel Booking</button>
+                            <button class="booking-action-button booking-action-button--danger" id="cancel-booking-button" type="button" aria-haspopup="dialog" data-i18n="trips.cancelBooking">Cancel Booking</button>
 
                             <button class="booking-action-button booking-action-button--secondary" id="download-confirmation-button" type="button" data-i18n="confirmation.download">Download Confirmation</button>
 
@@ -710,31 +511,30 @@
 
 
     <div class="booking-modal" id="cancel-booking-modal" hidden>
-
         <div class="booking-modal-backdrop" data-close-cancel-modal></div>
-
-        <div class="booking-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cancel-booking-title">
-
+        <div class="booking-modal-dialog booking-modal-dialog--cancel" role="dialog" aria-modal="true" aria-labelledby="cancel-booking-title" aria-describedby="cancel-modal-intro" tabindex="-1">
             <h2 class="booking-modal-title" id="cancel-booking-title" data-i18n="trips.cancelBooking">Cancel Booking</h2>
-
-            <p class="booking-modal-text">
-
-                This will cancel reservation <strong id="cancel-modal-pnr">—</strong>.
-
-                Cancelled bookings cannot be used for travel. Ancillary selections will no longer be active.
-
-            </p>
-
+            <p class="booking-modal-text" id="cancel-modal-intro" data-i18n="cancellation.intro">Review the estimated refund before you confirm. Cancelled bookings cannot be used for travel and cannot be reinstated.</p>
+            <dl class="cancel-summary">
+                <div class="cancel-summary-row"><dt data-i18n="confirmation.reference">Booking Reference</dt><dd id="cancel-modal-pnr">—</dd></div>
+                <div class="cancel-summary-row"><dt data-i18n="admin.route">Route</dt><dd id="cancel-modal-route">—</dd></div>
+                <div class="cancel-summary-row"><dt data-i18n="trips.flightDate">Flight Date</dt><dd id="cancel-modal-date">—</dd></div>
+                <div class="cancel-summary-row"><dt data-i18n="cancellation.amountPaid">Amount Paid</dt><dd id="cancel-modal-paid">$0</dd></div>
+                <div class="cancel-summary-row"><dt data-i18n="cancellation.fee">Cancellation Fee</dt><dd id="cancel-modal-fee">$0</dd></div>
+                <div class="cancel-summary-row cancel-summary-row--total" id="cancel-modal-refund-row"><dt data-i18n="cancellation.refundable">Estimated Refund</dt><dd id="cancel-modal-refund">$0</dd></div>
+            </dl>
+            <p class="cancel-rule" id="cancel-modal-rule"></p>
+            <p class="cancel-not-eligible" id="cancel-modal-not-eligible" data-i18n="cancellation.notEligibleText" hidden>Under these fare rules this booking is not eligible for a refund. You can still cancel it.</p>
+            <details class="cancel-rules">
+                <summary data-i18n="cancellation.rulesTitle">Demo fare rules (mock)</summary>
+                <ul class="cancel-rules-list" id="cancel-modal-rules"></ul>
+            </details>
+            <p class="cancel-demo-note" data-i18n="cancellation.demoNote">Demo / mock estimate only. No real payment provider is contacted, and a refund is never marked Completed without provider confirmation.</p>
             <div class="booking-modal-actions">
-
                 <button class="booking-action-button booking-action-button--secondary" type="button" data-close-cancel-modal data-i18n="bookingDetails.keepBooking">Keep Booking</button>
-
                 <button class="booking-action-button booking-action-button--danger" id="confirm-cancellation-button" type="button" data-i18n="ui.confirmCancellation">Confirm Cancellation</button>
-
             </div>
-
         </div>
-
     </div>
 
 

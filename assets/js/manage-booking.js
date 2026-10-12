@@ -20,10 +20,9 @@
         cabinClass: "Comfort",
         passengerCount: 2,
         selectedSeats: ["12A", "12B"],
-        totalPrice: 1485,
+        totalPrice: 1430,
         baggageTotal: 55,
         mealTotal: 38,
-        extraServicesTotal: 55,
         taxesFees: 86,
         passengers: [
             {
@@ -55,13 +54,6 @@
         meals: [
             { name: "Leyla Mammadova", mealName: "Standard Meal", price: 18 },
             { name: "Orkhan Aliyev", mealName: "Halal Meal", price: 20 }
-        ],
-        extraServices: [
-            {
-                id: "lounge-access",
-                name: "Lounge Access",
-                price: 55
-            }
         ]
     };
 
@@ -178,7 +170,6 @@
     function enrichBooking(booking) {
         var baggageData = readJSON("baggageData");
         var mealData = readJSON("mealData");
-        var extraServicesData = readJSON("extraServicesData");
         var copy = JSON.parse(JSON.stringify(booking));
 
         if (!copy.pnr) {
@@ -195,10 +186,22 @@
             copy.mealTotal = mealData.totalMealCost || 0;
         }
 
-        if (!Array.isArray(copy.extraServices) && extraServicesData) {
-            copy.extraServices = extraServicesData.selectedServices || [];
-            copy.extraServicesTotal = extraServicesData.extraServicesTotal || 0;
+        /*
+         * Extra services are not part of the booking flow. Bookings saved by an
+         * older version may still carry extraServicesTotal / extraServices that
+         * were folded into totalPrice; take that amount back out and drop the fields.
+         */
+        var legacyExtras = Number(copy.extraServicesTotal);
+        if (!isFinite(legacyExtras)) {
+            legacyExtras = Array.isArray(copy.extraServices)
+                ? copy.extraServices.reduce(function (sum, item) { return sum + (Number(item && item.price) || 0); }, 0)
+                : 0;
         }
+        if (legacyExtras > 0 && isFinite(Number(copy.totalPrice))) {
+            copy.totalPrice = Number(copy.totalPrice) - legacyExtras;
+        }
+        delete copy.extraServices;
+        delete copy.extraServicesTotal;
 
         if (typeof copy.taxesFees !== "number") {
             var base = Number(copy.totalPrice) || 0;
@@ -208,12 +211,11 @@
         if (typeof copy.baseFare !== "number") {
             var baggageTotal = Number(copy.baggageTotal) || 0;
             var mealTotal = Number(copy.mealTotal) || 0;
-            var extrasTotal = Number(copy.extraServicesTotal) || 0;
             var taxes = Number(copy.taxesFees) || 0;
             var grand = Number(copy.totalPrice);
 
             if (isFinite(grand) && grand > 0) {
-                copy.baseFare = Math.max(grand - baggageTotal - mealTotal - extrasTotal - taxes, 0);
+                copy.baseFare = Math.max(grand - baggageTotal - mealTotal - taxes, 0);
             } else {
                 copy.baseFare = MOCK_BOOKING.totalPrice;
             }
@@ -368,7 +370,6 @@
                 "</dl>" +
                 '<div class="booking-result-actions">' +
                     '<button class="booking-action-button booking-action-button--primary" type="button" data-action="view">' + tr("manage.viewBooking", "View Booking") + '</button>' +
-                    '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="change">' + tr("manage.changeBooking", "Change Booking") + '</button>' +
                     '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="cancel">' + tr("manage.cancelBooking", "Cancel Booking") + '</button>' +
                 "</div>" +
             "</article>";
@@ -389,11 +390,6 @@
 
         if (action === "view") {
             window.location.href = "booking-details.html?source=manage&intent=view";
-            return;
-        }
-
-        if (action === "change") {
-            window.location.href = "booking-details.html?source=manage&intent=change";
             return;
         }
 

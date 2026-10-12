@@ -25,7 +25,6 @@
         baseFare: 0,
         baggage: 0,
         meals: 0,
-        extraServices: 0,
         taxes: 0,
         subtotal: 0,
         discount: 0,
@@ -119,12 +118,9 @@
         return count > 0 ? count : 1;
     }
 
-    function getBaggageTotal(baggageData, bookingData, extraServicesData) {
+    function getBaggageTotal(baggageData, bookingData) {
         if (baggageData && baggageData.totalBaggageCost != null) {
             return roundMoney(toNumber(baggageData.totalBaggageCost, 0));
-        }
-        if (extraServicesData && extraServicesData.baggageTotal != null) {
-            return roundMoney(toNumber(extraServicesData.baggageTotal, 0));
         }
         if (bookingData && bookingData.baggageTotal != null) {
             return roundMoney(toNumber(bookingData.baggageTotal, 0));
@@ -132,12 +128,9 @@
         return 0;
     }
 
-    function getMealTotal(mealData, bookingData, extraServicesData) {
+    function getMealTotal(mealData, bookingData) {
         if (mealData && mealData.totalMealCost != null) {
             return roundMoney(toNumber(mealData.totalMealCost, 0));
-        }
-        if (extraServicesData && extraServicesData.mealTotal != null) {
-            return roundMoney(toNumber(extraServicesData.mealTotal, 0));
         }
         if (bookingData && bookingData.mealTotal != null) {
             return roundMoney(toNumber(bookingData.mealTotal, 0));
@@ -145,17 +138,13 @@
         return 0;
     }
 
-    function getExtraServicesTotal(extraServicesData, bookingData) {
-        if (extraServicesData && extraServicesData.extraServicesTotal != null) {
-            return roundMoney(toNumber(extraServicesData.extraServicesTotal, 0));
-        }
-
-        if (extraServicesData && Array.isArray(extraServicesData.selectedServices)) {
-            return roundMoney(extraServicesData.selectedServices.reduce(function (sum, service) {
-                return sum + toNumber(service && service.price, 0);
-            }, 0));
-        }
-
+    /*
+     * The booking flow has no extra services. Older bookingData objects may
+     * still carry extraServicesTotal / extraServices from a previous session;
+     * that amount is only subtracted when recovering the base fare from a
+     * stored total that already included it, and is never charged.
+     */
+    function getLegacyExtrasTotal(bookingData) {
         if (bookingData && bookingData.extraServicesTotal != null) {
             return roundMoney(toNumber(bookingData.extraServicesTotal, 0));
         }
@@ -169,11 +158,7 @@
         return 0;
     }
 
-    function getBaseFare(bookingData, baggageTotal, mealTotal, extraServicesTotal, extraServicesData) {
-        if (extraServicesData && extraServicesData.baseFare != null) {
-            return roundMoney(toNumber(extraServicesData.baseFare, 0));
-        }
-
+    function getBaseFare(bookingData, baggageTotal, mealTotal) {
         if (bookingData && bookingData.baseFare != null) {
             return roundMoney(toNumber(bookingData.baseFare, 0));
         }
@@ -192,15 +177,12 @@
         }
 
         // If add-on totals were already folded into bookingData.totalPrice, recover base fare.
-        if (
-            (bookingData && (bookingData.baggageTotal != null || bookingData.mealTotal != null || bookingData.extraServicesTotal != null)) ||
-            extraServicesData
-        ) {
+        if (bookingData && (bookingData.baggageTotal != null || bookingData.mealTotal != null || bookingData.extraServicesTotal != null)) {
             var discountAmount = toNumber(bookingData && bookingData.discountAmount, 0);
             var taxesEstimate = toNumber(bookingData && bookingData.taxesAndFees, 0);
             return roundMoney(Math.max(
                 0,
-                storedTotal - baggageTotal - mealTotal - extraServicesTotal - taxesEstimate + discountAmount
+                storedTotal - baggageTotal - mealTotal - getLegacyExtrasTotal(bookingData) - taxesEstimate + discountAmount
             ));
         }
 
@@ -221,14 +203,12 @@
     function calculatePriceBreakdown(bookingData) {
         var baggageData = readJSON("baggageData");
         var mealData = readJSON("mealData");
-        var extraServicesData = readJSON("extraServicesData");
 
-        var baggage = getBaggageTotal(baggageData, bookingData, extraServicesData);
-        var meals = getMealTotal(mealData, bookingData, extraServicesData);
-        var extraServices = getExtraServicesTotal(extraServicesData, bookingData);
-        var baseFare = getBaseFare(bookingData, baggage, meals, extraServices, extraServicesData);
+        var baggage = getBaggageTotal(baggageData, bookingData);
+        var meals = getMealTotal(mealData, bookingData);
+        var baseFare = getBaseFare(bookingData, baggage, meals);
         var taxes = roundMoney(baseFare * TAX_RATE);
-        var subtotal = roundMoney(baseFare + baggage + meals + extraServices + taxes);
+        var subtotal = roundMoney(baseFare + baggage + meals + taxes);
 
         var promoCode = appliedPromo ? appliedPromo.code : "";
         var promoPercent = appliedPromo ? appliedPromo.percent : 0;
@@ -241,7 +221,6 @@
             baseFare: baseFare,
             baggage: baggage,
             meals: meals,
-            extraServices: extraServices,
             taxes: taxes,
             subtotal: subtotal,
             discount: discount,
@@ -405,7 +384,8 @@
         bookingData.baseFare = prices.baseFare;
         bookingData.baggageTotal = prices.baggage;
         bookingData.mealTotal = prices.meals;
-        bookingData.extraServicesTotal = prices.extraServices;
+        delete bookingData.extraServicesTotal;
+        delete bookingData.extraServices;
         bookingData.taxesAndFees = prices.taxes;
         bookingData.preDiscountTotal = prices.subtotal;
         bookingData.totalPrice = prices.grandTotal;
@@ -427,7 +407,6 @@
         setText("payment-base-fare", formatPrice(prices.baseFare));
         setText("payment-baggage", formatPrice(prices.baggage));
         setText("payment-meals", formatPrice(prices.meals));
-        setText("payment-extra-services", formatPrice(prices.extraServices));
         setText("payment-discount", prices.discount > 0 ? ("−" + formatPrice(prices.discount)) : formatPrice(0));
         setText("payment-taxes", formatPrice(prices.taxes));
         setText("payment-total", formatPrice(prices.grandTotal));
@@ -746,7 +725,8 @@
         bookingData.baseFare = prices.baseFare;
         bookingData.baggageTotal = prices.baggage;
         bookingData.mealTotal = prices.meals;
-        bookingData.extraServicesTotal = prices.extraServices;
+        delete bookingData.extraServicesTotal;
+        delete bookingData.extraServices;
         bookingData.taxesAndFees = prices.taxes;
         bookingData.taxesFees = prices.taxes;
         bookingData.preDiscountTotal = prices.subtotal;

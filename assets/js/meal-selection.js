@@ -372,14 +372,14 @@ var MEAL_OPTIONS = [
     }
 
     function bindContinue() {
-        var button = document.getElementById("continue-extra-services-button");
+        var button = document.getElementById("continue-payment-button");
         if (!button) {
             return;
         }
 
         button.addEventListener("click", function () {
             saveMealData();
-            window.location.href = "extra-services.html";
+            window.location.href = "payment.html";
         });
     }
 

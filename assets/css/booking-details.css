@@ -103,15 +103,7 @@
     color: #e0b0ac;
 }
 
-.change-booking-panel {
-    margin-bottom: 1.4rem;
-}
-
-.change-booking-panel[hidden] {
-    display: none !important;
-}
-
-.change-booking-intro {
+.details-empty-text {
     margin: 0 0 1.25rem;
     color: var(--color-cream-muted);
     font-size: 0.98rem;
@@ -119,150 +111,77 @@
     line-height: 1.55;
 }
 
-.change-compare-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.35rem;
+.details-refund {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(246, 241, 231, 0.1);
 }
 
-.change-compare-card {
-    padding: 1.1rem 1.15rem;
-    border-radius: 14px;
-    background: rgba(5, 12, 22, 0.45);
-    border: 1px solid rgba(246, 241, 231, 0.1);
+.details-refund[hidden] {
+    display: none;
 }
 
-.change-compare-card--new {
-    border-color: rgba(198, 163, 106, 0.4);
-    background: rgba(198, 163, 106, 0.08);
-}
-
-.change-compare-heading {
-    margin: 0 0 0.85rem;
-    color: var(--color-gold);
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-}
-
-.change-compare-list {
-    display: grid;
-    gap: 0.7rem;
-    margin: 0;
-}
-
-.change-compare-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.change-compare-row dt {
-    margin: 0;
+.details-refund-label {
+    margin: 0 0 0.45rem;
     color: rgba(246, 241, 231, 0.55);
-    font-size: 0.85rem;
-}
-
-.change-compare-row dd {
-    margin: 0;
-    color: var(--color-cream);
-    font-size: 0.95rem;
-    font-weight: 400;
-    text-align: right;
-}
-
-.change-booking-form {
-    display: grid;
-    gap: 1.25rem;
-}
-
-.change-field-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.change-field {
-    display: grid;
-    gap: 0.4rem;
-}
-
-.change-field--full {
-    grid-column: 1 / -1;
-}
-
-.change-field-label {
-    color: rgba(246, 241, 231, 0.62);
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
 
-.change-field-input {
-    width: 100%;
-    min-height: 46px;
-    padding: 0.65rem 0.9rem;
-    border-radius: 12px;
-    background: rgba(5, 12, 22, 0.62);
-    border: 1px solid rgba(246, 241, 231, 0.14);
-    color: var(--color-cream);
-    font: inherit;
-    font-size: 0.98rem;
-    color-scheme: dark;
-}
-
-.change-field-input:focus {
-    outline: none;
-    border-color: var(--color-gold);
-}
-
-.change-field-hint {
+.details-refund-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
     margin: 0;
+}
+
+.details-refund-amount {
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+}
+
+.details-refund-meta {
+    margin: 0.45rem 0 0;
     color: rgba(246, 241, 231, 0.5);
     font-size: 0.82rem;
+    line-height: 1.5;
 }
 
-.change-price-summary {
-    display: grid;
-    gap: 0.7rem;
-    padding: 1.1rem 1.15rem;
-    border-radius: 14px;
-    background: rgba(5, 12, 22, 0.4);
-    border: 1px solid rgba(198, 163, 106, 0.28);
-}
-
-.change-price-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    color: var(--color-cream-muted);
-    font-size: 0.95rem;
-}
-
-.change-price-row strong {
-    color: var(--color-cream);
-    font-weight: 500;
-}
-
-.change-price-row--difference {
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(246, 241, 231, 0.1);
-    color: var(--color-cream);
-}
-
-.change-price-row--difference strong {
+.refund-status-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    background: rgba(198, 163, 106, 0.14);
     color: var(--color-gold-light);
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
+    font-size: 0.64rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
-.change-booking-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+.refund-status-badge--processing {
+    border-color: rgba(140, 170, 210, 0.55);
+    background: rgba(140, 170, 210, 0.12);
+    color: #c5d6ec;
+}
+
+.refund-status-badge--completed {
+    border-color: rgba(130, 180, 140, 0.55);
+    background: rgba(130, 180, 140, 0.12);
+    color: #c4e0c9;
+}
+
+.refund-status-badge--notEligible {
+    border-color: rgba(246, 241, 231, 0.2);
+    background: rgba(246, 241, 231, 0.06);
+    color: rgba(246, 241, 231, 0.7);
 }
 
 .booking-action-button--danger {
@@ -281,6 +200,10 @@
     cursor: default;
     transform: none;
     filter: none;
+}
+
+body.has-open-modal {
+    overflow: hidden;
 }
 
 .booking-modal[hidden] {
@@ -333,6 +256,115 @@
 .booking-modal-text strong {
     color: var(--color-gold-light);
     font-weight: 500;
+}
+
+.booking-modal-dialog--cancel {
+    width: min(540px, 100%);
+    max-height: calc(100vh - 2.5rem);
+    max-height: calc(100dvh - 2.5rem);
+    overflow-y: auto;
+}
+
+.booking-modal-dialog:focus {
+    outline: none;
+}
+
+.booking-modal-dialog:focus-visible {
+    outline: 2px solid var(--color-gold-light);
+    outline-offset: 2px;
+}
+
+.cancel-summary {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0 0 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    background: rgba(5, 12, 22, 0.45);
+    border: 1px solid rgba(198, 163, 106, 0.28);
+}
+
+.cancel-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.cancel-summary-row dt {
+    color: rgba(246, 241, 231, 0.6);
+    font-size: 0.86rem;
+}
+
+.cancel-summary-row dd {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 0.95rem;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.cancel-summary-row--total {
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(246, 241, 231, 0.1);
+}
+
+.cancel-summary-row--total dd {
+    color: var(--color-gold-light);
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+}
+
+.cancel-summary-row--total.is-not-eligible dd {
+    color: rgba(246, 241, 231, 0.7);
+    font-family: inherit;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.cancel-rule,
+.cancel-not-eligible,
+.cancel-demo-note {
+    margin: 0 0 0.75rem;
+    color: var(--color-cream-muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.cancel-not-eligible {
+    color: #e0b0ac;
+}
+
+.cancel-rules {
+    margin: 0 0 0.75rem;
+    color: var(--color-cream-muted);
+    font-size: 0.85rem;
+}
+
+.cancel-rules summary {
+    color: var(--color-gold-light);
+    cursor: pointer;
+}
+
+.cancel-rules-list {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0.6rem 0 0;
+    padding-left: 1.1rem;
+    line-height: 1.5;
+}
+
+.cancel-rules-list strong {
+    color: var(--color-cream);
+    font-weight: 500;
+}
+
+.cancel-demo-note {
+    margin-bottom: 1.2rem;
+    color: rgba(246, 241, 231, 0.5);
+    font-size: 0.8rem;
+    font-style: italic;
 }
 
 .booking-modal-actions {
@@ -501,7 +533,6 @@
     .site-footer,
     .details-actions,
     .details-message,
-    .change-booking-panel,
     .booking-modal {
         display: none !important;
     }
@@ -551,9 +582,6 @@
 }
 
 @media (max-width: 720px) {
-    .change-compare-grid,
-    .change-field-grid,
-    .change-booking-actions,
     .booking-modal-actions {
         grid-template-columns: 1fr;
     }

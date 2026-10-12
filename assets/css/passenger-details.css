@@ -191,25 +191,6 @@ h2 {
     gap: 0.85rem;
 }
 
-.search-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 42px;
-    color: var(--color-cream);
-    border-radius: 50%;
-}
-
-.search-button:hover {
-    color: var(--color-gold-light);
-}
-
-.search-icon {
-    width: 18px;
-    height: 18px;
-}
-
 .login-button {
     display: inline-flex;
     align-items: center;

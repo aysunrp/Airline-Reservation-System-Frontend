@@ -11,6 +11,7 @@
 
     var notificationsState = [];
     var bookingFingerprint = "none";
+    var expandedIds = {};
 
     function escapeHtml(value) {
         return String(value)
@@ -292,6 +293,10 @@
         }
 
         writeJSON(STORAGE_KEY, payload);
+
+        try {
+            window.dispatchEvent(new CustomEvent("aerova:notificationschange"));
+        } catch (error) {}
     }
 
     function loadNotifications() {
@@ -332,55 +337,113 @@
             return;
         }
 
-        list.innerHTML = notificationsState.map(function (notification) {
+        list.innerHTML = notificationsState.map(function (notification, index) {
             var isUnread = !notification.read;
+            var isExpanded = !!expandedIds[notification.id];
+            var panelId = "notification-panel-" + index;
+            var toggleId = "notification-toggle-" + index;
+            var reference = getNotificationReference(notification);
 
             return (
-                '<article class="notification-card' + (isUnread ? " is-unread" : "") +
+                '<article class="notification-card' + (isUnread ? " is-unread" : "") + (isExpanded ? " is-expanded" : "") +
                     '" data-notification-id="' + escapeHtml(notification.id) + '">' +
-                    '<span class="notification-icon" aria-hidden="true">' +
-                        escapeHtml(notification.icon || "•") +
-                    "</span>" +
-                    '<div class="notification-body">' +
-                        '<div class="notification-title-row">' +
-                            '<h2 class="notification-title">' + escapeHtml(notification.title) + "</h2>" +
-                            '<span class="notification-state ' +
-                                (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
-                                (isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) +
+                    '<h2 class="notification-heading">' +
+                    '<button class="notification-toggle" type="button" id="' + toggleId + '" aria-expanded="' + (isExpanded ? "true" : "false") +
+                        '" aria-controls="' + panelId + '">' +
+                        '<span class="notification-icon" aria-hidden="true">' +
+                            escapeHtml(notification.icon || "•") +
+                        "</span>" +
+                        '<span class="notification-body">' +
+                            '<span class="notification-title-row">' +
+                                '<span class="notification-title">' + escapeHtml(notification.title) + "</span>" +
+                                stateLabelMarkup(isUnread) +
                             "</span>" +
+                            '<span class="notification-preview">' + escapeHtml(notification.message) + "</span>" +
+                            '<span class="notification-time">' + escapeHtml(formatDateTime(notification.datetime)) + "</span>" +
+                        "</span>" +
+                        '<span class="notification-chevron" aria-hidden="true"></span>' +
+                    "</button>" +
+                    "</h2>" +
+                    '<div class="notification-panel" id="' + panelId + '" role="region" aria-labelledby="' + toggleId + '"' +
+                        (isExpanded ? "" : " inert") + ">" +
+                        '<div class="notification-panel-inner">' +
+                            '<p class="notification-message">' + escapeHtml(notification.message) + "</p>" +
+                            '<dl class="notification-details">' +
+                                '<div class="notification-detail"><dt>' + escapeHtml(tr("common.date", "Date")) + "</dt><dd>" +
+                                    escapeHtml(formatDateTime(notification.datetime)) + "</dd></div>" +
+                                '<div class="notification-detail"><dt>' + escapeHtml(tr("common.status", "Status")) + '</dt><dd class="notification-detail-status">' +
+                                    escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) + "</dd></div>" +
+                                (reference
+                                    ? '<div class="notification-detail"><dt>' + escapeHtml(tr("trips.bookingReference", "Booking Reference")) + "</dt><dd>" +
+                                        escapeHtml(reference) + "</dd></div>"
+                                    : "") +
+                            "</dl>" +
                         "</div>" +
-                        '<p class="notification-message">' + escapeHtml(notification.message) + "</p>" +
-                        '<p class="notification-time">' + escapeHtml(formatDateTime(notification.datetime)) + "</p>" +
-                    "</div>" +
-                    '<div class="notification-actions">' +
-                        '<button class="notification-action-button" type="button" data-action="mark-read"' +
-                            (notification.read ? " disabled" : "") +
-                        ">Mark as Read</button>" +
                     "</div>" +
                 "</article>"
             );
         }).join("");
     }
 
-    function markAsRead(notificationId) {
-        var changed = false;
+    function stateLabelMarkup(isUnread) {
+        return '<span class="notification-state ' +
+            (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
+            escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) +
+            "</span>";
+    }
 
+    function getNotificationReference(notification) {
+        var booking = getBookingData();
+        if (booking && booking.pnr && String(notification.id || "").slice(-String(booking.pnr).length - 1) === "-" + booking.pnr) {
+            return booking.pnr;
+        }
+        return "";
+    }
+
+    function setCardExpanded(card, expanded) {
+        var toggle = card.querySelector(".notification-toggle");
+        var panel = card.querySelector(".notification-panel");
+        card.classList.toggle("is-expanded", expanded);
+        if (toggle) toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+        if (panel) {
+            if (expanded) panel.removeAttribute("inert");
+            else panel.setAttribute("inert", "");
+        }
+    }
+
+    function markCardRead(card) {
+        card.classList.remove("is-unread");
+        var state = card.querySelector(".notification-state");
+        if (state) state.outerHTML = stateLabelMarkup(false);
+        var detailStatus = card.querySelector(".notification-detail-status");
+        if (detailStatus) detailStatus.textContent = tr("common.read", "Read");
+    }
+
+    function toggleNotification(card) {
+        var id = card.getAttribute("data-notification-id");
+        var expanded = !card.classList.contains("is-expanded");
+
+        if (expanded) expandedIds[id] = true;
+        else delete expandedIds[id];
+        setCardExpanded(card, expanded);
+
+        if (!expanded) {
+            return;
+        }
+
+        var changed = false;
         notificationsState = notificationsState.map(function (notification) {
-            if (notification.id !== notificationId || notification.read) {
+            if (notification.id !== id || notification.read) {
                 return notification;
             }
-
             changed = true;
             return Object.assign({}, notification, { read: true });
         });
 
-        if (!changed) {
-            return;
+        if (changed) {
+            persistNotifications();
+            markCardRead(card);
         }
-
-        persistNotifications();
-        renderNotifications();
-        showMessage(tr("notifications.markedRead", "Notification marked as read."));
     }
 
     function markAllAsRead() {
@@ -410,6 +473,7 @@
         }
 
         notificationsState = [];
+        expandedIds = {};
         persistNotifications({ clearedFingerprint: bookingFingerprint });
         renderNotifications();
         showMessage(tr("notifications.allCleared", "All notifications have been cleared."));
@@ -422,8 +486,8 @@
 
         if (list) {
             list.addEventListener("click", function (event) {
-                var button = event.target.closest("[data-action='mark-read']");
-                if (!button || button.disabled) {
+                var button = event.target.closest(".notification-toggle");
+                if (!button) {
                     return;
                 }
 
@@ -432,7 +496,7 @@
                     return;
                 }
 
-                markAsRead(card.getAttribute("data-notification-id"));
+                toggleNotification(card);
             });
         }
 
@@ -488,6 +552,7 @@
 
     function init() {
         notificationsState = loadNotifications();
+        persistNotifications();
         renderNotifications();
         bindActions();
         initMenuToggle();

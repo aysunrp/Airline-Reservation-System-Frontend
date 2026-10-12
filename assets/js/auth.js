@@ -184,6 +184,8 @@
             }
         }
 
+        updateNotificationBadges();
+
         document.querySelectorAll("[data-auth-logout]").forEach(function (el) {
             el.addEventListener("click", function (event) {
                 event.preventDefault();
@@ -361,6 +363,109 @@
         });
     }
 
+
+    /*
+     * Unread badge for the Notifications nav links. Reads the existing
+     * notificationsData (sessionStorage) written by notifications.js. When the
+     * stored list was not built for the current booking yet, the unread count
+     * mirrors what notifications.js will generate (all new items are unread).
+     */
+    var NOTIFICATIONS_KEY = "notificationsData";
+    var BADGE_STYLE_ID = "aerova-notif-badge-style";
+
+    function bookingFingerprint(booking) {
+        if (!booking) return "none";
+        var flight = booking.flight || {};
+        return [
+            booking.pnr || "",
+            booking.status || "",
+            booking.paymentStatus || "",
+            flight.departureDate || "",
+            flight.flightNumber || "",
+            booking.cabinClass || "",
+            booking.totalPrice != null ? String(booking.totalPrice) : ""
+        ].join("|");
+    }
+
+    function expectedNotificationIds(booking) {
+        var flight = booking.flight || {};
+        var pnr = booking.pnr || "your booking";
+        var status = String(booking.status || "").toLowerCase();
+        var payment = String(booking.paymentStatus || "").toLowerCase();
+        var paid = payment === "paid" || payment === "confirmed";
+        var ids = [];
+
+        if (status === "cancelled" || payment === "cancelled") {
+            return ["cancelled-" + pnr];
+        }
+        if (status === "confirmed" || paid || !!booking.pnr) ids.push("confirmed-" + pnr);
+        if (paid) ids.push("payment-" + pnr);
+        if (flight.flightNumber || flight.departureDate) ids.push("flight-update-" + pnr);
+        if (flight.departureDate) ids.push("checkin-" + pnr);
+        return ids;
+    }
+
+    function getUnreadNotificationCount() {
+        var stored = readJSON(sessionStorage, NOTIFICATIONS_KEY);
+        var list = stored ? (Array.isArray(stored) ? stored : (Array.isArray(stored.notifications) ? stored.notifications : [])) : [];
+        var booking = readJSON(sessionStorage, "bookingData");
+        var unread = function (items) {
+            return items.filter(function (item) { return item && !item.read; }).length;
+        };
+
+        if (!booking) return unread(list);
+
+        var fingerprint = bookingFingerprint(booking);
+        if (stored && !Array.isArray(stored) && stored.clearedFingerprint && stored.clearedFingerprint === fingerprint) {
+            return 0;
+        }
+        if (stored && !Array.isArray(stored) && stored.fingerprint === fingerprint) {
+            return unread(list);
+        }
+
+        var readMap = {};
+        list.forEach(function (item) {
+            if (item && item.id) readMap[item.id] = !!item.read;
+        });
+        return expectedNotificationIds(booking).filter(function (id) {
+            return !readMap[id];
+        }).length;
+    }
+
+    function ensureBadgeStyles() {
+        if (document.getElementById(BADGE_STYLE_ID)) return;
+        var style = document.createElement("style");
+        style.id = BADGE_STYLE_ID;
+        style.textContent =
+            ".aerova-notif-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.35em;height:1.35em;" +
+            "margin-left:0.45em;padding:0 0.38em;border-radius:999px;background:#c6a36a;color:#07111d;" +
+            "box-shadow:0 0 0 1px rgba(246,241,231,0.35);font-size:0.68rem;font-weight:600;line-height:1;" +
+            "letter-spacing:0;text-transform:none;vertical-align:0.12em;}" +
+            ".aerova-notif-badge[hidden]{display:none;}";
+        (document.head || document.documentElement).appendChild(style);
+    }
+
+    function updateNotificationBadges() {
+        var links = document.querySelectorAll(".auth-nav-notifications, .auth-nav-notifications-drawer");
+        if (!links.length) return;
+        ensureBadgeStyles();
+        var count = isLoggedIn() ? getUnreadNotificationCount() : 0;
+        var label = count + " " + tr("common.unread", "Unread");
+
+        links.forEach(function (link) {
+            var badge = link.querySelector(".aerova-notif-badge");
+            if (!badge) {
+                badge = document.createElement("span");
+                badge.className = "aerova-notif-badge";
+                link.appendChild(badge);
+            }
+            badge.textContent = count > 99 ? "99+" : String(count);
+            badge.hidden = count <= 0;
+            badge.setAttribute("aria-label", label);
+            badge.title = label;
+        });
+    }
+
     function guardAuthenticatedPages() {
         var path = window.location.pathname.toLowerCase();
         var href = String(window.location.href || "").toLowerCase();
@@ -390,13 +495,22 @@
         window.addEventListener("aerova:languagechange", function () {
             updateNavigation();
         });
+        window.addEventListener("aerova:notificationschange", updateNotificationBadges);
+        window.addEventListener("pageshow", updateNotificationBadges);
+        window.addEventListener("storage", function (event) {
+            if (!event.key || event.key === NOTIFICATIONS_KEY || event.key === "bookingData") {
+                updateNotificationBadges();
+            }
+        });
     }
 
     window.AerovaAuth = {
         isLoggedIn: isLoggedIn,
         getCurrentUser: getCurrentUser,
         logout: logout,
-        clearAuthState: clearAuthState
+        clearAuthState: clearAuthState,
+        updateNotificationBadges: updateNotificationBadges,
+        getUnreadNotificationCount: getUnreadNotificationCount
     };
 
     if (document.readyState === "loading") {
