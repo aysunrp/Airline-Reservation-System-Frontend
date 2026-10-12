@@ -13,16 +13,13 @@
 
     var DEFAULT_PROFILE = {
         title: "Ms",
-        firstName: "Leyla",
-        lastName: "Mammadova",
-        dateOfBirth: "1994-04-18",
+        firstName: "Aysun",
+        lastName: "Panahli",
+        dateOfBirth: "2004-06-16",
         nationality: "Azerbaijani",
-        email: "leyla.mammadova@email.com",
+        email: "aysunrp@code.edu.az",
         countryCode: "+994",
-        mobilePhone: "501234567",
-        preferredCabin: "Comfort",
-        preferredMeal: "Halal Meal",
-        baggagePreference: "+20 kg",
+        mobilePhone: "508343943",
         savedPassengers: [
             {
                 id: "passenger-1",
@@ -50,9 +47,9 @@
             .replace(/'/g, "&#39;");
     }
 
-    function readJSON(key) {
+    function readStore(store, key) {
         try {
-            var raw = sessionStorage.getItem(key);
+            var raw = store.getItem(key);
             if (!raw) {
                 return null;
             }
@@ -64,13 +61,25 @@
         }
     }
 
+    function readJSON(key) {
+        return readStore(sessionStorage, key) || readStore(localStorage, key);
+    }
+
     function writeJSON(key, value) {
+        var payload = JSON.stringify(value);
+        var saved = false;
+
         try {
-            sessionStorage.setItem(key, JSON.stringify(value));
-            return true;
-        } catch (error) {
-            return false;
-        }
+            sessionStorage.setItem(key, payload);
+            saved = true;
+        } catch (error) { /* ignore */ }
+
+        try {
+            localStorage.setItem(key, payload);
+            saved = true;
+        } catch (error) { /* ignore */ }
+
+        return saved;
     }
 
     function showMessage(text, isSuccess) {
@@ -190,9 +199,6 @@
             email: stored.email || "",
             countryCode: stored.countryCode || "",
             mobilePhone: stored.mobilePhone || "",
-            preferredCabin: stored.preferredCabin || "Economy",
-            preferredMeal: stored.preferredMeal || "Standard Meal",
-            baggagePreference: stored.baggagePreference || "No Extra Baggage",
             savedPassengers: Array.isArray(stored.savedPassengers)
                 ? stored.savedPassengers
                 : []
@@ -208,9 +214,6 @@
         setFieldValue("profile-email", profile.email);
         setFieldValue("profile-country-code", profile.countryCode);
         setFieldValue("profile-phone", profile.mobilePhone);
-        setFieldValue("profile-cabin", profile.preferredCabin);
-        setFieldValue("profile-meal", profile.preferredMeal);
-        setFieldValue("profile-baggage", profile.baggagePreference);
     }
 
     function renderSavedPassengers() {
@@ -244,21 +247,6 @@
                 "</article>"
             );
         }).join("");
-
-        list.querySelectorAll(".saved-passenger-card").forEach(function (card) {
-            var passengerId = card.getAttribute("data-passenger-id");
-
-            card.querySelectorAll("[data-action]").forEach(function (button) {
-                button.addEventListener("click", function () {
-                    var action = button.getAttribute("data-action");
-                    if (action === "edit") {
-                        openPassengerModal(passengerId);
-                    } else if (action === "delete") {
-                        deletePassenger(passengerId);
-                    }
-                });
-            });
-        });
     }
 
     function validateProfileForm() {
@@ -304,11 +292,18 @@
             email: getTrimmedValue("profile-email"),
             countryCode: getTrimmedValue("profile-country-code"),
             mobilePhone: getTrimmedValue("profile-phone"),
-            preferredCabin: getTrimmedValue("profile-cabin") || "Economy",
-            preferredMeal: getTrimmedValue("profile-meal") || "Standard Meal",
-            baggagePreference: getTrimmedValue("profile-baggage") || "No Extra Baggage",
-            savedPassengers: profileState.savedPassengers.slice()
+            savedPassengers: (profileState.savedPassengers || []).slice()
         };
+    }
+
+    function persistProfile() {
+        var data = collectProfileFromForm();
+        if (!writeJSON(STORAGE_KEY, data)) {
+            return false;
+        }
+
+        profileState.savedPassengers = data.savedPassengers;
+        return true;
     }
 
     function saveProfile(event) {
@@ -320,12 +315,12 @@
             return;
         }
 
-        profileState = collectProfileFromForm();
-
-        if (!writeJSON(STORAGE_KEY, profileState)) {
+        if (!persistProfile()) {
             showMessage(tr("profile.saveFail", "Unable to save your profile right now."));
             return;
         }
+
+        profileState = collectProfileFromForm();
 
         showMessage(tr("profile.saved", "Your profile changes have been saved."), true);
     }
@@ -420,18 +415,29 @@
             profileState.savedPassengers.push(passenger);
         }
 
-        writeJSON(STORAGE_KEY, collectProfileFromForm());
+        if (!persistProfile()) {
+            showMessage(tr("profile.saveFail", "Unable to save your profile right now."));
+            return;
+        }
+
         renderSavedPassengers();
         closePassengerModal();
         showMessage(tr("profile.passengerUpdated", "Saved passenger profile updated."), true);
     }
 
     function deletePassenger(passengerId) {
-        profileState.savedPassengers = profileState.savedPassengers.filter(function (item) {
-            return item.id !== passengerId;
+        var previous = (profileState.savedPassengers || []).slice();
+
+        profileState.savedPassengers = previous.filter(function (item) {
+            return String(item.id) !== String(passengerId);
         });
 
-        writeJSON(STORAGE_KEY, collectProfileFromForm());
+        if (!persistProfile()) {
+            profileState.savedPassengers = previous;
+            showMessage(tr("profile.saveFail", "Unable to save your profile right now."));
+            return;
+        }
+
         renderSavedPassengers();
         showMessage(tr("profile.passengerRemoved", "Passenger removed from your saved profiles."), true);
     }
@@ -486,6 +492,30 @@
         var form = document.getElementById("profile-form");
         if (form) {
             form.addEventListener("submit", saveProfile);
+        }
+
+        var passengerList = document.getElementById("saved-passengers-list");
+        if (passengerList) {
+            passengerList.addEventListener("click", function (event) {
+                var button = event.target.closest("[data-action]");
+                if (!button || !passengerList.contains(button)) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                var card = button.closest("[data-passenger-id]");
+                var passengerId = card ? card.getAttribute("data-passenger-id") : "";
+                if (!passengerId) {
+                    return;
+                }
+
+                if (button.getAttribute("data-action") === "edit") {
+                    openPassengerModal(passengerId);
+                } else if (button.getAttribute("data-action") === "delete") {
+                    deletePassenger(passengerId);
+                }
+            });
         }
 
         var addButton = document.getElementById("add-passenger-button");

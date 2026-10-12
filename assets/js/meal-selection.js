@@ -22,45 +22,32 @@
         "Aysel Karimova",
         "Elvin Abbasov"
     ];
-
-    var MEAL_OPTIONS = [
-        {
-            id: "none",
-            name: "No Meal",
-            description: "Skip in-flight dining for this passenger.",
-            price: 0
-        },
-        {
-            id: "standard",
-            name: "Standard Meal",
-            description: "Chef-prepared main with seasonal sides.",
-            price: 18
-        },
-        {
-            id: "vegetarian",
-            name: "Vegetarian Meal",
-            description: "Meat-free course with fresh vegetables.",
-            price: 20
-        },
-        {
-            id: "vegan",
-            name: "Vegan Meal",
-            description: "Plant-based dish prepared without animal products.",
-            price: 22
-        },
-        {
-            id: "halal",
-            name: "Halal Meal",
-            description: "Prepared according to Halal dietary standards.",
-            price: 20
-        },
-        {
-            id: "kids",
-            name: "Kids Meal",
-            description: "A lighter, child-friendly plate and dessert.",
-            price: 15
-        }
-    ];
+var MEAL_OPTIONS = [
+    {
+        id: "none",
+        name: "No Meal",
+        description: "Skip in-flight dining for this passenger.",
+        price: 0
+    },
+    {
+        id: "classic",
+        name: "Classic Dining",
+        description: "A carefully prepared classic meal served with seasonal sides.",
+        price: 18
+    },
+    {
+        id: "wellness",
+        name: "Wellness Dining",
+        description: "A fresh and balanced selection prepared with wholesome ingredients.",
+        price: 25
+    },
+    {
+        id: "signature",
+        name: "Signature Dining",
+        description: "A premium chef-inspired dining experience with elevated presentation and ingredients.",
+        price: 35
+    }
+];
 
     var DEFAULT_FLIGHT = {
         airline: "AEROVA",

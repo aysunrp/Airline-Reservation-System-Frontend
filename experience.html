@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/passenger-details.css">
     <link rel="stylesheet" href="assets/css/i18n.css">
-    <link rel="stylesheet" href="assets/css/experience.css?v=editorial4">
+    <link rel="stylesheet" href="assets/css/experience.css?v=cabins1">
 </head>
 <body class="experience-body">
     <header id="site-header" class="site-header site-header--transparent">
@@ -50,141 +50,150 @@
 
     <main>
         <section class="exp-hero" aria-label="The AEROVA Experience" data-i18n-aria="experience.heroTitle">
-            <div class="exp-hero__media" role="img" aria-label="Aircraft wing above the clouds at golden hour"></div>
+            <div class="exp-hero__media" role="img" aria-label="Luxury aircraft cabin interior"></div>
             <div class="exp-hero__veil" aria-hidden="true"></div>
             <div class="exp-hero__content">
-                <p class="exp-hero__kicker">AEROVA</p>
                 <h1 class="exp-hero__title" data-i18n="experience.heroTitle">The AEROVA Experience</h1>
-                <p class="exp-hero__text" data-i18n="experience.heroText">Flying with AEROVA is an experience — cabins, cuisine, and care composed with quiet intention.</p>
+                <p class="exp-hero__text" data-i18n="experience.heroText">Designed around the way you travel.</p>
             </div>
         </section>
 
-        <section id="economy" class="exp-split exp-split--economy" aria-labelledby="economy-title">
-            <div class="exp-split__media">
-                <img src="assets/images/exp-economy.jpg" alt="Modern economy class cabin aisle">
+        <section class="exp-intro" aria-labelledby="intro-title">
+            <p class="exp-kicker" data-i18n="experience.introLabel">Cabin Experience</p>
+            <h2 id="intro-title" data-i18n="experience.introTitle">Three ways to fly with AEROVA</h2>
+            <p data-i18n="experience.introText">Economy, Comfort, and Business are composed as distinct cabins — each with its own seat, service, and pace. Choose a class to see exactly what is included.</p>
+        </section>
+
+        <section class="cabin-board" aria-label="Cabin classes" data-i18n-aria="experience.classesLabel">
+            <article class="cabin-card" data-cabin-card="economy">
+                <div class="cabin-card__media">
+                    <img src="assets/images/economy-class.jpg" alt="AEROVA Economy cabin" data-i18n-aria="experience.economyImageAlt">
+                </div>
+                <div class="cabin-card__body">
+                    <p class="cabin-card__index">01</p>
+                    <h2 data-i18n="experience.economyName">Economy Class</h2>
+                    <p data-i18n="experience.economyLead">A calm, well-equipped cabin for everyday and long-haul travel.</p>
+                    <button class="cabin-card__btn" type="button" data-cabin-open aria-pressed="false" data-i18n="experience.discoverEconomy">Discover Economy</button>
+                </div>
+            </article>
+            <article class="cabin-card" data-cabin-card="comfort">
+                <div class="cabin-card__media">
+                    <img src="assets/images/comfort.jpg" alt="AEROVA Comfort cabin" data-i18n-aria="experience.comfortImageAlt">
+                </div>
+                <div class="cabin-card__body">
+                    <p class="cabin-card__index">02</p>
+                    <h2 data-i18n="experience.comfortName">Comfort Class</h2>
+                    <p data-i18n="experience.comfortLead">More room, priority care, and a quieter place to settle.</p>
+                    <button class="cabin-card__btn" type="button" data-cabin-open aria-pressed="false" data-i18n="experience.discoverComfort">Discover Comfort</button>
+                </div>
+            </article>
+            <article class="cabin-card" data-cabin-card="business">
+                <div class="cabin-card__media">
+                    <img src="assets/images/exp-business.jpg" alt="AEROVA Business suite" data-i18n-aria="experience.businessImageAlt">
+                </div>
+                <div class="cabin-card__body">
+                    <p class="cabin-card__index">03</p>
+                    <h2 data-i18n="experience.businessName">Business Class</h2>
+                    <p data-i18n="experience.businessLead">Privacy, a lie-flat bed, and service arranged around your time.</p>
+                    <button class="cabin-card__btn" type="button" data-cabin-open aria-pressed="false" data-i18n="experience.discoverBusiness">Discover Business</button>
+                </div>
+            </article>
+        </section>
+
+        <section id="cabin-detail" class="cabin-detail" hidden aria-live="polite">
+            <div class="cabin-detail__panel" data-cabin-panel="economy" hidden>
+                <header class="cabin-detail__head">
+                    <p class="exp-kicker" data-i18n="experience.economyName">Economy Class</p>
+                    <h2 data-i18n="experience.economyDetailTitle">A considered cabin for every journey</h2>
+                    <p data-i18n="experience.economyDetailText">Economy is designed for ease: a supportive seat, a personal screen, and service that stays attentive without crowding the cabin.</p>
+                </header>
+                <ul class="spec-grid">
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 19V9l3-4h6l3 4v10M4 19h16"/></svg></span><div><h3 data-i18n="experience.featSeat">Seat comfort</h3><p data-i18n="experience.economySeat">Ergonomic seats with an adjustable headrest and a measured recline for medium and long-haul flights.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h4v12H4zM10 6h4v12h-4zM16 6h4v12h-4z"/></svg></span><div><h3 data-i18n="experience.featConfig">Seat configuration</h3><p data-i18n="experience.economyConfig">3-3-3 on wide-body aircraft and 3-3 on narrow-body, with a seatback screen at every place.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 20h8"/></svg></span><div><h3 data-i18n="experience.featEntertainment">Entertainment</h3><p data-i18n="experience.economyEntertainment">Films, series, and music on the seatback system, plus a moving map for the route ahead.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18a8 8 0 0 1 14 0M8 18a5 5 0 0 1 8 0M12 18h.01"/></svg></span><div><h3 data-i18n="experience.featWifi">Wi-Fi and connectivity</h3><p data-i18n="experience.economyWifi">Onboard Wi-Fi on equipped aircraft, with messaging included on selected routes.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 10h14v8H5zM8 10V8a4 4 0 0 1 8 0v2"/></svg></span><div><h3 data-i18n="experience.featMeals">Meals and beverages</h3><p data-i18n="experience.economyMeals">A hot meal or snack according to flight length, with complimentary soft drinks, tea, and coffee.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8h10l1 12H6L7 8zM9 8V6a3 3 0 0 1 6 0v2"/></svg></span><div><h3 data-i18n="experience.featCabinBag">Cabin baggage</h3><p data-i18n="experience.economyCabinBag">One cabin bag up to 8 kg, plus a personal item that fits beneath the seat in front of you.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="12" rx="1.5"/><path d="M9 7V5h6v2"/></svg></span><div><h3 data-i18n="experience.featChecked">Checked baggage</h3><p data-i18n="experience.economyChecked">One checked bag up to 23 kg on international itineraries.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7v10M16 7v6a4 4 0 0 1-8 0"/><path d="M12 3v4"/></svg></span><div><h3 data-i18n="experience.featPower">USB and power</h3><p data-i18n="experience.economyPower">USB-A and USB-C charging at every seat. AC power is fitted on selected long-haul aircraft.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19c1.4-3 3.6-4.5 7-4.5S17.6 16 19 19"/></svg></span><div><h3 data-i18n="experience.featService">Passenger service</h3><p data-i18n="experience.economyService">Cabin crew trained to be present when you need them, with a call button at every seat.</p></div></li>
+                    <li class="spec-wide"><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><div><h3 data-i18n="experience.featBenefits">Included benefits</h3><p data-i18n="experience.economyBenefits">Complimentary water, seat selection from 24 hours before departure, and AEROVA entertainment for the full flight.</p></div></li>
+                </ul>
             </div>
-            <div class="exp-split__copy">
-                <p class="exp-eyebrow" data-i18n="common.economy">Economy</p>
-                <h2 id="economy-title" class="exp-split__title" data-i18n="experience.economyTitle">Economy Experience</h2>
-                <p class="exp-split__text" data-i18n="experience.economyText">Ergonomic seating, thoughtful lighting, and essentials arranged so every journey feels composed from the first moment onboard.</p>
-                <ul class="exp-split__list">
-                    <li data-i18n="experience.economyPoint1">Comfortable seating for every journey</li>
-                    <li data-i18n="experience.economyPoint4">Personal space designed for calm</li>
-                    <li data-i18n="experience.economyPoint2">Thoughtful dining and soft drinks</li>
-                    <li data-i18n="experience.economyPoint3">Entertainment when you want it</li>
+
+            <div class="cabin-detail__panel" data-cabin-panel="comfort" hidden>
+                <header class="cabin-detail__head">
+                    <p class="exp-kicker" data-i18n="experience.comfortName">Comfort Class</p>
+                    <h2 data-i18n="experience.comfortDetailTitle">More space, with priority from the start</h2>
+                    <p data-i18n="experience.comfortDetailText">Comfort sits between Economy and Business: extra legroom, a quieter cabin zone, and services that move you through the airport with less waiting.</p>
+                </header>
+                <ul class="spec-grid">
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 16h16M7 16V8h4v8M13 16V6h4v10"/></svg></span><div><h3 data-i18n="experience.featLegroom">Extra legroom</h3><p data-i18n="experience.comfortLegroom">Greater seat pitch than Economy, so you can stretch and settle for the length of the flight.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 19V9l3-4h6l3 4v10M4 19h16"/></svg></span><div><h3 data-i18n="experience.featSpacious">More spacious seating</h3><p data-i18n="experience.comfortSpace">Wider seats with deeper cushioning and a more generous recline than the main cabin.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 4.6L19 8.2l-3.5 3.4.8 4.9L12 14.8 7.7 16.5l.8-4.9L5 8.2l4.8-.6z"/></svg></span><div><h3 data-i18n="experience.featEnhanced">Enhanced comfort</h3><p data-i18n="experience.comfortEnhanced">A quieter cabin section, a larger pillow, and an amenity kit on long-haul flights.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19l7-14 7 14M8 14h8"/></svg></span><div><h3 data-i18n="experience.featPriority">Priority services</h3><p data-i18n="experience.comfortPriority">Priority check-in, priority boarding, and earlier delivery of your checked bag on arrival.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 10h14v8H5zM8 10V8a4 4 0 0 1 8 0v2"/></svg></span><div><h3 data-i18n="experience.featMeals">Meals and beverages</h3><p data-i18n="experience.comfortMeals">An upgraded menu with a wider choice, plus complimentary drinks including selected wines.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 20h8"/></svg></span><div><h3 data-i18n="experience.featEntertainment">Entertainment</h3><p data-i18n="experience.comfortEntertainment">A larger high-definition screen and noise-reducing headphones.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18a8 8 0 0 1 14 0M8 18a5 5 0 0 1 8 0M12 18h.01"/></svg></span><div><h3 data-i18n="experience.featWifi">Wi-Fi and connectivity</h3><p data-i18n="experience.comfortWifi">Complimentary messaging and a Wi-Fi allowance on equipped aircraft.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="12" rx="1.5"/><path d="M9 7V5h6v2"/></svg></span><div><h3 data-i18n="experience.featBaggage">Baggage benefits</h3><p data-i18n="experience.comfortBaggage">Two cabin bags and one checked bag up to 30 kg.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7v10M16 7v6a4 4 0 0 1-8 0"/><path d="M12 3v4"/></svg></span><div><h3 data-i18n="experience.featPower">USB and power</h3><p data-i18n="experience.comfortPower">USB and AC power at every Comfort seat, so devices stay ready for the flight.</p></div></li>
+                    <li class="spec-wide"><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><div><h3 data-i18n="experience.featBenefits">Included benefits</h3><p data-i18n="experience.comfortBenefits">Dedicated overhead space in the Comfort cabin, priority boarding, and a welcome drink after take-off.</p></div></li>
+                </ul>
+            </div>
+
+            <div class="cabin-detail__panel" data-cabin-panel="business" hidden>
+                <header class="cabin-detail__head">
+                    <p class="exp-kicker" data-i18n="experience.businessName">Business Class</p>
+                    <h2 data-i18n="experience.businessDetailTitle">A private cabin, arranged around you</h2>
+                    <p data-i18n="experience.businessDetailText">Business is AEROVA’s most composed way to fly: a spacious seat that becomes a bed, dining served to your schedule, and priority from the kerb to the gate.</p>
+                </header>
+                <ul class="spec-grid">
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 19V9l3-4h6l3 4v10M4 19h16"/></svg></span><div><h3 data-i18n="experience.featPremiumSeat">Premium spacious seating</h3><p data-i18n="experience.businessSeat">A private, suite-style seat with direct aisle access on wide-body aircraft.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 15h18v3H3zM5 15V9h14v6"/></svg></span><div><h3 data-i18n="experience.featLieFlat">Lie-flat rest</h3><p data-i18n="experience.businessLieFlat">A fully flat bed on long-haul flights, with a mattress topper, duvet, and pillow.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4zM4 11h16M9 7V5M15 7V5"/></svg></span><div><h3 data-i18n="experience.featCheckin">Priority check-in</h3><p data-i18n="experience.businessCheckin">Dedicated Business desks, so you move from arrival at the airport to your boarding pass with less waiting.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 16h10l6-6-2-2-4 4H4zM4 19h8"/></svg></span><div><h3 data-i18n="experience.featBoarding">Priority boarding</h3><p data-i18n="experience.businessBoarding">Board before the main cabin and settle into your seat while the aircraft is still quiet.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/></svg></span><div><h3 data-i18n="experience.featLounge">Lounge access</h3><p data-i18n="experience.businessLounge">Access to AEROVA and partner lounges before departure, with quiet seating and a full refreshment service.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 10h14v8H5zM8 10V8a4 4 0 0 1 8 0v2"/></svg></span><div><h3 data-i18n="experience.featDining">Premium dining</h3><p data-i18n="experience.businessDining">A multi-course menu with seasonal dishes, served when you are ready rather than on a fixed round.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 20h8"/></svg></span><div><h3 data-i18n="experience.featPremiumEnt">Premium entertainment</h3><p data-i18n="experience.businessEntertainment">A large screen, studio-quality headphones, and an extended film and music library.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18a8 8 0 0 1 14 0M8 18a5 5 0 0 1 8 0M12 18h.01"/></svg></span><div><h3 data-i18n="experience.featWifi">Wi-Fi and connectivity</h3><p data-i18n="experience.businessWifi">Complimentary high-speed Wi-Fi for the flight on equipped aircraft.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="12" rx="1.5"/><path d="M9 7V5h6v2"/></svg></span><div><h3 data-i18n="experience.featAllowance">Increased baggage allowance</h3><p data-i18n="experience.businessBaggage">Two cabin bags and two checked bags of up to 32 kg each.</p></div></li>
+                    <li><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19c1.4-3 3.6-4.5 7-4.5S17.6 16 19 19"/></svg></span><div><h3 data-i18n="experience.featCabinService">Premium cabin service</h3><p data-i18n="experience.businessService">A dedicated crew, a welcome amenity, and turndown service when you are ready to rest.</p></div></li>
+                    <li class="spec-wide"><span class="spec-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><div><h3 data-i18n="experience.featBenefits">Included benefits</h3><p data-i18n="experience.businessBenefits">Lounge access, priority at check-in, security, and boarding, plus a lie-flat bed on long-haul flights.</p></div></li>
                 </ul>
             </div>
         </section>
 
-        <section id="comfort" class="exp-split exp-split--comfort exp-split--reverse" aria-labelledby="comfort-title">
-            <div class="exp-split__media exp-split__media--tall">
-                <img src="assets/images/comfort.jpg" alt="Premium comfort cabin with extra space">
-            </div>
-            <div class="exp-split__copy">
-                <p class="exp-eyebrow" data-i18n="common.comfort">Comfort</p>
-                <h2 id="comfort-title" class="exp-split__title" data-i18n="experience.comfortTitle">Comfort Experience</h2>
-                <p class="exp-split__text" data-i18n="experience.comfortText">Extra room to settle in, preferred seating options, and a calmer cabin rhythm for travelers who value space and ease.</p>
-                <ul class="exp-split__list">
-                    <li data-i18n="experience.comfortPoint1">More space to settle in</li>
-                    <li data-i18n="experience.comfortPoint2">Priority boarding and services</li>
-                    <li data-i18n="experience.comfortPoint3">Enhanced comfort throughout</li>
-                </ul>
-            </div>
-        </section>
-
-        <section id="business" class="exp-split exp-split--business" aria-labelledby="business-title">
-            <div class="exp-split__media exp-split__media--luxe">
-                <img src="assets/images/exp-hero.jpg" alt="Business class lie-flat suite">
-                <span class="exp-split__goldline" aria-hidden="true"></span>
-            </div>
-            <div class="exp-split__copy exp-split__copy--luxe">
-                <p class="exp-eyebrow" data-i18n="common.business">Business</p>
-                <h2 id="business-title" class="exp-split__title" data-i18n="experience.businessTitle">Business Class Experience</h2>
-                <p class="exp-split__text" data-i18n="experience.businessText">Private repose, lie-flat comfort, and attentive service that turns long-haul hours into a quiet continuation of your day.</p>
-                <ul class="exp-split__list">
-                    <li data-i18n="experience.businessPoint1">Premium seating and privacy</li>
-                    <li data-i18n="experience.businessPoint2">Lounge access before departure</li>
-                    <li data-i18n="experience.businessPoint3">Refined multi-course dining</li>
-                    <li data-i18n="experience.businessPoint4">Attentive premium service</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="exp-dining" aria-labelledby="dining-title">
-            <div class="exp-dining__frame">
-                <img src="assets/images/exp-dining-meal.jpg" alt="Premium business class meal served onboard">
-                <div class="exp-dining__veil" aria-hidden="true"></div>
-            </div>
-            <div class="exp-dining__content">
-                <p class="exp-eyebrow" data-i18n="experience.onboardDining">Onboard Dining</p>
-                <h2 id="dining-title" class="exp-dining__title" data-i18n="experience.diningHeading">Thoughtfully Served</h2>
-                <p class="exp-dining__text" data-i18n="experience.diningText">Seasonal menus and cabin-specific service, from light plates in Economy to multi-course dining in Business Class.</p>
-            </div>
-        </section>
-
-        <section class="exp-lounge" aria-labelledby="lounge-title">
-            <div class="exp-shell exp-lounge__inner">
-                <div class="exp-lounge__media">
-                    <img src="assets/images/exp-lounge.jpg" alt="Luxury airport lounge interior">
-                </div>
-                <div class="exp-lounge__copy">
-                    <p class="exp-eyebrow" data-i18n="experience.lounge">Airport Lounge</p>
-                    <h2 id="lounge-title" class="exp-lounge__title" data-i18n="experience.relaxBefore">Relax Before You Fly</h2>
-                    <p class="exp-lounge__text" data-i18n="experience.loungeText">Calm seating, refined refreshments, and a seamless prelude to boarding for eligible Comfort and Business travelers.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="exp-entertainment" aria-labelledby="entertainment-title">
-            <div class="exp-shell exp-entertainment__inner">
-                <div class="exp-entertainment__copy">
-                    <p class="exp-eyebrow" data-i18n="experience.entertainment">Entertainment</p>
-                    <h2 id="entertainment-title" class="exp-entertainment__title" data-i18n="experience.entertainmentHeading">A Quiet Companion</h2>
-                    <p class="exp-entertainment__text" data-i18n="experience.entertainmentText">A curated library of films, music, and quiet reading modes — available when you want them, invisible when you do not.</p>
-                </div>
-                <div class="exp-entertainment__media">
-                    <img src="assets/images/cabin-entertainment.jpg" alt="Seatback entertainment screen onboard">
-                </div>
-            </div>
-        </section>
-
-        <section class="exp-services" aria-labelledby="services-title">
-            <div class="exp-shell">
-                <p class="exp-eyebrow" data-i18n="experience.premium">Premium Services</p>
-                <h2 id="services-title" class="exp-services__title" data-i18n="experience.designedAroundYou">Designed Around You</h2>
-                <p class="exp-services__lead" data-i18n="experience.premiumText">Priority boarding, Fast Track, and tailored extras that keep your journey moving with quiet efficiency.</p>
-                <ol class="exp-services__list">
-                    <li>
-                        <span class="exp-services__num">01</span>
-                        <span class="exp-services__name" data-i18n="common.priorityBoarding">Priority Boarding</span>
-                    </li>
-                    <li>
-                        <span class="exp-services__num">02</span>
-                        <span class="exp-services__name" data-i18n="experience.loungeAccess">Lounge Access</span>
-                    </li>
-                    <li>
-                        <span class="exp-services__num">03</span>
-                        <span class="exp-services__name" data-i18n="experience.extraLegroom">Extra Legroom</span>
-                    </li>
-                    <li>
-                        <span class="exp-services__num">04</span>
-                        <span class="exp-services__name" data-i18n="common.fastTrack">Fast Track</span>
-                    </li>
-                    <li>
-                        <span class="exp-services__num">05</span>
-                        <span class="exp-services__name" data-i18n="experience.personalService">Personal Service</span>
-                    </li>
-                </ol>
-            </div>
+        <section class="exp-beyond" aria-labelledby="beyond-title">
+            <p class="exp-kicker" data-i18n="experience.beyondLabel">Beyond the seat</p>
+            <h2 id="beyond-title" data-i18n="experience.beyondTitle">The journey, from the airport to arrival</h2>
+            <ol>
+                <li>
+                    <span>01</span>
+                    <div>
+                        <h3 data-i18n="experience.groundTitle">On the ground</h3>
+                        <p data-i18n="experience.groundText">Comfort and Business guests use priority check-in. Where the airport allows it, Fast Track shortens the path to the gate.</p>
+                    </div>
+                </li>
+                <li>
+                    <span>02</span>
+                    <div>
+                        <h3 data-i18n="experience.cabinTitle">In the cabin</h3>
+                        <p data-i18n="experience.cabinText">Cabin lighting follows the flight. The crew is trained to be present when needed, then leave you to the journey.</p>
+                    </div>
+                </li>
+                <li>
+                    <span>03</span>
+                    <div>
+                        <h3 data-i18n="experience.arrivalTitle">On arrival</h3>
+                        <p data-i18n="experience.arrivalText">Comfort and Business baggage is delivered ahead of the main hold, so the journey ends with the same composure it began.</p>
+                    </div>
+                </li>
+            </ol>
         </section>
 
         <section class="exp-cta" aria-label="Book your journey">
-            <div class="exp-cta__media" role="img" aria-label="Commercial aircraft in flight"></div>
-            <div class="exp-cta__veil" aria-hidden="true"></div>
-            <div class="exp-cta__content">
-                <h2 class="exp-cta__title" data-i18n="experience.ctaTitle">Your Journey Starts With AEROVA</h2>
-                <a class="exp-cta__btn" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
-            </div>
+            <h2 data-i18n="experience.ctaTitle">Your Journey Starts With AEROVA</h2>
+            <a class="exp-cta__btn" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
         </section>
     </main>
 
@@ -259,5 +268,6 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/home.js"></script>
+    <script src="assets/js/experience.js"></script>
 </body>
 </html>

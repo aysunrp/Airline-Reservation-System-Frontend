@@ -181,18 +181,6 @@
         return tr(destination[field], destination[fallbackField || field.replace(/Key$/, "")]);
     }
 
-    function showNotFound() {
-        var hero = byId("destination-hero");
-        var content = byId("destination-content");
-        var notFound = byId("destination-not-found");
-
-        if (hero) hero.hidden = true;
-        if (content) content.hidden = true;
-        if (notFound) notFound.hidden = false;
-
-        document.title = "AEROVA | " + tr("ui.destinationNotFound", "Destination Not Found");
-    }
-
     function renderBaggage(items) {
         var list = byId("destination-baggage");
         if (!list) return;
@@ -274,16 +262,14 @@
         var destination = DESTINATIONS[id];
 
         if (!destination) {
-            showNotFound();
+            window.location.replace("destinations.html");
             return;
         }
 
         var hero = byId("destination-hero");
         var content = byId("destination-content");
-        var notFound = byId("destination-not-found");
         if (hero) hero.hidden = false;
         if (content) content.hidden = false;
-        if (notFound) notFound.hidden = true;
 
         renderDestination(destination);
     }
