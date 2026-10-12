@@ -14,7 +14,8 @@ window.AEROVA_LOCALES.az = {
     "openMenu": "Menyunu aç",
     "closeMenu": "Menyunu bağla",
     "primary": "Əsas",
-    "homeAria": "AEROVA Ana səhifə"
+    "homeAria": "AEROVA Ana səhifə",
+    "accountMenu": "Hesab menyusu"
   },
   "footer": {
     "description": "Gözləntilərinizin fövqünə uçun.",
@@ -633,6 +634,18 @@ window.AEROVA_LOCALES.az = {
     "completeFields": "Vurğulanmış sahələri tamamlayın.",
     "saveFail": "Profil indi yadda saxlanıla bilmir.",
     "passengerUpdated": "Yadda saxlanılmış sərnişin yeniləndi."
+  },
+  "seatPreview": {
+    "title": "Oturacaq sxemlərimizlə tanış olun",
+    "subtitle": "Səyahətdən əvvəl hər salona baxın. Oturacaqlar sifariş zamanı seçilir.",
+    "tabsLabel": "Salon sinifləri",
+    "economy": "Ekonom sinif",
+    "comfort": "Komfort sinif",
+    "business": "Biznes sinif",
+    "front": "Ön",
+    "backHome": "Ana səhifəyə qayıt",
+    "summary": "{cabin}: {from}–{to} sıralar, {config} oturacaq düzülüşü",
+    "note": "Yalnız baxış üçündür. Oturacaqların mövcudluğu və seçimi uçuş sifarişi zamanı göstərilir."
   },
   "cancellation": {
     "intro": "Təsdiq etməzdən əvvəl təxmini geri ödənişi yoxlayın. Ləğv edilmiş bron səyahət üçün istifadə oluna və bərpa edilə bilməz.",

@@ -1,0 +1,115 @@
+/* Read-only seat layout preview (seat-preview.html). Builds on seat-selection.css. */
+.seat-preview-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-gold-light);
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.seat-preview-back:hover,
+.seat-preview-back:focus-visible {
+    color: var(--color-gold);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+}
+
+.seat-preview-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 44rem;
+    margin: 0 auto;
+}
+
+.seat-preview-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.3rem;
+    border: 1px solid rgba(198, 163, 106, 0.35);
+    border-radius: 999px;
+    background: rgba(7, 17, 29, 0.55);
+}
+
+.seat-preview-tab {
+    padding: 0.7rem 1.3rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(246, 241, 231, 0.78);
+    font: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.seat-preview-tab:hover {
+    color: var(--color-cream, #f6f1e7);
+}
+
+.seat-preview-tab[aria-selected="true"] {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+    color: #07111d;
+}
+
+.seat-preview-tab:focus-visible,
+.seat-preview-tabpanel:focus-visible {
+    outline: 2px solid var(--color-gold-light);
+    outline-offset: 3px;
+}
+
+.seat-preview-tabpanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    width: 100%;
+    border-radius: 18px;
+}
+
+.seat-preview-summary,
+.seat-preview-note {
+    margin: 0;
+    color: rgba(246, 241, 231, 0.72);
+    font-size: 0.88rem;
+    text-align: center;
+}
+
+.seat-preview-note {
+    font-size: 0.8rem;
+    color: rgba(246, 241, 231, 0.6);
+}
+
+.seat-preview-content .seat--preview,
+.seat-preview-content .seat--preview:hover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    pointer-events: none;
+    user-select: none;
+    transform: none;
+}
+
+@media (max-width: 480px) {
+    .seat-preview-tabs {
+        border-radius: 18px;
+        width: 100%;
+    }
+
+    .seat-preview-tab {
+        flex: 1 1 auto;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+    }
+}

@@ -103,6 +103,8 @@
 
         findLoginButtons().forEach(function (button) {
             if (loggedIn) {
+                /* Logged-in users get the account menu button instead of this link. */
+                button.style.display = "none";
                 button.href = "profile.html";
                 button.textContent = displayName(user);
                 button.setAttribute("data-auth-state", "profile");
@@ -112,6 +114,7 @@
                     button.setAttribute("aria-current", "page");
                 }
             } else {
+                button.style.display = "";
                 button.href = "login.html";
                 button.textContent = tr("nav.login", "Login");
                 button.setAttribute("data-auth-state", "login");
@@ -121,67 +124,20 @@
         });
 
         if (headerActions) {
-            var notifyDesktop = headerActions.querySelector(".auth-nav-notifications");
-            var logoutDesktop = headerActions.querySelector(".auth-nav-logout");
+            /* Notifications lives in the account menu; no standalone navbar link. */
+            headerActions.querySelectorAll(".auth-nav-notifications, .auth-nav-logout").forEach(function (el) {
+                el.remove();
+            });
 
-            if (loggedIn) {
-                if (!notifyDesktop) {
-                    notifyDesktop = document.createElement("a");
-                    notifyDesktop.className = "trips-link auth-nav-notifications";
-                    notifyDesktop.href = "notifications.html";
-                    notifyDesktop.setAttribute("data-i18n", "nav.notifications");
-                    notifyDesktop.textContent = tr("nav.notifications", "Notifications");
-                    var profileBtn = headerActions.querySelector(".login-button:not(.login-button--drawer)");
-                    if (profileBtn) headerActions.insertBefore(notifyDesktop, profileBtn);
-                    else headerActions.appendChild(notifyDesktop);
-                } else {
-                    notifyDesktop.hidden = false;
-                    notifyDesktop.href = "notifications.html";
-                    notifyDesktop.setAttribute("data-i18n", "nav.notifications");
-                    notifyDesktop.textContent = tr("nav.notifications", "Notifications");
-                }
-            } else {
-                if (notifyDesktop) notifyDesktop.remove();
-                if (logoutDesktop) logoutDesktop.remove();
-            }
+            syncDesktopAccountMenu(headerActions, loggedIn ? user : null);
         }
 
         if (drawerNav) {
-            var notifyDrawer = drawerNav.querySelector(".auth-nav-notifications-drawer");
-            var logoutDrawer = drawerNav.querySelector(".auth-nav-logout-drawer");
-
-            if (loggedIn) {
-                if (!notifyDrawer) {
-                    notifyDrawer = document.createElement("a");
-                    notifyDrawer.className = "login-button login-button--drawer auth-nav-notifications-drawer";
-                    notifyDrawer.href = "notifications.html";
-                    notifyDrawer.setAttribute("data-i18n", "nav.notifications");
-                    notifyDrawer.textContent = tr("nav.notifications", "Notifications");
-                    var drawerLogin = drawerNav.querySelector(".login-button--drawer");
-                    if (drawerLogin) drawerNav.insertBefore(notifyDrawer, drawerLogin);
-                    else drawerNav.appendChild(notifyDrawer);
-                } else {
-                    notifyDrawer.hidden = false;
-                    notifyDrawer.setAttribute("data-i18n", "nav.notifications");
-                    notifyDrawer.textContent = tr("nav.notifications", "Notifications");
-                }
-
-                if (!logoutDrawer) {
-                    logoutDrawer = document.createElement("button");
-                    logoutDrawer.type = "button";
-                    logoutDrawer.className = "login-button login-button--drawer auth-nav-logout-drawer";
-                    logoutDrawer.setAttribute("data-i18n", "nav.logout");
-                    logoutDrawer.textContent = tr("nav.logout", "Logout");
-                    logoutDrawer.addEventListener("click", logout);
-                    drawerNav.appendChild(logoutDrawer);
-                } else {
-                    logoutDrawer.setAttribute("data-i18n", "nav.logout");
-                    logoutDrawer.textContent = tr("nav.logout", "Logout");
-                }
-            } else {
-                if (notifyDrawer) notifyDrawer.remove();
-                if (logoutDrawer) logoutDrawer.remove();
-            }
+            /* Notifications and Logout now live in the drawer account section. */
+            drawerNav.querySelectorAll(".auth-nav-notifications-drawer, .auth-nav-logout-drawer").forEach(function (el) {
+                el.remove();
+            });
+            syncDrawerAccountMenu(drawerNav, loggedIn ? user : null);
         }
 
         updateNotificationBadges();
@@ -192,6 +148,269 @@
                 logout();
             });
         });
+    }
+
+    /*
+     * Account menu: logged-in users get a profile button that opens My Profile,
+     * My Trips, Notifications (with unread badge) and Logout. Desktop uses a
+     * dropdown menu; the mobile drawer uses an inline expandable list.
+     */
+    var ACCOUNT_STYLE_ID = "aerova-account-menu-style";
+    var ACCOUNT_ITEMS = [
+        { href: "profile.html", key: "profile.title", fallback: "My Profile" },
+        { href: "my-trips.html", key: "nav.myTrips", fallback: "My Trips" },
+        { href: "notifications.html", key: "nav.notifications", fallback: "Notifications", badge: true },
+        { logout: true, key: "nav.logout", fallback: "Logout" }
+    ];
+    var accountDocumentBound = false;
+
+    function currentPageName() {
+        var parts = String(window.location.pathname || "").split("/");
+        return (parts[parts.length - 1] || "index.html").toLowerCase();
+    }
+
+    function ensureAccountMenuStyles() {
+        if (document.getElementById(ACCOUNT_STYLE_ID)) return;
+        var style = document.createElement("style");
+        style.id = ACCOUNT_STYLE_ID;
+        style.textContent =
+            ".header-actions{position:relative;}" +
+            ".account-menu-button{gap:0.5em;background:transparent;font-family:inherit;cursor:pointer;}" +
+            ".account-menu-caret{display:inline-block;font-size:0.8em;line-height:1;transition:transform 0.2s ease;}" +
+            "[aria-expanded=\"true\"]>.account-menu-caret{transform:rotate(180deg);}" +
+            ".account-menu{position:absolute;top:calc(100% + 0.65rem);right:0;z-index:1000;min-width:14rem;margin:0;padding:0.4rem;list-style:none;" +
+            "background:#0b1a2c;border:1px solid rgba(198,163,106,0.45);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,0.45);}" +
+            ".account-menu[hidden],.account-drawer-list[hidden]{display:none;}" +
+            ".account-menu-sep{margin-top:0.3rem;padding-top:0.3rem;border-top:1px solid rgba(246,241,231,0.12);}" +
+            ".account-menu-item{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;width:100%;padding:0.72rem 0.9rem;" +
+            "border:0;border-radius:9px;background:transparent;color:#f6f1e7;font:inherit;font-size:0.74rem;font-weight:400;letter-spacing:0.14em;" +
+            "line-height:1.3;text-align:left;text-decoration:none;text-transform:uppercase;white-space:nowrap;cursor:pointer;}" +
+            ".account-menu-item:hover,.account-menu-item:focus-visible{background:rgba(198,163,106,0.16);color:#e3c78f;}" +
+            ".account-menu-item:focus-visible{outline:2px solid #c6a36a;outline-offset:-2px;}" +
+            ".account-menu-item[aria-current=\"page\"]{color:#e3c78f;}" +
+            ".account-menu-item .aerova-notif-badge{margin-left:0;}" +
+            ".account-drawer-list{display:flex;flex-direction:column;width:100%;margin:0.75rem 0 0;padding:0 0 0 0.9rem;list-style:none;" +
+            "border-left:1px solid rgba(198,163,106,0.45);}" +
+            ".account-drawer-list .account-menu-item{padding:0.85rem 0.5rem;border-radius:0;font-size:0.8rem;border-bottom:1px solid rgba(246,241,231,0.1);}" +
+            ".account-drawer-list .account-menu-sep{margin-top:0;padding-top:0;border-top:0;}";
+        (document.head || document.documentElement).appendChild(style);
+    }
+
+    function buildAccountItems(list, asMenu) {
+        var page = currentPageName();
+        ACCOUNT_ITEMS.forEach(function (item) {
+            var li = document.createElement("li");
+            if (asMenu) li.setAttribute("role", "none");
+            if (item.logout) li.className = "account-menu-sep";
+            var el;
+            if (item.logout) {
+                el = document.createElement("button");
+                el.type = "button";
+                el.className = "account-menu-item account-menu-logout";
+                el.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    logout();
+                });
+            } else {
+                el = document.createElement("a");
+                el.className = "account-menu-item";
+                el.href = item.href;
+                if (item.badge) el.classList.add("auth-nav-notifications-menu");
+                if (page === item.href) el.setAttribute("aria-current", "page");
+            }
+            if (asMenu) {
+                el.setAttribute("role", "menuitem");
+                el.tabIndex = -1;
+            }
+            var label = document.createElement("span");
+            label.className = "account-menu-label";
+            label.setAttribute("data-i18n", item.key);
+            label.textContent = tr(item.key, item.fallback);
+            el.appendChild(label);
+            li.appendChild(el);
+            list.appendChild(li);
+        });
+    }
+
+    function refreshAccountLabels(root) {
+        root.querySelectorAll(".account-menu-label[data-i18n]").forEach(function (label) {
+            var key = label.getAttribute("data-i18n");
+            var item = ACCOUNT_ITEMS.filter(function (entry) { return entry.key === key; })[0];
+            label.textContent = tr(key, item ? item.fallback : label.textContent);
+        });
+    }
+
+    function setAccountButtonName(button, user) {
+        var name = button.querySelector(".account-menu-name");
+        if (name) name.textContent = displayName(user);
+        button.setAttribute("data-account-label", displayName(user) + " – " + tr("nav.accountMenu", "Account menu"));
+        button.setAttribute("aria-label", button.getAttribute("data-account-label"));
+    }
+
+    function buildAccountButton(className, id, controls) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = className;
+        button.id = id;
+        button.setAttribute("aria-expanded", "false");
+        button.setAttribute("aria-controls", controls);
+        var name = document.createElement("span");
+        name.className = "account-menu-name";
+        var caret = document.createElement("span");
+        caret.className = "account-menu-caret";
+        caret.setAttribute("aria-hidden", "true");
+        caret.textContent = "\u25BE";
+        button.appendChild(name);
+        button.appendChild(caret);
+        return button;
+    }
+
+    function menuItems(menu) {
+        return Array.prototype.slice.call(menu.querySelectorAll("[role='menuitem']"));
+    }
+
+    function setDesktopMenuOpen(open, focusTarget) {
+        var button = document.getElementById("account-menu-button");
+        var menu = document.getElementById("account-menu");
+        if (!button || !menu) return;
+        button.setAttribute("aria-expanded", open ? "true" : "false");
+        menu.hidden = !open;
+        if (open) {
+            var items = menuItems(menu);
+            var target = focusTarget === "last" ? items[items.length - 1] : items[0];
+            if (target) target.focus();
+        } else if (focusTarget === "button") {
+            button.focus();
+        }
+    }
+
+    function closeDrawerAccount(focusToggle) {
+        var toggle = document.getElementById("account-drawer-toggle");
+        var list = document.getElementById("account-drawer-list");
+        if (!toggle || !list) return;
+        toggle.setAttribute("aria-expanded", "false");
+        list.hidden = true;
+        if (focusToggle) toggle.focus();
+    }
+
+    function bindAccountDocumentEvents() {
+        if (accountDocumentBound) return;
+        accountDocumentBound = true;
+        document.addEventListener("click", function (event) {
+            var button = document.getElementById("account-menu-button");
+            var menu = document.getElementById("account-menu");
+            if (!button || !menu || menu.hidden) return;
+            if (button.contains(event.target) || menu.contains(event.target)) return;
+            setDesktopMenuOpen(false);
+        });
+        document.addEventListener("keydown", function (event) {
+            if (event.key !== "Escape" && event.key !== "Esc") return;
+            var menu = document.getElementById("account-menu");
+            if (menu && !menu.hidden) {
+                event.preventDefault();
+                setDesktopMenuOpen(false, "button");
+            }
+        });
+        window.addEventListener("resize", function () {
+            setDesktopMenuOpen(false);
+        });
+    }
+
+    function syncDesktopAccountMenu(headerActions, user) {
+        var button = headerActions.querySelector("#account-menu-button");
+        var menu = headerActions.querySelector("#account-menu");
+
+        if (!user) {
+            if (button) button.remove();
+            if (menu) menu.remove();
+            return;
+        }
+
+        ensureAccountMenuStyles();
+        if (!button) {
+            button = buildAccountButton("login-button account-menu-button auth-nav-notifications-menu", "account-menu-button", "account-menu");
+            button.setAttribute("aria-haspopup", "menu");
+            menu = document.createElement("ul");
+            menu.className = "account-menu";
+            menu.id = "account-menu";
+            menu.setAttribute("role", "menu");
+            menu.setAttribute("aria-labelledby", "account-menu-button");
+            menu.hidden = true;
+            buildAccountItems(menu, true);
+
+            var anchor = headerActions.querySelector(".login-button:not(.login-button--drawer):not(.account-menu-button)");
+            var before = anchor ? anchor.nextSibling : headerActions.querySelector(".menu-toggle");
+            headerActions.insertBefore(button, before);
+            headerActions.insertBefore(menu, button.nextSibling);
+
+            button.addEventListener("click", function () {
+                setDesktopMenuOpen(button.getAttribute("aria-expanded") !== "true");
+            });
+            button.addEventListener("keydown", function (event) {
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                    event.preventDefault();
+                    setDesktopMenuOpen(true, event.key === "ArrowUp" ? "last" : "first");
+                }
+            });
+            menu.addEventListener("keydown", function (event) {
+                var items = menuItems(menu);
+                var index = items.indexOf(document.activeElement);
+                var next = null;
+                if (event.key === "ArrowDown") next = items[(index + 1) % items.length];
+                else if (event.key === "ArrowUp") next = items[(index - 1 + items.length) % items.length];
+                else if (event.key === "Home") next = items[0];
+                else if (event.key === "End") next = items[items.length - 1];
+                else if (event.key === "Tab") setDesktopMenuOpen(false);
+                if (next) {
+                    event.preventDefault();
+                    next.focus();
+                }
+            });
+            bindAccountDocumentEvents();
+        }
+        setAccountButtonName(button, user);
+        refreshAccountLabels(menu);
+    }
+
+    function syncDrawerAccountMenu(drawerNav, user) {
+        var toggle = drawerNav.querySelector("#account-drawer-toggle");
+        var list = drawerNav.querySelector("#account-drawer-list");
+
+        if (!user) {
+            if (toggle) toggle.remove();
+            if (list) list.remove();
+            return;
+        }
+
+        ensureAccountMenuStyles();
+        if (!toggle) {
+            toggle = buildAccountButton("login-button login-button--drawer account-drawer-toggle auth-nav-notifications-menu", "account-drawer-toggle", "account-drawer-list");
+            list = document.createElement("ul");
+            list.className = "account-drawer-list";
+            list.id = "account-drawer-list";
+            list.hidden = true;
+            buildAccountItems(list, false);
+
+            var anchor = drawerNav.querySelector(".login-button--drawer:not(.account-drawer-toggle)");
+            drawerNav.insertBefore(toggle, anchor ? anchor.nextSibling : null);
+            drawerNav.insertBefore(list, toggle.nextSibling);
+
+            toggle.addEventListener("click", function () {
+                var open = toggle.getAttribute("aria-expanded") !== "true";
+                toggle.setAttribute("aria-expanded", open ? "true" : "false");
+                list.hidden = !open;
+            });
+            /* Escape inside the account list collapses only the list; a second Escape closes the drawer. */
+            list.addEventListener("keydown", function (event) {
+                if (event.key !== "Escape" && event.key !== "Esc") return;
+                event.preventDefault();
+                event.stopPropagation();
+                closeDrawerAccount(true);
+            });
+            bindAccountDocumentEvents();
+        }
+        setAccountButtonName(toggle, user);
+        refreshAccountLabels(list);
     }
 
     function clearFieldError(input) {
@@ -446,7 +665,7 @@
     }
 
     function updateNotificationBadges() {
-        var links = document.querySelectorAll(".auth-nav-notifications, .auth-nav-notifications-drawer");
+        var links = document.querySelectorAll(".auth-nav-notifications-menu");
         if (!links.length) return;
         ensureBadgeStyles();
         var count = isLoggedIn() ? getUnreadNotificationCount() : 0;
@@ -457,12 +676,17 @@
             if (!badge) {
                 badge = document.createElement("span");
                 badge.className = "aerova-notif-badge";
-                link.appendChild(badge);
+                var caret = link.querySelector(".account-menu-caret");
+                if (caret) link.insertBefore(badge, caret);
+                else link.appendChild(badge);
             }
             badge.textContent = count > 99 ? "99+" : String(count);
             badge.hidden = count <= 0;
             badge.setAttribute("aria-label", label);
             badge.title = label;
+            if (link.hasAttribute("data-account-label")) {
+                link.setAttribute("aria-label", link.getAttribute("data-account-label") + (count > 0 ? ", " + label : ""));
+            }
         });
     }
 

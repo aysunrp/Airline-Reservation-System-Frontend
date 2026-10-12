@@ -135,10 +135,6 @@ h2 {
     gap: clamp(0.75rem, 1.4vw, 1.75rem);
 }
 
-.nav-item--drawer {
-    display: none;
-}
-
 .login-button.login-button--drawer {
     display: none;
 }
@@ -806,10 +802,6 @@ select.field-input.is-invalid {
 
     .nav-link::after {
         display: none;
-    }
-
-    .nav-item--drawer {
-        display: list-item;
     }
 
     .login-button.login-button--drawer {

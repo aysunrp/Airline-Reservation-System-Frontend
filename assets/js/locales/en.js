@@ -14,7 +14,8 @@ window.AEROVA_LOCALES.en = {
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "primary": "Primary",
-    "homeAria": "AEROVA Home"
+    "homeAria": "AEROVA Home",
+    "accountMenu": "Account menu"
   },
   "footer": {
     "description": "Fly beyond expectations.",
@@ -633,6 +634,18 @@ window.AEROVA_LOCALES.en = {
     "completeFields": "Please complete the highlighted fields.",
     "saveFail": "Unable to save your profile right now.",
     "passengerUpdated": "Saved passenger profile updated."
+  },
+  "seatPreview": {
+    "title": "Explore Our Seat Layouts",
+    "subtitle": "Preview each cabin before you travel. Seats are chosen during booking.",
+    "tabsLabel": "Cabin classes",
+    "economy": "Economy Class",
+    "comfort": "Comfort Class",
+    "business": "Business Class",
+    "front": "Front",
+    "backHome": "Back to Home",
+    "summary": "{cabin}: rows {from}–{to}, {config} seating",
+    "note": "Preview only. Seat availability and selection are shown when you book a flight."
   },
   "cancellation": {
     "intro": "Review the estimated refund before you confirm. Cancelled bookings cannot be used for travel and cannot be reinstated.",
