@@ -49,132 +49,99 @@
     </header>
 
     <main>
-        <section class="abt-hero" aria-label="About AEROVA" data-i18n-aria="about.newWayTitle">
-            <div class="abt-hero__media" role="img" aria-label="Aircraft at night"></div>
-            <div class="abt-hero__veil" aria-hidden="true"></div>
-            <div class="abt-hero__content">
-                <div class="abt-hero__rule" aria-hidden="true"></div>
-                <h1 class="abt-hero__title" data-i18n="about.newWayTitle">A New Way to Fly</h1>
-                <p class="abt-hero__text" data-i18n="about.newWayText">Effortless. Elegant. Personal.</p>
+        <!-- Hero photo: assets/images/about-hero.jpg (About page only)
+             Source: https://unsplash.com/photos/an-airplane-is-landing-during-sunset-0mwEIqZR6RM
+             Author: Ryuta (@srtgraphy) on Unsplash, Unsplash License. Replace freely. -->
+        <section class="ab-hero" aria-labelledby="ab-hero-title">
+            <div class="ab-hero__copy">
+                <p class="ab-eyebrow" data-i18n="about.heroEyebrow">Our Story</p>
+                <h1 class="ab-hero__title" id="ab-hero-title" data-i18n="about.heroTitle">Beyond the Destination</h1>
+                <span class="ab-rule" aria-hidden="true"></span>
+                <p class="ab-hero__text" data-i18n="about.heroText">AEROVA was imagined around a simple belief: travel should feel calm, clear, and personal, from the moment you begin planning to the moment you arrive.</p>
+                <a class="ab-button" href="#ab-journey" data-i18n="about.heroCta">Discover Our Story</a>
             </div>
+            <figure class="ab-hero__media">
+                <img src="assets/images/about-hero.jpg" alt="Commercial aircraft on final approach at dusk" data-i18n-aria="about.heroImageAlt" width="1600" height="1067">
+            </figure>
         </section>
 
-        <section class="abt-story" aria-labelledby="story-title">
-            <div class="abt-shell">
-                <p class="abt-story__label" data-i18n="about.storyTitle">Our Story</p>
-                <h2 id="story-title" class="abt-story__headline" data-i18n="about.storyHeadline">Travel should feel considered from the first search to the final gate.</h2>
-                <div class="abt-story__grid">
-                    <div>
-                        <p class="abt-story__lead" data-i18n="about.storyLead">AEROVA was created around the idea of making air travel feel effortless, elegant and personal.</p>
-                        <p class="abt-story__body" data-i18n="about.storyText">Today, travelers choose AEROVA for journeys that are as thoughtfully prepared as the destinations they seek.</p>
-                    </div>
-                    <div class="abt-story__visual">
-                        <img src="assets/images/hero-aircraft.jpg" alt="AEROVA aircraft in flight">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="abt-mv" aria-label="Mission and vision">
-            <article class="abt-mv__panel">
-                <p class="abt-mv__label" data-i18n="about.missionLabel">Our Mission</p>
-                <h2 class="abt-mv__title" data-i18n="about.missionHeading">Elevate Every Flight</h2>
-                <p class="abt-mv__text" data-i18n="about.missionLong">We focus on comfort, reliability, thoughtful service, and modern travel — so every journey feels calm, clear, and composed.</p>
-            </article>
-            <article class="abt-mv__panel">
-                <p class="abt-mv__label" data-i18n="about.visionLabel">Our Vision</p>
-                <h2 class="abt-mv__title" data-i18n="about.visionHeading">Set the Standard for Calm Luxury</h2>
-                <p class="abt-mv__text" data-i18n="about.visionText">To become the airline travelers trust when comfort, clarity, and connection matter most.</p>
-            </article>
-        </section>
-
-        <section class="abt-numbers" aria-labelledby="numbers-title">
-            <div class="abt-shell">
-                <p id="numbers-title" class="abt-numbers__label" data-i18n="about.numbers">AEROVA by the Numbers</p>
-                <div class="abt-numbers__grid">
-                    <div class="abt-stat">
-                        <p class="abt-stat__value">50+</p>
-                        <p class="abt-stat__label" data-i18n="about.statDestinations">Destinations</p>
-                    </div>
-                    <div class="abt-stat">
-                        <p class="abt-stat__value">120+</p>
-                        <p class="abt-stat__label" data-i18n="about.statFlights">Daily Flights</p>
-                    </div>
-                    <div class="abt-stat">
-                        <p class="abt-stat__value">98%</p>
-                        <p class="abt-stat__label" data-i18n="about.statOnTime">On-Time Performance</p>
-                    </div>
-                    <div class="abt-stat">
-                        <p class="abt-stat__value">24/7</p>
-                        <p class="abt-stat__label" data-i18n="about.statSupport">Guest Support</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="abt-why" aria-labelledby="why-title">
-            <div class="abt-shell abt-why__layout">
-                <h2 id="why-title" class="abt-why__statement" data-i18n="about.whyStatement">Why AEROVA exists is simple: travel deserves more composure.</h2>
-                <div class="abt-why__points">
-                    <div class="abt-why__point">
-                        <h3 data-i18n="about.effortless">Effortless Booking</h3>
-                        <p data-i18n="about.effortlessText">A clear path from search to seat, without noise.</p>
-                    </div>
-                    <div class="abt-why__point">
-                        <h3 data-i18n="about.considered">Considered Comfort</h3>
-                        <p data-i18n="about.consideredText">Cabins and service designed around how people actually travel.</p>
-                    </div>
-                    <div class="abt-why__point">
-                        <h3 data-i18n="about.connected">Connected Destinations</h3>
-                        <p data-i18n="about.connectedText">Routes chosen for meaning, not volume alone.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="abt-values" aria-labelledby="values-title">
-            <div class="abt-shell">
-                <p id="values-title" class="abt-values__label" data-i18n="about.values">Our Values</p>
-                <ol class="abt-values__list">
-                    <li class="abt-values__item">
-                        <span class="abt-values__num">01</span>
-                        <div>
-                            <h3 class="abt-values__title" data-i18n="about.valueElegance">Elegance</h3>
-                            <p class="abt-values__text" data-i18n="about.valueEleganceText">Refinement without noise — in design, service, and every detail of the journey.</p>
-                        </div>
+        <section class="ab-journey" id="ab-journey" aria-labelledby="ab-journey-title">
+            <div class="ab-shell">
+                <header class="ab-section-head">
+                    <p class="ab-eyebrow" data-i18n="about.journeyEyebrow">Our Journey</p>
+                    <h2 class="ab-heading" id="ab-journey-title" data-i18n="about.journeyTitle">The Journey Behind AEROVA</h2>
+                </header>
+                <ol class="ab-timeline">
+                    <li class="ab-timeline__item">
+                        <span class="ab-timeline__num" aria-hidden="true">I</span>
+                        <h3 data-i18n="about.visionStepTitle">The Vision</h3>
+                        <p data-i18n="about.visionStepText">It began with one idea: every journey should feel considered, not merely arranged.</p>
                     </li>
-                    <li class="abt-values__item">
-                        <span class="abt-values__num">02</span>
-                        <div>
-                            <h3 class="abt-values__title" data-i18n="about.valueReliability">Reliability</h3>
-                            <p class="abt-values__text" data-i18n="about.valueReliabilityText">Punctual, clear, and dependable — so travelers can move with confidence.</p>
-                        </div>
+                    <li class="ab-timeline__item">
+                        <span class="ab-timeline__num" aria-hidden="true">II</span>
+                        <h3 data-i18n="about.experienceStepTitle">The Experience</h3>
+                        <p data-i18n="about.experienceStepText">We bring together comfort, thoughtful service, and simplicity, so each part of travel feels in its right place.</p>
                     </li>
-                    <li class="abt-values__item">
-                        <span class="abt-values__num">03</span>
-                        <div>
-                            <h3 class="abt-values__title" data-i18n="about.valueComfort">Comfort</h3>
-                            <p class="abt-values__text" data-i18n="about.valueComfortText">Space, quiet, and care arranged around how people actually rest and travel.</p>
-                        </div>
-                    </li>
-                    <li class="abt-values__item">
-                        <span class="abt-values__num">04</span>
-                        <div>
-                            <h3 class="abt-values__title" data-i18n="about.valueService">Personal Service</h3>
-                            <p class="abt-values__text" data-i18n="about.valueServiceText">Attentive without interruption — service that anticipates, then steps aside.</p>
-                        </div>
+                    <li class="ab-timeline__item">
+                        <span class="ab-timeline__num" aria-hidden="true">III</span>
+                        <h3 data-i18n="about.futureStepTitle">The Future</h3>
+                        <p data-i18n="about.futureStepText">We are building a more seamless digital travel experience, from the first search to the final gate.</p>
                     </li>
                 </ol>
             </div>
         </section>
 
-        <section class="abt-close" aria-label="Start your journey">
-            <div class="abt-shell abt-close__inner">
-                <div>
-                    <h2 class="abt-close__title" data-i18n="about.closeTitle">Your Journey Starts With AEROVA</h2>
-                    <p class="abt-close__text" data-i18n="about.closeText">From the first search to the final arrival, travel composed around you.</p>
+        <section class="ab-philosophy" aria-labelledby="ab-philosophy-title">
+            <div class="ab-shell">
+                <p class="ab-eyebrow" data-i18n="about.philosophyEyebrow">Our Philosophy</p>
+                <h2 class="ab-philosophy__title" id="ab-philosophy-title" data-i18n="about.philosophyTitle">Every journey deserves a better beginning.</h2>
+                <div class="ab-principles">
+                    <div class="ab-principle">
+                        <h3 data-i18n="about.principleComfortTitle">Thoughtful Comfort</h3>
+                        <p data-i18n="about.principleComfortText">Space, quiet, and care, arranged around how people really travel.</p>
+                    </div>
+                    <div class="ab-principle">
+                        <h3 data-i18n="about.principleEffortlessTitle">Effortless Journeys</h3>
+                        <p data-i18n="about.principleEffortlessText">Clear choices and fewer steps, from planning to boarding.</p>
+                    </div>
+                    <div class="ab-principle">
+                        <h3 data-i18n="about.principleServiceTitle">Personal Service</h3>
+                        <p data-i18n="about.principleServiceText">Attention that feels natural: present when needed, never in the way.</p>
+                    </div>
                 </div>
-                <a class="abt-close__btn" href="booking.html" data-i18n="about.startJourney">Start Your Journey</a>
+            </div>
+        </section>
+
+        <!-- Signature photo: assets/images/about-signature.jpg
+             Source: https://unsplash.com/photos/white-airplane-wing-during-sunset-x2lS3Xl_Lzw
+             Author: 99.films (@99films) on Unsplash, Unsplash License. Replace freely. -->
+        <section class="ab-signature" aria-labelledby="ab-signature-title">
+            <figure class="ab-signature__media">
+                <img src="assets/images/about-signature.jpg" alt="Aircraft wing against the evening sky" data-i18n-aria="about.signatureImageAlt" width="2000" height="1125">
+            </figure>
+            <div class="ab-signature__statement">
+                <span class="ab-rule" aria-hidden="true"></span>
+                <h2 id="ab-signature-title" data-i18n="about.signatureText">More than a flight. A feeling that stays with you.</h2>
+            </div>
+        </section>
+
+        <section class="ab-purpose" aria-label="Mission and vision" data-i18n-aria="about.purposeLabel">
+            <div class="ab-shell ab-purpose__grid">
+                <div class="ab-purpose__col">
+                    <p class="ab-eyebrow" data-i18n="about.missionLabel">Our Mission</p>
+                    <p class="ab-purpose__text" data-i18n="about.missionText">To make booking and planning air travel simple, clear, and comfortable.</p>
+                </div>
+                <div class="ab-purpose__col">
+                    <p class="ab-eyebrow" data-i18n="about.visionLabel">Our Vision</p>
+                    <p class="ab-purpose__text" data-i18n="about.visionText">To create a premium, thoughtful, and seamless travel experience.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="ab-cta" aria-labelledby="ab-cta-title">
+            <div class="ab-shell">
+                <h2 class="ab-cta__title" id="ab-cta-title" data-i18n="about.ctaTitle">Your next journey starts here.</h2>
+                <a class="ab-button ab-button--dark" href="booking.html" data-i18n="about.ctaButton">Book a Flight</a>
             </div>
         </section>
     </main>
