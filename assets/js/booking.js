@@ -43,7 +43,7 @@ function tr(key, fallback, vars) {
     });
 
     window.addEventListener("resize", function () {
-        if (window.innerWidth > 1080) {
+        if (window.innerWidth > 1366) {
             setMenu(false);
         }
     });

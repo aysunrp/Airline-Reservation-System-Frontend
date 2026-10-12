@@ -32,10 +32,12 @@
             from: "Baku",
             to: "London",
             departure: "14:20",
-            arrival: "18:15",
-            duration: "5h 55m",
-            durationMinutes: 355,
+            arrival: "19:15",
+            duration: "8h 55m",
+            durationMinutes: 535,
             stops: "1 Stop",
+            legMinutes: [170, 285],
+            via: [{ code: "IST", layoverMinutes: 80 }],
             aircraft: "AEROVA A350-900",
             cabinPrices: {
                 Economy: 365,
@@ -104,10 +106,12 @@
             from: "Baku",
             to: "Paris",
             departure: "15:30",
-            arrival: "19:40",
-            duration: "6h 10m",
-            durationMinutes: 370,
+            arrival: "20:40",
+            duration: "8h 10m",
+            durationMinutes: 490,
             stops: "1 Stop",
+            legMinutes: [170, 225],
+            via: [{ code: "IST", layoverMinutes: 95 }],
             aircraft: "AEROVA A321neo",
             cabinPrices: {
                 Economy: 340,
@@ -240,8 +244,199 @@
                 Comfort: 310,
                 Business: 470
             }
+        },
+        {
+            id: 14,
+            airline: "AEROVA",
+            flightNumber: "AV 612",
+            from: "Baku",
+            to: "London",
+            departure: "07:15",
+            arrival: "13:30",
+            duration: "10h 15m",
+            durationMinutes: 615,
+            stops: "2 Stops",
+            legMinutes: [65, 220, 150],
+            via: [
+                { code: "TBS", layoverMinutes: 70 },
+                { code: "VIE", layoverMinutes: 110 }
+            ],
+            aircraft: "AEROVA A320neo",
+            cabinPrices: {
+                Economy: 310,
+                Comfort: 430,
+                Business: 720
+            }
+        },
+        {
+            id: 15,
+            airline: "AEROVA",
+            flightNumber: "AV 724",
+            from: "Baku",
+            to: "Paris",
+            departure: "22:40",
+            arrival: "07:35",
+            duration: "11h 55m",
+            durationMinutes: 715,
+            stops: "2 Stops",
+            legMinutes: [170, 145, 125],
+            via: [
+                { code: "IST", layoverMinutes: 150 },
+                { code: "VIE", layoverMinutes: 125 }
+            ],
+            aircraft: "AEROVA A321neo",
+            cabinPrices: {
+                Economy: 285,
+                Comfort: 395,
+                Business: 660
+            }
         }
     ];
+
+    /*
+     * Mock airport data. Times in the itinerary are local to each airport;
+     * utcOffset (minutes) is a fixed mock offset used to keep segment
+     * durations, layovers and the total journey time consistent.
+     */
+    var AIRPORTS = {
+        GYD: { code: "GYD", city: "Baku", name: "Heydar Aliyev International Airport", utcOffset: 240 },
+        LHR: { code: "LHR", city: "London", name: "Heathrow Airport", utcOffset: 0 },
+        CDG: { code: "CDG", city: "Paris", name: "Paris Charles de Gaulle Airport", utcOffset: 60 },
+        DXB: { code: "DXB", city: "Dubai", name: "Dubai International Airport", utcOffset: 240 },
+        IST: { code: "IST", city: "Istanbul", name: "Istanbul Airport", utcOffset: 180 },
+        TBS: { code: "TBS", city: "Tbilisi", name: "Tbilisi International Airport", utcOffset: 240 },
+        VIE: { code: "VIE", city: "Vienna", name: "Vienna International Airport", utcOffset: 60 }
+    };
+
+    var CITY_AIRPORTS = {
+        baku: "GYD",
+        london: "LHR",
+        paris: "CDG",
+        dubai: "DXB",
+        istanbul: "IST"
+    };
+
+    function formatDurationLabel(totalMinutes) {
+        var hours = Math.floor(totalMinutes / 60);
+        var minutes = totalMinutes % 60;
+        return hours + "h " + (minutes < 10 ? "0" : "") + minutes + "m";
+    }
+
+    function pad2(value) {
+        return (value < 10 ? "0" : "") + value;
+    }
+
+    function minutesToClock(totalMinutes) {
+        var dayMinutes = ((totalMinutes % 1440) + 1440) % 1440;
+        return pad2(Math.floor(dayMinutes / 60)) + ":" + pad2(dayMinutes % 60);
+    }
+
+    function airportFor(city) {
+        return AIRPORTS[CITY_AIRPORTS[String(city || "").trim().toLowerCase()]] || null;
+    }
+
+    /*
+     * Builds the segment template of a schedule from its legs and stopovers.
+     * Every time is computed in UTC minutes relative to the departure day and
+     * then converted back to the local time of the airport involved.
+     */
+    function buildRoute(schedule) {
+        var origin = airportFor(schedule.from);
+        var destination = airportFor(schedule.to);
+        var via = schedule.via || [];
+        var legMinutes = schedule.legMinutes || [schedule.durationMinutes];
+
+        if (!origin || !destination || legMinutes.length !== via.length + 1) {
+            return null;
+        }
+
+        var stopsList = [origin];
+        via.forEach(function (stop) {
+            stopsList.push(AIRPORTS[stop.code]);
+        });
+        stopsList.push(destination);
+
+        if (stopsList.some(function (airport) { return !airport; })) {
+            return null;
+        }
+
+        var cursorUtc = parseDepartureMinutes(schedule.departure) - origin.utcOffset;
+        var segments = [];
+
+        for (var i = 0; i < legMinutes.length; i += 1) {
+            var fromAirport = stopsList[i];
+            var toAirport = stopsList[i + 1];
+
+            if (i > 0) {
+                cursorUtc += via[i - 1].layoverMinutes;
+            }
+
+            var depLocal = cursorUtc + fromAirport.utcOffset;
+            var arrUtc = cursorUtc + legMinutes[i];
+            var arrLocal = arrUtc + toAirport.utcOffset;
+
+            segments.push({
+                from: { code: fromAirport.code, city: fromAirport.city, name: fromAirport.name },
+                to: { code: toAirport.code, city: toAirport.city, name: toAirport.name },
+                departureTime: minutesToClock(depLocal),
+                departureDayOffset: Math.floor(depLocal / 1440),
+                departureUtcOffset: fromAirport.utcOffset,
+                arrivalTime: minutesToClock(arrLocal),
+                arrivalDayOffset: Math.floor(arrLocal / 1440),
+                arrivalUtcOffset: toAirport.utcOffset,
+                durationMinutes: legMinutes[i]
+            });
+
+            cursorUtc = arrUtc;
+        }
+
+        return segments;
+    }
+
+    /* Derive arrival, duration and stops from the itinerary so they always agree. */
+    MOCK_FLIGHTS.forEach(function (schedule) {
+        var route = buildRoute(schedule);
+        if (!route) {
+            return;
+        }
+
+        var last = route[route.length - 1];
+        var total = 0;
+        route.forEach(function (segment, index) {
+            total += segment.durationMinutes;
+            if (index > 0) {
+                total += schedule.via[index - 1].layoverMinutes;
+            }
+        });
+
+        schedule.route = route;
+        schedule.arrival = last.arrivalTime;
+        schedule.arrivalDayOffset = last.arrivalDayOffset;
+        schedule.durationMinutes = total;
+        schedule.duration = formatDurationLabel(total);
+        schedule.stopsCount = route.length - 1;
+        schedule.stops = schedule.stopsCount === 0 ? "Non-stop" : (schedule.stopsCount === 1 ? "1 Stop" : schedule.stopsCount + " Stops");
+    });
+
+    function datedSegments(route, date) {
+        if (!route) {
+            return null;
+        }
+
+        return route.map(function (segment) {
+            return {
+                from: segment.from,
+                to: segment.to,
+                departureDate: toISODate(addDays(date, segment.departureDayOffset)),
+                departureTime: segment.departureTime,
+                departureUtcOffset: segment.departureUtcOffset,
+                arrivalDate: toISODate(addDays(date, segment.arrivalDayOffset)),
+                arrivalTime: segment.arrivalTime,
+                arrivalUtcOffset: segment.arrivalUtcOffset,
+                durationMinutes: segment.durationMinutes
+            };
+        });
+    }
 
     function normalizeText(value) {
         return String(value || "").trim().toLowerCase();
@@ -382,9 +577,12 @@
             duration: schedule.duration,
             durationMinutes: schedule.durationMinutes,
             stops: schedule.stops,
+            stopsCount: schedule.stopsCount,
             aircraft: schedule.aircraft,
             cabinPrices: schedule.cabinPrices,
-            date: dateISO
+            date: dateISO,
+            arrivalDate: schedule.route ? toISODate(addDays(date, schedule.arrivalDayOffset)) : dateISO,
+            segments: datedSegments(schedule.route, date)
         };
     }
 
@@ -528,6 +726,27 @@
         );
     }
 
+    function arrivalDayMarker(flight) {
+        if (!flight.arrivalDate || !flight.date || flight.arrivalDate <= flight.date) {
+            return "";
+        }
+
+        var days = Math.round((parseISODate(flight.arrivalDate) - parseISODate(flight.date)) / 86400000);
+        return days > 0 ? ' <span class="journey-next-day">+' + days + "</span>" : "";
+    }
+
+    function stopoverCodesLabel(flight) {
+        if (!flight.segments || flight.segments.length < 2) {
+            return "";
+        }
+
+        var codes = flight.segments.slice(1).map(function (segment) {
+            return segment.from.code;
+        }).join(", ");
+
+        return " · " + (typeof t === "function" ? t("results.via", { codes: codes }) : "via " + codes);
+    }
+
     function createFlightCard(flight, selectedCabin) {
         var price = getCabinPrice(flight, selectedCabin);
         var displayDate = formatDisplayDate(flight.date) || "Date not selected";
@@ -544,7 +763,7 @@
             "</div>" +
             '<div class="flight-card-journey">' +
                 '<p class="journey-date">' + escapeHtml(displayDate) + "</p>" +
-                '<p class="journey-times">' + escapeHtml(flight.departure) + " → " + escapeHtml(flight.arrival) + "</p>" +
+                '<p class="journey-times">' + escapeHtml(flight.departure) + " → " + escapeHtml(flight.arrival) + arrivalDayMarker(flight) + "</p>" +
                 '<p class="journey-route">' + escapeHtml(flight.from) + " → " + escapeHtml(flight.to) + "</p>" +
             "</div>" +
             '<div class="flight-card-details">' +
@@ -553,8 +772,9 @@
                     if (typeof t !== "function") return flight.stops;
                     if (flight.stops === "Non-stop") return t("results.nonstop");
                     if (flight.stops === "1 Stop") return t("results.oneStop");
+                    if (flight.stopsCount > 1) return t("results.stopsCount", { count: flight.stopsCount });
                     return flight.stops;
-                })()) + "</p>" +
+                })() + stopoverCodesLabel(flight)) + "</p>" +
                 '<p class="detail-item"><span class="detail-label">' + escapeHtml(typeof t === "function" ? t("flightDetails.aircraft") : "Aircraft") + '</span> ' + escapeHtml(flight.aircraft) + "</p>" +
                 buildCabinOptionsMarkup(flight, selectedCabin) +
             "</div>" +
@@ -648,7 +868,8 @@
 
     function applyClientFilters(flights, filterState) {
         return flights.filter(function (flight) {
-            if (filterState.stops.length && filterState.stops.indexOf(flight.stops) === -1) {
+            if (filterState.stops.length && filterState.stops.indexOf(flight.stops) === -1 &&
+                !(flight.stopsCount >= 2 && filterState.stops.indexOf("2+") !== -1)) {
                 return false;
             }
 
@@ -810,6 +1031,11 @@
             departure: flight.departure,
             arrival: flight.arrival,
             duration: flight.duration,
+            durationMinutes: flight.durationMinutes,
+            stops: flight.stops,
+            stopsCount: flight.stopsCount,
+            arrivalDate: flight.arrivalDate,
+            segments: flight.segments || null,
             aircraft: flight.aircraft,
             cabinClass: cabinClass,
             price: price,
@@ -840,6 +1066,22 @@
             stops: flight.stops || "",
             aircraft: flight.aircraft || ""
         });
+
+        if (typeof flight.stopsCount === "number") {
+            params.set("stopsCount", String(flight.stopsCount));
+        }
+
+        if (flight.arrivalDate) {
+            params.set("arrivalDate", flight.arrivalDate);
+        }
+
+        if (typeof flight.durationMinutes === "number") {
+            params.set("durationMinutes", String(flight.durationMinutes));
+        }
+
+        if (flight.segments && flight.segments.length) {
+            params.set("segments", JSON.stringify(flight.segments));
+        }
 
         window.location.href = "flight-details.html?" + params.toString();
     }

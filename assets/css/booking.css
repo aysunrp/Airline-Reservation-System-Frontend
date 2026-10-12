@@ -131,7 +131,7 @@ h2 {
 .nav-list {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 2vw, 2.15rem);
+    gap: clamp(0.75rem, 1.4vw, 1.75rem);
 }
 
 .nav-item--drawer {
@@ -148,8 +148,9 @@ h2 {
     color: var(--color-cream);
     font-size: 0.74rem;
     font-weight: 400;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .nav-link.is-current {
@@ -1251,7 +1252,7 @@ select.field-input {
     color: var(--color-gold-light);
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1366px) {
     :root {
         --header-height: 76px;
     }

@@ -28,7 +28,7 @@
             label: "Comfort", labelKey: "common.comfort",
             startRow: 5,
             endRow: 9,
-            groups: [["A", "B"], ["C"], ["D", "E"]],
+            groups: [["A", "B"], ["C", "D", "E"]],
             occupied: ["6A", "7C", "8E"],
             seatGap: "0.55rem",
             groupGap: "0.55rem"
@@ -153,6 +153,40 @@
         return [];
     }
 
+    /* Keep only stored seats that exist and are free in this cabin's layout and were chosen for this cabin. */
+    function filterSeatsForLayout(seats, layout, flightData) {
+        var savedCabin = flightData && flightData.seatsCabin;
+        if (savedCabin && resolveCabinLayout(savedCabin) !== layout) {
+            return [];
+        }
+
+        var valid = {};
+        var row;
+        for (row = layout.startRow; row <= layout.endRow; row += 1) {
+            layout.groups.forEach(function (group) {
+                group.forEach(function (letter) {
+                    valid[String(row) + letter] = true;
+                });
+            });
+        }
+        layout.occupied.forEach(function (seatId) {
+            delete valid[seatId];
+        });
+
+        var seen = {};
+        return seats.filter(function (seatId) {
+            if (!valid[seatId] || seen[seatId]) {
+                return false;
+            }
+            seen[seatId] = true;
+            return true;
+        });
+    }
+
+    function cabinClassForLayout(layout) {
+        return layout === CABIN_LAYOUTS.Business ? "Business" : (layout === CABIN_LAYOUTS.Comfort ? "Comfort" : "Economy");
+    }
+
     function setText(id, value) {
         var element = document.getElementById(id);
         if (element) {
@@ -204,7 +238,8 @@
             selectedSeats: selectedSeats.slice(),
             selectedSeat: selectedSeats.length === 1 ? selectedSeats[0] : selectedSeats.join(", "),
             passengers: String(requiredSeats),
-            cabinClass: activeLayout.label === "Business Class" ? "Business" : activeLayout.label
+            cabinClass: cabinClassForLayout(activeLayout),
+            seatsCabin: cabinClassForLayout(activeLayout)
         });
 
         try {
@@ -309,7 +344,7 @@
         cabin.style.setProperty("--group-gap", layout.groupGap);
 
         if (sectionLabel) {
-            sectionLabel.textContent = layout.label;
+            sectionLabel.textContent = tr(layout.labelKey, layout.label);
         }
 
         columns.innerHTML = buildColumnHeaders(layout);
@@ -447,11 +482,20 @@
         });
     }
 
+    var currentFlightData = null;
+
     function init() {
         var flightData = readSelectedFlight();
         activeLayout = resolveCabinLayout(flightData && flightData.cabinClass);
         requiredSeats = resolvePassengerCount(flightData);
-        selectedSeats = normalizeStoredSeats(flightData).slice(0, requiredSeats);
+        var storedSeats = normalizeStoredSeats(flightData);
+        selectedSeats = filterSeatsForLayout(storedSeats, activeLayout, flightData).slice(0, requiredSeats);
+        currentFlightData = flightData;
+
+        if (flightData && storedSeats.length && selectedSeats.length !== storedSeats.length) {
+            /* Drop seats that do not belong to this cabin so later steps never see them. */
+            persistSelectedSeats(flightData);
+        }
 
         populateFlightSummary(flightData, activeLayout);
         renderSeatMap(activeLayout);
@@ -460,12 +504,18 @@
         bindContinue(flightData);
     }
 
+    function refreshForLanguage() {
+        populateFlightSummary(currentFlightData, activeLayout);
+        renderSeatMap(activeLayout);
+        updateSelectedSeatSummary();
+    }
+
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", init);
     } else {
         init();
     }
     window.addEventListener("aerova:languagechange", function () {
-        if (typeof refreshSummary === 'function') { /* noop */ } if (typeof renderSeatMap === 'function') { try { init(); } catch (e) {} }
+        refreshForLanguage();
     });
 })();

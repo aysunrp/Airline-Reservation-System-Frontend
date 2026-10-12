@@ -1,6 +1,7 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.ru = {
   "nav": {
+    "home": "Главная",
     "booking": "Бронирование",
     "destinations": "Направления",
     "experience": "Впечатления",
@@ -280,6 +281,8 @@ window.AEROVA_LOCALES.ru = {
     "nextMonth": "Следующий месяц"
   },
   "results": {
+    "stopsCount": "{count} пересадки",
+    "via": "через {codes}",
     "eyebrow": "Доступные рейсы",
     "availableNext30": "Доступные рейсы на ближайшие 30 дней",
     "modifySearch": "← Изменить поиск",
@@ -327,6 +330,25 @@ window.AEROVA_LOCALES.ru = {
     "amenities": "Удобства",
     "baggage": "Багаж",
     "fromPrice": "От {price}"
+  },
+  "journey": {
+    "title": "Маршрут поездки",
+    "departure": "Вылет",
+    "arrival": "Прилёт",
+    "stopover": "Пересадка",
+    "arrives": "Прилёт",
+    "departs": "Вылет",
+    "layover": "Ожидание {duration}",
+    "flight": "Полёт · {duration}",
+    "total": "Общее время в пути",
+    "localNote": "Всё время указано по местному времени аэропортов.",
+    "direct": "Прямой рейс · без пересадок",
+    "unavailable": "Информация о пересадках недоступна",
+    "unavailableText": "Сведения о стыковках для этого рейса недоступны. Время вылета и прилёта выше подтверждено.",
+    "nextDay": "+{days} дн.",
+    "hm": "{h} ч {m} мин",
+    "h": "{h} ч",
+    "m": "{m} мин"
   },
   "seats": {
     "title": "Выберите места",

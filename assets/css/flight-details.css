@@ -507,3 +507,319 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Journey timeline: departure, stopovers with layovers, and final arrival */
+
+.journey-timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin: 1.4rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.journey-stop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.journey-marker {
+    display: block;
+    width: 14px;
+    height: 14px;
+    margin-bottom: 0.85rem;
+    border-radius: 50%;
+    background: var(--color-gold);
+    box-shadow: 0 0 0 5px rgba(198, 163, 106, 0.2);
+}
+
+.journey-stop--stopover .journey-marker {
+    background: var(--color-navy);
+    border: 3px solid var(--color-gold);
+    box-shadow: 0 0 0 5px rgba(7, 17, 29, 0.08);
+}
+
+.journey-stop--arrival .journey-marker {
+    background: var(--color-navy);
+    box-shadow: 0 0 0 5px rgba(7, 17, 29, 0.12);
+}
+
+.journey-stop-body {
+    min-width: 0;
+}
+
+.journey-stop--stopover .journey-stop-body {
+    padding: 0.85rem 0.9rem 0.9rem;
+    border: 1px solid rgba(198, 163, 106, 0.45);
+    border-radius: 14px;
+    background: rgba(7, 17, 29, 0.04);
+}
+
+.journey-label {
+    margin: 0 0 0.35rem;
+    color: #9a7844;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.journey-time {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 2.6vw, 2rem);
+    font-weight: 500;
+    line-height: 1.05;
+}
+
+.journey-next-day {
+    display: inline-block;
+    margin-left: 0.25rem;
+    color: #9a7844;
+    font-family: var(--font-sans, inherit);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    vertical-align: super;
+    white-space: nowrap;
+}
+
+.journey-date {
+    margin: 0.3rem 0 0;
+    color: rgba(28, 21, 12, 0.66);
+    font-size: 0.85rem;
+}
+
+.journey-place {
+    margin: 0.55rem 0 0;
+    color: var(--color-ink);
+    font-size: 1rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.journey-code {
+    margin-right: 0.2rem;
+    color: #9a7844;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+}
+
+.journey-airport {
+    margin: 0.25rem 0 0;
+    color: rgba(28, 21, 12, 0.62);
+    font-size: 0.86rem;
+    font-weight: 300;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.journey-connection {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0.75rem 0 0;
+}
+
+.journey-connection > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.2rem 0.6rem;
+}
+
+.journey-connection dt {
+    color: rgba(28, 21, 12, 0.62);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.journey-connection dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.journey-connection .journey-layover dd {
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    background: var(--color-navy);
+    color: var(--color-gold-light);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.journey-connection .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.journey-leg {
+    position: relative;
+    flex: 0 1 clamp(84px, 11vw, 150px);
+    min-width: 72px;
+    padding: 1.35rem 0.5rem 0;
+    text-align: center;
+}
+
+.journey-leg-line {
+    position: absolute;
+    top: 6px;
+    left: 0.4rem;
+    right: 0.4rem;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(198, 163, 106, 0.35), rgba(198, 163, 106, 0.95), rgba(198, 163, 106, 0.35));
+}
+
+.journey-leg-line::after {
+    content: "";
+    position: absolute;
+    right: -2px;
+    top: -4px;
+    border-left: 7px solid var(--color-gold);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+.journey-leg-label {
+    display: inline-block;
+    color: rgba(28, 21, 12, 0.7);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.journey-stop--arrival {
+    text-align: right;
+}
+
+.journey-stop--arrival .journey-marker {
+    margin-left: auto;
+}
+
+.journey-unavailable {
+    flex: 1.2 1 0;
+    min-width: 0;
+    margin: 0 0.75rem;
+    padding: 0.9rem 1rem;
+    border: 1px dashed rgba(198, 163, 106, 0.7);
+    border-radius: 14px;
+    background: rgba(7, 17, 29, 0.04);
+}
+
+.journey-unavailable-title {
+    margin: 0;
+    color: var(--color-ink);
+    font-weight: 500;
+}
+
+.journey-unavailable-text {
+    margin: 0.35rem 0 0;
+    color: rgba(28, 21, 12, 0.66);
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+.journey-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(198, 163, 106, 0.35);
+}
+
+.journey-footer p {
+    margin: 0;
+}
+
+.journey-total {
+    color: var(--color-ink);
+    font-weight: 500;
+}
+
+.journey-total span,
+.journey-direct,
+.journey-note {
+    color: rgba(28, 21, 12, 0.62);
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+@media (max-width: 900px) {
+    .journey-timeline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .journey-stop,
+    .journey-stop--arrival {
+        display: grid;
+        grid-template-columns: 1.6rem minmax(0, 1fr);
+        gap: 0.75rem;
+        flex: none;
+        text-align: left;
+    }
+
+    .journey-marker,
+    .journey-stop--arrival .journey-marker {
+        margin: 0.25rem 0 0 1px;
+    }
+
+    .journey-leg {
+        flex: none;
+        min-width: 0;
+        min-height: 3.2rem;
+        padding: 1rem 0 1rem 2.35rem;
+        text-align: left;
+    }
+
+    .journey-leg-line {
+        top: 0;
+        bottom: 0;
+        left: 7px;
+        right: auto;
+        width: 2px;
+        height: auto;
+        background: linear-gradient(180deg, rgba(198, 163, 106, 0.35), rgba(198, 163, 106, 0.95), rgba(198, 163, 106, 0.35));
+    }
+
+    .journey-leg-line::after {
+        right: auto;
+        top: auto;
+        bottom: -2px;
+        left: -4px;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 7px solid var(--color-gold);
+        border-bottom: 0;
+    }
+
+    .journey-unavailable {
+        flex: none;
+        margin: 0.9rem 0 0.9rem 2.35rem;
+    }
+
+    .journey-footer {
+        flex-direction: column;
+    }
+}

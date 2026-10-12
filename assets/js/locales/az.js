@@ -1,6 +1,7 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.az = {
   "nav": {
+    "home": "Ana səhifə",
     "booking": "Bron",
     "destinations": "İstiqamətlər",
     "experience": "Təcrübə",
@@ -280,6 +281,8 @@ window.AEROVA_LOCALES.az = {
     "nextMonth": "Növbəti ay"
   },
   "results": {
+    "stopsCount": "{count} dayanacaq",
+    "via": "{codes} vasitəsilə",
     "eyebrow": "Mövcud uçuşlar",
     "availableNext30": "Növbəti 30 gün ərzində mövcud uçuşlar",
     "modifySearch": "← Axtarışı dəyiş",
@@ -327,6 +330,25 @@ window.AEROVA_LOCALES.az = {
     "amenities": "İmkanlar",
     "baggage": "Baqaj",
     "fromPrice": "{price}-dən"
+  },
+  "journey": {
+    "title": "Səyahət xronologiyası",
+    "departure": "Uçuş",
+    "arrival": "Eniş",
+    "stopover": "Aralıq dayanacaq",
+    "arrives": "Eniş",
+    "departs": "Uçuş",
+    "layover": "{duration} gözləmə",
+    "flight": "Uçuş · {duration}",
+    "total": "Ümumi səyahət müddəti",
+    "localNote": "Bütün vaxtlar hər hava limanının yerli vaxtı ilə göstərilir.",
+    "direct": "Birbaşa uçuş · aralıq dayanacaq yoxdur",
+    "unavailable": "Aralıq dayanacaq məlumatı mövcud deyil",
+    "unavailableText": "Bu uçuşun birləşmə məlumatları mövcud deyil. Yuxarıdakı uçuş və eniş vaxtları təsdiqlənib.",
+    "nextDay": "+{days} gün",
+    "hm": "{h} saat {m} dəq",
+    "h": "{h} saat",
+    "m": "{m} dəq"
   },
   "seats": {
     "title": "Oturacaqlarınızı seçin",

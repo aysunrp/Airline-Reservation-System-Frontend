@@ -29,7 +29,7 @@
 
         <div class="header-container">
 
-            <a class="logo" href="index.html" aria-label="AEROVA Home" data-i18n-aria="nav.homeAria">
+            <div class="logo">
 
                 <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
 
@@ -39,13 +39,15 @@
 
                 <span class="logo-text">Aerova</span>
 
-            </a>
+            </div>
 
 
 
             <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
 
                 <ul class="nav-list">
+
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
 
                     <li class="nav-item"><a class="nav-link is-current" href="booking.html" aria-current="page" data-i18n="nav.booking">Booking</a></li>
 
@@ -211,59 +213,11 @@
 
 
 
-                <article class="details-card" aria-labelledby="timeline-title">
+                <article class="details-card journey-card" aria-labelledby="timeline-title">
 
-                    <h2 class="details-card-title" id="timeline-title" data-i18n="ui.flightTimeline">Flight Timeline</h2>
+                    <h2 class="details-card-title" id="timeline-title" data-i18n="journey.title">Journey Timeline</h2>
 
-
-
-                    <div class="flight-timeline" aria-label="Flight timeline">
-
-                        <div class="timeline-point">
-
-                            <p class="timeline-time">09:30</p>
-
-                            <p class="timeline-city">Baku</p>
-
-                            <p class="timeline-code">GYD</p>
-
-                            <p class="timeline-note">Heydar Aliyev International Airport</p>
-
-                        </div>
-
-
-
-                        <div class="timeline-path" aria-hidden="true">
-
-                            <span class="timeline-dot"></span>
-
-                            <span class="timeline-track">
-
-                                <span class="timeline-line"></span>
-
-                                <span class="timeline-duration">5h 40m · Non-stop</span>
-
-                            </span>
-
-                            <span class="timeline-dot"></span>
-
-                        </div>
-
-
-
-                        <div class="timeline-point timeline-point--arrival">
-
-                            <p class="timeline-time">13:10</p>
-
-                            <p class="timeline-city">London</p>
-
-                            <p class="timeline-code">LHR</p>
-
-                            <p class="timeline-note">Heathrow Airport · Terminal 5</p>
-
-                        </div>
-
-                    </div>
+                    <div class="journey" id="journey-timeline" aria-live="polite"></div>
 
                 </article>
 
@@ -489,7 +443,7 @@
 
                 <div class="footer-brand">
 
-                    <a class="logo" href="index.html">
+                    <div class="logo">
 
                         <svg class="logo-mark" viewBox="0 0 64 32" aria-hidden="true">
 
@@ -499,7 +453,7 @@
 
                         <span class="logo-text">Aerova</span>
 
-                    </a>
+                    </div>
 
                     <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
 

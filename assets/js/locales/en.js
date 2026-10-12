@@ -1,6 +1,7 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.en = {
   "nav": {
+    "home": "Home",
     "booking": "Booking",
     "destinations": "Destinations",
     "experience": "Experience",
@@ -280,6 +281,8 @@ window.AEROVA_LOCALES.en = {
     "nextMonth": "Next month"
   },
   "results": {
+    "stopsCount": "{count} Stops",
+    "via": "via {codes}",
     "eyebrow": "Available Flights",
     "availableNext30": "Available flights in the next 30 days",
     "modifySearch": "← Modify search",
@@ -327,6 +330,25 @@ window.AEROVA_LOCALES.en = {
     "amenities": "Amenities",
     "baggage": "Baggage",
     "fromPrice": "From {price}"
+  },
+  "journey": {
+    "title": "Journey Timeline",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "stopover": "Stopover",
+    "arrives": "Arrives",
+    "departs": "Departs",
+    "layover": "{duration} layover",
+    "flight": "Flight · {duration}",
+    "total": "Total journey time",
+    "localNote": "All times are local to each airport.",
+    "direct": "Direct flight · no stopovers",
+    "unavailable": "Stopover details unavailable",
+    "unavailableText": "Connection details for this flight are not available. The departure and arrival times above are confirmed.",
+    "nextDay": "+{days} day",
+    "hm": "{h}h {m}m",
+    "h": "{h}h",
+    "m": "{m}m"
   },
   "seats": {
     "title": "Select Your Seats",

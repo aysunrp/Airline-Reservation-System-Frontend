@@ -132,7 +132,7 @@ h2 {
 .nav-list {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 2vw, 2.15rem);
+    gap: clamp(0.75rem, 1.4vw, 1.75rem);
 }
 
 .nav-item--drawer {
@@ -149,8 +149,9 @@ h2 {
     color: var(--color-cream);
     font-size: 0.74rem;
     font-weight: 400;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .nav-link.is-current {
@@ -441,6 +442,7 @@ h2 {
     --row-label-size: 1.35rem;
     --seat-gap: 0.7rem;
     --group-gap: 0.7rem;
+    --row-gap: 1.2rem;
     --body-width: min(100%, 26rem);
     display: flex;
     flex-direction: column;
@@ -450,7 +452,8 @@ h2 {
 }
 
 .airplane[data-layout="comfort"] {
-    --seat-size: 2.45rem;
+    --seat-size: 2.55rem;
+    --row-gap: 0.9rem;
     --aisle-size: 1.55rem;
     --seat-gap: 0.55rem;
     --group-gap: 0.55rem;
@@ -463,6 +466,7 @@ h2 {
     --row-label-size: 1.2rem;
     --seat-gap: 0.35rem;
     --group-gap: 0.35rem;
+    --row-gap: 0.42rem;
     --body-width: min(100%, 28rem);
 }
 
@@ -622,7 +626,7 @@ h2 {
 .seat-map {
     display: flex;
     flex-direction: column;
-    gap: 0.48rem;
+    gap: var(--row-gap, 0.48rem);
     width: max-content;
     max-width: 100%;
     margin-inline: auto;
@@ -714,6 +718,18 @@ h2 {
     border-color: rgba(198, 163, 106, 0.8);
     color: var(--color-gold-light);
     transform: translateY(-1px);
+}
+
+/* Premium cabins: champagne-trimmed seats so Comfort and Business read differently from Economy */
+.airplane[data-layout="comfort"] .seat--available {
+    border-color: rgba(198, 163, 106, 0.55);
+    background: rgba(198, 163, 106, 0.12);
+}
+
+.airplane[data-layout="business"] .seat--available {
+    border: 1px solid rgba(224, 196, 138, 0.75);
+    background: linear-gradient(180deg, rgba(198, 163, 106, 0.22) 0%, rgba(198, 163, 106, 0.08) 100%);
+    box-shadow: inset 0 -4px 0 rgba(198, 163, 106, 0.25);
 }
 
 .seat--selected {
@@ -854,7 +870,7 @@ h2 {
     }
 
     .airplane[data-layout="comfort"] {
-        --seat-size: 2.1rem;
+        --seat-size: 2.25rem;
         --aisle-size: 1.15rem;
     }
 
@@ -1022,7 +1038,7 @@ h2 {
     color: var(--color-gold-light);
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1366px) {
     :root {
         --header-height: 76px;
     }
@@ -1091,7 +1107,9 @@ h2 {
         display: inline-flex;
         margin-top: 1.25rem;
     }
+}
 
+@media (max-width: 1080px) {
     .seat-selection-page {
         margin-top: 1.75rem;
         margin-bottom: 3rem;
