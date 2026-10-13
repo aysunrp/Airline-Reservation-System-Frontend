@@ -490,6 +490,7 @@ function tr(key, fallback, vars) {
 
     var CITY_SUGGESTIONS = [
         "Baku",
+        "Nakhchivan",
         "London",
         "Paris",
         "Istanbul",
@@ -723,6 +724,7 @@ function tr(key, fallback, vars) {
     var STORAGE_KEY = "aerovaPriceCalendar";
     var CALENDAR_CITIES = [
         "Baku",
+        "Nakhchivan",
         "London",
         "Paris",
         "Istanbul",
@@ -893,10 +895,12 @@ function tr(key, fallback, vars) {
             "baku|paris": 390,
             "baku|dubai": 245,
             "baku|istanbul": 200,
+            "baku|nakhchivan": 85,
             "london|baku": 440,
             "paris|baku": 405,
             "dubai|baku": 260,
-            "istanbul|baku": 215
+            "istanbul|baku": 215,
+            "nakhchivan|baku": 85
         };
 
         if (bases[routeKey]) {

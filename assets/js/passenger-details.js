@@ -69,12 +69,43 @@
         input.setAttribute("data-original-placeholder", input.getAttribute("placeholder") || "");
     }
 
+    /* Visible per-field error text (passenger cards); survives language changes via data-error-key. */
+    function fieldErrorElement(input) {
+        return input && input.id ? document.getElementById(input.id + "-error") : null;
+    }
+
+    function hideFieldErrorText(input) {
+        var element = fieldErrorElement(input);
+        if (input) input.removeAttribute("aria-invalid");
+        if (!element) return;
+        element.hidden = true;
+        element.textContent = "";
+        element.removeAttribute("data-error-key");
+        element.removeAttribute("data-error-fallback");
+        element.removeAttribute("data-error-vars");
+    }
+
+    function showFieldError(input, key, fallback, vars) {
+        var message = tr(key, fallback, vars);
+        markInvalid(input, message);
+        if (!input) return;
+        input.setAttribute("aria-invalid", "true");
+        var element = fieldErrorElement(input);
+        if (!element) return;
+        element.textContent = message;
+        element.hidden = false;
+        element.setAttribute("data-error-key", key);
+        element.setAttribute("data-error-fallback", fallback);
+        element.setAttribute("data-error-vars", JSON.stringify(vars || {}));
+    }
+
     function clearFieldError(input) {
         if (!input || !input.classList.contains("is-invalid")) {
             return;
         }
 
         input.classList.remove("is-invalid");
+        hideFieldErrorText(input);
 
         var original = input.getAttribute("data-original-placeholder");
         if (original === null) {
@@ -293,84 +324,276 @@
         return markup;
     }
 
+    var DOCS = window.AEROVA_TRAVEL_DOCS || null;
+    var TITLE_OPTIONS = [["Mr", "travelDocs.mr"], ["Mrs", "travelDocs.mrs"], ["Ms", "travelDocs.ms"]];
+    var GENDER_OPTIONS = [
+        ["Female", "travelDocs.female"],
+        ["Male", "travelDocs.male"],
+        ["Other", "travelDocs.other"],
+        ["Prefer not to say", "travelDocs.preferNot"]
+    ];
+    var DOC_TYPE_FALLBACKS = { passport: "Passport", az_id_card: "Azerbaijani national ID card" };
+
+    /* Options carry English values (stored) and translated labels. */
+    function buildKeyedOptions(options, placeholderKey, placeholderFallback) {
+        var markup = '<option value="" selected disabled data-i18n="' + placeholderKey + '">' + escapeHtml(tr(placeholderKey, placeholderFallback)) + "</option>";
+        options.forEach(function (option) {
+            markup += '<option value="' + escapeHtml(option[0]) + '" data-i18n="' + option[1] + '">' + escapeHtml(tr(option[1], option[0])) + "</option>";
+        });
+        return markup;
+    }
+
+    function countryOptions(placeholderKey, placeholderFallback) {
+        var countries = DOCS ? DOCS.countries : [];
+        return buildKeyedOptions(countries.map(function (country) {
+            return [country.code, "travelDocs.countries." + country.code];
+        }), placeholderKey, placeholderFallback).replace(/data-i18n="travelDocs\.countries\.(\w+)">([^<]*)</g, function (match, code, text) {
+            return 'data-i18n="travelDocs.countries.' + code + '">' + escapeHtml(tr("travelDocs.countries." + code, DOCS.countryName(code))) + "<";
+        });
+    }
+
+    function fieldLabel(forId, key, fallback, required) {
+        return '<label class="field-label" for="' + forId + '"><span data-i18n="' + key + '">' + escapeHtml(tr(key, fallback)) + "</span>" +
+            (required
+                ? ' <span class="required-mark" aria-hidden="true">*</span>'
+                : ' <span class="optional-mark" data-i18n="travelDocs.optional">' + escapeHtml(tr("travelDocs.optional", "(Optional)")) + "</span>") +
+            "</label>";
+    }
+
+    function fieldError(id) {
+        return '<p class="field-error" id="' + id + '-error" hidden></p>';
+    }
+
     function buildPassengerCard(index, seat) {
         var passengerNumber = index + 1;
         var prefix = "passenger-" + passengerNumber;
         var titleId = prefix + "-title";
         var personalId = prefix + "-personal";
         var documentId = prefix + "-document";
+        var name = function (field) { return 'name="passengers[' + index + '][' + field + ']"'; };
+        var described = function (id, hint) {
+            return ' aria-describedby="' + (hint ? id + "-hint " : "") + id + '-error"';
+        };
 
         return (
             '<article class="details-card passenger-card" data-passenger-index="' + passengerNumber + '" data-seat="' + escapeHtml(seat) + '" aria-labelledby="' + titleId + '">' +
-                '<h2 class="details-card-title" id="' + titleId + '">Passenger ' + passengerNumber + "</h2>" +
-                '<p class="passenger-seat">Selected Seat: ' + escapeHtml(seat) + "</p>" +
+                '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(tr("passengers.passengerN", "Passenger {n}", { n: passengerNumber })) + "</h2>" +
+                '<p class="passenger-seat">' + escapeHtml(tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: seat })) + "</p>" +
 
                 '<section class="details-section" aria-labelledby="' + personalId + '">' +
-                    '<h3 class="details-section-title" id="' + personalId + '">Personal Information</h3>' +
+                    '<h3 class="details-section-title" id="' + personalId + '" data-i18n="travelDocs.personalInfo">' + escapeHtml(tr("travelDocs.personalInfo", "Personal Information")) + "</h3>" +
                     '<div class="field-grid">' +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-title-field">Title <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<select class="field-input" id="' + prefix + '-title-field" name="passengers[' + index + '][title]" required>' +
-                                buildSelectOptions(["Mr", "Mrs", "Ms"], "Select title") +
-                            "</select>" +
+                            fieldLabel(prefix + "-title-field", "travelDocs.title", "Title", true) +
+                            '<select class="field-input" id="' + prefix + '-title-field" ' + name("title") + described(prefix + "-title-field") + " required>" +
+                                buildKeyedOptions(TITLE_OPTIONS, "travelDocs.selectTitle", "Select title") +
+                            "</select>" + fieldError(prefix + "-title-field") +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-first-name">First Name / Given Name <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-first-name" name="passengers[' + index + '][firstName]" type="text" autocomplete="given-name" required>' +
+                            fieldLabel(prefix + "-first-name", "travelDocs.firstName", "First Name / Given Name", true) +
+                            '<input class="field-input" id="' + prefix + '-first-name" ' + name("firstName") + described(prefix + "-first-name") + ' type="text" autocomplete="given-name" required>' + fieldError(prefix + "-first-name") +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-middle-name">Middle Name <span class="optional-mark">(Optional)</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-middle-name" name="passengers[' + index + '][middleName]" type="text" autocomplete="additional-name">' +
+                            fieldLabel(prefix + "-middle-name", "travelDocs.middleName", "Middle Name", false) +
+                            '<input class="field-input" id="' + prefix + '-middle-name" ' + name("middleName") + ' type="text" autocomplete="additional-name">' +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-last-name">Last Name / Surname <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-last-name" name="passengers[' + index + '][lastName]" type="text" autocomplete="family-name" required>' +
+                            fieldLabel(prefix + "-last-name", "travelDocs.lastName", "Last Name / Surname", true) +
+                            '<input class="field-input" id="' + prefix + '-last-name" ' + name("lastName") + described(prefix + "-last-name") + ' type="text" autocomplete="family-name" required>' + fieldError(prefix + "-last-name") +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-dob">Date of Birth <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-dob" name="passengers[' + index + '][dateOfBirth]" type="date" required>' +
+                            fieldLabel(prefix + "-dob", "travelDocs.dob", "Date of Birth", true) +
+                            '<input class="field-input" id="' + prefix + '-dob" ' + name("dateOfBirth") + described(prefix + "-dob") + ' type="date" required>' + fieldError(prefix + "-dob") +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-gender">Gender <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<select class="field-input" id="' + prefix + '-gender" name="passengers[' + index + '][gender]" required>' +
-                                buildSelectOptions(
-                                    ["Female", "Male", "Other", "Prefer not to say"],
-                                    "Select gender"
-                                ) +
-                            "</select>" +
+                            fieldLabel(prefix + "-gender", "travelDocs.gender", "Gender", true) +
+                            '<select class="field-input" id="' + prefix + '-gender" ' + name("gender") + described(prefix + "-gender") + " required>" +
+                                buildKeyedOptions(GENDER_OPTIONS, "travelDocs.selectGender", "Select gender") +
+                            "</select>" + fieldError(prefix + "-gender") +
                         "</div>" +
                         '<div class="field field--full">' +
-                            '<label class="field-label" for="' + prefix + '-nationality">Nationality <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-nationality" name="passengers[' + index + '][nationality]" type="text" autocomplete="country-name" required>' +
+                            fieldLabel(prefix + "-nationality", "travelDocs.nationality", "Nationality", true) +
+                            '<select class="field-input" id="' + prefix + '-nationality" ' + name("nationality") + described(prefix + "-nationality") + ' data-doc-trigger="nationality" required>' +
+                                countryOptions("travelDocs.selectNationality", "Select nationality") +
+                            "</select>" + fieldError(prefix + "-nationality") +
                         "</div>" +
                     "</div>" +
                 "</section>" +
 
                 '<section class="details-section" aria-labelledby="' + documentId + '">' +
-                    '<h3 class="details-section-title" id="' + documentId + '">Travel Document</h3>' +
+                    '<h3 class="details-section-title" id="' + documentId + '" data-i18n="travelDocs.travelDocument">' + escapeHtml(tr("travelDocs.travelDocument", "Travel Document")) + "</h3>" +
                     '<div class="field-grid">' +
-                        '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-document-type">Document Type <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<select class="field-input" id="' + prefix + '-document-type" name="passengers[' + index + '][documentType]" required>' +
-                                buildSelectOptions(["Passport", "ID Card"], "Select document type") +
-                            "</select>" +
+                        '<div class="field field--full">' +
+                            fieldLabel(prefix + "-document-type", "travelDocs.documentType", "Document Type", true) +
+                            '<select class="field-input" id="' + prefix + '-document-type" ' + name("documentType") + described(prefix + "-document-type") + ' data-doc-trigger="type" required></select>' +
+                            fieldError(prefix + "-document-type") +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-document-number">Document Number <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-document-number" name="passengers[' + index + '][documentNumber]" type="text" required>' +
+                            fieldLabel(prefix + "-document-number", "travelDocs.documentNumber", "Document Number", true) +
+                            '<input class="field-input" id="' + prefix + '-document-number" ' + name("documentNumber") + described(prefix + "-document-number", true) + ' type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required>' +
+                            '<p class="field-hint" id="' + prefix + '-document-number-hint"></p>' + fieldError(prefix + "-document-number") +
+                        "</div>" +
+                        '<div class="field" id="' + prefix + '-issuing-field">' +
+                            fieldLabel(prefix + "-issuing-country", "travelDocs.issuingCountry", "Issuing Country", true) +
+                            '<select class="field-input" id="' + prefix + '-issuing-country" ' + name("issuingCountry") + described(prefix + "-issuing-country") + ' data-doc-trigger="issuing" data-auto="1" required>' +
+                                countryOptions("travelDocs.selectCountry", "Select country") +
+                            "</select>" + fieldError(prefix + "-issuing-country") +
                         "</div>" +
                         '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-issuing-country">Issuing Country <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-issuing-country" name="passengers[' + index + '][issuingCountry]" type="text" required>' +
-                        "</div>" +
-                        '<div class="field">' +
-                            '<label class="field-label" for="' + prefix + '-document-expiry">Document Expiry Date <span class="required-mark" aria-hidden="true">*</span></label>' +
-                            '<input class="field-input" id="' + prefix + '-document-expiry" name="passengers[' + index + '][documentExpiry]" type="date" required>' +
+                            fieldLabel(prefix + "-document-expiry", "travelDocs.expiry", "Document Expiry Date", true) +
+                            '<input class="field-input" id="' + prefix + '-document-expiry" ' + name("documentExpiry") + described(prefix + "-document-expiry", true) + ' type="date" required>' +
+                            '<p class="field-hint" id="' + prefix + '-document-expiry-hint"></p>' + fieldError(prefix + "-document-expiry") +
                         "</div>" +
                     "</div>" +
                 "</section>" +
             "</article>"
         );
+    }
+
+    /* Last date of travel the document must cover: return date, else arrival, else departure. */
+    function lastTravelDate() {
+        var flight = activeFlightData || {};
+        var candidates = [flight.returnDate, flight.arrivalDate, flight.departureDate];
+        for (var i = 0; i < candidates.length; i += 1) {
+            if (parseISODate(candidates[i])) return parseISODate(candidates[i]);
+        }
+        return null;
+    }
+
+    function toISODateLocal(date) {
+        return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+    }
+
+    function localizedDate(date) {
+        var monthName = tr("common.months." + (date.getMonth() + 1), MONTH_NAMES[date.getMonth()]);
+        return date.getDate() + " " + monthName + " " + date.getFullYear();
+    }
+
+    /* Earliest acceptable expiry date (exclusive bound is the last travel date + mock validity days). */
+    function minimumExpiryDate(minValidityDays) {
+        var base = lastTravelDate();
+        if (!base) {
+            base = new Date();
+            base.setHours(0, 0, 0, 0);
+        }
+        var date = new Date(base.getFullYear(), base.getMonth(), base.getDate() + (minValidityDays || 0) + 1);
+        return { travel: base, minimum: date };
+    }
+
+    function documentOptionsFor(card) {
+        var nationality = card.querySelector('[data-doc-trigger="nationality"]').value;
+        if (!DOCS) {
+            return { routeType: "international", countries: [], documents: ["passport"], minValidityDays: 0 };
+        }
+        return DOCS.documentOptions(activeFlightData, nationality);
+    }
+
+    function documentTypeDefinition(code) {
+        return DOCS && DOCS.documentTypes[code] ? DOCS.documentTypes[code] : null;
+    }
+
+    /* Rebuilds document type options, issuing country, hints and limits for one passenger card. */
+    function updateDocumentFields(card) {
+        var prefix = "passenger-" + card.getAttribute("data-passenger-index");
+        var nationalitySelect = getFieldById(prefix + "-nationality");
+        var typeSelect = getFieldById(prefix + "-document-type");
+        var numberInput = getFieldById(prefix + "-document-number");
+        var issuingSelect = getFieldById(prefix + "-issuing-country");
+        var issuingField = getFieldById(prefix + "-issuing-field");
+        var options = documentOptionsFor(card);
+        var current = typeSelect.value;
+        var typeChanged;
+
+        typeSelect.innerHTML = buildKeyedOptions(options.documents.map(function (code) {
+            return [code, "travelDocs.docTypes." + code];
+        }), "travelDocs.selectDocumentType", "Select document type").replace(/data-i18n="travelDocs\.docTypes\.(\w+)">[^<]*</g, function (match, code) {
+            return 'data-i18n="travelDocs.docTypes.' + code + '">' + escapeHtml(tr("travelDocs.docTypes." + code, DOC_TYPE_FALLBACKS[code] || code)) + "<";
+        });
+
+        if (options.documents.indexOf(current) !== -1) {
+            typeSelect.value = current;
+        } else if (options.documents.length === 1) {
+            typeSelect.value = options.documents[0];
+        } else {
+            typeSelect.value = "";
+        }
+        typeChanged = typeSelect.value !== card.getAttribute("data-doc-type");
+        card.setAttribute("data-doc-type", typeSelect.value);
+        card.setAttribute("data-min-validity", String(options.minValidityDays || 0));
+        if (typeSelect.value) clearFieldError(typeSelect);
+
+        var definition = documentTypeDefinition(typeSelect.value);
+        if (definition && definition.issuingCountry !== "select") {
+            issuingField.hidden = true;
+            issuingSelect.value = definition.issuingCountry;
+            issuingSelect.setAttribute("data-auto", "1");
+            clearFieldError(issuingSelect);
+        } else {
+            issuingField.hidden = false;
+            if ((issuingSelect.getAttribute("data-auto") === "1" || !issuingSelect.value) && nationalitySelect.value) {
+                issuingSelect.value = nationalitySelect.value;
+                issuingSelect.setAttribute("data-auto", "1");
+                clearFieldError(issuingSelect);
+            }
+        }
+
+        numberInput.maxLength = definition && definition.code === "az_id_card" ? 11 : 9;
+        setText(prefix + "-document-number-hint", definition
+            ? tr("travelDocs.hints." + definition.code, definition.code === "az_id_card" ? "AA + 7 digits or AZE + 8 digits, e.g. {example}" : "6–9 letters or digits, e.g. {example}", { example: definition.numberExample })
+            : tr("travelDocs.hints.chooseType", "Choose a document type first."));
+        if (typeChanged && numberInput.value) clearFieldError(numberInput);
+
+        var limits = minimumExpiryDate(options.minValidityDays);
+        getFieldById(prefix + "-document-expiry").min = toISODateLocal(limits.minimum);
+        setText(prefix + "-document-expiry-hint", options.minValidityDays
+            ? tr("travelDocs.hints.expiryValidity", "Must be valid at least {days} days after {date}.", { days: options.minValidityDays, date: localizedDate(limits.travel) })
+            : tr("travelDocs.hints.expiry", "Must be valid after your last travel date ({date}).", { date: localizedDate(limits.travel) }));
+    }
+
+    function updateRouteNotice() {
+        var notice = getFieldById("travel-docs-notice");
+        if (!notice || !DOCS || !activeFlightData) return;
+        var countries = DOCS.routeCountries(activeFlightData);
+        var names = countries.map(function (code) { return tr("travelDocs.countries." + code, DOCS.countryName(code) || "—"); });
+        var unique = names.filter(function (value, index) { return names.indexOf(value) === index; });
+        var domestic = DOCS.routeType(activeFlightData) === "domestic";
+        setText("travel-docs-route", domestic
+            ? tr("travelDocs.routeDomestic", "Domestic flight within {country}", { country: names[0] })
+            : tr("travelDocs.routeInternational", "International flight: {countries}", { countries: unique.join(" → ") }));
+        notice.setAttribute("data-route-type", domestic ? "domestic" : "international");
+        notice.hidden = false;
+    }
+
+    function refreshPassengerCardText() {
+        document.querySelectorAll(".passenger-card").forEach(function (card) {
+            var index = Number(card.getAttribute("data-passenger-index"));
+            setText("passenger-" + index + "-title", tr("passengers.passengerN", "Passenger {n}", { n: index }));
+            var seatLine = card.querySelector(".passenger-seat");
+            if (seatLine) seatLine.textContent = tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: card.getAttribute("data-seat") });
+            updateDocumentFields(card);
+            card.querySelectorAll(".field-error[data-error-key]").forEach(function (element) {
+                var vars = {};
+                try { vars = JSON.parse(element.getAttribute("data-error-vars") || "{}"); } catch (error) { vars = {}; }
+                element.textContent = tr(element.getAttribute("data-error-key"), element.getAttribute("data-error-fallback"), vars);
+            });
+        });
+        updateRouteNotice();
+    }
+
+    function bindDocumentControls() {
+        var container = document.getElementById("passenger-cards");
+        if (!container) return;
+        container.addEventListener("change", function (event) {
+            var trigger = event.target && event.target.getAttribute("data-doc-trigger");
+            if (!trigger) return;
+            var card = event.target.closest(".passenger-card");
+            if (!card) return;
+            if (trigger === "issuing") {
+                event.target.setAttribute("data-auto", "0");
+                return;
+            }
+            updateDocumentFields(card);
+        });
     }
 
     function populateBookingSummary(flightData, passengerCount, selectedSeats) {
@@ -407,6 +630,8 @@
         });
 
         container.innerHTML = markup;
+        container.querySelectorAll(".passenger-card").forEach(updateDocumentFields);
+        updateRouteNotice();
     }
 
     function setFormsVisibility(isVisible) {
@@ -439,62 +664,71 @@
             documentExpiry: getFieldById(prefix + "-document-expiry")
         };
 
+        var issuingVisible = !getFieldById(prefix + "-issuing-field").hidden;
         var requiredChecks = [
-            { key: "title", message: "This field is required" },
-            { key: "firstName", message: "Enter your first name" },
-            { key: "lastName", message: "Enter your last name" },
-            { key: "dateOfBirth", message: "Enter your date of birth" },
-            { key: "gender", message: "Select your gender" },
-            { key: "nationality", message: "Enter your nationality" },
-            { key: "documentType", message: "Select document type" },
-            { key: "documentNumber", message: "Enter document number" },
-            { key: "issuingCountry", message: "Enter issuing country" },
-            { key: "documentExpiry", message: "Enter expiry date" }
+            { key: "title", error: "travelDocs.errors.title", message: "Select a title" },
+            { key: "firstName", error: "travelDocs.errors.firstName", message: "Enter your first name" },
+            { key: "lastName", error: "travelDocs.errors.lastName", message: "Enter your last name" },
+            { key: "dateOfBirth", error: "travelDocs.errors.dob", message: "Enter your date of birth" },
+            { key: "gender", error: "travelDocs.errors.gender", message: "Select your gender" },
+            { key: "nationality", error: "travelDocs.errors.nationality", message: "Select your nationality" },
+            { key: "documentType", error: "travelDocs.errors.documentType", message: "Select document type" },
+            { key: "documentNumber", error: "travelDocs.errors.documentNumber", message: "Enter document number" },
+            { key: "issuingCountry", error: "travelDocs.errors.issuingCountry", message: "Select issuing country", skip: !issuingVisible },
+            { key: "documentExpiry", error: "travelDocs.errors.expiry", message: "Enter expiry date" }
         ];
 
         var isValid = true;
         var focusField = null;
-        var i;
-        var check;
-        var value;
-        var dateOfBirthValue;
-        var documentExpiryValue;
+        var invalid = function (field, key, fallback, vars) {
+            showFieldError(field, key, fallback, vars);
+            if (!focusField) focusField = field;
+            isValid = false;
+        };
+        var card = fields.title ? fields.title.closest(".passenger-card") : null;
+        var options = card ? documentOptionsFor(card) : { documents: ["passport"], minValidityDays: 0, routeType: "international", countries: [] };
+        var definition = documentTypeDefinition(getTrimmedValue(fields.documentType));
+        var numberValue = getTrimmedValue(fields.documentNumber).toUpperCase().replace(/[\s-]/g, "");
+        var dateOfBirth = parseISODate(getTrimmedValue(fields.dateOfBirth));
+        var expiryValue = getTrimmedValue(fields.documentExpiry);
+        var expiry = parseISODate(expiryValue);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        for (i = 0; i < requiredChecks.length; i += 1) {
-            check = requiredChecks[i];
-            value = getTrimmedValue(fields[check.key]);
+        requiredChecks.forEach(function (check) {
+            if (!check.skip && !getTrimmedValue(fields[check.key])) {
+                invalid(fields[check.key], check.error, check.message);
+            }
+        });
 
-            if (!value) {
-                markInvalid(fields[check.key], check.message);
-                if (!focusField) {
-                    focusField = fields[check.key];
+        if (getTrimmedValue(fields.dateOfBirth) && (!dateOfBirth || dateOfBirth >= today)) {
+            invalid(fields.dateOfBirth, "travelDocs.errors.dobInvalid", "Enter a valid date of birth in the past");
+        }
+
+        if (getTrimmedValue(fields.documentType) && (!definition || options.documents.indexOf(definition.code) === -1)) {
+            invalid(fields.documentType, "travelDocs.errors.documentTypeNotAllowed", "This document type is not accepted for this route");
+        } else if (definition && numberValue && !definition.numberPattern.test(numberValue)) {
+            invalid(
+                fields.documentNumber,
+                "travelDocs.errors.number_" + definition.code,
+                definition.code === "az_id_card"
+                    ? "Enter a valid ID card number (AA + 7 digits or AZE + 8 digits), e.g. {example}"
+                    : "Enter a valid passport number (6–9 letters or digits), e.g. {example}",
+                { example: definition.numberExample }
+            );
+        }
+
+        if (expiryValue) {
+            var limits = minimumExpiryDate(options.minValidityDays);
+            if (!expiry) {
+                invalid(fields.documentExpiry, "travelDocs.errors.expiry", "Enter expiry date");
+            } else if (expiry < limits.minimum) {
+                if (options.minValidityDays) {
+                    invalid(fields.documentExpiry, "travelDocs.errors.expiryValidity", "The document must be valid at least {days} days after {date}", { days: options.minValidityDays, date: localizedDate(limits.travel) });
+                } else {
+                    invalid(fields.documentExpiry, "travelDocs.errors.expiryAfterTravel", "The document must be valid after your last travel date ({date})", { date: localizedDate(limits.travel) });
                 }
-                isValid = false;
             }
-        }
-
-        dateOfBirthValue = getTrimmedValue(fields.dateOfBirth);
-        if (dateOfBirthValue && !parseISODate(dateOfBirthValue)) {
-            markInvalid(fields.dateOfBirth, "Enter your date of birth");
-            if (!focusField) {
-                focusField = fields.dateOfBirth;
-            }
-            isValid = false;
-        }
-
-        documentExpiryValue = getTrimmedValue(fields.documentExpiry);
-        if (documentExpiryValue && !parseISODate(documentExpiryValue)) {
-            markInvalid(fields.documentExpiry, "Enter expiry date");
-            if (!focusField) {
-                focusField = fields.documentExpiry;
-            }
-            isValid = false;
-        } else if (documentExpiryValue && isPastDate(documentExpiryValue)) {
-            markInvalid(fields.documentExpiry, "Enter expiry date");
-            if (!focusField) {
-                focusField = fields.documentExpiry;
-            }
-            isValid = false;
         }
 
         if (!isValid) {
@@ -503,6 +737,10 @@
                 focusField: focusField
             };
         }
+
+        var nationalityCode = getTrimmedValue(fields.nationality);
+        var issuingCode = definition.issuingCountry !== "select" ? definition.issuingCountry : getTrimmedValue(fields.issuingCountry);
+        var countryName = function (code) { return DOCS ? DOCS.countryName(code) : code; };
 
         return {
             valid: true,
@@ -513,12 +751,21 @@
                 lastName: getTrimmedValue(fields.lastName),
                 dateOfBirth: getTrimmedValue(fields.dateOfBirth),
                 gender: getTrimmedValue(fields.gender),
-                nationality: getTrimmedValue(fields.nationality),
-                documentType: getTrimmedValue(fields.documentType),
-                documentNumber: getTrimmedValue(fields.documentNumber),
-                issuingCountry: getTrimmedValue(fields.issuingCountry),
-                documentExpiryDate: getTrimmedValue(fields.documentExpiry),
-                assignedSeat: seat
+                /* Legacy string fields kept for compatibility (English names / labels). */
+                nationality: countryName(nationalityCode),
+                documentType: definition.legacyLabel,
+                documentNumber: numberValue,
+                issuingCountry: countryName(issuingCode),
+                documentExpiryDate: expiryValue,
+                assignedSeat: seat,
+                /* Structured document details (mock rules, see travel-documents.js). */
+                nationalityCode: nationalityCode,
+                document: {
+                    type: definition.code,
+                    number: numberValue,
+                    issuingCountry: issuingCode,
+                    expiryDate: expiryValue
+                }
             }
         };
     }
@@ -604,7 +851,13 @@
             selectedSeats: activeSelectedSeats.slice(),
             passengers: passengers,
             contact: contact,
-            totalPrice: totalPrice
+            totalPrice: totalPrice,
+            travelDocuments: DOCS ? {
+                routeType: DOCS.routeType(flightData),
+                countries: DOCS.routeCountries(flightData),
+                rulesVersion: DOCS.version,
+                mockRules: true
+            } : null
         };
     }
 
@@ -714,6 +967,8 @@
         populateBookingSummary(flightData, passengerCount, selectedSeats);
         bindContinueButton();
         bindClearInvalidOnInput();
+        bindDocumentControls();
+        window.addEventListener("aerova:languagechange", refreshPassengerCardText);
 
         if (!flightData) {
             showMessage(tr("passengers.noBooking", "No booking data found. Please select a flight and seats first."));

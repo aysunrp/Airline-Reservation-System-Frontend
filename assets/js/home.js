@@ -79,7 +79,7 @@
     var KNOWN_CITIES = [
         "abu dhabi", "new york", "los angeles", "hong kong", "san francisco",
         "cape town", "kuala lumpur", "tel aviv", "rio de janeiro", "las vegas",
-        "dubai", "london", "paris", "istanbul", "baku", "maldives", "male",
+        "dubai", "london", "paris", "istanbul", "baku", "nakhchivan", "maldives", "male",
         "tokyo", "singapore", "doha", "moscow", "berlin", "rome", "madrid",
         "barcelona", "amsterdam", "vienna", "zurich", "geneva", "milan",
         "munich", "frankfurt", "beijing", "shanghai", "seoul", "bangkok",

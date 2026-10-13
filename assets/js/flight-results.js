@@ -290,6 +290,97 @@
                 Comfort: 395,
                 Business: 660
             }
+        },
+        /* Domestic route (mock): Baku GYD <-> Nakhchivan NAJ. Arrival time is derived from the route. */
+        {
+            id: 16,
+            airline: "AEROVA",
+            flightNumber: "AV 801",
+            from: "Baku",
+            to: "Nakhchivan",
+            departure: "07:20",
+            arrival: "",
+            duration: "1h 15m",
+            durationMinutes: 75,
+            stops: "Non-stop",
+            aircraft: "AEROVA A320neo",
+            cabinPrices: {
+                Economy: 75,
+                Comfort: 110,
+                Business: 190
+            }
+        },
+        {
+            id: 17,
+            airline: "AEROVA",
+            flightNumber: "AV 805",
+            from: "Baku",
+            to: "Nakhchivan",
+            departure: "13:40",
+            arrival: "",
+            duration: "1h 15m",
+            durationMinutes: 75,
+            stops: "Non-stop",
+            aircraft: "AEROVA A321neo",
+            cabinPrices: {
+                Economy: 85,
+                Comfort: 120,
+                Business: 205
+            }
+        },
+        {
+            id: 18,
+            airline: "AEROVA",
+            flightNumber: "AV 809",
+            from: "Baku",
+            to: "Nakhchivan",
+            departure: "19:15",
+            arrival: "",
+            duration: "1h 15m",
+            durationMinutes: 75,
+            stops: "Non-stop",
+            aircraft: "AEROVA A320neo",
+            cabinPrices: {
+                Economy: 95,
+                Comfort: 135,
+                Business: 220
+            }
+        },
+        {
+            id: 19,
+            airline: "AEROVA",
+            flightNumber: "AV 802",
+            from: "Nakhchivan",
+            to: "Baku",
+            departure: "09:05",
+            arrival: "",
+            duration: "1h 15m",
+            durationMinutes: 75,
+            stops: "Non-stop",
+            aircraft: "AEROVA A320neo",
+            cabinPrices: {
+                Economy: 75,
+                Comfort: 110,
+                Business: 190
+            }
+        },
+        {
+            id: 20,
+            airline: "AEROVA",
+            flightNumber: "AV 806",
+            from: "Nakhchivan",
+            to: "Baku",
+            departure: "15:30",
+            arrival: "",
+            duration: "1h 15m",
+            durationMinutes: 75,
+            stops: "Non-stop",
+            aircraft: "AEROVA A321neo",
+            cabinPrices: {
+                Economy: 85,
+                Comfort: 120,
+                Business: 205
+            }
         }
     ];
 
@@ -299,17 +390,19 @@
      * durations, layovers and the total journey time consistent.
      */
     var AIRPORTS = {
-        GYD: { code: "GYD", city: "Baku", name: "Heydar Aliyev International Airport", utcOffset: 240 },
-        LHR: { code: "LHR", city: "London", name: "Heathrow Airport", utcOffset: 0 },
-        CDG: { code: "CDG", city: "Paris", name: "Paris Charles de Gaulle Airport", utcOffset: 60 },
-        DXB: { code: "DXB", city: "Dubai", name: "Dubai International Airport", utcOffset: 240 },
-        IST: { code: "IST", city: "Istanbul", name: "Istanbul Airport", utcOffset: 180 },
-        TBS: { code: "TBS", city: "Tbilisi", name: "Tbilisi International Airport", utcOffset: 240 },
-        VIE: { code: "VIE", city: "Vienna", name: "Vienna International Airport", utcOffset: 60 }
+        GYD: { code: "GYD", city: "Baku", name: "Heydar Aliyev International Airport", country: "AZ", utcOffset: 240 },
+        NAJ: { code: "NAJ", city: "Nakhchivan", name: "Nakhchivan International Airport", country: "AZ", utcOffset: 240 },
+        LHR: { code: "LHR", city: "London", name: "Heathrow Airport", country: "GB", utcOffset: 0 },
+        CDG: { code: "CDG", city: "Paris", name: "Paris Charles de Gaulle Airport", country: "FR", utcOffset: 60 },
+        DXB: { code: "DXB", city: "Dubai", name: "Dubai International Airport", country: "AE", utcOffset: 240 },
+        IST: { code: "IST", city: "Istanbul", name: "Istanbul Airport", country: "TR", utcOffset: 180 },
+        TBS: { code: "TBS", city: "Tbilisi", name: "Tbilisi International Airport", country: "GE", utcOffset: 240 },
+        VIE: { code: "VIE", city: "Vienna", name: "Vienna International Airport", country: "AT", utcOffset: 60 }
     };
 
     var CITY_AIRPORTS = {
         baku: "GYD",
+        nakhchivan: "NAJ",
         london: "LHR",
         paris: "CDG",
         dubai: "DXB",
@@ -376,8 +469,8 @@
             var arrLocal = arrUtc + toAirport.utcOffset;
 
             segments.push({
-                from: { code: fromAirport.code, city: fromAirport.city, name: fromAirport.name },
-                to: { code: toAirport.code, city: toAirport.city, name: toAirport.name },
+                from: { code: fromAirport.code, city: fromAirport.city, name: fromAirport.name, country: fromAirport.country },
+                to: { code: toAirport.code, city: toAirport.city, name: toAirport.name, country: toAirport.country },
                 departureTime: minutesToClock(depLocal),
                 departureDayOffset: Math.floor(depLocal / 1440),
                 departureUtcOffset: fromAirport.utcOffset,

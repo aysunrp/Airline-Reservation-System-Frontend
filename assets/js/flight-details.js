@@ -3,6 +3,7 @@
 
     var AIRPORT_CODES = {
         baku: "GYD",
+        nakhchivan: "NAJ",
         london: "LHR",
         paris: "CDG",
         dubai: "DXB",
