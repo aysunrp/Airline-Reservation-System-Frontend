@@ -1363,5 +1363,34 @@ window.AEROVA_LOCALES.en = {
     "stillLagoonsYou": "Still lagoons, private shores, and horizons reserved for you.",
     "loadingDestination": "Loading destination details…",
     "nonstopSuffix": "Non-stop"
+  },
+  "chat": {
+    "launcher": "Ask AEROVA",
+    "open": "Open travel assistant",
+    "close": "Close travel assistant",
+    "eyebrow": "AEROVA Concierge",
+    "title": "Travel assistant",
+    "subtitle": "AI answers to your travel questions",
+    "clear": "Clear",
+    "clearLabel": "Clear conversation",
+    "inputLabel": "Your message",
+    "placeholder": "Ask a travel question...",
+    "send": "Send",
+    "you": "You",
+    "assistantName": "AEROVA assistant",
+    "logLabel": "Conversation",
+    "typing": "Assistant is typing...",
+    "welcome": "Hello! I am the AEROVA travel assistant. Ask me about destinations, baggage, seats, check-in or using the website.",
+    "disclaimer": "AI can make mistakes. The assistant cannot book, change or cancel trips or verify travel documents.",
+    "errors": {
+      "empty": "Please type a message.",
+      "tooLong": "Your message is too long (max 2000 characters).",
+      "notConfigured": "The assistant is not available right now. Please try again later.",
+      "rateLimited": "You are sending messages too quickly. Please wait a minute and try again.",
+      "invalid": "That message could not be sent. Please shorten it and try again.",
+      "timeout": "The assistant took too long to answer. Please try again.",
+      "network": "Cannot reach the assistant. Check your connection or try again later.",
+      "generic": "Something went wrong. Please try again."
+    }
   }
 };

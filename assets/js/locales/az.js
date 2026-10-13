@@ -1363,5 +1363,34 @@ window.AEROVA_LOCALES.az = {
     "stillLagoonsYou": "Sakit laqunlar, özəl sahillər və sizin üçün saxlanılmış üfüqlər.",
     "loadingDestination": "İstiqamət detalları yüklənir…",
     "nonstopSuffix": "Birbaşa"
+  },
+  "chat": {
+    "launcher": "AEROVA-dan soruşun",
+    "open": "Səyahət köməkçisini açın",
+    "close": "Səyahət köməkçisini bağlayın",
+    "eyebrow": "AEROVA Konsyerj",
+    "title": "Səyahət köməkçisi",
+    "subtitle": "Səyahət suallarınıza süni intellekt cavabları",
+    "clear": "Təmizlə",
+    "clearLabel": "Söhbəti təmizləyin",
+    "inputLabel": "Mesajınız",
+    "placeholder": "Səyahət sualınızı yazın...",
+    "send": "Göndər",
+    "you": "Siz",
+    "assistantName": "AEROVA köməkçisi",
+    "logLabel": "Söhbət",
+    "typing": "Köməkçi yazır...",
+    "welcome": "Salam! Mən AEROVA səyahət köməkçisiyəm. İstiqamətlər, baqaj, oturacaqlar, qeydiyyat və ya saytdan istifadə barədə soruşa bilərsiniz.",
+    "disclaimer": "Süni intellekt səhv edə bilər. Köməkçi səfər sifariş edə, dəyişə, ləğv edə və ya səyahət sənədlərini yoxlaya bilməz.",
+    "errors": {
+      "empty": "Zəhmət olmasa, mesaj yazın.",
+      "tooLong": "Mesajınız çox uzundur (maksimum 2000 simvol).",
+      "notConfigured": "Köməkçi hazırda əlçatan deyil. Zəhmət olmasa, bir az sonra yenidən cəhd edin.",
+      "rateLimited": "Çox tez-tez mesaj göndərirsiniz. Bir dəqiqə gözləyib yenidən cəhd edin.",
+      "invalid": "Mesaj göndərilə bilmədi. Onu qısaldıb yenidən cəhd edin.",
+      "timeout": "Köməkçi çox gec cavab verdi. Yenidən cəhd edin.",
+      "network": "Köməkçiyə qoşulmaq mümkün olmadı. Bağlantınızı yoxlayın və ya sonra yenidən cəhd edin.",
+      "generic": "Xəta baş verdi. Yenidən cəhd edin."
+    }
   }
 };
