@@ -1364,6 +1364,22 @@ window.AEROVA_LOCALES.en = {
     "loadingDestination": "Loading destination details…",
     "nonstopSuffix": "Non-stop"
   },
+  "api": {
+    "errors": {
+      "network": "Cannot reach the server. Check your connection and try again.",
+      "timeout": "The server took too long to answer. Please try again.",
+      "invalid": "Some of the details are not valid. Please check them and try again.",
+      "unauthorized": "Please sign in to continue.",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "forbidden": "You do not have permission to do this.",
+      "notFound": "We could not find what you were looking for.",
+      "conflict": "This was changed by someone else. Please refresh and try again.",
+      "businessRule": "This action is not allowed right now.",
+      "rateLimited": "Too many requests. Please wait a moment and try again.",
+      "server": "Something went wrong on our side. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
   "chat": {
     "launcher": "Ask AEROVA",
     "open": "Open travel assistant",

@@ -1364,6 +1364,22 @@ window.AEROVA_LOCALES.az = {
     "loadingDestination": "İstiqamət detalları yüklənir…",
     "nonstopSuffix": "Birbaşa"
   },
+  "api": {
+    "errors": {
+      "network": "Serverlə əlaqə qurulmur. İnternet bağlantınızı yoxlayıb yenidən cəhd edin.",
+      "timeout": "Server çox gec cavab verdi. Zəhmət olmasa yenidən cəhd edin.",
+      "invalid": "Bəzi məlumatlar düzgün deyil. Zəhmət olmasa yoxlayıb yenidən cəhd edin.",
+      "unauthorized": "Davam etmək üçün daxil olun.",
+      "sessionExpired": "Sessiyanızın vaxtı bitib. Zəhmət olmasa yenidən daxil olun.",
+      "forbidden": "Bu əməliyyat üçün icazəniz yoxdur.",
+      "notFound": "Axtardığınız məlumat tapılmadı.",
+      "conflict": "Bu məlumat başqası tərəfindən dəyişdirilib. Səhifəni yeniləyib yenidən cəhd edin.",
+      "businessRule": "Bu əməliyyata hazırda icazə verilmir.",
+      "rateLimited": "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.",
+      "server": "Bizim tərəfdə xəta baş verdi. Zəhmət olmasa daha sonra yenidən cəhd edin.",
+      "generic": "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."
+    }
+  },
   "chat": {
     "launcher": "AEROVA-dan soruşun",
     "open": "Səyahət köməkçisini açın",
