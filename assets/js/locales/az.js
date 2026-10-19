@@ -1378,6 +1378,16 @@ window.AEROVA_LOCALES.az = {
       "rateLimited": "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.",
       "server": "Bizim tərəfdə xəta baş verdi. Zəhmət olmasa daha sonra yenidən cəhd edin.",
       "generic": "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."
+    },
+    "search": {
+      "loadingTitle": "Uçuşlar axtarılır",
+      "loadingText": "Zəhmət olmasa gözləyin, mövcud uçuşlar axtarılır.",
+      "loadingCount": "Axtarılır...",
+      "errorTitle": "Uçuşları yükləmək mümkün olmadı",
+      "retry": "Yenidən cəhd et",
+      "needRoute": "Haradan və hara uçacağınızı daxil edin.",
+      "needDate": "Uçuşları axtarmaq üçün yola düşmə tarixini seçin.",
+      "unknownAirport": "Hələlik \"{city}\" şəhərinə və ya şəhərindən uçuşumuz yoxdur. Zəhmət olmasa başqa şəhər seçin."
     }
   },
   "chat": {

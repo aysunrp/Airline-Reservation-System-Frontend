@@ -6,426 +6,10 @@
 
     var CABIN_CLASSES = ["Economy", "Comfort", "Business"];
 
-    var MOCK_FLIGHTS = [
-        {
-            id: 1,
-            airline: "AEROVA",
-            flightNumber: "AV 101",
-            from: "Baku",
-            to: "London",
-            departure: "09:30",
-            arrival: "13:10",
-            duration: "5h 40m",
-            durationMinutes: 340,
-            stops: "Non-stop",
-            aircraft: "AEROVA 787-9",
-            cabinPrices: {
-                Economy: 420,
-                Comfort: 560,
-                Business: 890
-            }
-        },
-        {
-            id: 2,
-            airline: "AEROVA",
-            flightNumber: "AV 205",
-            from: "Baku",
-            to: "London",
-            departure: "14:20",
-            arrival: "19:15",
-            duration: "8h 55m",
-            durationMinutes: 535,
-            stops: "1 Stop",
-            legMinutes: [170, 285],
-            via: [{ code: "IST", layoverMinutes: 80 }],
-            aircraft: "AEROVA A350-900",
-            cabinPrices: {
-                Economy: 365,
-                Comfort: 490,
-                Business: 820
-            }
-        },
-        {
-            id: 3,
-            airline: "AEROVA",
-            flightNumber: "AV 401",
-            from: "Baku",
-            to: "London",
-            departure: "15:00",
-            arrival: "19:30",
-            duration: "4h 30m",
-            durationMinutes: 270,
-            stops: "Non-stop",
-            aircraft: "AEROVA 787-9",
-            cabinPrices: {
-                Economy: 420,
-                Comfort: 560,
-                Business: 890
-            }
-        },
-        {
-            id: 4,
-            airline: "AEROVA",
-            flightNumber: "AV 318",
-            from: "Baku",
-            to: "London",
-            departure: "19:45",
-            arrival: "23:25",
-            duration: "5h 40m",
-            durationMinutes: 340,
-            stops: "Non-stop",
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 455,
-                Comfort: 575,
-                Business: 950
-            }
-        },
-        {
-            id: 5,
-            airline: "AEROVA",
-            flightNumber: "AV 220",
-            from: "Baku",
-            to: "Paris",
-            departure: "08:10",
-            arrival: "11:55",
-            duration: "5h 45m",
-            durationMinutes: 345,
-            stops: "Non-stop",
-            aircraft: "AEROVA A350-900",
-            cabinPrices: {
-                Economy: 390,
-                Comfort: 520,
-                Business: 860
-            }
-        },
-        {
-            id: 6,
-            airline: "AEROVA",
-            flightNumber: "AV 226",
-            from: "Baku",
-            to: "Paris",
-            departure: "15:30",
-            arrival: "20:40",
-            duration: "8h 10m",
-            durationMinutes: 490,
-            stops: "1 Stop",
-            legMinutes: [170, 225],
-            via: [{ code: "IST", layoverMinutes: 95 }],
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 340,
-                Comfort: 470,
-                Business: 790
-            }
-        },
-        {
-            id: 7,
-            airline: "AEROVA",
-            flightNumber: "AV 232",
-            from: "Baku",
-            to: "Paris",
-            departure: "20:05",
-            arrival: "23:50",
-            duration: "5h 45m",
-            durationMinutes: 345,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 410,
-                Comfort: 620,
-                Business: 880
-            }
-        },
-        {
-            id: 8,
-            airline: "AEROVA",
-            flightNumber: "AV 310",
-            from: "Baku",
-            to: "Dubai",
-            departure: "06:45",
-            arrival: "09:20",
-            duration: "3h 35m",
-            durationMinutes: 215,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 210,
-                Comfort: 290,
-                Business: 480
-            }
-        },
-        {
-            id: 9,
-            airline: "AEROVA",
-            flightNumber: "AV 316",
-            from: "Baku",
-            to: "Dubai",
-            departure: "13:15",
-            arrival: "15:55",
-            duration: "3h 40m",
-            durationMinutes: 220,
-            stops: "Non-stop",
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 245,
-                Comfort: 330,
-                Business: 520
-            }
-        },
-        {
-            id: 10,
-            airline: "AEROVA",
-            flightNumber: "AV 322",
-            from: "Baku",
-            to: "Dubai",
-            departure: "18:50",
-            arrival: "21:30",
-            duration: "3h 40m",
-            durationMinutes: 220,
-            stops: "Non-stop",
-            aircraft: "AEROVA 787-9",
-            cabinPrices: {
-                Economy: 280,
-                Comfort: 380,
-                Business: 560
-            }
-        },
-        {
-            id: 11,
-            airline: "AEROVA",
-            flightNumber: "AV 501",
-            from: "Baku",
-            to: "Istanbul",
-            departure: "07:55",
-            arrival: "10:10",
-            duration: "3h 15m",
-            durationMinutes: 195,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 185,
-                Comfort: 250,
-                Business: 400
-            }
-        },
-        {
-            id: 12,
-            airline: "AEROVA",
-            flightNumber: "AV 508",
-            from: "Baku",
-            to: "Istanbul",
-            departure: "12:40",
-            arrival: "15:05",
-            duration: "3h 25m",
-            durationMinutes: 205,
-            stops: "Non-stop",
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 200,
-                Comfort: 275,
-                Business: 430
-            }
-        },
-        {
-            id: 13,
-            airline: "AEROVA",
-            flightNumber: "AV 515",
-            from: "Baku",
-            to: "Istanbul",
-            departure: "21:10",
-            arrival: "23:25",
-            duration: "3h 15m",
-            durationMinutes: 195,
-            stops: "Non-stop",
-            aircraft: "AEROVA A350-900",
-            cabinPrices: {
-                Economy: 220,
-                Comfort: 310,
-                Business: 470
-            }
-        },
-        {
-            id: 14,
-            airline: "AEROVA",
-            flightNumber: "AV 612",
-            from: "Baku",
-            to: "London",
-            departure: "07:15",
-            arrival: "13:30",
-            duration: "10h 15m",
-            durationMinutes: 615,
-            stops: "2 Stops",
-            legMinutes: [65, 220, 150],
-            via: [
-                { code: "TBS", layoverMinutes: 70 },
-                { code: "VIE", layoverMinutes: 110 }
-            ],
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 310,
-                Comfort: 430,
-                Business: 720
-            }
-        },
-        {
-            id: 15,
-            airline: "AEROVA",
-            flightNumber: "AV 724",
-            from: "Baku",
-            to: "Paris",
-            departure: "22:40",
-            arrival: "07:35",
-            duration: "11h 55m",
-            durationMinutes: 715,
-            stops: "2 Stops",
-            legMinutes: [170, 145, 125],
-            via: [
-                { code: "IST", layoverMinutes: 150 },
-                { code: "VIE", layoverMinutes: 125 }
-            ],
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 285,
-                Comfort: 395,
-                Business: 660
-            }
-        },
-        /* Domestic route (mock): Baku GYD <-> Nakhchivan NAJ. Arrival time is derived from the route. */
-        {
-            id: 16,
-            airline: "AEROVA",
-            flightNumber: "AV 801",
-            from: "Baku",
-            to: "Nakhchivan",
-            departure: "07:20",
-            arrival: "",
-            duration: "1h 15m",
-            durationMinutes: 75,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 75,
-                Comfort: 110,
-                Business: 190
-            }
-        },
-        {
-            id: 17,
-            airline: "AEROVA",
-            flightNumber: "AV 805",
-            from: "Baku",
-            to: "Nakhchivan",
-            departure: "13:40",
-            arrival: "",
-            duration: "1h 15m",
-            durationMinutes: 75,
-            stops: "Non-stop",
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 85,
-                Comfort: 120,
-                Business: 205
-            }
-        },
-        {
-            id: 18,
-            airline: "AEROVA",
-            flightNumber: "AV 809",
-            from: "Baku",
-            to: "Nakhchivan",
-            departure: "19:15",
-            arrival: "",
-            duration: "1h 15m",
-            durationMinutes: 75,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 95,
-                Comfort: 135,
-                Business: 220
-            }
-        },
-        {
-            id: 19,
-            airline: "AEROVA",
-            flightNumber: "AV 802",
-            from: "Nakhchivan",
-            to: "Baku",
-            departure: "09:05",
-            arrival: "",
-            duration: "1h 15m",
-            durationMinutes: 75,
-            stops: "Non-stop",
-            aircraft: "AEROVA A320neo",
-            cabinPrices: {
-                Economy: 75,
-                Comfort: 110,
-                Business: 190
-            }
-        },
-        {
-            id: 20,
-            airline: "AEROVA",
-            flightNumber: "AV 806",
-            from: "Nakhchivan",
-            to: "Baku",
-            departure: "15:30",
-            arrival: "",
-            duration: "1h 15m",
-            durationMinutes: 75,
-            stops: "Non-stop",
-            aircraft: "AEROVA A321neo",
-            cabinPrices: {
-                Economy: 85,
-                Comfort: 120,
-                Business: 205
-            }
-        }
-    ];
-
-    /*
-     * Mock airport data. Times in the itinerary are local to each airport;
-     * utcOffset (minutes) is a fixed mock offset used to keep segment
-     * durations, layovers and the total journey time consistent.
-     */
-    var AIRPORTS = {
-        GYD: { code: "GYD", city: "Baku", name: "Heydar Aliyev International Airport", country: "AZ", utcOffset: 240 },
-        NAJ: { code: "NAJ", city: "Nakhchivan", name: "Nakhchivan International Airport", country: "AZ", utcOffset: 240 },
-        LHR: { code: "LHR", city: "London", name: "Heathrow Airport", country: "GB", utcOffset: 0 },
-        CDG: { code: "CDG", city: "Paris", name: "Paris Charles de Gaulle Airport", country: "FR", utcOffset: 60 },
-        DXB: { code: "DXB", city: "Dubai", name: "Dubai International Airport", country: "AE", utcOffset: 240 },
-        IST: { code: "IST", city: "Istanbul", name: "Istanbul Airport", country: "TR", utcOffset: 180 },
-        TBS: { code: "TBS", city: "Tbilisi", name: "Tbilisi International Airport", country: "GE", utcOffset: 240 },
-        VIE: { code: "VIE", city: "Vienna", name: "Vienna International Airport", country: "AT", utcOffset: 60 }
-    };
-
-    var CITY_AIRPORTS = {
-        baku: "GYD",
-        nakhchivan: "NAJ",
-        london: "LHR",
-        paris: "CDG",
-        dubai: "DXB",
-        istanbul: "IST"
-    };
-
     function formatDurationLabel(totalMinutes) {
         var hours = Math.floor(totalMinutes / 60);
         var minutes = totalMinutes % 60;
         return hours + "h " + (minutes < 10 ? "0" : "") + minutes + "m";
-    }
-
-    function pad2(value) {
-        return (value < 10 ? "0" : "") + value;
-    }
-
-    function minutesToClock(totalMinutes) {
-        var dayMinutes = ((totalMinutes % 1440) + 1440) % 1440;
-        return pad2(Math.floor(dayMinutes / 60)) + ":" + pad2(dayMinutes % 60);
-    }
-
-    function airportFor(city) {
-        return AIRPORTS[CITY_AIRPORTS[String(city || "").trim().toLowerCase()]] || null;
     }
 
     /*
@@ -433,104 +17,6 @@
      * Every time is computed in UTC minutes relative to the departure day and
      * then converted back to the local time of the airport involved.
      */
-    function buildRoute(schedule) {
-        var origin = airportFor(schedule.from);
-        var destination = airportFor(schedule.to);
-        var via = schedule.via || [];
-        var legMinutes = schedule.legMinutes || [schedule.durationMinutes];
-
-        if (!origin || !destination || legMinutes.length !== via.length + 1) {
-            return null;
-        }
-
-        var stopsList = [origin];
-        via.forEach(function (stop) {
-            stopsList.push(AIRPORTS[stop.code]);
-        });
-        stopsList.push(destination);
-
-        if (stopsList.some(function (airport) { return !airport; })) {
-            return null;
-        }
-
-        var cursorUtc = parseDepartureMinutes(schedule.departure) - origin.utcOffset;
-        var segments = [];
-
-        for (var i = 0; i < legMinutes.length; i += 1) {
-            var fromAirport = stopsList[i];
-            var toAirport = stopsList[i + 1];
-
-            if (i > 0) {
-                cursorUtc += via[i - 1].layoverMinutes;
-            }
-
-            var depLocal = cursorUtc + fromAirport.utcOffset;
-            var arrUtc = cursorUtc + legMinutes[i];
-            var arrLocal = arrUtc + toAirport.utcOffset;
-
-            segments.push({
-                from: { code: fromAirport.code, city: fromAirport.city, name: fromAirport.name, country: fromAirport.country },
-                to: { code: toAirport.code, city: toAirport.city, name: toAirport.name, country: toAirport.country },
-                departureTime: minutesToClock(depLocal),
-                departureDayOffset: Math.floor(depLocal / 1440),
-                departureUtcOffset: fromAirport.utcOffset,
-                arrivalTime: minutesToClock(arrLocal),
-                arrivalDayOffset: Math.floor(arrLocal / 1440),
-                arrivalUtcOffset: toAirport.utcOffset,
-                durationMinutes: legMinutes[i]
-            });
-
-            cursorUtc = arrUtc;
-        }
-
-        return segments;
-    }
-
-    /* Derive arrival, duration and stops from the itinerary so they always agree. */
-    MOCK_FLIGHTS.forEach(function (schedule) {
-        var route = buildRoute(schedule);
-        if (!route) {
-            return;
-        }
-
-        var last = route[route.length - 1];
-        var total = 0;
-        route.forEach(function (segment, index) {
-            total += segment.durationMinutes;
-            if (index > 0) {
-                total += schedule.via[index - 1].layoverMinutes;
-            }
-        });
-
-        schedule.route = route;
-        schedule.arrival = last.arrivalTime;
-        schedule.arrivalDayOffset = last.arrivalDayOffset;
-        schedule.durationMinutes = total;
-        schedule.duration = formatDurationLabel(total);
-        schedule.stopsCount = route.length - 1;
-        schedule.stops = schedule.stopsCount === 0 ? "Non-stop" : (schedule.stopsCount === 1 ? "1 Stop" : schedule.stopsCount + " Stops");
-    });
-
-    function datedSegments(route, date) {
-        if (!route) {
-            return null;
-        }
-
-        return route.map(function (segment) {
-            return {
-                from: segment.from,
-                to: segment.to,
-                departureDate: toISODate(addDays(date, segment.departureDayOffset)),
-                departureTime: segment.departureTime,
-                departureUtcOffset: segment.departureUtcOffset,
-                arrivalDate: toISODate(addDays(date, segment.arrivalDayOffset)),
-                arrivalTime: segment.arrivalTime,
-                arrivalUtcOffset: segment.arrivalUtcOffset,
-                durationMinutes: segment.durationMinutes
-            };
-        });
-    }
-
     function normalizeText(value) {
         return String(value || "").trim().toLowerCase();
     }
@@ -577,11 +63,6 @@
         }
 
         return day + " " + MONTH_NAMES[month - 1] + " " + year;
-    }
-
-    function startOfToday() {
-        var now = new Date();
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     }
 
     function parseISODate(value) {
@@ -631,18 +112,6 @@
         return year + "-" + month + "-" + day;
     }
 
-    function addDays(date, days) {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
-    }
-
-    function getDayNumber(date) {
-        return Math.round(date.getTime() / 86400000);
-    }
-
-    function scheduleOperatesOn(schedule, date) {
-        return getDayNumber(date) % 4 === (schedule.id - 1) % 4;
-    }
-
     function parseDepartureMinutes(timeValue) {
         var parts = String(timeValue || "").split(":");
         var hours = Number(parts[0]);
@@ -653,30 +122,6 @@
         }
 
         return (hours * 60) + minutes;
-    }
-
-    function createDatedFlight(schedule, date) {
-        var dateISO = toISODate(date);
-
-        return {
-            id: schedule.id,
-            instanceId: String(schedule.id) + "-" + dateISO,
-            airline: schedule.airline,
-            flightNumber: schedule.flightNumber,
-            from: schedule.from,
-            to: schedule.to,
-            departure: schedule.departure,
-            arrival: schedule.arrival,
-            duration: schedule.duration,
-            durationMinutes: schedule.durationMinutes,
-            stops: schedule.stops,
-            stopsCount: schedule.stopsCount,
-            aircraft: schedule.aircraft,
-            cabinPrices: schedule.cabinPrices,
-            date: dateISO,
-            arrivalDate: schedule.route ? toISODate(addDays(date, schedule.arrivalDayOffset)) : dateISO,
-            segments: datedSegments(schedule.route, date)
-        };
     }
 
     function resolveCabinName(cabinValue) {
@@ -718,42 +163,202 @@
         });
     }
 
-    function filterFlights(criteria) {
-        var fromValue = normalizeText(criteria.from);
-        var toValue = normalizeText(criteria.to);
+    var viewState = "loading";
+    var statusSpec = null;
+    var loadToken = 0;
 
-        if (!fromValue || !toValue) {
-            return [];
+    function say(key, fallback, vars) {
+        if (typeof t !== "function") {
+            return fallback;
         }
 
-        var matchingSchedules = MOCK_FLIGHTS.filter(function (flight) {
-            return normalizeText(flight.from) === fromValue &&
-                normalizeText(flight.to) === toValue;
+        var value = t(key, vars);
+        return value && value !== key ? value : fallback;
+    }
+
+    function setCountText(text) {
+        var countElement = document.getElementById("results-count");
+        if (countElement) {
+            countElement.textContent = text;
+        }
+    }
+
+    function paintStatus() {
+        var container = document.querySelector(".flight-list");
+        if (!container || !statusSpec) {
+            return;
+        }
+
+        var spec = statusSpec;
+        var title = say(spec.titleKey, spec.titleFallback);
+        var message = spec.text || say(spec.textKey, spec.textFallback, spec.vars);
+
+        container.innerHTML =
+            '<div class="results-empty" role="' + (spec.kind === "error" ? "alert" : "status") + '">' +
+                '<h2 class="results-empty-title">' + escapeHtml(title) + "</h2>" +
+                '<p class="results-empty-text">' + escapeHtml(message) + "</p>" +
+                (spec.retry ? '<button type="button" class="select-flight-button results-retry">' + escapeHtml(say("api.search.retry", "Try again")) + "</button>" : "") +
+            "</div>";
+
+        var retryButton = container.querySelector(".results-retry");
+        if (retryButton) {
+            retryButton.addEventListener("click", loadFlights);
+        }
+
+        setCountText(spec.kind === "loading" ? say("api.search.loadingCount", "Searching...") : "");
+    }
+
+    function setStatus(spec) {
+        viewState = spec.kind;
+        statusSpec = spec;
+        paintStatus();
+    }
+
+    function stopsLabel(count) {
+        return count === 0 ? "Non-stop" : (count === 1 ? "1 Stop" : count + " Stops");
+    }
+
+    function airportInfo(airport) {
+        return { code: airport.code, city: airport.city, name: airport.name, country: airport.countryCode };
+    }
+
+    /*
+     * One flight from the API in the shape the cards, filters and the details page already use.
+     * Times are shown where they happen: each airport's own clock, from its time zone.
+     */
+    function toPageFlight(dto, airports) {
+        var directory = window.AEROVA_AIRPORTS;
+        var origin = directory.find(airports, dto.originCode);
+        var destination = directory.find(airports, dto.destinationCode);
+        var departure = directory.localTime(dto.departureAt, origin.timeZoneId);
+        var arrival = directory.localTime(dto.arrivalAt, destination.timeZoneId);
+
+        var legs = (dto.segments || []).slice().sort(function (a, b) { return a.sequenceNo - b.sequenceNo; });
+        if (!legs.length) {
+            legs = [{ originCode: dto.originCode, destinationCode: dto.destinationCode, departureAt: dto.departureAt, arrivalAt: dto.arrivalAt }];
+        }
+
+        var segments = legs.map(function (leg) {
+            var from = directory.find(airports, leg.originCode);
+            var to = directory.find(airports, leg.destinationCode);
+            var legDeparture = directory.localTime(leg.departureAt, from.timeZoneId);
+            var legArrival = directory.localTime(leg.arrivalAt, to.timeZoneId);
+
+            return {
+                from: airportInfo(from),
+                to: airportInfo(to),
+                departureDate: legDeparture.date,
+                departureTime: legDeparture.time,
+                departureUtcOffset: legDeparture.offsetMinutes,
+                arrivalDate: legArrival.date,
+                arrivalTime: legArrival.time,
+                arrivalUtcOffset: legArrival.offsetMinutes,
+                durationMinutes: legArrival.utcMinutes - legDeparture.utcMinutes
+            };
         });
 
-        var results = [];
+        var cabinPrices = {};
+        Object.keys(dto.fares || {}).forEach(function (cabin) {
+            cabinPrices[cabin] = Number(dto.fares[cabin]);
+        });
+
+        var durationMinutes = arrival.utcMinutes - departure.utcMinutes;
+
+        return {
+            id: dto.id,
+            instanceId: String(dto.id) + "-" + departure.date,
+            airline: "AEROVA",
+            flightNumber: dto.flightNumber,
+            from: dto.originCity,
+            to: dto.destinationCity,
+            departure: departure.time,
+            arrival: arrival.time,
+            duration: formatDurationLabel(durationMinutes),
+            durationMinutes: durationMinutes,
+            stops: stopsLabel(dto.stops),
+            stopsCount: dto.stops,
+            aircraft: "AEROVA " + dto.aircraftModel,
+            cabinPrices: cabinPrices,
+            date: departure.date,
+            arrivalDate: arrival.date,
+            segments: segments
+        };
+    }
+
+    function searchBody(criteria, origin, destination, selectedDate) {
+        var travellers = parseInt(criteria.passengers, 10);
+
+        return {
+            legs: [{ originCode: origin.code, destinationCode: destination.code, date: toISODate(selectedDate) }],
+            cabinClass: resolveCabinName(criteria.cabinClass) || null,
+            passengers: isFinite(travellers) ? Math.min(9, Math.max(1, travellers)) : 1
+        };
+    }
+
+    /* Loads this search from the backend. The page only ever shows what the API answered. */
+    function loadFlights() {
+        var criteria = searchCriteria;
+        var token = ++loadToken;
         var selectedDate = parseISODate(criteria.departureDate);
 
-        if (selectedDate) {
-            matchingSchedules.forEach(function (schedule) {
-                results.push(createDatedFlight(schedule, selectedDate));
-            });
-        } else {
-            var today = startOfToday();
-            var dayOffset;
+        baseFlights = [];
 
-            for (dayOffset = 0; dayOffset < 30; dayOffset += 1) {
-                var date = addDays(today, dayOffset);
-
-                matchingSchedules.forEach(function (schedule) {
-                    if (scheduleOperatesOn(schedule, date)) {
-                        results.push(createDatedFlight(schedule, date));
-                    }
-                });
-            }
+        if (!criteria.from || !criteria.to) {
+            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.needRoute", textFallback: "Enter where you are flying from and to." });
+            return;
         }
 
-        return sortFlightsChronologically(results);
+        if (!selectedDate) {
+            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.needDate", textFallback: "Select a departure date to search for flights." });
+            return;
+        }
+
+        setStatus({ kind: "loading", titleKey: "api.search.loadingTitle", titleFallback: "Searching flights", textKey: "api.search.loadingText", textFallback: "Please wait while we look for available flights." });
+
+        var directory = window.AEROVA_AIRPORTS;
+        var airports = [];
+
+        directory.load().then(function (list) {
+            airports = list;
+            var origin = directory.find(list, criteria.from);
+            var destination = directory.find(list, criteria.to);
+
+            if (!origin || !destination) {
+                var unknown = new Error("Unknown airport");
+                unknown.unknownCity = !origin ? criteria.from : criteria.to;
+                throw unknown;
+            }
+
+            return window.AEROVA_API.post("api/flights/search", searchBody(criteria, origin, destination, selectedDate));
+        }).then(function (legs) {
+            if (token !== loadToken) {
+                return;
+            }
+
+            var found = (legs && legs[0] && legs[0].flights) || [];
+            baseFlights = sortFlightsChronologically(found.map(function (dto) { return toPageFlight(dto, airports); }));
+            viewState = "ready";
+            statusSpec = null;
+            refreshResults();
+        }).catch(function (error) {
+            if (token !== loadToken) {
+                return;
+            }
+
+            baseFlights = [];
+
+            if (error && error.unknownCity) {
+                setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.unknownAirport", textFallback: "We do not fly from or to \"" + error.unknownCity + "\" yet. Please choose another city.", vars: { city: error.unknownCity } });
+                return;
+            }
+
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+            if (!isApiError && window.console) {
+                window.console.error(error);
+            }
+
+            setStatus({ kind: "error", titleKey: "api.search.errorTitle", titleFallback: "We could not load flights", text: isApiError ? error.userMessage : say("api.errors.generic", "Something went wrong. Please try again."), retry: true });
+        });
     }
 
     function updateResultsHeader(criteria) {
@@ -1031,6 +636,10 @@
     }
 
     function refreshResults() {
+        if (viewState !== "ready") {
+            return;
+        }
+
         var filterState = readFilterState();
         activeCabin = getActiveCabin(filterState);
 
@@ -1233,17 +842,20 @@
 
     function init() {
         searchCriteria = readSearchCriteria();
-        baseFlights = filterFlights(searchCriteria);
         activeCabin = getDefaultCabin(searchCriteria);
 
         updateResultsHeader(searchCriteria);
         initCabinFilterDefault(searchCriteria);
         bindFilterControls();
-        refreshResults();
+        loadFlights();
 
         window.addEventListener("aerova:languagechange", function () {
             updateResultsHeader(searchCriteria || {});
-            refreshResults();
+            if (viewState === "ready") {
+                refreshResults();
+            } else {
+                paintStatus();
+            }
             if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
                 window.AEROVA_I18N.applyTranslations(document);
             }

@@ -1378,6 +1378,16 @@ window.AEROVA_LOCALES.en = {
       "rateLimited": "Too many requests. Please wait a moment and try again.",
       "server": "Something went wrong on our side. Please try again later.",
       "generic": "Something went wrong. Please try again."
+    },
+    "search": {
+      "loadingTitle": "Searching flights",
+      "loadingText": "Please wait while we look for available flights.",
+      "loadingCount": "Searching...",
+      "errorTitle": "We could not load flights",
+      "retry": "Try again",
+      "needRoute": "Enter where you are flying from and to.",
+      "needDate": "Select a departure date to search for flights.",
+      "unknownAirport": "We do not fly from or to \"{city}\" yet. Please choose another city."
     }
   },
   "chat": {
