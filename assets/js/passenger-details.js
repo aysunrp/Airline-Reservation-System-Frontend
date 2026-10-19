@@ -17,6 +17,7 @@
     var PNR_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     var activeFlightData = null;
     var activeSelectedSeats = [];
+    var activeSelectedSeatIds = [];
 
     function escapeHtml(value) {
         return String(value)
@@ -300,6 +301,77 @@
             });
     }
 
+    function resolveSelectedSeatIds(flightData) {
+        var ids = flightData && Array.isArray(flightData.selectedSeatIds) ? flightData.selectedSeatIds : [];
+
+        return ids.map(function (id) {
+            var number = Number(id);
+            return number > 0 && Math.floor(number) === number ? number : 0;
+        });
+    }
+
+    /* Ages are counted on the first travel day, with the backend's limits (Pricing:InfantMaxAgeYears, ChildMaxAgeYears). */
+    var INFANT_UNDER_AGE = 2;
+    var ADULT_FROM_AGE = 12;
+
+    function passengerTypeFor(dateOfBirthText) {
+        var birth = parseISODate(dateOfBirthText);
+        var travel = parseISODate(activeFlightData && activeFlightData.departureDate);
+
+        if (!birth || !travel || birth > travel) {
+            return "";
+        }
+
+        var age = travel.getFullYear() - birth.getFullYear();
+        var monthDiff = travel.getMonth() - birth.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && travel.getDate() < birth.getDate())) {
+            age -= 1;
+        }
+
+        return age < INFANT_UNDER_AGE ? "Infant" : (age < ADULT_FROM_AGE ? "Child" : "Adult");
+    }
+
+    /* An infant travels on an adult's lap: the seat chosen for that passenger is released. */
+    function refreshInfantState() {
+        var keptSeats = [];
+
+        document.querySelectorAll(".passenger-card").forEach(function (card, index) {
+            var birthField = card.querySelector('input[name$="[dateOfBirth]"]');
+            var type = passengerTypeFor(birthField ? birthField.value : "");
+            var seat = activeSelectedSeats[index];
+            var seatLine = card.querySelector(".passenger-seat");
+
+            card.setAttribute("data-passenger-type", type);
+
+            if (seatLine) {
+                seatLine.textContent = type === "Infant"
+                    ? tr("api.passengers.infantNote", "Infant under 2: travels on an adult's lap, so seat {seat} will be released.", { seat: seat })
+                    : tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: seat });
+            }
+
+            if (type !== "Infant" && seat) {
+                keptSeats.push(seat);
+            }
+        });
+
+        setText("summary-seats", keptSeats.length ? keptSeats.join(", ") : "—");
+    }
+
+    function bindInfantRule() {
+        var container = document.getElementById("passenger-cards");
+        if (!container) {
+            return;
+        }
+
+        ["input", "change"].forEach(function (eventName) {
+            container.addEventListener(eventName, function (event) {
+                if (event.target && event.target.name && /\[dateOfBirth\]$/.test(event.target.name)) {
+                    refreshInfantState();
+                }
+            });
+        });
+    }
+
     function hasDuplicateSeats(seats) {
         var seen = {};
 
@@ -325,7 +397,7 @@
     }
 
     var DOCS = window.AEROVA_TRAVEL_DOCS || null;
-    var TITLE_OPTIONS = [["Mr", "travelDocs.mr"], ["Mrs", "travelDocs.mrs"], ["Ms", "travelDocs.ms"]];
+    var TITLE_OPTIONS = [["Mr", "travelDocs.mr"], ["Mrs", "travelDocs.mrs"], ["Ms", "travelDocs.ms"], ["Mx", "travelDocs.mx"]];
     var GENDER_OPTIONS = [
         ["Female", "travelDocs.female"],
         ["Male", "travelDocs.male"],
@@ -568,8 +640,6 @@
         document.querySelectorAll(".passenger-card").forEach(function (card) {
             var index = Number(card.getAttribute("data-passenger-index"));
             setText("passenger-" + index + "-title", tr("passengers.passengerN", "Passenger {n}", { n: index }));
-            var seatLine = card.querySelector(".passenger-seat");
-            if (seatLine) seatLine.textContent = tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: card.getAttribute("data-seat") });
             updateDocumentFields(card);
             card.querySelectorAll(".field-error[data-error-key]").forEach(function (element) {
                 var vars = {};
@@ -578,6 +648,7 @@
             });
         });
         updateRouteNotice();
+        refreshInfantState();
     }
 
     function bindDocumentControls() {
@@ -738,6 +809,8 @@
             };
         }
 
+        var passengerType = passengerTypeFor(getTrimmedValue(fields.dateOfBirth));
+        var isInfant = passengerType === "Infant";
         var nationalityCode = getTrimmedValue(fields.nationality);
         var issuingCode = definition.issuingCountry !== "select" ? definition.issuingCountry : getTrimmedValue(fields.issuingCountry);
         var countryName = function (code) { return DOCS ? DOCS.countryName(code) : code; };
@@ -757,7 +830,9 @@
                 documentNumber: numberValue,
                 issuingCountry: countryName(issuingCode),
                 documentExpiryDate: expiryValue,
-                assignedSeat: seat,
+                passengerType: passengerType,
+                assignedSeat: isInfant ? null : seat,
+                assignedSeatId: isInfant ? null : (activeSelectedSeatIds[index] || null),
                 /* Structured document details (mock rules, see travel-documents.js). */
                 nationalityCode: nationalityCode,
                 document: {
@@ -848,7 +923,8 @@
             },
             cabinClass: flightData.cabinClass || "",
             passengerCount: passengerCount,
-            selectedSeats: activeSelectedSeats.slice(),
+            selectedSeats: passengers.map(function (passenger) { return passenger.assignedSeat; }).filter(Boolean),
+            selectedSeatIds: passengers.map(function (passenger) { return passenger.assignedSeatId; }).filter(Boolean),
             passengers: passengers,
             contact: contact,
             totalPrice: totalPrice,
@@ -915,6 +991,19 @@
             return;
         }
 
+        var adults = passengers.filter(function (passenger) { return passenger.passengerType === "Adult"; }).length;
+        var infants = passengers.filter(function (passenger) { return passenger.passengerType === "Infant"; }).length;
+
+        if (adults === 0) {
+            showMessage(tr("api.passengers.needAdult", "At least one passenger must be 12 or older."));
+            return;
+        }
+
+        if (infants > adults) {
+            showMessage(tr("api.passengers.tooManyInfants", "Each infant needs an adult: there cannot be more infants than adults."));
+            return;
+        }
+
         bookingData = buildBookingData(passengers, contactResult.contact);
 
         if (!saveBookingData(bookingData)) {
@@ -963,6 +1052,7 @@
 
         activeFlightData = flightData;
         activeSelectedSeats = selectedSeats.slice();
+        activeSelectedSeatIds = resolveSelectedSeatIds(flightData);
 
         populateBookingSummary(flightData, passengerCount, selectedSeats);
         bindContinueButton();
@@ -1021,9 +1111,19 @@
             return;
         }
 
+        if (activeSelectedSeatIds.length !== selectedSeats.length || activeSelectedSeatIds.indexOf(0) !== -1) {
+            showMessage(tr("api.passengers.seatDataMissing", "Seat details are missing. Please return to seat selection."));
+            setFormsVisibility(false);
+            if (container) {
+                container.innerHTML = "";
+            }
+            return;
+        }
+
         showMessage("");
         setFormsVisibility(true);
         renderPassengerCards(selectedSeats);
+        bindInfantRule();
     }
 
     if (document.readyState === "loading") {
