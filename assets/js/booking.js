@@ -488,21 +488,17 @@ function tr(key, fallback, vars) {
         });
     });
 
-    var CITY_SUGGESTIONS = [
-        "Baku",
-        "Nakhchivan",
-        "London",
-        "Paris",
-        "Istanbul",
-        "Dubai",
-        "Berlin",
-        "Barcelona",
-        "Rome",
-        "Milan",
-        "New York",
-        "Tokyo",
-        "Singapore"
-    ];
+    /* Airports from the backend; the suggestions below are built from them. */
+    var airportDirectory = [];
+
+    if (window.AEROVA_AIRPORTS) {
+        window.AEROVA_AIRPORTS.load().then(function (airports) {
+            airportDirectory = airports;
+        }, function () {
+            // No suggestions without the airport list; the traveller can still type a city and the results page reports the problem.
+            airportDirectory = [];
+        });
+    }
 
     var activeSuggestionInput = null;
 
@@ -558,9 +554,7 @@ function tr(key, fallback, vars) {
             return [];
         }
 
-        return CITY_SUGGESTIONS.filter(function (city) {
-            return city.toLowerCase().indexOf(normalized) === 0;
-        });
+        return window.AEROVA_AIRPORTS ? window.AEROVA_AIRPORTS.suggest(airportDirectory, normalized) : [];
     }
 
     function renderCitySuggestions(input, cities) {
