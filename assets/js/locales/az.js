@@ -1388,6 +1388,16 @@ window.AEROVA_LOCALES.az = {
       "needRoute": "Haradan və hara uçacağınızı daxil edin.",
       "needDate": "Uçuşları axtarmaq üçün yola düşmə tarixini seçin.",
       "unknownAirport": "Hələlik \"{city}\" şəhərinə və ya şəhərindən uçuşumuz yoxdur. Zəhmət olmasa başqa şəhər seçin."
+    },
+    "details": {
+      "loadingTitle": "Uçuş məlumatları yüklənir",
+      "loadingText": "Zəhmət olmasa gözləyin, uçuş yüklənir.",
+      "errorTitle": "Bu uçuşu yükləmək mümkün olmadı",
+      "noFlightTitle": "Uçuş seçilməyib",
+      "noFlightText": "Təfərrüatlarını görmək üçün axtarış nəticələrindən uçuş seçin.",
+      "notFoundTitle": "Bu uçuş mövcud deyil",
+      "notFoundText": "O, silinmiş və ya dəyişdirilmiş ola bilər. Zəhmət olmasa yenidən axtarın.",
+      "cabinUnavailable": "Mövcud deyil"
     }
   },
   "chat": {

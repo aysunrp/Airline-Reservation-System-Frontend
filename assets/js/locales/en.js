@@ -1388,6 +1388,16 @@ window.AEROVA_LOCALES.en = {
       "needRoute": "Enter where you are flying from and to.",
       "needDate": "Select a departure date to search for flights.",
       "unknownAirport": "We do not fly from or to \"{city}\" yet. Please choose another city."
+    },
+    "details": {
+      "loadingTitle": "Loading flight details",
+      "loadingText": "Please wait while we load this flight.",
+      "errorTitle": "We could not load this flight",
+      "noFlightTitle": "No flight selected",
+      "noFlightText": "Choose a flight from the search results to see its details.",
+      "notFoundTitle": "This flight is not available",
+      "notFoundText": "It may have been removed or changed. Please search again.",
+      "cabinUnavailable": "Not available"
     }
   },
   "chat": {
