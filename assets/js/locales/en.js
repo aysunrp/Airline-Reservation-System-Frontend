@@ -660,6 +660,7 @@ window.AEROVA_LOCALES.en = {
     "mr": "Mr",
     "mrs": "Mrs",
     "ms": "Ms",
+    "mx": "Mx",
     "firstName": "First Name / Given Name",
     "middleName": "Middle Name",
     "optional": "(Optional)",
@@ -1398,6 +1399,22 @@ window.AEROVA_LOCALES.en = {
       "notFoundTitle": "This flight is not available",
       "notFoundText": "It may have been removed or changed. Please search again.",
       "cabinUnavailable": "Not available"
+    },
+    "seats": {
+      "loadingTitle": "Loading seat map",
+      "loadingText": "Please wait while we load the seats.",
+      "errorTitle": "We could not load the seat map",
+      "noFlightTitle": "No flight selected",
+      "noFlightText": "Choose a flight first, then select your seats.",
+      "noSeatsTitle": "No seats to show",
+      "noSeatsText": "This cabin has no seats on this flight.",
+      "extraLegroom": "Extra legroom"
+    },
+    "passengers": {
+      "infantNote": "Infant under 2: travels on an adult's lap, so seat {seat} will be released.",
+      "needAdult": "At least one passenger must be 12 or older.",
+      "tooManyInfants": "Each infant needs an adult: there cannot be more infants than adults.",
+      "seatDataMissing": "Seat details are missing. Please return to seat selection."
     }
   },
   "chat": {

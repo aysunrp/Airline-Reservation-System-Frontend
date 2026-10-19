@@ -660,6 +660,7 @@ window.AEROVA_LOCALES.az = {
     "mr": "Cənab",
     "mrs": "Xanım",
     "ms": "Xanım (subay)",
+    "mx": "Mx",
     "firstName": "Ad",
     "middleName": "Ata adı",
     "optional": "(İstəyə bağlı)",
@@ -1398,6 +1399,22 @@ window.AEROVA_LOCALES.az = {
       "notFoundTitle": "Bu uçuş mövcud deyil",
       "notFoundText": "O, silinmiş və ya dəyişdirilmiş ola bilər. Zəhmət olmasa yenidən axtarın.",
       "cabinUnavailable": "Mövcud deyil"
+    },
+    "seats": {
+      "loadingTitle": "Oturacaq xəritəsi yüklənir",
+      "loadingText": "Zəhmət olmasa gözləyin, oturacaqlar yüklənir.",
+      "errorTitle": "Oturacaq xəritəsini yükləmək mümkün olmadı",
+      "noFlightTitle": "Uçuş seçilməyib",
+      "noFlightText": "Əvvəlcə uçuş seçin, sonra oturacaqlarınızı seçin.",
+      "noSeatsTitle": "Göstəriləcək oturacaq yoxdur",
+      "noSeatsText": "Bu uçuşda bu kabində oturacaq yoxdur.",
+      "extraLegroom": "Əlavə ayaq yeri"
+    },
+    "passengers": {
+      "infantNote": "2 yaşdan kiçik körpə: böyüyün qucağında uçur, ona görə {seat} oturacağı azad ediləcək.",
+      "needAdult": "Ən azı bir sərnişin 12 yaşda və ya daha böyük olmalıdır.",
+      "tooManyInfants": "Hər körpəyə bir böyük lazımdır: körpələrin sayı böyüklərdən çox ola bilməz.",
+      "seatDataMissing": "Oturacaq məlumatları yoxdur. Zəhmət olmasa oturacaq seçiminə qayıdın."
     }
   },
   "chat": {
