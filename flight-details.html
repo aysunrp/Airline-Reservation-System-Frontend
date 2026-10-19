@@ -108,7 +108,9 @@
 
 
 
-                <article class="details-card flight-summary-card" aria-labelledby="flight-summary-title">
+                <div class="details-status" id="details-status" role="status" aria-live="polite"></div>
+
+                <article class="details-card flight-summary-card" aria-labelledby="flight-summary-title" data-details-content hidden>
 
                     <div class="flight-summary-top">
 
@@ -116,9 +118,9 @@
 
                             <p class="flight-summary-airline">AEROVA</p>
 
-                            <h2 class="details-card-title" id="flight-summary-title">AV 101</h2>
+                            <h2 class="details-card-title" id="flight-summary-title">—</h2>
 
-                            <p class="flight-summary-route">Baku (GYD) → London (LHR)</p>
+                            <p class="flight-summary-route">—</p>
 
                         </div>
 
@@ -200,7 +202,7 @@
 
 
 
-                <article class="details-card journey-card" aria-labelledby="timeline-title">
+                <article class="details-card journey-card" aria-labelledby="timeline-title" data-details-content hidden>
 
                     <h2 class="details-card-title" id="timeline-title" data-i18n="journey.title">Journey Timeline</h2>
 
@@ -210,7 +212,7 @@
 
 
 
-                <section class="fare-options" aria-labelledby="fare-options-title">
+                <section class="fare-options" aria-labelledby="fare-options-title" data-details-content hidden>
 
                     <header class="fare-options-intro">
 
@@ -224,13 +226,13 @@
 
                     <div class="fare-options-grid" role="list">
 
-                        <article class="fare-card" role="listitem">
+                        <article class="fare-card" role="listitem" data-cabin="Economy">
 
                             <div class="fare-card-header">
 
                                 <p class="fare-card-label" data-i18n="common.economy">Economy</p>
 
-                                <p class="fare-card-price"><span class="fare-card-amount">$420</span><span class="fare-card-per" data-i18n="common.perPassenger">per passenger</span></p>
+                                <p class="fare-card-price"><span class="fare-card-amount">—</span><span class="fare-card-per" data-i18n="common.perPassenger">per passenger</span></p>
 
                                 <p class="fare-card-note" data-i18n="ui.essentialComfortForEveryJourney">Essential comfort for every journey</p>
 
@@ -286,7 +288,7 @@
 
 
 
-                        <article class="fare-card fare-card--best-value" role="listitem" aria-labelledby="comfort-fare-label">
+                        <article class="fare-card fare-card--best-value" role="listitem" aria-labelledby="comfort-fare-label" data-cabin="Comfort">
 
                             <p class="fare-best-value-badge" data-i18n="ui.bestValue">Best Value</p>
 
@@ -294,7 +296,7 @@
 
                                 <p class="fare-card-label" id="comfort-fare-label" data-i18n="common.comfort">Comfort</p>
 
-                                <p class="fare-card-price"><span class="fare-card-amount">$680</span><span class="fare-card-per" data-i18n="common.perPassenger">per passenger</span></p>
+                                <p class="fare-card-price"><span class="fare-card-amount">—</span><span class="fare-card-per" data-i18n="common.perPassenger">per passenger</span></p>
 
                                 <p class="fare-card-note" data-i18n="ui.recommendedBalanceOfSpaceServiceAnd">Recommended balance of space, service, and flexibility</p>
 
@@ -350,13 +352,13 @@
 
 
 
-                        <article class="fare-card" role="listitem">
+                        <article class="fare-card" role="listitem" data-cabin="Business">
 
                             <div class="fare-card-header">
 
                                 <p class="fare-card-label" data-i18n="home.businessTitle">Business Class</p>
 
-                                <p class="fare-card-price"><span class="fare-card-amount">$1,450</span><span class="fare-card-per" data-i18n="common.perPassenger">per passenger</span></p>
+                                <p class="fare-card-price"><span class="fare-card-amount">—</span><span class="fare-card-per" data-i18n="common.perPassenger">per passenger</span></p>
 
                                 <p class="fare-card-note" data-i18n="ui.refinedTravelWithoutCompromise">Refined travel without compromise</p>
 
@@ -608,12 +610,14 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/airports.js"></script>
+    <script src="assets/js/flights-api.js"></script>
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js"></script>
 
     <script src="assets/js/home.js"></script>
 
-    <script src="assets/js/flight-details.js"></script>
+    <script src="assets/js/flight-details.js?v=api-details1"></script>
 
 </body>
 

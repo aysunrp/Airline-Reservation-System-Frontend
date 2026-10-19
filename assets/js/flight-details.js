@@ -1,23 +1,6 @@
 (function () {
     "use strict";
 
-    var AIRPORT_CODES = {
-        baku: "GYD",
-        nakhchivan: "NAJ",
-        london: "LHR",
-        paris: "CDG",
-        dubai: "DXB",
-        istanbul: "IST",
-        maldives: "MLE",
-        "new york": "JFK",
-        tokyo: "HND",
-        singapore: "SIN",
-        berlin: "BER",
-        barcelona: "BCN",
-        rome: "FCO",
-        milan: "MXP"
-    };
-
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -25,11 +8,6 @@
 
     function getParams() {
         return new URLSearchParams(window.location.search);
-    }
-
-    function airportCode(city) {
-        var key = String(city || "").trim().toLowerCase();
-        return AIRPORT_CODES[key] || "—";
     }
 
     function formatDisplayDate(value) {
@@ -51,12 +29,6 @@
         }
 
         return day + " " + MONTH_NAMES[month - 1] + " " + year;
-    }
-
-    function parsePrice(text) {
-        var digits = String(text || "").replace(/[^0-9.]/g, "");
-        var amount = Number(digits);
-        return isFinite(amount) ? amount : 0;
     }
 
     function readSearchCriteria() {
@@ -173,21 +145,6 @@
         return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
     }
 
-    function parseSegments(raw) {
-        if (!raw) {
-            return null;
-        }
-        if (Array.isArray(raw)) {
-            return raw;
-        }
-        try {
-            var parsed = JSON.parse(raw);
-            return Array.isArray(parsed) ? parsed : null;
-        } catch (error) {
-            return null;
-        }
-    }
-
     /*
      * Only accept an itinerary whose times all agree: each segment duration
      * matches its departure/arrival, connections happen at the same airport
@@ -246,93 +203,51 @@
         return true;
     }
 
-    function stopsCountFromLabel(label) {
-        if (label === "0" || /^non/i.test(String(label || ""))) {
-            return 0;
-        }
-        var match = /^(\d+)/.exec(String(label || ""));
-        return match ? Number(match[1]) : null;
-    }
-
-    function readStoredSelection() {
-        try {
-            var raw = sessionStorage.getItem("aerovaSelectedFlight");
-            var parsed = raw ? JSON.parse(raw) : null;
-            return parsed && typeof parsed === "object" ? parsed : null;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function numberOrNull(value) {
-        if (value === null || value === undefined || value === "") {
-            return null;
-        }
-        var number = Number(value);
-        return isFinite(number) ? number : null;
-    }
-
     /* Query params from View Details first; otherwise the stored selected flight. */
-    function readFlight() {
+    /* The backend id of the flight to show: View Details puts it in the link. */
+    function readFlightId() {
+        var id = Number(getParams().get("flightId"));
+        return id > 0 && Math.floor(id) === id ? id : 0;
+    }
+
+    /* Search context: the link from the results page first, the stored search otherwise. */
+    function readContext() {
         var params = getParams();
-        var flight;
+        var stored = readSearchCriteria();
 
-        if (params.get("flightNumber")) {
-            flight = {
-                flightNumber: params.get("flightNumber"),
-                from: params.get("from") || "",
-                to: params.get("to") || "",
-                departureDate: params.get("departureDate") || "",
-                arrivalDate: params.get("arrivalDate") || "",
-                departure: params.get("departureTime") || "",
-                arrival: params.get("arrivalTime") || "",
-                duration: params.get("duration") || "",
-                durationMinutes: numberOrNull(params.get("durationMinutes")),
-                stopsLabel: params.get("stops") || "",
-                stopsCount: numberOrNull(params.get("stopsCount")),
-                aircraft: params.get("aircraft") || "",
-                segments: parseSegments(params.get("segments"))
-            };
-        } else {
-            var stored = readStoredSelection();
-            if (stored && stored.flightNumber) {
-                flight = {
-                    flightNumber: stored.flightNumber,
-                    from: stored.from || "",
-                    to: stored.to || "",
-                    departureDate: stored.departureDate || "",
-                    arrivalDate: stored.arrivalDate || "",
-                    departure: stored.departure || "",
-                    arrival: stored.arrival || "",
-                    duration: stored.duration || "",
-                    durationMinutes: numberOrNull(stored.durationMinutes),
-                    stopsLabel: stored.stops || "",
-                    stopsCount: numberOrNull(stored.stopsCount),
-                    aircraft: stored.aircraft || "",
-                    segments: parseSegments(stored.segments)
-                };
-            } else {
-                flight = {
-                    flightNumber: "AV 101",
-                    from: "Baku",
-                    to: "London",
-                    departureDate: "",
-                    arrivalDate: "",
-                    departure: "09:30",
-                    arrival: "11:10",
-                    duration: "5h 40m",
-                    durationMinutes: 340,
-                    stopsLabel: "Non-stop",
-                    stopsCount: 0,
-                    aircraft: "AEROVA 787-9",
-                    segments: null
-                };
-            }
+        function pick(name) {
+            return params.get(name) || stored[name] || "";
         }
 
-        if (flight.stopsCount === null) {
-            flight.stopsCount = stopsCountFromLabel(flight.stopsLabel);
-        }
+        return {
+            passengers: pick("passengers") || "1",
+            tripType: pick("tripType") || "oneway",
+            returnDate: pick("returnDate"),
+            departureDate: pick("departureDate")
+        };
+    }
+
+    /* The page flight from flights-api.js, with the names this page uses. */
+    function toDetailsFlight(page) {
+        var flight = {
+            id: page.id,
+            flightNumber: page.flightNumber,
+            from: page.from,
+            to: page.to,
+            fromCode: page.fromCode,
+            toCode: page.toCode,
+            departureDate: page.date,
+            arrivalDate: page.arrivalDate,
+            departure: page.departure,
+            arrival: page.arrival,
+            duration: page.duration,
+            durationMinutes: page.durationMinutes,
+            stopsLabel: page.stops,
+            stopsCount: page.stopsCount,
+            aircraft: page.aircraft,
+            segments: page.segments,
+            cabinPrices: page.cabinPrices
+        };
 
         if (!validateSegments(flight.segments, flight)) {
             flight.segments = null;
@@ -423,8 +338,8 @@
                     '<p class="journey-note">' + escapeHtml(tr("journey.localNote", null, "All times are local.")) + "</p>" +
                 "</div>";
         } else {
-            var origin = { code: airportCode(flight.from), city: flight.from };
-            var destination = { code: airportCode(flight.to), city: flight.to };
+            var origin = { code: flight.fromCode, city: flight.from };
+            var destination = { code: flight.toCode, city: flight.to };
             var arrivalDate = flight.arrivalDate || "";
 
             items.push(pointMarkup("departure", tr("journey.departure", null, "Departure"),
@@ -457,8 +372,8 @@
     }
 
     function renderFlight(flight) {
-        var fromCode = airportCode(flight.from);
-        var toCode = airportCode(flight.to);
+        var fromCode = flight.fromCode;
+        var toCode = flight.toCode;
         var routeLabel = flight.from + " (" + fromCode + ") → " + flight.to + " (" + toCode + ")";
 
         setText("#flight-summary-title", flight.flightNumber);
@@ -485,9 +400,9 @@
     }
 
     function saveAndContinue(flight, cabinClass, price) {
-        var search = readSearchCriteria();
+        var context = readContext();
         var selection = {
-            id: flight.flightNumber,
+            id: flight.id,
             flightNumber: flight.flightNumber,
             from: flight.from,
             to: flight.to,
@@ -502,10 +417,10 @@
             aircraft: flight.aircraft,
             cabinClass: cabinClass,
             price: price,
-            passengers: search.passengers || 1,
-            departureDate: flight.departureDate || search.departureDate || "",
-            returnDate: search.returnDate || "",
-            tripType: search.tripType || "oneway"
+            passengers: context.passengers,
+            departureDate: flight.departureDate || context.departureDate,
+            returnDate: context.returnDate,
+            tripType: context.tripType
         };
 
         try {
@@ -517,29 +432,51 @@
         window.location.href = "seat-selection.html";
     }
 
-    function bindSelectButtons(flight) {
-        document.querySelectorAll(".fare-card").forEach(function (card) {
-            var button = card.querySelector(".select-flight-button");
-            var label = card.querySelector(".fare-card-label");
-            var amount = card.querySelector(".fare-card-amount");
+    function formatMoney(amount) {
+        var whole = amount % 1 === 0;
+        return "$" + amount.toLocaleString("en-US", { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 });
+    }
 
-            if (!button || !label) {
-                return;
+    /* Every price on the cards comes from the flight's fares; a cabin the flight does not sell cannot be chosen. */
+    function renderFares(flight) {
+        document.querySelectorAll(".fare-card[data-cabin]").forEach(function (card) {
+            var cabin = card.getAttribute("data-cabin");
+            var price = flight.cabinPrices ? flight.cabinPrices[cabin] : undefined;
+            var available = typeof price === "number" && isFinite(price);
+            var amount = card.querySelector(".fare-card-amount");
+            var button = card.querySelector(".select-flight-button");
+
+            if (amount) {
+                amount.textContent = available ? formatMoney(price) : "—";
             }
 
-            button.addEventListener("click", function () {
-                var cabin = label.textContent.trim();
-                var labelKey = label.getAttribute("data-i18n") || "";
-                if (/business/i.test(labelKey) || /business/i.test(cabin)) {
-                    cabin = "Business";
-                } else if (/comfort/i.test(labelKey) || /comfort/i.test(cabin)) {
-                    cabin = "Comfort";
-                } else {
-                    cabin = "Economy";
-                }
+            card.classList.toggle("is-unavailable", !available);
 
-                saveAndContinue(flight, cabin, parsePrice(amount ? amount.textContent : "0"));
-            });
+            if (button) {
+                button.disabled = !available;
+                var key = available ? "results.selectFlight" : "api.details.cabinUnavailable";
+                button.setAttribute("data-i18n", key);
+                button.textContent = tr(key, null, available ? "Select Flight" : "Not available");
+            }
+        });
+    }
+
+    /* One listener for the three cards; it always reads the flight that is currently shown. */
+    function bindFareButtons() {
+        var grid = document.querySelector(".fare-options-grid");
+        if (!grid) {
+            return;
+        }
+
+        grid.addEventListener("click", function (event) {
+            var button = event.target.closest ? event.target.closest(".select-flight-button") : null;
+            var card = button ? button.closest(".fare-card") : null;
+            var cabin = card ? card.getAttribute("data-cabin") : "";
+            var price = currentFlight && currentFlight.cabinPrices ? currentFlight.cabinPrices[cabin] : undefined;
+
+            if (button && !button.disabled && typeof price === "number" && isFinite(price)) {
+                saveAndContinue(currentFlight, cabin, price);
+            }
         });
     }
 
@@ -566,15 +503,94 @@
         intro.appendChild(back);
     }
 
-    function init() {
-        var flight = readFlight();
+    var currentFlight = null;
+    var statusSpec = null;
+
+    function paintStatus() {
+        var panel = document.getElementById("details-status");
+        if (!panel) {
+            return;
+        }
+
+        if (!statusSpec) {
+            panel.hidden = true;
+            panel.innerHTML = "";
+            return;
+        }
+
+        var spec = statusSpec;
+        panel.hidden = false;
+        panel.setAttribute("role", spec.kind === "error" ? "alert" : "status");
+        panel.innerHTML =
+            '<h2 class="details-status-title">' + escapeHtml(tr(spec.titleKey, null, spec.titleFallback)) + "</h2>" +
+            '<p class="details-status-text">' + escapeHtml(spec.text || tr(spec.textKey, null, spec.textFallback)) + "</p>" +
+            (spec.retry ? '<button type="button" class="select-flight-button details-retry">' + escapeHtml(tr("api.search.retry", null, "Try again")) + "</button>" : "");
+
+        var retryButton = panel.querySelector(".details-retry");
+        if (retryButton) {
+            retryButton.addEventListener("click", loadFlight);
+        }
+    }
+
+    /* A status replaces the flight content; no status shows the flight. */
+    function setStatus(spec) {
+        statusSpec = spec;
+        document.querySelectorAll("[data-details-content]").forEach(function (section) {
+            section.hidden = !!spec;
+        });
+        paintStatus();
+    }
+
+    function showFlight(flight) {
+        currentFlight = flight;
+        setStatus(null);
         renderFlight(flight);
-        bindSelectButtons(flight);
+        renderFares(flight);
+    }
+
+    function loadFlight() {
+        var flightId = readFlightId();
+        currentFlight = null;
+
+        if (!flightId) {
+            setStatus({ kind: "notice", titleKey: "api.details.noFlightTitle", titleFallback: "No flight selected", textKey: "api.details.noFlightText", textFallback: "Choose a flight from the search results to see its details." });
+            return;
+        }
+
+        setStatus({ kind: "loading", titleKey: "api.details.loadingTitle", titleFallback: "Loading flight details", textKey: "api.details.loadingText", textFallback: "Please wait while we load this flight." });
+
+        window.AEROVA_FLIGHTS.get(flightId).then(function (page) {
+            showFlight(toDetailsFlight(page));
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+
+            if (isApiError && error.status === 404) {
+                setStatus({ kind: "notice", titleKey: "api.details.notFoundTitle", titleFallback: "This flight is not available", textKey: "api.details.notFoundText", textFallback: "It may have been removed or changed. Please search again." });
+                return;
+            }
+
+            if (!isApiError && window.console) {
+                window.console.error(error);
+            }
+
+            setStatus({ kind: "error", titleKey: "api.details.errorTitle", titleFallback: "We could not load this flight", text: isApiError ? error.userMessage : tr("api.errors.generic", null, "Something went wrong. Please try again."), retry: true });
+        });
+    }
+
+    function init() {
         ensureBackLink();
+        bindFareButtons();
 
         window.addEventListener("aerova:languagechange", function () {
-            renderFlight(flight);
+            if (currentFlight) {
+                renderFlight(currentFlight);
+                renderFares(currentFlight);
+            } else {
+                paintStatus();
+            }
         });
+
+        loadFlight();
     }
 
     if (document.readyState === "loading") {

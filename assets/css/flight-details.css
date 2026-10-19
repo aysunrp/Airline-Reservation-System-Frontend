@@ -823,3 +823,47 @@
         flex-direction: column;
     }
 }
+
+/* Status panel shown while the flight loads, or when it cannot be shown. */
+.flight-details-container [hidden] {
+    display: none !important;
+}
+
+.details-status {
+    padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    text-align: center;
+}
+
+.details-status-title {
+    margin: 0 0 0.7rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3vw, 2.3rem);
+    font-weight: 500;
+}
+
+.details-status-text {
+    margin: 0;
+    color: var(--color-cream-muted);
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.details-retry {
+    margin-top: 1.5rem;
+    cursor: pointer;
+}
+
+/* A cabin the flight does not sell. */
+.fare-card.is-unavailable {
+    opacity: 0.6;
+}
+
+.fare-card.is-unavailable .select-flight-button {
+    cursor: not-allowed;
+    filter: grayscale(0.7);
+    transform: none;
+}
