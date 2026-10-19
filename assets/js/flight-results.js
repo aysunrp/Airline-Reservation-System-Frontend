@@ -6,12 +6,6 @@
 
     var CABIN_CLASSES = ["Economy", "Comfort", "Business"];
 
-    function formatDurationLabel(totalMinutes) {
-        var hours = Math.floor(totalMinutes / 60);
-        var minutes = totalMinutes % 60;
-        return hours + "h " + (minutes < 10 ? "0" : "") + minutes + "m";
-    }
-
     /*
      * Builds the segment template of a schedule from its legs and stopovers.
      * Every time is computed in UTC minutes relative to the departure day and
@@ -214,77 +208,10 @@
         paintStatus();
     }
 
-    function stopsLabel(count) {
-        return count === 0 ? "Non-stop" : (count === 1 ? "1 Stop" : count + " Stops");
-    }
-
-    function airportInfo(airport) {
-        return { code: airport.code, city: airport.city, name: airport.name, country: airport.countryCode };
-    }
-
     /*
      * One flight from the API in the shape the cards, filters and the details page already use.
      * Times are shown where they happen: each airport's own clock, from its time zone.
      */
-    function toPageFlight(dto, airports) {
-        var directory = window.AEROVA_AIRPORTS;
-        var origin = directory.find(airports, dto.originCode);
-        var destination = directory.find(airports, dto.destinationCode);
-        var departure = directory.localTime(dto.departureAt, origin.timeZoneId);
-        var arrival = directory.localTime(dto.arrivalAt, destination.timeZoneId);
-
-        var legs = (dto.segments || []).slice().sort(function (a, b) { return a.sequenceNo - b.sequenceNo; });
-        if (!legs.length) {
-            legs = [{ originCode: dto.originCode, destinationCode: dto.destinationCode, departureAt: dto.departureAt, arrivalAt: dto.arrivalAt }];
-        }
-
-        var segments = legs.map(function (leg) {
-            var from = directory.find(airports, leg.originCode);
-            var to = directory.find(airports, leg.destinationCode);
-            var legDeparture = directory.localTime(leg.departureAt, from.timeZoneId);
-            var legArrival = directory.localTime(leg.arrivalAt, to.timeZoneId);
-
-            return {
-                from: airportInfo(from),
-                to: airportInfo(to),
-                departureDate: legDeparture.date,
-                departureTime: legDeparture.time,
-                departureUtcOffset: legDeparture.offsetMinutes,
-                arrivalDate: legArrival.date,
-                arrivalTime: legArrival.time,
-                arrivalUtcOffset: legArrival.offsetMinutes,
-                durationMinutes: legArrival.utcMinutes - legDeparture.utcMinutes
-            };
-        });
-
-        var cabinPrices = {};
-        Object.keys(dto.fares || {}).forEach(function (cabin) {
-            cabinPrices[cabin] = Number(dto.fares[cabin]);
-        });
-
-        var durationMinutes = arrival.utcMinutes - departure.utcMinutes;
-
-        return {
-            id: dto.id,
-            instanceId: String(dto.id) + "-" + departure.date,
-            airline: "AEROVA",
-            flightNumber: dto.flightNumber,
-            from: dto.originCity,
-            to: dto.destinationCity,
-            departure: departure.time,
-            arrival: arrival.time,
-            duration: formatDurationLabel(durationMinutes),
-            durationMinutes: durationMinutes,
-            stops: stopsLabel(dto.stops),
-            stopsCount: dto.stops,
-            aircraft: "AEROVA " + dto.aircraftModel,
-            cabinPrices: cabinPrices,
-            date: departure.date,
-            arrivalDate: arrival.date,
-            segments: segments
-        };
-    }
-
     function searchBody(criteria, origin, destination, selectedDate) {
         var travellers = parseInt(criteria.passengers, 10);
 
@@ -336,7 +263,7 @@
             }
 
             var found = (legs && legs[0] && legs[0].flights) || [];
-            baseFlights = sortFlightsChronologically(found.map(function (dto) { return toPageFlight(dto, airports); }));
+            baseFlights = sortFlightsChronologically(found.map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); }));
             viewState = "ready";
             statusSpec = null;
             refreshResults();
@@ -756,33 +683,24 @@
         window.location.href = "seat-selection.html";
     }
 
+    /* The details page loads the flight itself by id; only the search context travels in the link. */
     function openFlightDetails(flight, criteria) {
-        var params = new URLSearchParams({
-            flightNumber: flight.flightNumber || "",
-            from: flight.from || "",
-            to: flight.to || "",
-            departureDate: flight.date || criteria.departureDate || "",
-            departureTime: flight.departure || "",
-            arrivalTime: flight.arrival || "",
-            duration: flight.duration || "",
-            stops: flight.stops || "",
-            aircraft: flight.aircraft || ""
-        });
+        var params = new URLSearchParams({ flightId: String(flight.id) });
 
-        if (typeof flight.stopsCount === "number") {
-            params.set("stopsCount", String(flight.stopsCount));
+        if (criteria.passengers) {
+            params.set("passengers", criteria.passengers);
         }
-
-        if (flight.arrivalDate) {
-            params.set("arrivalDate", flight.arrivalDate);
+        if (criteria.tripType) {
+            params.set("tripType", criteria.tripType);
         }
-
-        if (typeof flight.durationMinutes === "number") {
-            params.set("durationMinutes", String(flight.durationMinutes));
+        if (criteria.returnDate) {
+            params.set("returnDate", criteria.returnDate);
         }
-
-        if (flight.segments && flight.segments.length) {
-            params.set("segments", JSON.stringify(flight.segments));
+        if (flight.date || criteria.departureDate) {
+            params.set("departureDate", flight.date || criteria.departureDate);
+        }
+        if (resolveCabinName(criteria.cabinClass)) {
+            params.set("cabinClass", resolveCabinName(criteria.cabinClass));
         }
 
         window.location.href = "flight-details.html?" + params.toString();
