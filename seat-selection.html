@@ -54,10 +54,10 @@
                 <div class="seat-layout">
                     <aside class="flight-summary" aria-label="Flight summary">
                         <p class="summary-airline" id="summary-airline">AEROVA</p>
-                        <p class="summary-flight" id="summary-flight">AV 101</p>
-                        <p class="summary-route" id="summary-route">Baku → London</p>
-                        <p class="summary-date" id="summary-date">21 November 2026</p>
-                        <p class="summary-times" id="summary-times">09:30 → 13:10</p>
+                        <p class="summary-flight" id="summary-flight">—</p>
+                        <p class="summary-route" id="summary-route">—</p>
+                        <p class="summary-date" id="summary-date">—</p>
+                        <p class="summary-times" id="summary-times">—</p>
                         <div class="summary-meta">
                             <p class="summary-meta-item"><span class="summary-meta-label" data-i18n="flightDetails.aircraft">Aircraft</span> <span id="summary-aircraft">AEROVA 787-9</span></p>
                             <p class="summary-meta-item"><span class="summary-meta-label" data-i18n="admin.cabin">Cabin</span> <span id="summary-cabin" data-i18n="common.economy">Economy</span></p>
@@ -80,6 +80,7 @@
                             </div>
                         </div>
 
+                        <div class="seat-status" id="seat-status" role="status" aria-live="polite"></div>
                         <div class="airplane" id="aircraft-cabin" data-layout="economy" aria-label="Aircraft seat map">
                             <p class="airplane-front-label">FRONT</p>
 
@@ -234,6 +235,6 @@
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/seat-layouts.js"></script>
-    <script src="assets/js/seat-selection.js?v=multi-seat1"></script>
+    <script src="assets/js/seat-selection.js?v=api-seats1"></script>
 </body>
 </html>

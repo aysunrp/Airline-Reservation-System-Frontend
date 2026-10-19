@@ -87,6 +87,7 @@
         return CABIN_LAYOUTS.Economy;
     }
 
+    /* The backend takes up to 9 travellers on one booking. */
     function resolvePassengerCount(flightData) {
         var count = Number(flightData && flightData.passengers);
 
@@ -94,8 +95,8 @@
             return 1;
         }
 
-        if (count > 4) {
-            return 4;
+        if (count > 9) {
+            return 9;
         }
 
         return Math.floor(count);
@@ -124,31 +125,25 @@
     }
 
     /* Keep only stored seats that exist and are free in this cabin's layout and were chosen for this cabin. */
-    function filterSeatsForLayout(seats, layout, flightData) {
-        var savedCabin = flightData && flightData.seatsCabin;
-        if (savedCabin && resolveCabinLayout(savedCabin) !== layout) {
+    /* Keeps the earlier choice only when it was made for this flight and cabin and every seat is still free. */
+    function restoreSeats(storedSeats, flightData, flightId, cabin, seats) {
+        if (!flightData || flightData.seatsFlightId !== flightId || flightData.seatsCabin !== cabin) {
             return [];
         }
 
-        var valid = {};
-        var row;
-        for (row = layout.startRow; row <= layout.endRow; row += 1) {
-            layout.groups.forEach(function (group) {
-                group.forEach(function (letter) {
-                    valid[String(row) + letter] = true;
-                });
-            });
-        }
-        layout.occupied.forEach(function (seatId) {
-            delete valid[seatId];
+        var free = {};
+        seats.forEach(function (seat) {
+            if (seat.isAvailable) {
+                free[seat.label] = true;
+            }
         });
 
         var seen = {};
-        return seats.filter(function (seatId) {
-            if (!valid[seatId] || seen[seatId]) {
+        return storedSeats.filter(function (label) {
+            if (!free[label] || seen[label]) {
                 return false;
             }
-            seen[seatId] = true;
+            seen[label] = true;
             return true;
         });
     }
@@ -203,13 +198,16 @@
 
     function persistSelectedSeats(flightData) {
         var baseData = flightData && typeof flightData === "object" ? flightData : {};
+        var cabin = cabinClassForLayout(activeLayout);
 
         var updated = Object.assign({}, baseData, {
             selectedSeats: selectedSeats.slice(),
+            selectedSeatIds: selectedSeats.map(function (label) { return seatIdByLabel[label]; }),
             selectedSeat: selectedSeats.length === 1 ? selectedSeats[0] : selectedSeats.join(", "),
             passengers: String(requiredSeats),
-            cabinClass: cabinClassForLayout(activeLayout),
-            seatsCabin: cabinClassForLayout(activeLayout)
+            cabinClass: cabin,
+            seatsCabin: cabin,
+            seatsFlightId: Number(baseData.id)
         });
 
         try {
@@ -220,35 +218,25 @@
     }
 
     function populateFlightSummary(flightData, layout) {
-        setText("summary-airline", (flightData && flightData.airline) || "AEROVA");
-        setText("summary-flight", (flightData && flightData.flightNumber) || "AV 101");
-        setText(
-            "summary-route",
-            ((flightData && flightData.from) || "Baku") + " → " + ((flightData && flightData.to) || "London")
-        );
-        setText(
-            "summary-date",
-            formatDisplayDate(flightData && flightData.departureDate)
-        );
-        setText(
-            "summary-times",
-            ((flightData && flightData.departure) || "09:30") +
-                " → " +
-                ((flightData && flightData.arrival) || "13:10")
-        );
-        setText("summary-aircraft", (flightData && flightData.aircraft) || "AEROVA 787-9");
+        var flight = flightData || {};
+        setText("summary-airline", flight.airline || "AEROVA");
+        setText("summary-flight", flight.flightNumber || "—");
+        setText("summary-route", flight.from && flight.to ? flight.from + " → " + flight.to : "—");
+        setText("summary-date", flight.departureDate ? formatDisplayDate(flight.departureDate) : "—");
+        setText("summary-times", flight.departure && flight.arrival ? flight.departure + " → " + flight.arrival : "—");
+        setText("summary-aircraft", flight.aircraft || "—");
         setText("summary-cabin", (layout.labelKey && typeof tr === "function") ? tr(layout.labelKey, layout.label) : layout.label);
     }
 
-    function buildColumnHeaders(layout) {
+    function buildColumnHeaders(groups) {
         var markup = "";
 
-        layout.groups.forEach(function (group, groupIndex) {
+        groups.forEach(function (group, groupIndex) {
             group.forEach(function (letter) {
                 markup += "<span>" + escapeHtml(letter) + "</span>";
             });
 
-            if (groupIndex < layout.groups.length - 1) {
+            if (groupIndex < groups.length - 1) {
                 markup += '<span class="seat-columns-aisle"></span>';
             }
         });
@@ -256,12 +244,38 @@
         return markup;
     }
 
-    function createSeatButton(seatId, isOccupied) {
+    /* The cabin's visual groups (aisles), plus any seat letter the layout does not know. */
+    function seatGroups(layout, seats) {
+        var known = {};
+        layout.groups.forEach(function (group) {
+            group.forEach(function (letter) {
+                known[letter] = true;
+            });
+        });
+
+        var extra = [];
+        seats.forEach(function (seat) {
+            if (!known[seat.letter] && extra.indexOf(seat.letter) === -1) {
+                extra.push(seat.letter);
+            }
+        });
+
+        return extra.length ? layout.groups.concat([extra.sort()]) : layout.groups;
+    }
+
+    function createSeatButton(seat) {
+        var seatId = seat.label;
+        var isOccupied = !seat.isAvailable;
         var button = document.createElement("button");
         button.type = "button";
         button.className = "seat " + (isOccupied ? "seat--occupied" : "seat--available");
         button.setAttribute("data-seat", seatId);
+        button.setAttribute("data-seat-id", String(seat.id));
         button.textContent = seatId;
+
+        if (seat.isExtraLegroom) {
+            button.title = tr("api.seats.extraLegroom", "Extra legroom");
+        }
 
         if (isOccupied) {
             button.disabled = true;
@@ -299,7 +313,8 @@
         });
     }
 
-    function renderSeatMap(layout) {
+    /* The seats, their numbers and who has them come from the API; the layout only places the aisles. */
+    function renderSeatMap(layout, seats) {
         var cabin = document.getElementById("aircraft-cabin");
         var columns = document.getElementById("seat-columns");
         var map = document.getElementById("seat-map");
@@ -317,17 +332,17 @@
             sectionLabel.textContent = tr(layout.labelKey, layout.label);
         }
 
-        columns.innerHTML = buildColumnHeaders(layout);
+        var groups = seatGroups(layout, seats);
+        columns.innerHTML = buildColumnHeaders(groups);
         map.innerHTML = "";
 
-        var occupiedLookup = {};
-        layout.occupied.forEach(function (seatId) {
-            occupiedLookup[seatId] = true;
+        var rows = {};
+        seats.forEach(function (seat) {
+            rows[seat.rowNumber] = rows[seat.rowNumber] || {};
+            rows[seat.rowNumber][seat.letter] = seat;
         });
 
-        var row;
-
-        for (row = layout.startRow; row <= layout.endRow; row += 1) {
+        Object.keys(rows).map(Number).sort(function (a, b) { return a - b; }).forEach(function (row) {
             var rowElement = document.createElement("div");
             rowElement.className = "seat-row";
 
@@ -336,19 +351,26 @@
             rowNumber.textContent = String(row);
             rowElement.appendChild(rowNumber);
 
-            layout.groups.forEach(function (group, groupIndex) {
+            groups.forEach(function (group, groupIndex) {
                 var groupElement = document.createElement("div");
                 groupElement.className = "seat-group";
                 groupElement.style.gridTemplateColumns = "repeat(" + group.length + ", var(--seat-size))";
 
                 group.forEach(function (letter) {
-                    var seatId = String(row) + letter;
-                    groupElement.appendChild(createSeatButton(seatId, !!occupiedLookup[seatId]));
+                    var seat = rows[row][letter];
+                    if (seat) {
+                        groupElement.appendChild(createSeatButton(seat));
+                    } else {
+                        var gap = document.createElement("span");
+                        gap.className = "seat-placeholder";
+                        gap.setAttribute("aria-hidden", "true");
+                        groupElement.appendChild(gap);
+                    }
                 });
 
                 rowElement.appendChild(groupElement);
 
-                if (groupIndex < layout.groups.length - 1) {
+                if (groupIndex < groups.length - 1) {
                     var aisle = document.createElement("div");
                     aisle.className = "seat-aisle";
                     aisle.setAttribute("aria-hidden", "true");
@@ -357,7 +379,7 @@
             });
 
             map.appendChild(rowElement);
-        }
+        });
 
         syncSeatButtonStates();
     }
@@ -453,30 +475,125 @@
     }
 
     var currentFlightData = null;
+    var seatList = null;
+    var seatIdByLabel = {};
+    var statusSpec = null;
+
+    function paintStatus() {
+        var cabin = document.getElementById("aircraft-cabin");
+        var panel = document.getElementById("seat-status");
+        if (!panel) {
+            return;
+        }
+
+        if (cabin) {
+            cabin.hidden = !!statusSpec;
+        }
+
+        if (!statusSpec) {
+            panel.hidden = true;
+            panel.innerHTML = "";
+            return;
+        }
+
+        var spec = statusSpec;
+        panel.hidden = false;
+        panel.setAttribute("role", spec.kind === "error" ? "alert" : "status");
+        panel.innerHTML =
+            '<h2 class="seat-status-title">' + escapeHtml(tr(spec.titleKey, spec.titleFallback)) + "</h2>" +
+            '<p class="seat-status-text">' + escapeHtml(spec.text || tr(spec.textKey, spec.textFallback)) + "</p>" +
+            (spec.retry ? '<button type="button" class="continue-button seat-retry">' + escapeHtml(tr("api.search.retry", "Try again")) + "</button>" : "");
+
+        var retryButton = panel.querySelector(".seat-retry");
+        if (retryButton) {
+            retryButton.addEventListener("click", loadSeats);
+        }
+    }
+
+    function setStatus(spec) {
+        statusSpec = spec;
+        paintStatus();
+    }
+
+    /* The seat map of this flight and cabin from the API: ids, numbers and who is already taken. */
+    function loadSeats() {
+        var flightData = currentFlightData;
+        var flightId = Number(flightData && flightData.id);
+        var cabin = cabinClassForLayout(activeLayout);
+
+        seatList = null;
+        seatIdByLabel = {};
+        selectedSeats = [];
+        updateSelectedSeatSummary();
+
+        if (!(flightId > 0) || Math.floor(flightId) !== flightId) {
+            setStatus({ kind: "notice", titleKey: "api.seats.noFlightTitle", titleFallback: "No flight selected", textKey: "api.seats.noFlightText", textFallback: "Choose a flight first, then select your seats." });
+            return;
+        }
+
+        setStatus({ kind: "loading", titleKey: "api.seats.loadingTitle", titleFallback: "Loading seat map", textKey: "api.seats.loadingText", textFallback: "Please wait while we load the seats." });
+
+        window.AEROVA_API.get("api/flights/" + flightId + "/seats", { query: { cabinClass: cabin } }).then(function (map) {
+            var seats = ((map && map.seats) || []).filter(function (seat) {
+                return seat.cabinClass === cabin;
+            });
+
+            if (!seats.length) {
+                setStatus({ kind: "notice", titleKey: "api.seats.noSeatsTitle", titleFallback: "No seats to show", textKey: "api.seats.noSeatsText", textFallback: "This cabin has no seats on this flight." });
+                return;
+            }
+
+            var stored = normalizeStoredSeats(flightData);
+            seatList = seats;
+            seats.forEach(function (seat) {
+                seatIdByLabel[seat.label] = seat.id;
+            });
+            selectedSeats = restoreSeats(stored, flightData, flightId, cabin, seats).slice(0, requiredSeats);
+
+            if (stored.length && selectedSeats.length !== stored.length) {
+                /* Drop seats that are gone or taken so later steps never see them. */
+                persistSelectedSeats(flightData);
+            }
+
+            setStatus(null);
+            renderSeatMap(activeLayout, seats);
+            updateSelectedSeatSummary();
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+
+            if (isApiError && error.status === 404) {
+                setStatus({ kind: "notice", titleKey: "api.details.notFoundTitle", titleFallback: "This flight is not available", textKey: "api.details.notFoundText", textFallback: "It may have been removed or changed. Please search again." });
+                return;
+            }
+
+            if (!isApiError && window.console) {
+                window.console.error(error);
+            }
+
+            setStatus({ kind: "error", titleKey: "api.seats.errorTitle", titleFallback: "We could not load the seat map", text: isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), retry: true });
+        });
+    }
 
     function init() {
         var flightData = readSelectedFlight();
+        currentFlightData = flightData;
         activeLayout = resolveCabinLayout(flightData && flightData.cabinClass);
         requiredSeats = resolvePassengerCount(flightData);
-        var storedSeats = normalizeStoredSeats(flightData);
-        selectedSeats = filterSeatsForLayout(storedSeats, activeLayout, flightData).slice(0, requiredSeats);
-        currentFlightData = flightData;
-
-        if (flightData && storedSeats.length && selectedSeats.length !== storedSeats.length) {
-            /* Drop seats that do not belong to this cabin so later steps never see them. */
-            persistSelectedSeats(flightData);
-        }
 
         populateFlightSummary(flightData, activeLayout);
-        renderSeatMap(activeLayout);
         updateSelectedSeatSummary();
         bindSeatInteractions(flightData);
         bindContinue(flightData);
+        loadSeats();
     }
 
     function refreshForLanguage() {
         populateFlightSummary(currentFlightData, activeLayout);
-        renderSeatMap(activeLayout);
+        if (seatList) {
+            renderSeatMap(activeLayout, seatList);
+        } else {
+            paintStatus();
+        }
         updateSelectedSeatSummary();
     }
 

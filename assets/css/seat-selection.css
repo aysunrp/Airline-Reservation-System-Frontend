@@ -1148,3 +1148,42 @@ h2 {
         gap: 0.15rem;
     }
 }
+
+/* Status panel shown while the seat map loads, or when it cannot be shown. */
+.seat-map-panel [hidden] {
+    display: none !important;
+}
+
+.seat-status {
+    padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    text-align: center;
+}
+
+.seat-status-title {
+    margin: 0 0 0.7rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 500;
+}
+
+.seat-status-text {
+    margin: 0;
+    color: var(--color-cream-muted);
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.seat-retry {
+    margin-top: 1.5rem;
+    cursor: pointer;
+}
+
+/* A position of the layout that has no seat on this aircraft. */
+.seat-placeholder {
+    width: var(--seat-size);
+    height: var(--seat-size);
+}
