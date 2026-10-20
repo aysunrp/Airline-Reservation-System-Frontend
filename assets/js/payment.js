@@ -310,8 +310,14 @@
         );
         setText(
             "payment-summary-seats",
-            selectedSeats.length ? selectedSeats.join(", ") : "—"
+            window.AEROVA_JOURNEY && bookingData.legs && bookingData.legs.length > 1
+                ? window.AEROVA_JOURNEY.seatsText(bookingData.legs)
+                : (selectedSeats.length ? selectedSeats.join(", ") : "\u2014")
         );
+
+        if (window.AEROVA_JOURNEY) {
+            window.AEROVA_JOURNEY.paintReturnLine("payment-summary-times", bookingData.legs);
+        }
 
         refreshTotals(bookingData);
 

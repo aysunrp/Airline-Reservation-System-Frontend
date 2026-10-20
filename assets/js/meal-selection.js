@@ -178,6 +178,10 @@
         setText("flight-times", flight.departure + " → " + flight.arrival);
         setText("flight-cabin", flight.cabinClass);
         setText("flight-aircraft", flight.aircraft);
+
+        if (window.AEROVA_JOURNEY) {
+            window.AEROVA_JOURNEY.paintReturnLine("flight-times", flight.legs);
+        }
     }
 
     function getTotalMealCost() {
@@ -326,6 +330,7 @@
         }
 
         return {
+            legs: bookingData.legs || [],
             airline: flight.airline || "AEROVA",
             flightNumber: flight.flightNumber || "\u2014",
             from: flight.from || "\u2014",

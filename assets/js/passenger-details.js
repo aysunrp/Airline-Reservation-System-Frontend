@@ -18,6 +18,10 @@
     var activeFlightData = null;
     var activeSelectedSeats = [];
     var activeSelectedSeatIds = [];
+    /* Every flight of the trip in travel order (one for a one-way trip), with the seats chosen on each. */
+    var activeLegs = [];
+    var activeLegSeats = [];
+    var activeLegSeatIds = [];
 
     function escapeHtml(value) {
         return String(value)
@@ -334,6 +338,7 @@
     /* An infant travels on an adult's lap: the seat chosen for that passenger is released. */
     function refreshInfantState() {
         var keptSeats = [];
+        var keptByLeg = activeLegSeats.map(function () { return []; });
 
         document.querySelectorAll(".passenger-card").forEach(function (card, index) {
             var birthField = card.querySelector('input[name$="[dateOfBirth]"]');
@@ -351,10 +356,14 @@
 
             if (type !== "Infant" && seat) {
                 keptSeats.push(seat);
+                activeLegSeats.forEach(function (legSeats, legIndex) {
+                    if (legSeats[index]) keptByLeg[legIndex].push(legSeats[index]);
+                });
             }
         });
 
-        setText("summary-seats", keptSeats.length ? keptSeats.join(", ") : "—");
+        var text = keptByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | ");
+        setText("summary-seats", text || "\u2014");
     }
 
     function bindInfantRule() {
@@ -685,7 +694,17 @@
         setText("summary-cabin", (flightData && flightData.cabinClass) || "—");
         setText("summary-passengers", String(passengerCount || "—"));
         setText("summary-seats", selectedSeats.length ? selectedSeats.join(", ") : "—");
-        setText("summary-total", formatPrice(flightData && flightData.price));
+        var total = activeLegs.reduce(function (sum, leg) { return sum + (Number(leg.price) || 0); }, 0);
+        setText("summary-total", formatPrice(activeLegs.length > 1 ? total : (flightData && flightData.price)));
+
+        if (window.AEROVA_JOURNEY) {
+            window.AEROVA_JOURNEY.paintReturnLine("summary-times", activeLegs.map(function (leg) {
+                return { flight: leg };
+            }));
+        }
+        if (activeLegSeats.length > 1) {
+            setText("summary-seats", activeLegSeats.map(function (list) { return list.join(", "); }).join(" | "));
+        }
     }
 
     function renderPassengerCards(selectedSeats) {
@@ -833,6 +852,9 @@
                 passengerType: passengerType,
                 assignedSeat: isInfant ? null : seat,
                 assignedSeatId: isInfant ? null : (activeSelectedSeatIds[index] || null),
+                assignedSeats: isInfant ? [] : activeLegs.map(function (leg, legIndex) {
+                    return { flightId: leg.id, flightSeatId: activeLegSeatIds[legIndex][index] || null, label: activeLegSeats[legIndex][index] || null };
+                }),
                 /* Structured document details (mock rules, see travel-documents.js). */
                 nationalityCode: nationalityCode,
                 document: {
@@ -905,7 +927,35 @@
         var unitPrice = Number(flightData.price);
         var totalPrice = isFinite(unitPrice) ? unitPrice * passengerCount : 0;
 
+        function legData(leg, legIndex) {
+            return {
+                flight: {
+                    id: leg.id || null,
+                    airline: leg.airline || "AEROVA",
+                    flightNumber: leg.flightNumber || "",
+                    from: leg.from || "",
+                    to: leg.to || "",
+                    route: ((leg.from || "") + " \u2192 " + (leg.to || "")).trim(),
+                    departure: leg.departure || "",
+                    arrival: leg.arrival || "",
+                    duration: leg.duration || "",
+                    aircraft: leg.aircraft || "",
+                    departureDate: leg.departureDate || "",
+                    returnDate: leg.returnDate || "",
+                    tripType: leg.tripType || ""
+                },
+                cabinClass: leg.cabinClass || "",
+                selectedSeats: passengers.map(function (passenger) {
+                    return passenger.assignedSeats && passenger.assignedSeats[legIndex] ? passenger.assignedSeats[legIndex].label : null;
+                }).filter(Boolean),
+                selectedSeatIds: passengers.map(function (passenger) {
+                    return passenger.assignedSeats && passenger.assignedSeats[legIndex] ? passenger.assignedSeats[legIndex].flightSeatId : null;
+                }).filter(Boolean)
+            };
+        }
+
         return {
+            legs: activeLegs.map(legData),
             flight: {
                 id: flightData.id || null,
                 airline: flightData.airline || "AEROVA",
@@ -1045,7 +1095,12 @@
     }
 
     function init() {
-        var flightData = readSelectedFlight();
+        var chosen = readSelectedFlight();
+        activeLegs = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.legs(chosen) : (chosen ? [chosen] : []);
+
+        // A return flight without its outbound flight cannot be booked on its own.
+        var returnWithoutOutbound = !!chosen && !!window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isReturnLeg(chosen) && activeLegs.length < 2;
+        var flightData = returnWithoutOutbound ? null : (activeLegs[0] || null);
         var passengerCount = resolvePassengerCount(flightData);
         var selectedSeats = resolveSelectedSeats(flightData);
         var container = document.getElementById("passenger-cards");
@@ -1053,6 +1108,8 @@
         activeFlightData = flightData;
         activeSelectedSeats = selectedSeats.slice();
         activeSelectedSeatIds = resolveSelectedSeatIds(flightData);
+        activeLegSeats = activeLegs.map(resolveSelectedSeats);
+        activeLegSeatIds = activeLegs.map(resolveSelectedSeatIds);
 
         populateBookingSummary(flightData, passengerCount, selectedSeats);
         bindContinueButton();
@@ -1061,7 +1118,9 @@
         window.addEventListener("aerova:languagechange", refreshPassengerCardText);
 
         if (!flightData) {
-            showMessage(tr("passengers.noBooking", "No booking data found. Please select a flight and seats first."));
+            showMessage(returnWithoutOutbound
+                ? tr("api.journey.outboundMissing", "The outbound flight of this round trip is missing. Please start your search again.")
+                : tr("passengers.noBooking", "No booking data found. Please select a flight and seats first."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -1111,7 +1170,13 @@
             return;
         }
 
-        if (activeSelectedSeatIds.length !== selectedSeats.length || activeSelectedSeatIds.indexOf(0) !== -1) {
+        // Every other flight of the trip needs the same number of different seats with their ids.
+        var otherLegBroken = activeLegSeats.some(function (legSeats, legIndex) {
+            var ids = activeLegSeatIds[legIndex];
+            return legSeats.length !== passengerCount || hasDuplicateSeats(legSeats) || ids.length !== legSeats.length || ids.indexOf(0) !== -1;
+        });
+
+        if (otherLegBroken || activeSelectedSeatIds.length !== selectedSeats.length || activeSelectedSeatIds.indexOf(0) !== -1) {
             showMessage(tr("api.passengers.seatDataMissing", "Seat details are missing. Please return to seat selection."));
             setFormsVisibility(false);
             if (container) {

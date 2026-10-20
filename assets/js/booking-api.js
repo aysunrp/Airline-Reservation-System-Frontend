@@ -36,13 +36,22 @@
     return number;
   }
 
-  function passengerRequest(passenger, flightId) {
+  function passengerRequest(passenger, flightId, legCount) {
     var document = passenger.document || {};
     var seats = [];
 
-    // Infants travel on an adult's lap and have no seat.
+    // Infants travel on an adult's lap and have no seat; everyone else has one seat on every flight of the trip.
     if (passenger.passengerType !== "Infant") {
-      seats.push({ flightId: flightId, flightSeatId: positiveInteger(passenger.assignedSeatId, "seat") });
+      if (passenger.assignedSeats && passenger.assignedSeats.length) {
+        if (passenger.assignedSeats.length !== legCount) {
+          throw new TypeError("A seat is missing for one of the flights.");
+        }
+        passenger.assignedSeats.forEach(function (seat) {
+          seats.push({ flightId: positiveInteger(seat.flightId, "flight"), flightSeatId: positiveInteger(seat.flightSeatId, "seat") });
+        });
+      } else {
+        seats.push({ flightId: flightId, flightSeatId: positiveInteger(passenger.assignedSeatId, "seat") });
+      }
     }
 
     return {
@@ -63,24 +72,32 @@
     };
   }
 
-  /* The request the API expects, from bookingData. One-way only for now. */
+  /* The request the API expects, from bookingData: one flight, or the two flights of a round trip. */
   function buildRequest(bookingData) {
     if (!bookingData || !bookingData.flight || !Array.isArray(bookingData.passengers) || !bookingData.passengers.length) {
       throw new TypeError("Booking data is incomplete.");
     }
 
-    var flightId = positiveInteger(bookingData.flight.id, "flight");
     var contact = bookingData.contact || {};
-    var tripType = bookingData.flight.tripType ? lookup(TRIP_TYPES, bookingData.flight.tripType, "trip type") : "OneWay";
+    var legs = bookingData.legs && bookingData.legs.length
+      ? bookingData.legs
+      : [{ flight: bookingData.flight, cabinClass: bookingData.cabinClass }];
+    var tripType = legs.length > 1
+      ? "RoundTrip"
+      : (bookingData.flight.tripType ? lookup(TRIP_TYPES, bookingData.flight.tripType, "trip type") : "OneWay");
 
-    if (tripType !== "OneWay") {
-      throw new TypeError("Only one-way trips can be booked for now.");
+    if (tripType === "MultiCity" || legs.length > 2) {
+      throw new TypeError("Only one-way and round trips can be booked for now.");
     }
 
+    var flightId = positiveInteger(legs[0].flight.id, "flight");
+
     return {
-      tripType: tripType,
-      legs: [{ flightId: flightId, cabinClass: lookup(CABINS, bookingData.cabinClass, "cabin") }],
-      passengers: bookingData.passengers.map(function (passenger) { return passengerRequest(passenger, flightId); }),
+      tripType: legs.length > 1 ? "RoundTrip" : "OneWay",
+      legs: legs.map(function (leg) {
+        return { flightId: positiveInteger(leg.flight.id, "flight"), cabinClass: lookup(CABINS, leg.cabinClass || bookingData.cabinClass, "cabin") };
+      }),
+      passengers: bookingData.passengers.map(function (passenger) { return passengerRequest(passenger, flightId, legs.length); }),
       contactEmail: contact.email,
       contactPhone: (String(contact.countryCode || "").trim() + " " + digits(contact.mobilePhone)).trim(),
       promoCode: bookingData.promoCode || null
