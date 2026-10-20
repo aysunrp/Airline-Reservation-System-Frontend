@@ -14,80 +14,9 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
-    /*
-     * MOCK / DEMO fare rules for cancellations (not real AEROVA fare conditions).
-     * Bands are checked from the top; "minDays" is the minimum number of whole
-     * days between today and the departure date. feePercent applies to the
-     * amount paid; null means the booking is not eligible for a refund.
-     */
-    var CANCELLATION_FARE_RULES = {
-        Economy: [
-            { minDays: 30, feePercent: 20 },
-            { minDays: 14, feePercent: 40 },
-            { minDays: -Infinity, feePercent: null }
-        ],
-        Comfort: [
-            { minDays: 30, feePercent: 10 },
-            { minDays: 7, feePercent: 25 },
-            { minDays: 1, feePercent: 50 },
-            { minDays: -Infinity, feePercent: null }
-        ],
-        Business: [
-            { minDays: 7, feePercent: 0 },
-            { minDays: 1, feePercent: 15 },
-            { minDays: -Infinity, feePercent: null }
-        ]
-    };
-
-    /* Demo only: a Pending refund request is shown as Processing after this delay. Never Completed. */
-    var MOCK_REFUND_PROCESSING_DELAY_MS = 2 * 60 * 1000;
-
-    var MOCK_BOOKING = {
-        pnr: "AV7K92M",
-        status: "Confirmed",
-        paymentStatus: "Confirmed",
-        cabinClass: "Comfort",
-        passengerCount: 2,
-        selectedSeats: ["12A", "12B"],
-        baseFare: 1360,
-        baggageTotal: 55,
-        mealTotal: 38,
-        taxesFees: 86,
-        totalPrice: 1539,
-        passengers: [
-            {
-                title: "Ms",
-                firstName: "Leyla",
-                lastName: "Mammadova"
-            },
-            {
-                title: "Mr",
-                firstName: "Orkhan",
-                lastName: "Aliyev"
-            }
-        ],
-        flight: {
-            airline: "AEROVA",
-            flightNumber: "AV 101",
-            from: "Baku",
-            to: "London",
-            departureDate: "2026-10-10",
-            departure: "09:30",
-            arrival: "13:10",
-            duration: "5h 40m",
-            aircraft: "AEROVA 787-9"
-        },
-        baggage: [
-            { name: "Leyla Mammadova", label: "+20 kg", price: 55 },
-            { name: "Orkhan Aliyev", label: "No Extra Baggage", price: 0 }
-        ],
-        meals: [
-            { name: "Leyla Mammadova", mealName: "Standard Meal", price: 18 },
-            { name: "Orkhan Aliyev", mealName: "Halal Meal", price: 20 }
-        ]
-    };
-
     var activeBooking = null;
+    var activeAirports = [];
+    var cancelQuote = null;
     var lastFocusedElement = null;
 
     function escapeHtml(value) {
@@ -218,136 +147,78 @@
         message.hidden = !text;
     }
 
-    function enrichBooking(booking) {
-        var copy = JSON.parse(JSON.stringify(booking || MOCK_BOOKING));
-        var baggageData = readJSON("baggageData");
-        var mealData = readJSON("mealData");
+    function refundLabel(status) {
+        return status ? String(status) : "NotEligible";
+    }
 
-        if (!copy.pnr) {
-            copy.pnr = "—";
+    /* One BookingDto from the API in the shape the sections below render. Times are shown at each airport. */
+    function toPageBooking(dto, airports) {
+        var directory = window.AEROVA_AIRPORTS;
+        var leg = dto.legs[0];
+        var origin = directory.find(airports, leg.originCode);
+        var destination = directory.find(airports, leg.destinationCode);
+        var departure = directory.localTime(leg.departureAt, origin.timeZoneId);
+        var arrival = directory.localTime(leg.arrivalAt, destination.timeZoneId);
+
+        var passengers = dto.passengers.map(function (passenger) {
+            var ticket = passenger.tickets.filter(function (item) { return item.legOrder === leg.legOrder; })[0] || {};
+            return {
+                title: passenger.title,
+                firstName: passenger.firstName,
+                middleName: passenger.middleName,
+                lastName: passenger.lastName,
+                passengerType: passenger.passengerType,
+                assignedSeat: ticket.seat || null,
+                baggageName: ticket.baggageName || null,
+                baggagePrice: ticket.baggagePrice || 0,
+                mealName: ticket.mealName || null,
+                mealPrice: ticket.mealPrice || 0
+            };
+        });
+
+        var price = dto.price;
+        var booking = {
+            pnr: dto.pnr,
+            status: dto.status,
+            flight: {
+                airline: "AEROVA",
+                flightNumber: leg.flightNumber,
+                from: leg.originCity,
+                to: leg.destinationCity,
+                route: leg.originCity + " \u2192 " + leg.destinationCity,
+                departureDate: departure.date,
+                departure: departure.time,
+                arrival: arrival.time,
+                aircraft: "AEROVA " + leg.aircraftModel,
+                utcDepartureAt: leg.departureAt
+            },
+            cabinClass: leg.cabinClass,
+            selectedSeats: passengers.map(function (passenger) { return passenger.assignedSeat; }).filter(Boolean),
+            passengers: passengers,
+            baggage: passengers.map(function (passenger) {
+                return { name: getPassengerName(passenger), label: passenger.baggageName || tr("api.options.noBaggage", "No Extra Baggage"), price: passenger.baggagePrice };
+            }),
+            meals: passengers.map(function (passenger) {
+                return { passengerName: getPassengerName(passenger), mealName: passenger.mealName || tr("api.options.noMeal", "No Meal"), price: passenger.mealPrice };
+            }),
+            baseFare: price.baseFare,
+            baggageTotal: price.baggage,
+            mealTotal: price.meals,
+            taxesFees: price.taxes,
+            discount: price.discount,
+            promoCode: price.promoCode,
+            totalPrice: price.total
+        };
+
+        if (dto.cancellation) {
+            booking.refund = { status: refundLabel(dto.cancellation.refundStatus), amount: dto.cancellation.refundAmount };
         }
 
-        if (!Array.isArray(copy.baggage) && baggageData && Array.isArray(baggageData.passengers)) {
-            copy.baggage = baggageData.passengers;
-            copy.baggageTotal = toNumber(baggageData.totalBaggageCost, 0);
-        }
-
-        if (!Array.isArray(copy.meals) && mealData && Array.isArray(mealData.passengers)) {
-            copy.meals = mealData.passengers;
-            copy.mealTotal = toNumber(mealData.totalMealCost, 0);
-        }
-
-        /*
-         * Extra services are not part of the booking flow. Bookings saved by an
-         * older version may still carry extraServicesTotal / extraServices that
-         * were folded into totalPrice; take that amount back out and drop the fields.
-         */
-        var legacyExtras = toNumber(copy.extraServicesTotal, NaN);
-        if (!isFinite(legacyExtras)) {
-            legacyExtras = Array.isArray(copy.extraServices)
-                ? copy.extraServices.reduce(function (sum, item) { return sum + toNumber(item && item.price, 0); }, 0)
-                : 0;
-        }
-
-        if (legacyExtras > 0 && isFinite(Number(copy.totalPrice))) {
-            copy.totalPrice = Number(copy.totalPrice) - legacyExtras;
-        }
-
-        delete copy.extraServices;
-        delete copy.extraServicesTotal;
-        copy.baggageTotal = toNumber(copy.baggageTotal, 0);
-        copy.mealTotal = toNumber(copy.mealTotal, 0);
-        copy.taxesFees = toNumber(
-            copy.taxesFees != null ? copy.taxesFees : copy.taxesAndFees,
-            Math.round(toNumber(copy.baseFare, 0) * 0.1)
-        );
-
-        if (typeof copy.baseFare !== "number") {
-            var remainder = toNumber(copy.totalPrice, 0) -
-                copy.baggageTotal -
-                copy.mealTotal -
-                copy.taxesFees;
-            copy.baseFare = remainder > 0 ? remainder : toNumber(MOCK_BOOKING.baseFare, 0);
-        }
-
-        if (!isFinite(Number(copy.totalPrice))) {
-            copy.totalPrice = copy.baseFare +
-                copy.baggageTotal +
-                copy.mealTotal +
-                copy.taxesFees;
-        }
-
-        if (!copy.status) {
-            copy.status = getBookingStatus(copy);
-        }
-
-        return copy;
+        return booking;
     }
 
     function getPageParams() {
         return new URLSearchParams(window.location.search);
-    }
-
-    function isCompletedBooking(booking) {
-        if (!booking || typeof booking !== "object") {
-            return false;
-        }
-
-        var paymentStatus = String(booking.paymentStatus || "").toLowerCase();
-        var status = String(booking.status || "").toLowerCase();
-
-        if (paymentStatus === "paid" || status === "confirmed" || status === "cancelled") {
-            return true;
-        }
-
-        return !!booking.pnr;
-    }
-
-    function resolveBooking() {
-        var params = getPageParams();
-        var source = String(params.get("source") || "").toLowerCase();
-        var managed = readJSON("managedBooking");
-        var stored = readJSON("bookingData");
-
-        if (source === "manage" && managed) {
-            return enrichBooking(managed);
-        }
-
-        if ((source === "trips" || !source) && stored && isCompletedBooking(stored)) {
-            return enrichBooking(stored);
-        }
-
-        if (source !== "trips" && managed) {
-            return enrichBooking(managed);
-        }
-
-        if (stored && isCompletedBooking(stored)) {
-            return enrichBooking(stored);
-        }
-
-        return null;
-    }
-
-    function persistBooking(booking) {
-        var params = getPageParams();
-        var source = String(params.get("source") || "").toLowerCase();
-        var current = readJSON("bookingData");
-        var managed = readJSON("managedBooking");
-        var saved = true;
-
-        if (source === "manage") {
-            saved = writeJSON("managedBooking", booking);
-            if (current && current.pnr && booking.pnr && current.pnr === booking.pnr) {
-                writeJSON("bookingData", booking);
-            }
-            return saved;
-        }
-
-        saved = writeJSON("bookingData", booking);
-        if (managed && managed.pnr && booking.pnr && managed.pnr === booking.pnr) {
-            writeJSON("managedBooking", booking);
-        }
-        return saved;
     }
 
     function normalizeCabin(cabin) {
@@ -373,10 +244,10 @@
 
     function renderPassengers(booking) {
         var passengers = Array.isArray(booking.passengers) ? booking.passengers : [];
-        var seats = Array.isArray(booking.selectedSeats) ? booking.selectedSeats : [];
-
         renderList("details-passengers", passengers, function (passenger, index) {
-            var seat = seats[index] ? "Seat " + seats[index] : "Seat not assigned";
+            var seat = passenger.assignedSeat
+                ? "Seat " + passenger.assignedSeat
+                : (passenger.passengerType === "Infant" ? tr("api.bookingDetails.infantNoSeat", "Infant, no seat") : "Seat not assigned");
 
             return (
                 '<li class="detail-list-item">' +
@@ -462,6 +333,12 @@
         setText("price-baggage", formatPrice(booking.baggageTotal));
         setText("price-meals", formatPrice(booking.mealTotal));
         setText("price-taxes", formatPrice(booking.taxesFees));
+
+        var discountRow = document.getElementById("price-discount-row");
+        if (discountRow) {
+            discountRow.hidden = !(booking.discount > 0);
+            setText("price-discount", "\u2212" + formatPrice(booking.discount));
+        }
         setText("price-grand-total", formatPrice(booking.totalPrice));
 
         renderPassengers(booking);
@@ -471,47 +348,16 @@
         updateActionAvailability(booking);
     }
 
-    function getDaysBeforeDeparture(dateValue) {
-        var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateValue || ""));
-        if (!match) {
-            return null;
-        }
-
-        var departure = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
-        var today = new Date();
-        today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        return Math.round((departure.getTime() - today.getTime()) / 86400000);
-    }
-
-    function getCancellationQuote(booking) {
-        var cabin = normalizeCabin(booking.cabinClass);
-        var flight = booking.flight || {};
-        var days = getDaysBeforeDeparture(flight.departureDate);
-        var amountPaid = roundMoney(toNumber(booking.totalPrice, 0));
-        var rules = CANCELLATION_FARE_RULES[cabin];
-        var band = null;
-
-        if (days !== null) {
-            for (var i = 0; i < rules.length; i += 1) {
-                if (days >= rules[i].minDays) {
-                    band = rules[i];
-                    break;
-                }
-            }
-        }
-
-        var eligible = !!band && band.feePercent !== null && amountPaid > 0;
-        var fee = eligible ? roundMoney(amountPaid * band.feePercent / 100) : amountPaid;
-        var refund = eligible ? roundMoney(amountPaid - fee) : 0;
-
+    /* The quote the backend gave for this booking, in the shape the cancel window shows. */
+    function toCancelQuote(dto, booking) {
         return {
-            cabin: cabin,
-            daysBeforeDeparture: days,
-            amountPaid: amountPaid,
-            feePercent: eligible ? band.feePercent : null,
-            cancellationFee: fee,
-            refundAmount: refund,
-            eligible: eligible
+            cabin: normalizeCabin(booking.cabinClass),
+            daysBeforeDeparture: dto.daysBeforeDeparture,
+            amountPaid: dto.amountPaid,
+            feePercent: dto.feePercent,
+            cancellationFee: dto.feeAmount,
+            refundAmount: dto.refundAmount,
+            eligible: dto.isRefundable
         };
     }
 
@@ -527,21 +373,6 @@
         var key = getRefundStatusKey(status);
         var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible" }[key];
         return tr("cancellation.status." + key, fallback);
-    }
-
-    function advanceMockRefund(booking) {
-        var refund = booking && booking.refund;
-        if (!refund || refund.status !== "Pending" || !refund.requestedAt) {
-            return false;
-        }
-
-        var requested = new Date(refund.requestedAt).getTime();
-        if (isFinite(requested) && Date.now() - requested >= MOCK_REFUND_PROCESSING_DELAY_MS) {
-            refund.status = "Processing";
-            refund.updatedAt = new Date().toISOString();
-            return true;
-        }
-        return false;
     }
 
     function renderRefundStatus(booking) {
@@ -583,38 +414,14 @@
     }
 
     function describeRule(quote) {
-        if (quote.daysBeforeDeparture === null) {
-            return tr("cancellation.ruleUnknownDate", "Departure date unavailable: not eligible for a refund.");
-        }
         var vars = {
             cabin: tr("common." + quote.cabin.toLowerCase(), quote.cabin),
             days: Math.max(quote.daysBeforeDeparture, 0),
             percent: quote.feePercent
         };
-        if (quote.daysBeforeDeparture < 0) {
-            return tr("cancellation.ruleDeparted", "This flight has already departed: not eligible for a refund.");
-        }
         return quote.eligible
             ? tr("cancellation.ruleApplied", "{cabin}, {days} days before departure: {percent}% cancellation fee.", vars)
             : tr("cancellation.ruleNotEligible", "{cabin}, {days} days before departure: not eligible for a refund.", vars);
-    }
-
-    function describeRuleTable() {
-        return Object.keys(CANCELLATION_FARE_RULES).map(function (cabin) {
-            var bands = CANCELLATION_FARE_RULES[cabin].map(function (band, index, list) {
-                var upper = index > 0 ? list[index - 1].minDays - 1 : null;
-                var range = band.minDays === -Infinity
-                    ? tr("cancellation.lessThanDays", "< {days} d", { days: list[index - 1] ? list[index - 1].minDays : 0 })
-                    : (upper === null
-                        ? tr("cancellation.atLeastDays", "≥ {days} d", { days: band.minDays })
-                        : tr("cancellation.rangeDays", "{from}–{to} d", { from: band.minDays, to: upper }));
-                var value = band.feePercent === null
-                    ? getRefundStatusLabel("Not Eligible")
-                    : tr("cancellation.feePercent", "{percent}% fee", { percent: band.feePercent });
-                return range + ": " + value;
-            }).join(" · ");
-            return "<li><strong>" + escapeHtml(tr("common." + cabin.toLowerCase(), cabin)) + "</strong> " + escapeHtml(bands) + "</li>";
-        }).join("");
     }
 
     function getCancelModal() {
@@ -622,15 +429,15 @@
     }
 
     function renderCancelModal() {
-        if (!activeBooking) {
+        if (!activeBooking || !cancelQuote) {
             return;
         }
 
         var flight = activeBooking.flight || {};
-        var quote = getCancellationQuote(activeBooking);
-        var route = flight.from && flight.to ? flight.from + " → " + flight.to : (flight.route || "—");
+        var quote = cancelQuote;
+        var route = flight.from && flight.to ? flight.from + " \u2192 " + flight.to : (flight.route || "\u2014");
 
-        setText("cancel-modal-pnr", activeBooking.pnr || "—");
+        setText("cancel-modal-pnr", activeBooking.pnr || "\u2014");
         setText("cancel-modal-route", route);
         setText("cancel-modal-date", formatDisplayDate(flight.departureDate));
         setText("cancel-modal-paid", formatPrice(quote.amountPaid));
@@ -648,9 +455,10 @@
             notice.hidden = quote.eligible;
         }
 
-        var table = document.getElementById("cancel-modal-rules");
-        if (table) {
-            table.innerHTML = describeRuleTable();
+        // The fare rule table was a demo; only the rule that applies to this booking is shown now.
+        var rules = document.querySelector(".cancel-rules");
+        if (rules) {
+            rules.hidden = true;
         }
     }
 
@@ -661,6 +469,15 @@
                 return !el.disabled && !el.hidden && el.offsetParent !== null;
             }
         );
+    }
+
+    function ownerLastName() {
+        return activeBooking && activeBooking.passengers[0] ? activeBooking.passengers[0].lastName : "";
+    }
+
+    /* The same two calls serve My Trips (signed in) and Manage Booking (reference and last name). */
+    function bookingPath(suffix) {
+        return "api/bookings/" + encodeURIComponent(activeBooking.pnr) + suffix;
     }
 
     function openCancelModal() {
@@ -674,15 +491,24 @@
             return;
         }
 
-        lastFocusedElement = document.activeElement;
-        renderCancelModal();
-        modal.hidden = false;
-        document.body.classList.add("has-open-modal");
+        var opener = document.activeElement;
+        showMessage("");
 
-        var dialog = modal.querySelector(".booking-modal-dialog");
-        if (dialog) {
-            dialog.focus();
-        }
+        window.AEROVA_API.get(bookingPath("/cancellation-quote?lastName=" + encodeURIComponent(ownerLastName()))).then(function (dto) {
+            cancelQuote = toCancelQuote(dto, activeBooking);
+            lastFocusedElement = opener;
+            renderCancelModal();
+            modal.hidden = false;
+            document.body.classList.add("has-open-modal");
+
+            var dialog = modal.querySelector(".booking-modal-dialog");
+            if (dialog) {
+                dialog.focus();
+            }
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+            showMessage(isApiError ? error.userMessage : tr("api.bookingDetails.quoteFailed", "We could not check the cancellation terms. Please try again."));
+        });
     }
 
     function closeCancelModal() {
@@ -730,73 +556,42 @@
     }
 
     function confirmCancellation() {
-        /* Guard: a cancelled booking can never be cancelled (or refunded) twice. */
-        var latest = resolveBooking();
-        if (!activeBooking || isCancelled(activeBooking) || (latest && isCancelled(latest))) {
-            if (latest) {
-                activeBooking = latest;
-                renderBooking(activeBooking);
-            }
+        if (!activeBooking || isCancelled(activeBooking)) {
             closeCancelModal();
             showMessage(tr("bookingDetails.alreadyCancelled", "This booking is already cancelled."));
             return;
         }
 
-        var quote = getCancellationQuote(activeBooking);
-        var now = new Date().toISOString();
-        var updated = JSON.parse(JSON.stringify(activeBooking));
+        var button = document.getElementById("confirm-cancellation-button");
+        var pnr = activeBooking.pnr;
+        if (button) {
+            button.disabled = true;
+        }
 
-        updated.status = "Cancelled";
-        updated.paymentStatus = "Cancelled";
-        updated.cancellation = {
-            cancelledAt: now,
-            daysBeforeDeparture: quote.daysBeforeDeparture,
-            fareRuleCabin: quote.cabin,
-            feePercent: quote.feePercent,
-            amountPaid: quote.amountPaid,
-            cancellationFee: quote.cancellationFee,
-            refundableAmount: quote.refundAmount,
-            mock: true
-        };
-        updated.refund = quote.eligible
-            ? {
-                reference: "RF-" + String(updated.pnr || "BOOKING").toUpperCase(),
-                status: "Pending",
-                amount: quote.refundAmount,
-                requestedAt: now,
-                updatedAt: now,
-                mock: true
-            }
-            : {
-                status: "Not Eligible",
-                amount: 0,
-                updatedAt: now,
-                mock: true
-            };
-
-        if (!persistBooking(updated)) {
-            showMessage(tr("bookingDetails.cancelFail", "Unable to cancel this booking. Please try again."));
+        window.AEROVA_API.post(bookingPath("/cancel"), { lastName: ownerLastName() }).then(function (dto) {
+            activeBooking = toPageBooking(dto, activeAirports);
+            renderBooking(activeBooking);
             closeCancelModal();
-            return;
-        }
 
-        activeBooking = enrichBooking(updated);
-        renderBooking(activeBooking);
-        closeCancelModal();
-        showMessage(quote.eligible
-            ? tr("cancellation.cancelledWithRefund", "Booking {pnr} has been cancelled. Refund request {ref} for {amount} is Pending (demo).", {
-                pnr: activeBooking.pnr || "",
-                ref: updated.refund.reference,
-                amount: formatPrice(quote.refundAmount)
-            })
-            : tr("cancellation.cancelledNoRefund", "Booking {pnr} has been cancelled. It is not eligible for a refund.", { pnr: activeBooking.pnr || "" }));
+            var refund = activeBooking.refund;
+            showMessage(refund && refund.amount > 0
+                ? tr("api.bookingDetails.cancelledWithRefund", "Booking {pnr} has been cancelled. A refund of {amount} was requested (demo: no real payment provider is contacted).", { pnr: pnr, amount: formatPrice(refund.amount) })
+                : tr("cancellation.cancelledNoRefund", "Booking {pnr} has been cancelled. It is not eligible for a refund.", { pnr: pnr }));
 
-        var cancelButton = document.getElementById("cancel-booking-button");
-        var focusTarget = document.getElementById("details-message");
-        if (focusTarget && (!cancelButton || cancelButton.hidden)) {
-            focusTarget.setAttribute("tabindex", "-1");
-            focusTarget.focus();
-        }
+            var focusTarget = document.getElementById("details-message");
+            if (focusTarget) {
+                focusTarget.setAttribute("tabindex", "-1");
+                focusTarget.focus();
+            }
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+            closeCancelModal();
+            showMessage(isApiError ? error.userMessage : tr("bookingDetails.cancelFail", "Unable to cancel this booking. Please try again."));
+        }).then(function () {
+            if (button) {
+                button.disabled = false;
+            }
+        });
     }
 
     function buildConfirmationText(booking) {
@@ -822,6 +617,9 @@
         });
 
         lines.push("");
+        if (booking.discount > 0) {
+            lines.push("Discount: -" + formatPrice(booking.discount));
+        }
         lines.push("Grand Total: " + formatPrice(booking.totalPrice));
         lines.push("Thank you for flying AEROVA.");
 
@@ -945,36 +743,94 @@
         });
     }
 
-    function showEmptyBookingState() {
+    /* Replaces the page content with one message (loading, an error or no booking); a null spec brings the content back. */
+    function setPageStatus(spec) {
         var container = document.querySelector(".booking-details-page .page-container");
         var intro = document.querySelector(".details-intro");
         if (!container) {
             return;
         }
 
+        var panel = document.getElementById("booking-details-empty");
+
         Array.prototype.forEach.call(container.children, function (child) {
-            if (intro && child === intro) {
+            if ((intro && child === intro) || child === panel) {
                 return;
             }
-            child.hidden = true;
+            if (spec) {
+                if (child.getAttribute("data-was-hidden") === null) {
+                    child.setAttribute("data-was-hidden", child.hidden ? "1" : "0");
+                }
+                child.hidden = true;
+            } else if (child.getAttribute("data-was-hidden") !== null) {
+                child.hidden = child.getAttribute("data-was-hidden") === "1";
+                child.removeAttribute("data-was-hidden");
+            }
         });
 
-        var empty = document.getElementById("booking-details-empty");
-        if (!empty) {
-            empty = document.createElement("section");
-            empty.id = "booking-details-empty";
-            empty.className = "details-card";
-            empty.innerHTML =
-                "<h2 class=\"details-card-title\">No Booking Found</h2>" +
-                "<p class=\"details-empty-text\">There is no confirmed booking to display. Complete a booking or search by PNR in Manage Booking.</p>" +
-                "<div class=\"booking-actions-row\">" +
-                    "<a class=\"booking-action-button booking-action-button--primary\" href=\"my-trips.html\">My Trips</a>" +
-                    "<a class=\"booking-action-button booking-action-button--secondary\" href=\"manage-booking.html\">Manage Booking</a>" +
-                "</div>";
-            container.appendChild(empty);
-        } else {
-            empty.hidden = false;
+        if (!spec) {
+            if (panel) {
+                panel.hidden = true;
+            }
+            return;
         }
+
+        if (!panel) {
+            panel = document.createElement("section");
+            panel.id = "booking-details-empty";
+            panel.className = "details-card";
+            container.appendChild(panel);
+        }
+
+        panel.hidden = false;
+        panel.setAttribute("role", spec.kind === "error" ? "alert" : "status");
+        panel.innerHTML =
+            '<h2 class="details-card-title">' + escapeHtml(spec.title) + "</h2>" +
+            '<p class="details-empty-text">' + escapeHtml(spec.text) + "</p>" +
+            (spec.actions && spec.actions.length
+                ? '<div class="booking-actions-row">' + spec.actions.map(function (action) {
+                    return action.href
+                        ? '<a class="booking-action-button booking-action-button--primary" href="' + escapeHtml(action.href) + '">' + escapeHtml(action.label) + "</a>"
+                        : '<button class="booking-action-button booking-action-button--primary" type="button" data-status-action="1">' + escapeHtml(action.label) + "</button>";
+                }).join("") + "</div>"
+                : "");
+
+        var retry = panel.querySelector("[data-status-action]");
+        if (retry && spec.onAction) {
+            retry.addEventListener("click", spec.onAction);
+        }
+    }
+
+    function showEmptyBookingState() {
+        setPageStatus({
+            kind: "notice",
+            title: tr("api.bookingDetails.notFoundTitle", "No Booking Found"),
+            text: tr("api.bookingDetails.notFoundText", "There is no booking to display. Open one from My Trips, or search by reference in Manage Booking."),
+            actions: [
+                { label: tr("nav.myTrips", "My Trips"), href: "my-trips.html" },
+                { label: tr("nav.manageBooking", "Manage Booking"), href: "manage-booking.html" }
+            ]
+        });
+    }
+
+    /* Which booking to open: one of mine (signed in) or one found with its reference and a passenger's last name. */
+    function requestBooking() {
+        var params = getPageParams();
+        var pnr = String(params.get("pnr") || "").toUpperCase();
+
+        if (String(params.get("source") || "").toLowerCase() === "manage") {
+            var managed = readJSON("aerovaManaged");
+            if (!managed || !managed.pnr || !managed.lastName) {
+                return null;
+            }
+            return window.AEROVA_API.get("api/bookings/" + encodeURIComponent(managed.pnr) + "?lastName=" + encodeURIComponent(managed.lastName));
+        }
+
+        if (/^[A-Z0-9]{6}$/.test(pnr)) {
+            return window.AEROVA_API.get("api/bookings/my/" + pnr);
+        }
+
+        return null;
     }
 
     function applyIntentActions() {
@@ -988,21 +844,48 @@
         }
     }
 
-    function init() {
-        activeBooking = resolveBooking();
-        if (activeBooking && advanceMockRefund(activeBooking)) {
-            persistBooking(activeBooking);
-        }
-        bindActions();
-        initMenuToggle();
+    function loadBooking() {
+        var request = requestBooking();
 
-        if (!activeBooking) {
+        if (!request) {
             showEmptyBookingState();
             return;
         }
 
-        renderBooking(activeBooking);
-        applyIntentActions();
+        setPageStatus({ kind: "loading", title: tr("api.bookingDetails.loadingTitle", "Loading your booking"), text: tr("api.bookingDetails.loadingText", "Please wait a moment."), actions: [] });
+
+        Promise.all([window.AEROVA_AIRPORTS.load(), request]).then(function (results) {
+            activeAirports = results[0];
+            activeBooking = toPageBooking(results[1], activeAirports);
+            setPageStatus(null);
+            renderBooking(activeBooking);
+            applyIntentActions();
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+
+            if (!isApiError && window.console) {
+                window.console.error(error);
+            }
+
+            if (isApiError && error.status === 404) {
+                showEmptyBookingState();
+                return;
+            }
+
+            setPageStatus({
+                kind: "error",
+                title: tr("api.bookingDetails.errorTitle", "We could not load the booking"),
+                text: isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."),
+                actions: [{ label: tr("api.options.retry", "Try again") }],
+                onAction: loadBooking
+            });
+        });
+    }
+
+    function init() {
+        bindActions();
+        initMenuToggle();
+        loadBooking();
     }
 
     if (document.readyState === "loading") {

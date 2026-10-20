@@ -604,3 +604,7 @@ body.has-open-modal {
         flex-direction: column;
     }
 }
+
+.summary-row[hidden] {
+    display: none;
+}
