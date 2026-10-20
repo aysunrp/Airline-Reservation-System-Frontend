@@ -1547,6 +1547,9 @@ window.AEROVA_LOCALES.en = {
       "documentNumber": "Document Number",
       "aircraftDetails": "Aircraft Details",
       "generated": "{created} flights created, {existing} already existed, {skipped} skipped."
+    },
+    "calendar": {
+      "loading": "Loading fares..."
     }
   },
   "chat": {

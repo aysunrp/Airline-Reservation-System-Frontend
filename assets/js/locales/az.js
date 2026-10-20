@@ -1547,6 +1547,9 @@ window.AEROVA_LOCALES.az = {
       "documentNumber": "Sənəd nömrəsi",
       "aircraftDetails": "Təyyarə təfərrüatları",
       "generated": "{created} reys yaradıldı, {existing} artıq mövcud idi, {skipped} atlandı."
+    },
+    "calendar": {
+      "loading": "Qiymətlər yüklənir..."
     }
   },
   "chat": {

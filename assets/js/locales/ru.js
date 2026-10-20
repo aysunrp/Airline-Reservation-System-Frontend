@@ -1547,6 +1547,9 @@ window.AEROVA_LOCALES.ru = {
       "documentNumber": "Номер документа",
       "aircraftDetails": "Данные самолёта",
       "generated": "Создано рейсов: {created}, уже существовало: {existing}, пропущено: {skipped}."
+    },
+    "calendar": {
+      "loading": "Загрузка цен..."
     }
   },
   "chat": {
