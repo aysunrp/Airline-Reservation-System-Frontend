@@ -1415,6 +1415,19 @@ window.AEROVA_LOCALES.en = {
       "needAdult": "At least one passenger must be 12 or older.",
       "tooManyInfants": "Each infant needs an adult: there cannot be more infants than adults.",
       "seatDataMissing": "Seat details are missing. Please return to seat selection."
+    },
+    "booking": {
+      "loadingTitle": "Reserving your seats",
+      "loadingText": "Please wait while we hold your seats and confirm the price.",
+      "errorTitle": "We could not reserve your seats",
+      "conflictTitle": "A seat is no longer available",
+      "conflictText": "Another traveller has just taken one of your seats. Please choose your seats again.",
+      "expiredTitle": "Your seat hold has ended",
+      "expiredText": "The seats were held for 15 minutes and are now released. Please choose your seats again.",
+      "holdText": "Your seats are held for {time}. Booking reference {pnr}.",
+      "retry": "Try again",
+      "backToSeats": "Choose seats again",
+      "backToPassengers": "Back to passenger details"
     }
   },
   "chat": {

@@ -1415,6 +1415,19 @@ window.AEROVA_LOCALES.az = {
       "needAdult": "Ən azı bir sərnişin 12 yaşda və ya daha böyük olmalıdır.",
       "tooManyInfants": "Hər körpəyə bir böyük lazımdır: körpələrin sayı böyüklərdən çox ola bilməz.",
       "seatDataMissing": "Oturacaq məlumatları yoxdur. Zəhmət olmasa oturacaq seçiminə qayıdın."
+    },
+    "booking": {
+      "loadingTitle": "Yerləriniz rezerv olunur",
+      "loadingText": "Zəhmət olmasa gözləyin, yerləriniz saxlanılır və qiymət təsdiqlənir.",
+      "errorTitle": "Yerləri rezerv etmək mümkün olmadı",
+      "conflictTitle": "Yer artıq mövcud deyil",
+      "conflictText": "Başqa sərnişin yerlərinizdən birini indicə tutdu. Zəhmət olmasa yerləri yenidən seçin.",
+      "expiredTitle": "Yerlərin saxlanma müddəti bitdi",
+      "expiredText": "Yerlər 15 dəqiqə saxlanılmışdı və indi azad edilib. Zəhmət olmasa yerləri yenidən seçin.",
+      "holdText": "Yerləriniz {time} müddətinə saxlanılır. Rezervasiya kodu {pnr}.",
+      "retry": "Yenidən cəhd et",
+      "backToSeats": "Yerləri yenidən seç",
+      "backToPassengers": "Sərnişin məlumatlarına qayıt"
     }
   },
   "chat": {
