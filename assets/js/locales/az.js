@@ -1483,6 +1483,14 @@ window.AEROVA_LOCALES.az = {
       "loadingText": "Zəhmət olmasa bir az gözləyin.",
       "errorTitle": "Bildirişlərinizi yükləmək mümkün olmadı",
       "refundCompletedTitle": "Geri ödəniş tamamlandı"
+    },
+    "profile": {
+      "loadingTitle": "Profiliniz yüklənir",
+      "loadingText": "Zəhmət olmasa bir az gözləyin.",
+      "errorTitle": "Profilinizi yükləmək mümkün olmadı"
+    },
+    "manage": {
+      "awaitingPayment": "Ödəniş gözlənilir"
     }
   },
   "chat": {

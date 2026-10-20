@@ -1483,6 +1483,14 @@ window.AEROVA_LOCALES.en = {
       "loadingText": "Please wait a moment.",
       "errorTitle": "We could not load your notifications",
       "refundCompletedTitle": "Refund Completed"
+    },
+    "profile": {
+      "loadingTitle": "Loading your profile",
+      "loadingText": "Please wait a moment.",
+      "errorTitle": "We could not load your profile"
+    },
+    "manage": {
+      "awaitingPayment": "Awaiting payment"
     }
   },
   "chat": {

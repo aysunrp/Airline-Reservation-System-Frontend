@@ -1483,6 +1483,14 @@ window.AEROVA_LOCALES.ru = {
       "loadingText": "Пожалуйста, подождите.",
       "errorTitle": "Не удалось загрузить уведомления",
       "refundCompletedTitle": "Возврат завершён"
+    },
+    "profile": {
+      "loadingTitle": "Загрузка профиля",
+      "loadingText": "Пожалуйста, подождите.",
+      "errorTitle": "Не удалось загрузить профиль"
+    },
+    "manage": {
+      "awaitingPayment": "Ожидает оплаты"
     }
   },
   "chat": {

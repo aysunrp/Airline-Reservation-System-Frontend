@@ -756,7 +756,19 @@
         });
     }
 
+    /* After the profile changed: keep the name shown in the header in step with it. */
+    function updateCurrentUser(changes) {
+        var user = getCurrentUser();
+        if (!user) return;
+        ["firstName", "lastName", "email"].forEach(function (key) {
+            if (changes && changes[key]) user[key] = changes[key];
+        });
+        writeJSON(sessionStorage, USER_KEY, user);
+        updateNavigation();
+    }
+
     window.AerovaAuth = {
+        updateCurrentUser: updateCurrentUser,
         isLoggedIn: isLoggedIn,
         getCurrentUser: getCurrentUser,
         logout: logout,
