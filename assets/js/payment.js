@@ -14,13 +14,6 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
-    var TAX_RATE = 0.1;
-    var PROMO_CODES = {
-        AEROVA10: 10,
-        FLYAEROVA: 15,
-        WELCOME20: 20
-    };
-
     var priceState = {
         baseFare: 0,
         baggage: 0,
@@ -109,143 +102,27 @@
         return readJSON("bookingData");
     }
 
-    function getPassengerCount(bookingData) {
-        if (!bookingData) {
-            return 1;
-        }
-
-        if (Array.isArray(bookingData.passengers) && bookingData.passengers.length) {
-            return bookingData.passengers.length;
-        }
-
-        var count = toNumber(bookingData.passengerCount, 0);
-        return count > 0 ? count : 1;
-    }
-
-    function getBaggageTotal(baggageData, bookingData) {
-        if (baggageData && baggageData.totalBaggageCost != null) {
-            return roundMoney(toNumber(baggageData.totalBaggageCost, 0));
-        }
-        if (bookingData && bookingData.baggageTotal != null) {
-            return roundMoney(toNumber(bookingData.baggageTotal, 0));
-        }
-        return 0;
-    }
-
-    function getMealTotal(mealData, bookingData) {
-        if (mealData && mealData.totalMealCost != null) {
-            return roundMoney(toNumber(mealData.totalMealCost, 0));
-        }
-        if (bookingData && bookingData.mealTotal != null) {
-            return roundMoney(toNumber(bookingData.mealTotal, 0));
-        }
-        return 0;
-    }
-
-    /*
-     * The booking flow has no extra services. Older bookingData objects may
-     * still carry extraServicesTotal / extraServices from a previous session;
-     * that amount is only subtracted when recovering the base fare from a
-     * stored total that already included it, and is never charged.
-     */
-    function getLegacyExtrasTotal(bookingData) {
-        if (bookingData && bookingData.extraServicesTotal != null) {
-            return roundMoney(toNumber(bookingData.extraServicesTotal, 0));
-        }
-
-        if (bookingData && Array.isArray(bookingData.extraServices)) {
-            return roundMoney(bookingData.extraServices.reduce(function (sum, service) {
-                return sum + toNumber(service && service.price, 0);
-            }, 0));
-        }
-
-        return 0;
-    }
-
-    function getBaseFare(bookingData, baggageTotal, mealTotal) {
-        if (bookingData && bookingData.baseFare != null) {
-            return roundMoney(toNumber(bookingData.baseFare, 0));
-        }
-
-        var selectedFlight = readJSON("aerovaSelectedFlight");
-        var passengerCount = getPassengerCount(bookingData);
-        var unitPrice = toNumber(selectedFlight && selectedFlight.price, NaN);
-
-        if (isFinite(unitPrice)) {
-            return roundMoney(unitPrice * passengerCount);
-        }
-
-        var storedTotal = toNumber(bookingData && bookingData.totalPrice, NaN);
-        if (!isFinite(storedTotal)) {
-            return 0;
-        }
-
-        // If add-on totals were already folded into bookingData.totalPrice, recover base fare.
-        if (bookingData && (bookingData.baggageTotal != null || bookingData.mealTotal != null || bookingData.extraServicesTotal != null)) {
-            var discountAmount = toNumber(bookingData && bookingData.discountAmount, 0);
-            var taxesEstimate = toNumber(bookingData && bookingData.taxesAndFees, 0);
-            return roundMoney(Math.max(
-                0,
-                storedTotal - baggageTotal - mealTotal - getLegacyExtrasTotal(bookingData) - taxesEstimate + discountAmount
-            ));
-        }
-
-        return roundMoney(storedTotal + toNumber(bookingData && bookingData.discountAmount, 0));
-    }
-
     function normalizePromoCode(value) {
         return String(value || "").trim().toUpperCase();
     }
 
-    function getPromoPercent(code) {
-        var normalized = normalizePromoCode(code);
-        return Object.prototype.hasOwnProperty.call(PROMO_CODES, normalized)
-            ? PROMO_CODES[normalized]
-            : null;
-    }
+    function calculatePriceBreakdown() {
+        var price = heldBooking && heldBooking.price;
 
-    function calculatePriceBreakdown(bookingData) {
-        if (heldBooking && heldBooking.price) {
-            var price = heldBooking.price;
-            return {
-                baseFare: roundMoney(price.baseFare),
-                baggage: roundMoney(price.baggage),
-                meals: roundMoney(price.meals),
-                taxes: roundMoney(price.taxes),
-                subtotal: roundMoney(price.subtotal),
-                discount: roundMoney(price.discount),
-                promoCode: price.promoCode || "",
-                promoPercent: toNumber(price.promoPercent, 0),
-                grandTotal: roundMoney(price.total)
-            };
+        if (!price) {
+            return { baseFare: 0, baggage: 0, meals: 0, taxes: 0, subtotal: 0, discount: 0, promoCode: "", promoPercent: 0, grandTotal: 0 };
         }
 
-        var baggageData = readJSON("baggageData");
-        var mealData = readJSON("mealData");
-
-        var baggage = getBaggageTotal(baggageData, bookingData);
-        var meals = getMealTotal(mealData, bookingData);
-        var baseFare = getBaseFare(bookingData, baggage, meals);
-        var taxes = roundMoney(baseFare * TAX_RATE);
-        var subtotal = roundMoney(baseFare + baggage + meals + taxes);
-
-        var promoCode = appliedPromo ? appliedPromo.code : "";
-        var promoPercent = appliedPromo ? appliedPromo.percent : 0;
-        var discount = appliedPromo
-            ? roundMoney(subtotal * (promoPercent / 100))
-            : 0;
-        var grandTotal = roundMoney(Math.max(0, subtotal - discount));
-
         return {
-            baseFare: baseFare,
-            baggage: baggage,
-            meals: meals,
-            taxes: taxes,
-            subtotal: subtotal,
-            discount: discount,
-            promoCode: promoCode,
-            promoPercent: promoPercent,
-            grandTotal: grandTotal
+            baseFare: roundMoney(price.baseFare),
+            baggage: roundMoney(price.baggage),
+            meals: roundMoney(price.meals),
+            taxes: roundMoney(price.taxes),
+            subtotal: roundMoney(price.subtotal),
+            discount: roundMoney(price.discount),
+            promoCode: price.promoCode || "",
+            promoPercent: toNumber(price.promoPercent, 0),
+            grandTotal: roundMoney(price.total)
         };
     }
 
@@ -473,24 +350,24 @@
         }
     }
 
-    function restoreAppliedPromo(bookingData) {
-        if (!bookingData || !bookingData.promoCode) {
-            appliedPromo = null;
-            return;
-        }
+    function restoreAppliedPromo() {
+        var price = heldBooking && heldBooking.price;
 
-        var percent = getPromoPercent(bookingData.promoCode);
-        if (percent == null) {
-            appliedPromo = null;
-            return;
-        }
-
-        appliedPromo = {
-            code: normalizePromoCode(bookingData.promoCode),
-            percent: percent
-        };
+        appliedPromo = price && price.promoCode
+            ? { code: price.promoCode, percent: toNumber(price.promoPercent, 0) }
+            : null;
     }
 
+    function saveBookingData(bookingData) {
+        try {
+            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /* The backend decides whether the code can be used; the booking is then made again with it, so the price comes from the backend. */
     function applyPromoCode() {
         clearPromoError();
 
@@ -518,43 +395,50 @@
             return;
         }
 
-        var percent = getPromoPercent(code);
-        if (percent == null) {
-            showPromoError(typeof t === "function" ? t("payment.invalidPromo") : "Invalid promo code");
-            return;
+        var applyButton = document.getElementById("promo-apply-button");
+        if (applyButton) {
+            applyButton.disabled = true;
         }
 
-        appliedPromo = {
-            code: code,
-            percent: percent
-        };
+        window.AEROVA_API.get("api/promo-codes/" + encodeURIComponent(code)).then(function (promo) {
+            bookingData.promoCode = promo.code;
 
-        var prices = refreshTotals(bookingData);
-        if (!persistPromoToBooking(bookingData, prices)) {
-            showPromoError(tr("payment.promoSaveFail", "Unable to save promo code"));
-            return;
-        }
+            if (!saveBookingData(bookingData)) {
+                showPromoError(tr("payment.promoSaveFail", "Unable to save promo code"));
+                return;
+            }
 
-        clearPromoError();
+            reserveBooking(bookingData, document.querySelector(".payment-layout"));
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+            showPromoError(isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."));
+        }).then(function () {
+            if (applyButton && !appliedPromo) {
+                applyButton.disabled = false;
+            }
+        });
     }
 
     function removePromoCode() {
         clearPromoError();
 
         var bookingData = readBookingData();
+        if (!bookingData) {
+            return;
+        }
+
+        delete bookingData.promoCode;
+        if (!saveBookingData(bookingData)) {
+            showPromoError(tr("payment.promoSaveFail", "Unable to save promo code"));
+            return;
+        }
+
         var input = document.getElementById("promo-code-input");
-
-        appliedPromo = null;
-
         if (input) {
             input.value = "";
-            input.disabled = false;
         }
 
-        var prices = refreshTotals(bookingData || {});
-        if (bookingData) {
-            persistPromoToBooking(bookingData, prices);
-        }
+        reserveBooking(bookingData, document.querySelector(".payment-layout"));
     }
 
     function getTrimmedValue(input) {
@@ -936,13 +820,7 @@
                 layout.hidden = false;
             }
 
-            var promoSection = document.getElementById("promo-code-section");
-            if (promoSection) {
-                // Promo codes are checked by the backend; until that is connected here, none is offered.
-                promoSection.hidden = true;
-            }
-
-            appliedPromo = null;
+            restoreAppliedPromo();
             populatePaymentSummary(bookingData);
             startHoldTimer();
         }).catch(function (error) {

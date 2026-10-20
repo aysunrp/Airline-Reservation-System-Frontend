@@ -141,8 +141,18 @@
       return Promise.resolve(held);
     }
 
+    // A hold made for different choices (other seats, baggage...) would keep those seats busy, so release it first.
+    var lastName = bookingData.passengers[0].lastName;
+    var release = held && held.pnr
+      ? window.AEROVA_API.post("api/bookings/" + encodeURIComponent(held.pnr) + "/cancel", { lastName: lastName, reason: "Replaced by a new reservation" }).catch(function () {
+        // Already expired or released: nothing to free.
+      })
+      : Promise.resolve();
+
     forget();
-    return window.AEROVA_API.post("api/bookings", request).then(function (booking) {
+    return release.then(function () {
+      return window.AEROVA_API.post("api/bookings", request);
+    }).then(function (booking) {
       var created = { fingerprint: key, id: booking.id, pnr: booking.pnr, expiresAt: booking.expiresAt, price: booking.price };
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(created));
