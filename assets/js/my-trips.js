@@ -1,4 +1,14 @@
+/*
+ * My Trips: the signed-in user's bookings from GET api/bookings/my. Needs api-client.js, airports.js and auth.js.
+ * Only trips that were paid are listed: a booking still waiting for payment, an expired hold, or a hold that was
+ * cancelled before any payment (refund status null) is checkout, not a trip.
+ */
 (function () {
+    "use strict";
+
+    var loadToken = 0;
+    var state = { trips: [], airports: [] };
+
     function tr(key, fallback, vars) {
         if (typeof window.t === "function") {
             var value = window.t(key, vars);
@@ -13,15 +23,8 @@
         var key = "common.months." + String(index + 1);
         var translated = tr(key, "");
         if (translated && translated !== key) return translated;
-        return MONTH_NAMES[index];
+        return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][index];
     }
-
-    "use strict";
-
-    var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
 
     function escapeHtml(value) {
         return String(value)
@@ -34,207 +37,111 @@
 
     function formatPrice(amount) {
         var value = Number(amount);
-        if (!isFinite(value)) {
-            return "$0.00";
-        }
-        return "$" + value.toFixed(2);
+        return "$" + (isFinite(value) ? value : 0).toFixed(2);
     }
 
     function formatDisplayDate(dateValue) {
-        if (!dateValue) {
+        var parts = String(dateValue || "").split("-");
+        if (parts.length !== 3) {
             return "—";
         }
-
-        var parts = String(dateValue).split("-");
-        if (parts.length !== 3) {
-            return String(dateValue);
-        }
-
-        var year = Number(parts[0]);
-        var month = Number(parts[1]);
-        var day = Number(parts[2]);
-
-        if (!year || !month || !day || month < 1 || month > 12) {
-            return String(dateValue);
-        }
-
-        return day + " " + monthName(month - 1) + " " + year;
+        return Number(parts[2]) + " " + monthName(Number(parts[1]) - 1) + " " + parts[0];
     }
 
-    function parseFlightDate(dateValue) {
-        if (!dateValue) {
-            return null;
-        }
-
-        var parts = String(dateValue).split("-");
-        if (parts.length !== 3) {
-            return null;
-        }
-
-        var year = Number(parts[0]);
-        var month = Number(parts[1]);
-        var day = Number(parts[2]);
-        var date = new Date(year, month - 1, day);
-
-        if (
-            !year ||
-            !month ||
-            !day ||
-            date.getFullYear() !== year ||
-            date.getMonth() !== month - 1 ||
-            date.getDate() !== day
-        ) {
-            return null;
-        }
-
-        date.setHours(0, 0, 0, 0);
-        return date;
+    function durationLabel(minutes) {
+        return Math.floor(minutes / 60) + "h " + (minutes % 60 < 10 ? "0" : "") + (minutes % 60) + "m";
     }
 
-    function isUpcomingFlight(dateValue) {
-        var flightDate = parseFlightDate(dateValue);
-        if (!flightDate) {
+    function isTrip(booking) {
+        if (booking.status === "Confirmed" || booking.status === "Completed") {
             return true;
         }
-
-        var today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return flightDate >= today;
+        return booking.status === "Cancelled" && booking.refundStatus != null;
     }
 
-    function readBookingData() {
-        try {
-            var raw = sessionStorage.getItem("bookingData");
-            if (!raw) {
-                return null;
-            }
-
-            var parsed = JSON.parse(raw);
-            return parsed && typeof parsed === "object" ? parsed : null;
-        } catch (error) {
-            return null;
-        }
+    function refundKey(status) {
+        var value = String(status || "").toLowerCase().replace(/[^a-z]/g, "");
+        return value === "processing" ? "processing" : (value === "completed" ? "completed" : (value === "noteligible" ? "notEligible" : "pending"));
     }
 
-    function isCompletedBooking(bookingData) {
-        if (!bookingData || typeof bookingData !== "object") {
-            return false;
-        }
-
-        var paymentStatus = String(bookingData.paymentStatus || "").toLowerCase();
-        var status = String(bookingData.status || "").toLowerCase();
-
-        if (paymentStatus === "paid" || status === "confirmed" || status === "cancelled") {
-            return true;
-        }
-
-        return !!bookingData.pnr;
-    }
-
-    function getBookingStatus(bookingData) {
-        var status = String(bookingData.status || "").toLowerCase();
-        if (status === "cancelled") {
-            return tr("common.statusCancelled", "Cancelled");
-        }
-
-        if (bookingData.paymentStatus === "Paid" || status === "confirmed") {
-            return tr("common.statusConfirmed", "Confirmed");
-        }
-
-        if (bookingData.paymentStatus) {
-            return String(bookingData.paymentStatus);
-        }
-
-        return tr("common.statusConfirmed", "Confirmed");
-    }
-
-    function buildRefundMarkup(refund) {
-        var key = String(refund.status || "").toLowerCase().replace(/[^a-z]/g, "");
-        key = key === "processing" ? "processing" : (key === "completed" ? "completed" : (key === "noteligible" ? "notEligible" : "pending"));
+    function buildRefundMarkup(status) {
+        var key = refundKey(status);
         var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible" }[key];
 
         return (
             '<p class="trip-card-refund">' +
                 '<span class="trip-card-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Refund status")) + "</span>" +
                 '<span class="trip-card-refund-status trip-card-refund-status--' + key + '">' + escapeHtml(tr("cancellation.status." + key, fallback)) + "</span>" +
-                (key === "notEligible" ? "" : '<span class="trip-card-refund-amount">' + escapeHtml(formatPrice(refund.amount)) + "</span>") +
                 '<span class="trip-card-refund-demo">' + escapeHtml(tr("cancellation.demoTag", "Demo")) + "</span>" +
             "</p>"
         );
     }
 
-    function buildTripCard(bookingData) {
-        var flight = bookingData.flight || {};
-        var selectedSeats = Array.isArray(bookingData.selectedSeats)
-            ? bookingData.selectedSeats
-            : [];
-        var passengerCount = bookingData.passengerCount ||
-            (Array.isArray(bookingData.passengers) ? bookingData.passengers.length : 0) ||
-            selectedSeats.length ||
-            0;
-        var route = flight.route ||
-            ((flight.from || "—") + " → " + (flight.to || "—"));
-        var seatsText = selectedSeats.length ? selectedSeats.join(", ") : "—";
-        var pnr = bookingData.pnr || "—";
-        var status = getBookingStatus(bookingData);
-        var cancelled = String(bookingData.status || "").toLowerCase() === "cancelled";
-        var refundMarkup = cancelled && bookingData.refund ? buildRefundMarkup(bookingData.refund) : "";
+    function statusLabel(status) {
+        if (status === "Cancelled") return tr("common.statusCancelled", "Cancelled");
+        if (status === "Completed") return tr("api.trips.statusCompleted", "Completed");
+        return tr("common.statusConfirmed", "Confirmed");
+    }
+
+    /* A booking summary from the API, with times shown at each airport. */
+    function toCard(booking) {
+        var directory = window.AEROVA_AIRPORTS;
+        var leg = booking.legs[0];
+        var origin = directory.find(state.airports, leg.originCode);
+        var destination = directory.find(state.airports, leg.destinationCode);
+        var departure = directory.localTime(leg.departureAt, origin.timeZoneId);
+        var arrival = directory.localTime(leg.arrivalAt, destination.timeZoneId);
+
+        return {
+            booking: booking,
+            departsAt: window.AEROVA_BOOKING.parseUtc(leg.departureAt).getTime(),
+            route: leg.originCity + " → " + leg.destinationCity,
+            flightNumber: leg.flightNumber,
+            date: departure.date,
+            departure: departure.time,
+            arrival: arrival.time,
+            duration: durationLabel(arrival.utcMinutes - departure.utcMinutes),
+            aircraft: "AEROVA " + leg.aircraftModel,
+            seats: leg.seats.length ? leg.seats.join(", ") : "—"
+        };
+    }
+
+    function buildTripCard(card) {
+        var booking = card.booking;
+        var cancelled = booking.status === "Cancelled";
+
+        function meta(label, value) {
+            return '<div class="trip-card-meta-item"><dt>' + label + "</dt><dd>" + escapeHtml(value) + "</dd></div>";
+        }
 
         return (
             '<article class="trip-card">' +
                 '<div class="trip-card-top">' +
                     '<div class="trip-card-identity">' +
-                        '<p class="trip-card-airline">' + escapeHtml(flight.airline || "AEROVA") + "</p>" +
-                        '<h2 class="trip-card-route">' + escapeHtml(route) + "</h2>" +
-                        '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + (flight.flightNumber || "—"), { number: flight.flightNumber || "—" })) + "</p>" +
+                        '<p class="trip-card-airline">AEROVA</p>' +
+                        '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
+                        '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + card.flightNumber, { number: card.flightNumber })) + "</p>" +
                     "</div>" +
-                    '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(status) + "</div>" +
+                    '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +
                 "</div>" +
                 '<dl class="trip-card-meta">' +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.bookingReference", "Booking Reference") + "</dt>" +
-                        "<dd>" + escapeHtml(pnr) + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.flightDate", "Flight Date") + "</dt>" +
-                        "<dd>" + escapeHtml(formatDisplayDate(flight.departureDate)) + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.departure", "Departure") + "</dt>" +
-                        "<dd>" + escapeHtml(flight.departure || "—") + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.arrival", "Arrival") + "</dt>" +
-                        "<dd>" + escapeHtml(flight.arrival || "—") + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.duration", "Duration") + "</dt>" +
-                        "<dd>" + escapeHtml(flight.duration || "—") + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.aircraft", "Aircraft") + "</dt>" +
-                        "<dd>" + escapeHtml(flight.aircraft || "—") + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.cabinClass", "Cabin Class") + "</dt>" +
-                        "<dd>" + escapeHtml(bookingData.cabinClass || "—") + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.passengerCount", "Passenger Count") + "</dt>" +
-                        "<dd>" + escapeHtml(String(passengerCount || "—")) + "</dd>" +
-                    "</div>" +
-                    '<div class="trip-card-meta-item">' +
-                        "<dt>" + tr("trips.selectedSeats", "Selected Seats") + "</dt>" +
-                        "<dd>" + escapeHtml(seatsText) + "</dd>" +
-                    "</div>" +
+                    meta(tr("trips.bookingReference", "Booking Reference"), booking.pnr) +
+                    meta(tr("trips.flightDate", "Flight Date"), formatDisplayDate(card.date)) +
+                    meta(tr("trips.departure", "Departure"), card.departure) +
+                    meta(tr("trips.arrival", "Arrival"), card.arrival) +
+                    meta(tr("trips.duration", "Duration"), card.duration) +
+                    meta(tr("trips.aircraft", "Aircraft"), card.aircraft) +
+                    meta(tr("trips.cabinClass", "Cabin Class"), booking.legs[0].cabinClass) +
+                    meta(tr("trips.passengerCount", "Passenger Count"), String(booking.passengerCount)) +
+                    meta(tr("trips.selectedSeats", "Selected Seats"), card.seats) +
                 "</dl>" +
-                refundMarkup +
+                (cancelled ? buildRefundMarkup(booking.refundStatus) : "") +
                 '<div class="trip-card-footer">' +
                     '<div class="trip-card-price">' +
                         '<p class="trip-card-price-label">' + tr("trips.total", "Total") + "</p>" +
-                        '<p class="trip-card-price-value">' + escapeHtml(formatPrice(bookingData.totalPrice)) + "</p>" +
+                        '<p class="trip-card-price-value">' + escapeHtml(formatPrice(booking.totalAmount)) + "</p>" +
                     "</div>" +
-                    '<a class="trip-card-button" href="booking-details.html?source=trips">' + tr("trips.viewDetails", "View Details") + "</a>" +
+                    '<a class="trip-card-button" href="booking-details.html?pnr=' + encodeURIComponent(booking.pnr) + '">' + tr("trips.viewDetails", "View Details") + "</a>" +
                 "</div>" +
             "</article>"
         );
@@ -244,12 +151,8 @@
         var pastPanel = document.querySelector(".trips-panel--past");
         var existing = document.getElementById("past-trips-list");
 
-        if (existing) {
+        if (existing || !pastPanel) {
             return existing;
-        }
-
-        if (!pastPanel) {
-            return null;
         }
 
         var list = document.createElement("div");
@@ -266,44 +169,100 @@
         return list;
     }
 
-    function showEmptyState(emptyId, shouldShow) {
-        var emptyState = document.getElementById(emptyId);
-        if (!emptyState) {
-            return;
+    function setHidden(id, hidden) {
+        var element = document.getElementById(id);
+        if (element) {
+            element.hidden = hidden;
         }
-        emptyState.hidden = !shouldShow;
     }
 
-    function renderTrips(bookingData) {
+    function showStatus(kind, title, text, actions) {
+        var panel = document.getElementById("trips-status");
+        var tabs = document.querySelector(".trips-tabs");
+        var buttons = document.getElementById("trips-status-actions");
+
+        document.getElementById("trips-status-title").textContent = title;
+        document.getElementById("trips-status-text").textContent = text;
+        panel.setAttribute("role", kind === "error" ? "alert" : "status");
+        buttons.innerHTML = "";
+
+        (actions || []).forEach(function (action) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "trip-card-button";
+            button.textContent = action.label;
+            button.addEventListener("click", action.onClick);
+            buttons.appendChild(button);
+        });
+
+        panel.hidden = false;
+        if (tabs) {
+            tabs.hidden = true;
+        }
+    }
+
+    function render() {
+        var now = Date.now();
+        var cards = state.trips.filter(isTrip).map(toCard);
+        var upcoming = cards.filter(function (card) { return card.departsAt >= now && card.booking.status !== "Completed"; })
+            .sort(function (a, b) { return a.departsAt - b.departsAt; });
+        var past = cards.filter(function (card) { return upcoming.indexOf(card) === -1; })
+            .sort(function (a, b) { return b.departsAt - a.departsAt; });
+
         var upcomingList = document.getElementById("upcoming-trips-list");
         var pastList = ensurePastTripsList();
-        var flight = bookingData && bookingData.flight ? bookingData.flight : {};
-        var upcoming = bookingData ? isUpcomingFlight(flight.departureDate) : false;
-        var cardMarkup = bookingData ? buildTripCard(bookingData) : "";
 
         if (upcomingList) {
-            upcomingList.innerHTML = upcoming ? cardMarkup : "";
+            upcomingList.innerHTML = upcoming.map(buildTripCard).join("");
         }
-
         if (pastList) {
-            pastList.innerHTML = bookingData && !upcoming ? cardMarkup : "";
+            pastList.innerHTML = past.map(buildTripCard).join("");
         }
 
-        showEmptyState("upcoming-trips-empty", !bookingData || !upcoming);
-        showEmptyState("past-trips-empty", !bookingData || upcoming);
-    }
+        setHidden("upcoming-trips-empty", upcoming.length > 0);
+        setHidden("past-trips-empty", past.length > 0);
+        setHidden("trips-status", true);
 
-    function init() {
-        var bookingData = readBookingData();
-        if (bookingData && !isCompletedBooking(bookingData)) {
-            bookingData = null;
+        var tabs = document.querySelector(".trips-tabs");
+        if (tabs) {
+            tabs.hidden = false;
         }
-        renderTrips(bookingData);
     }
 
-    document.addEventListener("DOMContentLoaded", init);
+    function load() {
+        var token = ++loadToken;
+
+        showStatus("loading", tr("api.trips.loadingTitle", "Loading your trips"), tr("api.trips.loadingText", "Please wait a moment."), []);
+
+        Promise.all([window.AEROVA_AIRPORTS.load(), window.AEROVA_API.get("api/bookings/my")]).then(function (results) {
+            if (token !== loadToken) {
+                return;
+            }
+            state.airports = results[0];
+            state.trips = results[1] || [];
+            render();
+        }).catch(function (error) {
+            if (token !== loadToken) {
+                return;
+            }
+
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+            if (!isApiError && window.console) {
+                window.console.error(error);
+            }
+
+            // A rejected token already sent the visitor to the sign-in page (auth.js).
+            showStatus("error", tr("api.trips.errorTitle", "We could not load your trips"), isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), [
+                { label: tr("api.options.retry", "Try again"), onClick: load }
+            ]);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", load);
     window.addEventListener("aerova:languagechange", function () {
-        if (typeof init === "function") { try { init(); } catch (e) {} }
+        if (state.trips.length || state.airports.length) {
+            try { render(); } catch (error) { /* the next load repaints */ }
+        }
         if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
     });
 })();

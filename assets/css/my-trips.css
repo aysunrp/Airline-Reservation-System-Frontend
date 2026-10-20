@@ -367,3 +367,44 @@
         flex: 1;
     }
 }
+
+/* Loading the trips, or why they cannot be shown. */
+.trips-tabs[hidden],
+.trips-status[hidden] {
+    display: none !important;
+}
+
+.trips-status {
+    padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    text-align: center;
+}
+
+.trips-status-title {
+    margin: 0 0 0.7rem;
+    color: var(--color-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 500;
+}
+
+.trips-status-text {
+    margin: 0;
+    color: var(--color-cream-muted);
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.trips-status-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.trips-status-actions:empty {
+    display: none;
+}

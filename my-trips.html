@@ -106,7 +106,13 @@
 
 
 
-                <div class="trips-tabs">
+                <div class="trips-status" id="trips-status" role="status" aria-live="polite" hidden>
+                    <h2 class="trips-status-title" id="trips-status-title"></h2>
+                    <p class="trips-status-text" id="trips-status-text"></p>
+                    <div class="trips-status-actions" id="trips-status-actions"></div>
+                </div>
+
+                <div class="trips-tabs" hidden>
 
                     <input class="trips-tab-input" id="tab-upcoming" name="trips-tab" type="radio" checked>
 
@@ -462,10 +468,12 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/api-client.js?v=api1"></script>
+    <script src="assets/js/airports.js"></script>
+    <script src="assets/js/booking-api.js"></script>
     <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=api2"></script>
+    <script src="assets/js/auth.js?v=api4"></script>
 
-    <script src="assets/js/my-trips.js"></script>
+    <script src="assets/js/my-trips.js?v=api1"></script>
 
 </body>
 
