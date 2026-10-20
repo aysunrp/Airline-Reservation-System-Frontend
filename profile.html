@@ -124,7 +124,13 @@
 
 
 
-                <form id="profile-form" class="profile-form" novalidate>
+                <div class="profile-status" id="profile-status" role="status" aria-live="polite">
+                    <h2 class="profile-status-title" id="profile-status-title"></h2>
+                    <p class="profile-status-text" id="profile-status-text"></p>
+                    <button class="booking-action-button booking-action-button--primary" id="profile-status-retry" type="button" hidden>Try again</button>
+                </div>
+
+                <form id="profile-form" hidden class="profile-form" novalidate>
 
                     <article class="details-card" aria-labelledby="personal-info-title">
 
@@ -180,7 +186,7 @@
 
                                 <label class="field-label" for="profile-nationality">Nationality <span class="required-mark" aria-hidden="true">*</span></label>
 
-                                <input class="field-input" id="profile-nationality" name="nationality" type="text" autocomplete="country-name" required>
+                                <select class="field-input" id="profile-nationality" name="nationality" autocomplete="country" required></select>
 
                             </div>
 
@@ -515,9 +521,10 @@
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/api-client.js?v=api1"></script>
     <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=api4"></script>
+    <script src="assets/js/auth.js?v=api5"></script>
 
-    <script src="assets/js/profile.js"></script>
+    <script src="assets/js/travel-documents.js"></script>
+    <script src="assets/js/profile.js?v=api2"></script>
 
 </body>
 
