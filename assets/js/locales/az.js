@@ -1428,6 +1428,23 @@ window.AEROVA_LOCALES.az = {
       "retry": "Yenidən cəhd et",
       "backToSeats": "Yerləri yenidən seç",
       "backToPassengers": "Sərnişin məlumatlarına qayıt"
+    },
+    "options": {
+      "passenger": "Sərnişin {n}",
+      "noBaggage": "Əlavə baqaj yoxdur",
+      "cabinOnly": "Yalnız salon baqajı",
+      "extraBag": "Əlavə qeydiyyatlı baqaj",
+      "noMeal": "Yemək yoxdur",
+      "noMealText": "Bu sərnişin üçün uçuş yeməyindən imtina edin.",
+      "loadingTitle": "Seçimlər yüklənir",
+      "loadingText": "Zəhmət olmasa bir az gözləyin.",
+      "errorTitle": "Seçimləri yükləmək mümkün olmadı",
+      "retry": "Yenidən cəhd et",
+      "noBookingTitle": "Davam edən rezervasiya yoxdur",
+      "noBookingText": "Əvvəlcə uçuş seçin və sərnişin məlumatlarını daxil edin.",
+      "backToPassengers": "Sərnişin məlumatlarına qayıt",
+      "saveErrorTitle": "Seçimlərinizi yadda saxlamaq mümkün olmadı",
+      "saveErrorText": "Brauzeriniz onları saxlamadı. Zəhmət olmasa yenidən cəhd edin."
     }
   },
   "chat": {

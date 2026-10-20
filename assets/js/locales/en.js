@@ -1428,6 +1428,23 @@ window.AEROVA_LOCALES.en = {
       "retry": "Try again",
       "backToSeats": "Choose seats again",
       "backToPassengers": "Back to passenger details"
+    },
+    "options": {
+      "passenger": "Passenger {n}",
+      "noBaggage": "No Extra Baggage",
+      "cabinOnly": "Cabin allowance only",
+      "extraBag": "Extra checked bag",
+      "noMeal": "No Meal",
+      "noMealText": "Skip in-flight dining for this passenger.",
+      "loadingTitle": "Loading options",
+      "loadingText": "Please wait a moment.",
+      "errorTitle": "We could not load the options",
+      "retry": "Try again",
+      "noBookingTitle": "No booking in progress",
+      "noBookingText": "Choose a flight and enter the passenger details first.",
+      "backToPassengers": "Back to passenger details",
+      "saveErrorTitle": "We could not save your choices",
+      "saveErrorText": "Your browser would not store them. Please try again."
     }
   },
   "chat": {
