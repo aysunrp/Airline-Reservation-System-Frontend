@@ -5,7 +5,6 @@
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    var PNR_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
     function setText(id, value) {
         var element = document.getElementById(id);
@@ -52,49 +51,6 @@
         return day + " " + MONTH_NAMES[month - 1] + " " + year;
     }
 
-    function generatePNR() {
-        var pnr = "";
-        var i;
-
-        for (i = 0; i < 6; i += 1) {
-            pnr += PNR_CHARSET.charAt(Math.floor(Math.random() * PNR_CHARSET.length));
-        }
-
-        return pnr;
-    }
-
-    function readBookingData() {
-        try {
-            var raw = sessionStorage.getItem("bookingData");
-            if (!raw) {
-                return null;
-            }
-
-            var parsed = JSON.parse(raw);
-            return parsed && typeof parsed === "object" ? parsed : null;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function saveBookingData(bookingData) {
-        try {
-            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
-        } catch (error) {
-            // Ignore storage errors and continue rendering
-        }
-    }
-
-    function ensurePNR(bookingData) {
-        if (bookingData.pnr) {
-            return String(bookingData.pnr);
-        }
-
-        bookingData.pnr = generatePNR();
-        saveBookingData(bookingData);
-        return bookingData.pnr;
-    }
-
     function getPassengerName(passenger) {
         return [passenger.title, passenger.firstName, passenger.middleName, passenger.lastName]
             .map(function (part) {
@@ -104,6 +60,60 @@
                 return !!part;
             })
             .join(" ");
+    }
+
+    /* Only the reference and a passenger's last name are kept after paying; everything shown comes from the backend. */
+    function readPaid() {
+        try {
+            var parsed = JSON.parse(sessionStorage.getItem("aerovaPaid") || "null");
+            return parsed && parsed.pnr && parsed.lastName ? parsed : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function tr(key, fallback, vars) {
+        if (typeof window.t === "function") {
+            var value = window.t(key, vars);
+            if (value && value !== key) {
+                return value;
+            }
+        }
+        return typeof vars === "object" && vars
+            ? String(fallback).replace(/\{(\w+)\}/g, function (_, name) { return vars[name] != null ? String(vars[name]) : "{" + name + "}"; })
+            : fallback;
+    }
+
+    function showStatus(title, text, actions, isError) {
+        var panel = document.getElementById("confirmation-status");
+        var body = document.getElementById("confirmation-body");
+        var buttons = document.getElementById("confirmation-status-actions");
+
+        setText("confirmation-status-title", title);
+        setText("confirmation-status-text", text);
+        buttons.innerHTML = "";
+
+        (actions || []).forEach(function (action) {
+            var element = document.createElement(action.href ? "a" : "button");
+            element.className = "confirmation-button confirmation-button--primary";
+            element.textContent = action.label;
+            if (action.href) {
+                element.setAttribute("href", action.href);
+            } else {
+                element.type = "button";
+                element.addEventListener("click", action.onClick);
+            }
+            buttons.appendChild(element);
+        });
+
+        panel.setAttribute("role", isError ? "alert" : "status");
+        panel.hidden = false;
+        body.hidden = true;
+    }
+
+    function showBooking() {
+        document.getElementById("confirmation-status").hidden = true;
+        document.getElementById("confirmation-body").hidden = false;
     }
 
     function renderPassengers(passengers, selectedSeats) {
@@ -165,46 +175,115 @@
         }
     }
 
+    /* The booking as the backend holds it, in the shape the page below fills in. */
+    function toPageData(booking, airports) {
+        var directory = window.AEROVA_AIRPORTS;
+        var leg = booking.legs[0];
+        var origin = directory.find(airports, leg.originCode);
+        var destination = directory.find(airports, leg.destinationCode);
+        var departure = directory.localTime(leg.departureAt, origin.timeZoneId);
+        var arrival = directory.localTime(leg.arrivalAt, destination.timeZoneId);
+        var seats = [];
+
+        var passengers = booking.passengers.map(function (passenger) {
+            var seat = null;
+            passenger.tickets.forEach(function (ticket) {
+                if (ticket.seat && ticket.legOrder === leg.legOrder) {
+                    seat = ticket.seat;
+                }
+                if (ticket.seat) {
+                    seats.push(ticket.seat);
+                }
+            });
+            return { title: passenger.title, firstName: passenger.firstName, middleName: passenger.middleName, lastName: passenger.lastName, assignedSeat: seat };
+        });
+
+        return {
+            pnr: booking.pnr,
+            flight: {
+                airline: "AEROVA",
+                flightNumber: leg.flightNumber,
+                route: leg.originCity + " \u2192 " + leg.destinationCity,
+                departureDate: departure.date,
+                departure: departure.time,
+                arrival: arrival.time,
+                aircraft: "AEROVA " + leg.aircraftModel
+            },
+            cabinClass: leg.cabinClass,
+            passengerCount: passengers.length,
+            selectedSeats: seats,
+            passengers: passengers,
+            totalPrice: booking.price.total
+        };
+    }
+
     function populateConfirmation(bookingData) {
-        var flight = bookingData.flight || {};
-        var selectedSeats = Array.isArray(bookingData.selectedSeats) ? bookingData.selectedSeats : [];
-        var passengers = Array.isArray(bookingData.passengers) ? bookingData.passengers : [];
-        var passengerCount = bookingData.passengerCount || passengers.length || selectedSeats.length || 0;
-        var seatsText = selectedSeats.length ? selectedSeats.join(", ") : "—";
-        var route = flight.route || ((flight.from || "—") + " → " + (flight.to || "—"));
-        var cabinClass = bookingData.cabinClass || "—";
-        var pnr = ensurePNR(bookingData);
+        var flight = bookingData.flight;
+        var seatsText = bookingData.selectedSeats.length ? bookingData.selectedSeats.join(", ") : "\u2014";
         var airlineEl = document.querySelector(".flight-airline");
 
-        setText("confirmation-pnr", pnr);
-        setText("confirmation-flight-number", flight.flightNumber || "—");
-        setText("confirmation-route", route);
+        setText("confirmation-pnr", bookingData.pnr);
+        setText("confirmation-flight-number", flight.flightNumber);
+        setText("confirmation-route", flight.route);
         setText("confirmation-departure-date", formatDisplayDate(flight.departureDate));
-        setText("confirmation-departure-time", flight.departure || "—");
-        setText("confirmation-arrival-time", flight.arrival || "—");
-        setText("confirmation-aircraft", flight.aircraft || "—");
-        setText("confirmation-cabin", cabinClass);
-        setText("confirmation-passenger-count", String(passengerCount || "—"));
+        setText("confirmation-departure-time", flight.departure);
+        setText("confirmation-arrival-time", flight.arrival);
+        setText("confirmation-aircraft", flight.aircraft);
+        setText("confirmation-cabin", bookingData.cabinClass);
+        setText("confirmation-passenger-count", String(bookingData.passengerCount));
         setText("confirmation-selected-seats", seatsText);
         setText("confirmation-total-price", formatPrice(bookingData.totalPrice));
 
         if (airlineEl) {
-            airlineEl.textContent = flight.airline || "AEROVA";
+            airlineEl.textContent = flight.airline;
         }
 
-        renderPassengers(passengers, selectedSeats);
-        populatePriceSummary(passengerCount || "—", cabinClass, seatsText, bookingData.totalPrice);
+        renderPassengers(bookingData.passengers, bookingData.selectedSeats);
+        populatePriceSummary(bookingData.passengerCount, bookingData.cabinClass, seatsText, bookingData.totalPrice);
     }
 
-    function init() {
-        var bookingData = readBookingData();
+    function load() {
+        var paid = readPaid();
 
-        if (!bookingData) {
-            window.location.href = "index.html";
+        if (!paid) {
+            showStatus(tr("api.confirmation.missingTitle", "No booking to show"), tr("api.confirmation.missingText", "Your booking could not be found on this device. Use Manage Booking with your reference and last name."), [
+                { label: tr("api.confirmation.manage", "Manage booking"), href: "manage-booking.html" }
+            ]);
             return;
         }
 
-        populateConfirmation(bookingData);
+        showStatus(tr("api.confirmation.loadingTitle", "Loading your booking"), tr("api.confirmation.loadingText", "Please wait a moment."), []);
+
+        Promise.all([
+            window.AEROVA_AIRPORTS.load(),
+            window.AEROVA_API.get("api/bookings/" + encodeURIComponent(paid.pnr) + "?lastName=" + encodeURIComponent(paid.lastName))
+        ]).then(function (results) {
+            var booking = results[1];
+
+            if (booking.status !== "Confirmed" && booking.status !== "Completed") {
+                showStatus(tr("api.confirmation.notPaidTitle", "This booking is not confirmed"), tr("api.confirmation.notPaidText", "The payment for this booking was not completed."), [
+                    { label: tr("api.confirmation.backHome", "Back to Home"), href: "index.html" }
+                ]);
+                return;
+            }
+
+            populateConfirmation(toPageData(booking, results[0]));
+            showBooking();
+        }).catch(function (error) {
+            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+
+            if (!isApiError && window.console) {
+                window.console.error(error);
+            }
+
+            showStatus(tr("api.confirmation.errorTitle", "We could not load your booking"), isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), [
+                { label: tr("api.confirmation.retry", "Try again"), onClick: load }
+            ], true);
+        });
+    }
+
+    function init() {
+        load();
     }
 
     document.addEventListener("DOMContentLoaded", init);

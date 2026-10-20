@@ -96,6 +96,14 @@
 
             <div class="confirmation-container">
 
+                <div class="confirmation-status-panel" id="confirmation-status" role="status" aria-live="polite" hidden>
+                    <h1 class="confirmation-status-title" id="confirmation-status-title"></h1>
+                    <p class="confirmation-status-text" id="confirmation-status-text"></p>
+                    <div class="confirmation-status-actions" id="confirmation-status-actions"></div>
+                </div>
+
+                <div id="confirmation-body" hidden>
+
                 <header class="confirmation-status">
 
                     <div class="confirmation-check" aria-hidden="true">✓</div>
@@ -287,6 +295,8 @@
                     <a class="confirmation-button confirmation-button--secondary" href="booking-details.html?source=trips" data-i18n="confirmation.viewDetails">Booking Details</a>
 
                     <a class="confirmation-button confirmation-button--secondary" href="index.html" data-i18n="auth.backHome">Back to Home</a>
+
+                </div>
 
                 </div>
 
@@ -484,10 +494,11 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/airports.js"></script>
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js"></script>
 
-    <script src="assets/js/confirmation.js"></script>
+    <script src="assets/js/confirmation.js?v=api2"></script>
 
 </body>
 
