@@ -716,21 +716,9 @@ function tr(key, fallback, vars) {
 
 (function () {
     var STORAGE_KEY = "aerovaPriceCalendar";
-    var CALENDAR_CITIES = [
-        "Baku",
-        "Nakhchivan",
-        "London",
-        "Paris",
-        "Istanbul",
-        "Dubai",
-        "Berlin",
-        "Barcelona",
-        "Rome",
-        "Milan",
-        "New York",
-        "Tokyo",
-        "Singapore"
-    ];
+    /* Cities with an airport, from the backend; the calendar needs them before it can show anything. */
+    var CALENDAR_CITIES = [];
+    var calendarAirports = [];
 
     var MONTH_NAMES = [
         "January", "February", "March", "April", "May", "June",
@@ -794,7 +782,7 @@ function tr(key, fallback, vars) {
         return;
     }
 
-    var viewDate = new Date(2026, 9, 1);
+    var viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     var selectionMode = "departure";
     var tripType = "round-trip";
     var departureDate = bookingDeparture.value || "";
@@ -872,36 +860,61 @@ function tr(key, fallback, vars) {
         return "";
     }
 
-    function hashString(value) {
-        var hash = 0;
-        var text = String(value || "");
-        for (var i = 0; i < text.length; i += 1) {
-            hash = ((hash << 5) - hash) + text.charCodeAt(i);
-            hash |= 0;
-        }
-        return Math.abs(hash);
+    /*
+     * Lowest fares come from GET api/flights/lowest-fares, one request per route and month, kept here once they arrived.
+     * A day without a flight has no entry; a month that is still loading or failed shows no prices (and says so below the grid).
+     */
+    var fareMonths = {};
+
+    function monthKey(fromCity, toCity, year, month) {
+        return normalizeCity(fromCity) + "|" + normalizeCity(toCity) + "|" + year + "-" + pad(month + 1);
     }
 
-    function getBaseFareForRoute(fromCity, toCity) {
-        var routeKey = normalizeCity(fromCity) + "|" + normalizeCity(toCity);
-        var bases = {
-            "baku|london": 420,
-            "baku|paris": 390,
-            "baku|dubai": 245,
-            "baku|istanbul": 200,
-            "baku|nakhchivan": 85,
-            "london|baku": 440,
-            "paris|baku": 405,
-            "dubai|baku": 260,
-            "istanbul|baku": 215,
-            "nakhchivan|baku": 85
-        };
+    function cityCode(city) {
+        var airport = window.AEROVA_AIRPORTS.find(calendarAirports, city);
+        return airport ? airport.code : "";
+    }
 
-        if (bases[routeKey]) {
-            return bases[routeKey];
+    function loadFareMonth(fromCity, toCity, year, month, onDone) {
+        var key = monthKey(fromCity, toCity, year, month);
+        var entry = fareMonths[key];
+
+        // A month that failed stays failed until the traveller asks again; retrying on every repaint would never stop.
+        if (entry) {
+            return entry;
         }
 
-        return 320 + (hashString(routeKey) % 180);
+        var originCode = cityCode(fromCity);
+        var destinationCode = cityCode(toCity);
+        entry = fareMonths[key] = { status: "loading", days: {}, from: fromCity, to: toCity, year: year, month: month };
+
+        if (!originCode || !destinationCode) {
+            entry.status = "ready";
+            return entry;
+        }
+
+        var first = new Date(year, month, 1);
+        var last = new Date(year, month + 1, 0);
+        var query = "api/flights/lowest-fares?originCode=" + encodeURIComponent(originCode) +
+            "&destinationCode=" + encodeURIComponent(destinationCode) +
+            "&from=" + toISODate(first) + "&to=" + toISODate(last);
+
+        window.AEROVA_API.get(query).then(function (days) {
+            (days || []).forEach(function (day) {
+                entry.days[day.date] = Number(day.lowestFare);
+            });
+            entry.status = "ready";
+        }).catch(function (error) {
+            entry.status = "error";
+            entry.message = error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+        }).then(function () {
+            refreshDeparturePrice();
+            refreshReturnPrice();
+            renderCalendar();
+            if (onDone) onDone(entry);
+        });
+
+        return entry;
     }
 
     function getDayFare(fromCity, toCity, date) {
@@ -909,48 +922,14 @@ function tr(key, fallback, vars) {
             return null;
         }
 
-        var day = date.getDate();
-        var weekday = date.getDay();
-        var seed = hashString(normalizeCity(fromCity) + "|" + normalizeCity(toCity) + "|" + toISODate(date));
+        var entry = loadFareMonth(fromCity, toCity, date.getFullYear(), date.getMonth());
+        var fare = entry.days[toISODate(date)];
+        return fare == null ? null : fare;
+    }
 
-        if (seed % 11 === 0 || (weekday === 2 && seed % 5 === 0)) {
-            return null;
-        }
-
-        var base = getBaseFareForRoute(fromCity, toCity);
-        var wave = Math.round(Math.sin((day / 31) * Math.PI * 2) * 35);
-        var weekendLift = (weekday === 5 || weekday === 0) ? 45 : 0;
-        var midweekDip = (weekday === 2 || weekday === 3) ? -30 : 0;
-        var jitter = (seed % 70) - 25;
-
-        if (normalizeCity(fromCity) === "baku" && normalizeCity(toCity) === "london" && date.getFullYear() === 2026 && date.getMonth() === 9) {
-            var octoberOutbound = {
-                10: 420,
-                11: 395,
-                12: 450,
-                13: 380,
-                14: 510
-            };
-            if (octoberOutbound[day] != null) {
-                return octoberOutbound[day];
-            }
-        }
-
-        if (normalizeCity(fromCity) === "london" && normalizeCity(toCity) === "baku" && date.getFullYear() === 2026 && date.getMonth() === 9) {
-            var octoberReturn = {
-                18: 390,
-                19: 405,
-                20: 370,
-                21: 420,
-                22: 455
-            };
-            if (octoberReturn[day] != null) {
-                return octoberReturn[day];
-            }
-        }
-
-        var fare = base + wave + weekendLift + midweekDip + jitter;
-        return Math.max(165, Math.round(fare / 5) * 5);
+    function retryFareMonth(fromCity, toCity, year, month) {
+        delete fareMonths[monthKey(fromCity, toCity, year, month)];
+        renderCalendar();
     }
 
     function formatFare(amount) {
@@ -1348,8 +1327,36 @@ function tr(key, fallback, vars) {
         calendarGrid.innerHTML = html;
         updateMonthLabel();
         updateCopy();
+        showFareStatus(route, year, month);
         updateSummary();
         syncFormDateFields();
+    }
+
+    function showFareStatus(route, year, month) {
+        if (!calendarNote || !route.from || !route.to) {
+            return;
+        }
+
+        var entry = fareMonths[monthKey(route.from, route.to, year, month)];
+        if (!entry || entry.status === "ready") {
+            return;
+        }
+
+        if (entry.status === "loading") {
+            calendarNote.textContent = tr("api.calendar.loading", "Loading fares...");
+            return;
+        }
+
+        calendarNote.innerHTML = "";
+        calendarNote.appendChild(document.createTextNode(entry.message + " "));
+        var retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "price-calendar-retry";
+        retry.textContent = tr("api.options.retry", "Try again");
+        retry.addEventListener("click", function () {
+            retryFareMonth(route.from, route.to, year, month);
+        });
+        calendarNote.appendChild(retry);
     }
 
     function selectDepartureDate(isoDate) {
@@ -1559,7 +1566,7 @@ function tr(key, fallback, vars) {
         });
     }
 
-    function initCalendar() {
+    function startCalendar() {
         populateCitySelects();
         tripType = detectInitialTripType();
         restoreSelection();
@@ -1575,7 +1582,7 @@ function tr(key, fallback, vars) {
         if (focusDate) {
             viewDate = new Date(focusDate.getFullYear(), focusDate.getMonth(), 1);
         } else {
-            viewDate = new Date(2026, 9, 1);
+            viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         }
 
         syncSelectsFromBooking();
@@ -1598,6 +1605,30 @@ function tr(key, fallback, vars) {
 
         bindCalendar();
         applyTripType(tripType);
+    }
+
+    function initCalendar() {
+        window.AEROVA_AIRPORTS.load().then(function (list) {
+            calendarAirports = list;
+            var seen = {};
+            CALENDAR_CITIES = list.map(function (airport) { return airport.city; }).filter(function (city) {
+                if (seen[city]) return false;
+                seen[city] = true;
+                return true;
+            });
+            startCalendar();
+        }).catch(function (error) {
+            if (calendarNote) {
+                calendarNote.innerHTML = "";
+                calendarNote.appendChild(document.createTextNode((error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.")) + " "));
+                var retry = document.createElement("button");
+                retry.type = "button";
+                retry.className = "price-calendar-retry";
+                retry.textContent = tr("api.options.retry", "Try again");
+                retry.addEventListener("click", initCalendar);
+                calendarNote.appendChild(retry);
+            }
+        });
     }
 
     if (document.readyState === "loading") {

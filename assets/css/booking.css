@@ -1360,3 +1360,14 @@ select.field-input {
         transition: none !important;
     }
 }
+
+.price-calendar-retry {
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
