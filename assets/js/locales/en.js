@@ -1550,6 +1550,17 @@ window.AEROVA_LOCALES.en = {
     },
     "calendar": {
       "loading": "Loading fares..."
+    },
+    "journey": {
+      "chooseOutbound": "Choose your outbound flight",
+      "chooseReturn": "Choose your return flight",
+      "outboundChosen": "Outbound: {flight}, {route}, {date}, {cabin}{seats}",
+      "seatsOutbound": "Select Your Outbound Seats",
+      "seatsReturn": "Select Your Return Seats",
+      "returnLine": "Return: {flight}, {route}, {date}, {times}",
+      "outboundMissing": "The outbound flight of this round trip is missing. Please start your search again.",
+      "returnFlightTitle": "Return Flight",
+      "returnTripLine": "Return {flight}, {route}"
     }
   },
   "chat": {

@@ -1550,6 +1550,17 @@ window.AEROVA_LOCALES.az = {
     },
     "calendar": {
       "loading": "Qiymətlər yüklənir..."
+    },
+    "journey": {
+      "chooseOutbound": "Gediş reysini seçin",
+      "chooseReturn": "Qayıdış reysini seçin",
+      "outboundChosen": "Gediş: {flight}, {route}, {date}, {cabin}{seats}",
+      "seatsOutbound": "Gediş yerlərini seçin",
+      "seatsReturn": "Qayıdış yerlərini seçin",
+      "returnLine": "Qayıdış: {flight}, {route}, {date}, {times}",
+      "outboundMissing": "Bu gediş-qayıdış səyahətinin gediş reysi tapılmadı. Zəhmət olmasa axtarışa yenidən başlayın.",
+      "returnFlightTitle": "Qayıdış reysi",
+      "returnTripLine": "Qayıdış {flight}, {route}"
     }
   },
   "chat": {

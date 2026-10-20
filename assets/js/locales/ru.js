@@ -1550,6 +1550,17 @@ window.AEROVA_LOCALES.ru = {
     },
     "calendar": {
       "loading": "Загрузка цен..."
+    },
+    "journey": {
+      "chooseOutbound": "Выберите рейс туда",
+      "chooseReturn": "Выберите обратный рейс",
+      "outboundChosen": "Туда: {flight}, {route}, {date}, {cabin}{seats}",
+      "seatsOutbound": "Выберите места на рейс туда",
+      "seatsReturn": "Выберите места на обратный рейс",
+      "returnLine": "Обратно: {flight}, {route}, {date}, {times}",
+      "outboundMissing": "Рейс туда для этой поездки не найден. Пожалуйста, начните поиск заново.",
+      "returnFlightTitle": "Обратный рейс",
+      "returnTripLine": "Обратно {flight}, {route}"
     }
   },
   "chat": {
