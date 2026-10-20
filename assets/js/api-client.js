@@ -88,7 +88,9 @@
     if (!token) {
       return false;
     }
-    var parsed = Date.parse(authResponse.expiresAt || "");
+    // The API sends UTC times, sometimes without the "Z"; without it the browser would read them as local time.
+    var expiresText = String(authResponse.expiresAt || "");
+    var parsed = Date.parse(/(Z|[+-]\d\d:?\d\d)$/i.test(expiresText) ? expiresText : expiresText + "Z");
     var expires = isFinite(parsed) ? parsed : 0;
     memory = { token: token, expires: expires };
     writeStorage(TOKEN_KEY, token);
