@@ -219,6 +219,14 @@
 
     function populateFlightSummary(flightData, layout) {
         var flight = flightData || {};
+
+        var title = document.querySelector(".seat-title");
+        if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isRoundTrip(flight)) {
+            title.textContent = window.AEROVA_JOURNEY.isReturnLeg(flight)
+                ? tr("api.journey.seatsReturn", "Select Your Return Seats")
+                : tr("api.journey.seatsOutbound", "Select Your Outbound Seats");
+        }
+
         setText("summary-airline", flight.airline || "AEROVA");
         setText("summary-flight", flight.flightNumber || "—");
         setText("summary-route", flight.from && flight.to ? flight.from + " → " + flight.to : "—");
@@ -470,7 +478,10 @@
 
             showMessage("");
             persistSelectedSeats(flightData);
-            window.location.href = "passenger-details.html";
+
+            // A round trip goes on to the return flight first; everything else goes to the passenger details.
+            var saved = readSelectedFlight();
+            window.location.href = window.AEROVA_JOURNEY && saved ? window.AEROVA_JOURNEY.afterSeats(saved) : "passenger-details.html";
         });
     }
 

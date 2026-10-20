@@ -34,7 +34,9 @@
             departureDate: params.get("departureDate") || "",
             returnDate: params.get("returnDate") || "",
             passengers: params.get("passengers") || "1",
-            cabinClass: (params.get("cabinClass") || "").trim()
+            cabinClass: (params.get("cabinClass") || "").trim(),
+            // 2 = choosing the return flight of a round trip (the link already holds the way back as from/to and the return date).
+            leg: params.get("leg") === "2" ? 2 : 1
         };
     }
 
@@ -288,6 +290,42 @@
         });
     }
 
+    /* While choosing the way back, remind the traveller of the flight and seats already chosen for the way out. */
+    function paintOutboundNote(criteria) {
+        var meta = document.querySelector(".results-meta");
+        var note = document.getElementById("journey-note");
+
+        if (!meta) {
+            return;
+        }
+
+        var outbound = criteria.leg === 2 && window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.outbound() : null;
+
+        if (!outbound) {
+            if (note) {
+                note.hidden = true;
+            }
+            return;
+        }
+
+        if (!note) {
+            note = document.createElement("p");
+            note.id = "journey-note";
+            note.className = "results-meta results-journey-note";
+            meta.parentNode.insertBefore(note, meta.nextSibling);
+        }
+
+        var seats = (outbound.selectedSeats || []).join(", ");
+        note.textContent = say("api.journey.outboundChosen", "Outbound: {flight}, {route}, {date}, {cabin}{seats}", {
+            flight: outbound.flightNumber,
+            route: outbound.from + " \u2192 " + outbound.to,
+            date: formatDisplayDate(outbound.departureDate),
+            cabin: outbound.cabinClass,
+            seats: seats ? ", " + seats : ""
+        });
+        note.hidden = false;
+    }
+
     function updateResultsHeader(criteria) {
         var routeElement = document.querySelector(".results-route");
         var metaElement = document.querySelector(".results-meta");
@@ -296,7 +334,15 @@
 
         if (eyebrowElement) {
             eyebrowElement.textContent = (typeof t === "function" ? t("results.eyebrow") : "Available Flights");
+
+            if (criteria.leg === 2) {
+                eyebrowElement.textContent = say("api.journey.chooseReturn", "Choose your return flight");
+            } else if (/round/i.test(criteria.tripType || "") && criteria.returnDate) {
+                eyebrowElement.textContent = say("api.journey.chooseOutbound", "Choose your outbound flight");
+            }
         }
+
+        paintOutboundNote(criteria);
 
         if (routeElement) {
             var fromLabel = criteria.from || "Origin";
@@ -671,8 +717,14 @@
             passengers: criteria.passengers,
             departureDate: flight.date || criteria.departureDate,
             returnDate: criteria.returnDate,
-            tripType: criteria.tripType
+            tripType: criteria.tripType,
+            leg: criteria.leg
         };
+
+        // Choosing a new outbound flight starts a new trip; the return flight keeps the outbound one.
+        if (criteria.leg !== 2 && window.AEROVA_JOURNEY) {
+            window.AEROVA_JOURNEY.reset();
+        }
 
         try {
             sessionStorage.setItem("aerovaSelectedFlight", JSON.stringify(selection));
@@ -695,6 +747,9 @@
         }
         if (criteria.returnDate) {
             params.set("returnDate", criteria.returnDate);
+        }
+        if (criteria.leg === 2) {
+            params.set("leg", "2");
         }
         if (flight.date || criteria.departureDate) {
             params.set("departureDate", flight.date || criteria.departureDate);

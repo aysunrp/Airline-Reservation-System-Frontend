@@ -223,7 +223,8 @@
             passengers: pick("passengers") || "1",
             tripType: pick("tripType") || "oneway",
             returnDate: pick("returnDate"),
-            departureDate: pick("departureDate")
+            departureDate: pick("departureDate"),
+            leg: params.get("leg") === "2" ? 2 : 1
         };
     }
 
@@ -420,8 +421,14 @@
             passengers: context.passengers,
             departureDate: flight.departureDate || context.departureDate,
             returnDate: context.returnDate,
-            tripType: context.tripType
+            tripType: context.tripType,
+            leg: context.leg
         };
+
+        // Choosing a new outbound flight starts a new trip; the return flight keeps the outbound one.
+        if (context.leg !== 2 && window.AEROVA_JOURNEY) {
+            window.AEROVA_JOURNEY.reset();
+        }
 
         try {
             sessionStorage.setItem("aerovaSelectedFlight", JSON.stringify(selection));
