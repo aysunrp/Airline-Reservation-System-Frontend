@@ -394,6 +394,7 @@
 
 
 
+                        <input class="admin-select" id="flight-date-filter" type="date" aria-label="Departure day (UTC)">
                         <select class="admin-select" id="flight-status-filter">
 
 
@@ -470,6 +471,11 @@
 
 
 
+                    </div>
+                    <div class="admin-pager" id="flights-pager">
+                        <button class="admin-btn admin-btn--ghost" id="flights-prev" type="button">&larr;</button>
+                        <span id="flights-pager-info"></span>
+                        <button class="admin-btn admin-btn--ghost" id="flights-next" type="button">&rarr;</button>
                     </div>
 
 
@@ -642,7 +648,7 @@
 
 
 
-                                    <th data-i18n="admin.flightNumber">Flight Number</th><th data-i18n="admin.route">Route</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="common.date">Date</th>
+                                    <th data-i18n="admin.flightNumber">Flight Number</th><th data-i18n="admin.route">Route</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="api.admin.days">Days of the week</th>
 
 
 
@@ -782,6 +788,7 @@
 
 
 
+                        <input class="admin-select" id="seat-date-select" type="date" aria-label="Departure day (UTC)">
                         <select class="admin-select" id="seat-flight-select" aria-label="Select flight"></select>
 
 
@@ -1226,10 +1233,12 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/api-client.js?v=api1"></script>
+    <script src="assets/js/airports.js"></script>
     <script src="assets/js/chat-widget.js"></script>
 
 
-    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/auth.js?v=api5"></script>
+    <script src="assets/js/admin.js?v=api2"></script>
 
 
 

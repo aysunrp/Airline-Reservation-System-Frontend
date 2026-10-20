@@ -987,3 +987,72 @@ table {
         --seat-size: 28px;
     }
 }
+
+/* Access, paging and the form controls the API-backed admin needs. */
+.admin-access {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    max-width: 38rem;
+    margin: 12vh auto;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+}
+
+.admin-access[hidden] {
+    display: none;
+}
+
+.admin-access-title {
+    margin: 0;
+    font-family: var(--font-serif, serif);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 500;
+}
+
+.admin-access-text {
+    margin: 0;
+    opacity: 0.8;
+}
+
+.admin-access-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.admin-shell[hidden] {
+    display: none !important;
+}
+
+.admin-pager {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 0.9rem 0 0;
+}
+
+.admin-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.admin-day {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+}
+
+.admin-message.is-error {
+    border-color: rgba(220, 38, 38, 0.5);
+    color: #b42318;
+}
+
+.seat-placeholder {
+    width: var(--seat-size);
+    height: var(--seat-size);
+}
