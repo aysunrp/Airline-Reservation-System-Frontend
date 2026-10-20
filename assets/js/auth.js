@@ -642,72 +642,14 @@
     }
 
 
-    /*
-     * Unread badge for the Notifications nav links. Reads the existing
-     * notificationsData (sessionStorage) written by notifications.js. When the
-     * stored list was not built for the current booking yet, the unread count
-     * mirrors what notifications.js will generate (all new items are unread).
-     */
-    var NOTIFICATIONS_KEY = "notificationsData";
+    /* Unread badge for the Notifications nav links; the number comes from GET api/notifications/unread-count. */
     var BADGE_STYLE_ID = "aerova-notif-badge-style";
 
-    function bookingFingerprint(booking) {
-        if (!booking) return "none";
-        var flight = booking.flight || {};
-        return [
-            booking.pnr || "",
-            booking.status || "",
-            booking.paymentStatus || "",
-            flight.departureDate || "",
-            flight.flightNumber || "",
-            booking.cabinClass || "",
-            booking.totalPrice != null ? String(booking.totalPrice) : ""
-        ].join("|");
-    }
-
-    function expectedNotificationIds(booking) {
-        var flight = booking.flight || {};
-        var pnr = booking.pnr || "your booking";
-        var status = String(booking.status || "").toLowerCase();
-        var payment = String(booking.paymentStatus || "").toLowerCase();
-        var paid = payment === "paid" || payment === "confirmed";
-        var ids = [];
-
-        if (status === "cancelled" || payment === "cancelled") {
-            return ["cancelled-" + pnr];
-        }
-        if (status === "confirmed" || paid || !!booking.pnr) ids.push("confirmed-" + pnr);
-        if (paid) ids.push("payment-" + pnr);
-        if (flight.flightNumber || flight.departureDate) ids.push("flight-update-" + pnr);
-        if (flight.departureDate) ids.push("checkin-" + pnr);
-        return ids;
-    }
+    /* Number of unread notifications as last reported by the API (0 when signed out). */
+    var unreadCount = 0;
 
     function getUnreadNotificationCount() {
-        var stored = readJSON(sessionStorage, NOTIFICATIONS_KEY);
-        var list = stored ? (Array.isArray(stored) ? stored : (Array.isArray(stored.notifications) ? stored.notifications : [])) : [];
-        var booking = readJSON(sessionStorage, "bookingData");
-        var unread = function (items) {
-            return items.filter(function (item) { return item && !item.read; }).length;
-        };
-
-        if (!booking) return unread(list);
-
-        var fingerprint = bookingFingerprint(booking);
-        if (stored && !Array.isArray(stored) && stored.clearedFingerprint && stored.clearedFingerprint === fingerprint) {
-            return 0;
-        }
-        if (stored && !Array.isArray(stored) && stored.fingerprint === fingerprint) {
-            return unread(list);
-        }
-
-        var readMap = {};
-        list.forEach(function (item) {
-            if (item && item.id) readMap[item.id] = !!item.read;
-        });
-        return expectedNotificationIds(booking).filter(function (id) {
-            return !readMap[id];
-        }).length;
+        return unreadCount;
     }
 
     function ensureBadgeStyles() {
@@ -723,11 +665,11 @@
         (document.head || document.documentElement).appendChild(style);
     }
 
-    function updateNotificationBadges() {
+    function paintNotificationBadges() {
         var links = document.querySelectorAll(".auth-nav-notifications-menu");
         if (!links.length) return;
         ensureBadgeStyles();
-        var count = isLoggedIn() ? getUnreadNotificationCount() : 0;
+        var count = isLoggedIn() ? unreadCount : 0;
         var label = count + " " + tr("common.unread", "Unread");
 
         links.forEach(function (link) {
@@ -749,6 +691,22 @@
         });
     }
 
+    function updateNotificationBadges() {
+        if (!isLoggedIn()) {
+            unreadCount = 0;
+            paintNotificationBadges();
+            return;
+        }
+
+        paintNotificationBadges();
+        window.AEROVA_API.get("api/notifications/unread-count").then(function (count) {
+            unreadCount = Number(count) || 0;
+            paintNotificationBadges();
+        }, function () {
+            // Keep the last known number; the badge is a convenience, not something to interrupt the visitor for.
+        });
+    }
+
     function guardAuthenticatedPages() {
         var path = window.location.pathname.toLowerCase();
         var protectedPages = [
@@ -760,6 +718,11 @@
         var needsAuth = protectedPages.some(function (page) {
             return path.indexOf(page) !== -1;
         });
+
+        // Manage Booking works for anyone who knows the reference and a passenger's last name.
+        if (needsAuth && path.indexOf("booking-details.html") !== -1 && /[?&]source=manage(&|$)/i.test(window.location.search)) {
+            needsAuth = false;
+        }
 
         if (needsAuth && !isLoggedIn()) {
             window.location.replace("login.html?next=" + encodeURIComponent(currentPageName()));
@@ -787,7 +750,7 @@
         window.addEventListener("aerova:notificationschange", updateNotificationBadges);
         window.addEventListener("pageshow", updateNotificationBadges);
         window.addEventListener("storage", function (event) {
-            if (!event.key || event.key === NOTIFICATIONS_KEY || event.key === "bookingData") {
+            if (!event.key) {
                 updateNotificationBadges();
             }
         });

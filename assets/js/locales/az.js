@@ -1461,6 +1461,28 @@ window.AEROVA_LOCALES.az = {
       "notPaidTitle": "Bu rezervasiya təsdiqlənməyib",
       "notPaidText": "Bu rezervasiya üçün ödəniş tamamlanmayıb.",
       "backHome": "Ana səhifəyə qayıt"
+    },
+    "bookingDetails": {
+      "loadingTitle": "Rezervasiyanız yüklənir",
+      "loadingText": "Zəhmət olmasa bir az gözləyin.",
+      "errorTitle": "Rezervasiyanı yükləmək mümkün olmadı",
+      "notFoundTitle": "Rezervasiya tapılmadı",
+      "notFoundText": "Göstəriləcək rezervasiya yoxdur. Onu Səyahətlərim bölməsindən açın və ya Rezervasiyanı idarə et bölməsində kodla axtarın.",
+      "infantNoSeat": "Körpə, yer yoxdur",
+      "quoteFailed": "Ləğv şərtlərini yoxlamaq mümkün olmadı. Zəhmət olmasa yenidən cəhd edin.",
+      "cancelledWithRefund": "{pnr} rezervasiyası ləğv edildi. {amount} məbləğində geri ödəniş tələb olundu (demo: real ödəniş provayderi ilə əlaqə qurulmur)."
+    },
+    "trips": {
+      "loadingTitle": "Səyahətləriniz yüklənir",
+      "loadingText": "Zəhmət olmasa bir az gözləyin.",
+      "errorTitle": "Səyahətlərinizi yükləmək mümkün olmadı",
+      "statusCompleted": "Tamamlandı"
+    },
+    "notifications": {
+      "loadingTitle": "Bildirişlər yüklənir",
+      "loadingText": "Zəhmət olmasa bir az gözləyin.",
+      "errorTitle": "Bildirişlərinizi yükləmək mümkün olmadı",
+      "refundCompletedTitle": "Geri ödəniş tamamlandı"
     }
   },
   "chat": {

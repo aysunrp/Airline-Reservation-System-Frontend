@@ -1461,6 +1461,28 @@ window.AEROVA_LOCALES.en = {
       "notPaidTitle": "This booking is not confirmed",
       "notPaidText": "The payment for this booking was not completed.",
       "backHome": "Back to Home"
+    },
+    "bookingDetails": {
+      "loadingTitle": "Loading your booking",
+      "loadingText": "Please wait a moment.",
+      "errorTitle": "We could not load the booking",
+      "notFoundTitle": "No Booking Found",
+      "notFoundText": "There is no booking to display. Open one from My Trips, or search by reference in Manage Booking.",
+      "infantNoSeat": "Infant, no seat",
+      "quoteFailed": "We could not check the cancellation terms. Please try again.",
+      "cancelledWithRefund": "Booking {pnr} has been cancelled. A refund of {amount} was requested (demo: no real payment provider is contacted)."
+    },
+    "trips": {
+      "loadingTitle": "Loading your trips",
+      "loadingText": "Please wait a moment.",
+      "errorTitle": "We could not load your trips",
+      "statusCompleted": "Completed"
+    },
+    "notifications": {
+      "loadingTitle": "Loading notifications",
+      "loadingText": "Please wait a moment.",
+      "errorTitle": "We could not load your notifications",
+      "refundCompletedTitle": "Refund Completed"
     }
   },
   "chat": {
