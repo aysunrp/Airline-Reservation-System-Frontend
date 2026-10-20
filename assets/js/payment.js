@@ -262,37 +262,7 @@
         }
     }
 
-    function persistPromoToBooking(bookingData, prices) {
-        if (!bookingData) {
-            return false;
-        }
 
-        if (appliedPromo) {
-            bookingData.promoCode = appliedPromo.code;
-            bookingData.discountPercent = appliedPromo.percent;
-            bookingData.discountAmount = prices.discount;
-        } else {
-            delete bookingData.promoCode;
-            delete bookingData.discountPercent;
-            delete bookingData.discountAmount;
-        }
-
-        bookingData.baseFare = prices.baseFare;
-        bookingData.baggageTotal = prices.baggage;
-        bookingData.mealTotal = prices.meals;
-        delete bookingData.extraServicesTotal;
-        delete bookingData.extraServices;
-        bookingData.taxesAndFees = prices.taxes;
-        bookingData.preDiscountTotal = prices.subtotal;
-        bookingData.totalPrice = prices.grandTotal;
-
-        try {
-            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
 
     function refreshTotals(bookingData) {
         var prices = calculatePriceBreakdown(bookingData || readBookingData() || {});
@@ -596,12 +566,123 @@
         };
     }
 
+    var paying = false;
+
+    function paymentMethodFor(method) {
+        return method === "apple" ? "ApplePay" : (method === "google" ? "GooglePay" : "Card");
+    }
+
+    /* Card details go to the backend only to be checked; nothing of them is kept on this page or in storage. */
+    function buildPaymentRequest(method) {
+        var request = { pnr: heldBooking.pnr, method: paymentMethodFor(method) };
+
+        if (method === "card") {
+            var expiry = getTrimmedValue(document.getElementById("card-expiry")).replace(/\s+/g, "").split("/");
+
+            request.cardholderName = getTrimmedValue(document.getElementById("cardholder-name"));
+            request.cardNumber = digitsOnly(getTrimmedValue(document.getElementById("card-number")));
+            request.expiryMonth = Number(expiry[0]);
+            request.expiryYear = 2000 + Number(expiry[1]);
+            request.cvv = digitsOnly(getTrimmedValue(document.getElementById("card-cvv")));
+        }
+
+        return request;
+    }
+
+    function setPaying(isPaying) {
+        var payButton = document.getElementById("pay-button");
+
+        paying = isPaying;
+        if (payButton) {
+            payButton.disabled = isPaying;
+            if (isPaying) {
+                payButton.textContent = tr("api.payment.processing", "Processing payment...");
+            } else {
+                refreshTotals();
+            }
+        }
+    }
+
+    /* Paid: only the reference and a passenger's last name are kept, so the confirmation page can ask the backend for the booking. */
+    function paymentSucceeded(pnr, lastName) {
+        try {
+            sessionStorage.setItem("aerovaPaid", JSON.stringify({ pnr: pnr, lastName: lastName }));
+            sessionStorage.removeItem("bookingData");
+        } catch (error) {
+            // The confirmation page then asks for the reference again.
+        }
+
+        window.AEROVA_BOOKING.forget();
+        stopHoldTimer();
+        ["card-number", "card-cvv", "card-expiry", "cardholder-name"].forEach(function (id) {
+            var field = document.getElementById(id);
+            if (field) {
+                field.value = "";
+            }
+        });
+        window.location.href = "./confirmation.html";
+    }
+
+    function paymentFailed(error, pnr, lastName) {
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+        var cvv = document.getElementById("card-cvv");
+
+        if (cvv) {
+            cvv.value = "";
+        }
+
+        if (!isApiError) {
+            if (window.console) {
+                window.console.error(error);
+            }
+            setPaying(false);
+            showMessage(tr("api.errors.generic", "Something went wrong. Please try again."));
+            return;
+        }
+
+        if (error.status === 409) {
+            // A payment whose answer was lost may already have gone through: ask the backend before saying anything.
+            window.AEROVA_API.get("api/bookings/" + encodeURIComponent(pnr) + "?lastName=" + encodeURIComponent(lastName)).then(function (booking) {
+                if (booking.status === "Confirmed") {
+                    paymentSucceeded(pnr, lastName);
+                    return;
+                }
+                setPaying(false);
+                showMessage(error.userMessage);
+            }).catch(function () {
+                setPaying(false);
+                showMessage(error.userMessage);
+            });
+            return;
+        }
+
+        setPaying(false);
+
+        if (error.status === 422 && /seats were released|no longer be paid/i.test(error.userMessage || "")) {
+            holdEnded();
+            return;
+        }
+
+        showMessage(error.userMessage);
+    }
+
     function handlePayClick(event) {
         event.preventDefault();
 
+        if (paying) {
+            return;
+        }
+
         clearFieldErrors();
+        showMessage("");
 
         var method = getSelectedPaymentMethod();
+        var bookingData = readBookingData();
+
+        if (!heldBooking || !bookingData || !bookingData.passengers || !bookingData.passengers.length) {
+            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
+            return;
+        }
 
         if (method === "card") {
             var validation = validateCardDetails();
@@ -613,45 +694,15 @@
             }
         }
 
-        var bookingData = readBookingData();
-        if (!bookingData) {
-            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
-            return;
-        }
+        var pnr = heldBooking.pnr;
+        var lastName = bookingData.passengers[0].lastName;
 
-        var prices = refreshTotals(bookingData);
-
-        bookingData.paymentStatus = "Paid";
-        bookingData.status = "Confirmed";
-        bookingData.paymentMethod = getPaymentMethodLabel(method);
-        bookingData.totalPrice = prices.grandTotal;
-        bookingData.baseFare = prices.baseFare;
-        bookingData.baggageTotal = prices.baggage;
-        bookingData.mealTotal = prices.meals;
-        delete bookingData.extraServicesTotal;
-        delete bookingData.extraServices;
-        bookingData.taxesAndFees = prices.taxes;
-        bookingData.taxesFees = prices.taxes;
-        bookingData.preDiscountTotal = prices.subtotal;
-
-        if (appliedPromo) {
-            bookingData.promoCode = appliedPromo.code;
-            bookingData.discountPercent = appliedPromo.percent;
-            bookingData.discountAmount = prices.discount;
-        } else {
-            delete bookingData.promoCode;
-            delete bookingData.discountPercent;
-            delete bookingData.discountAmount;
-        }
-
-        try {
-            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
-        } catch (error) {
-            showMessage(typeof t === "function" ? t("payment.saveError") : "Unable to save payment status. Please try again.");
-            return;
-        }
-
-        window.location.href = "./confirmation.html";
+        setPaying(true);
+        window.AEROVA_API.post("api/payments", buildPaymentRequest(method)).then(function () {
+            paymentSucceeded(pnr, lastName);
+        }).catch(function (error) {
+            paymentFailed(error, pnr, lastName);
+        });
     }
 
     function bindClearInvalidOnInput() {
@@ -748,6 +799,15 @@
         }
     }
 
+    function holdEnded() {
+        stopHoldTimer();
+        window.AEROVA_BOOKING.forget();
+        heldBooking = null;
+        bookingPanel("error", tr("api.booking.expiredTitle", "Your seat hold has ended"), tr("api.booking.expiredText", "The seats were held for 15 minutes and are now released. Please choose your seats again."), [
+            { label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" }
+        ]);
+    }
+
     function paintHold() {
         var hold = document.getElementById("booking-hold");
         if (!hold || !heldBooking) {
@@ -756,12 +816,7 @@
 
         var left = window.AEROVA_BOOKING.parseUtc(heldBooking.expiresAt).getTime() - Date.now();
         if (left <= 0) {
-            stopHoldTimer();
-            window.AEROVA_BOOKING.forget();
-            heldBooking = null;
-            bookingPanel("error", tr("api.booking.expiredTitle", "Your seat hold has ended"), tr("api.booking.expiredText", "The seats were held for 15 minutes and are now released. Please choose your seats again."), [
-                { label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" }
-            ]);
+            holdEnded();
             return;
         }
 
