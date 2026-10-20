@@ -14,52 +14,8 @@
         "July", "August", "September", "October", "November", "December"
     ];
 
-    var MOCK_PASSENGER_NAMES = [
-        "Leyla Mammadova",
-        "Orkhan Aliyev",
-        "Nigar Huseynova",
-        "Rashad Ismayilov",
-        "Aysel Karimova",
-        "Elvin Abbasov"
-    ];
-var MEAL_OPTIONS = [
-    {
-        id: "none",
-        name: "No Meal",
-        description: "Skip in-flight dining for this passenger.",
-        price: 0
-    },
-    {
-        id: "classic",
-        name: "Classic Dining",
-        description: "A carefully prepared classic meal served with seasonal sides.",
-        price: 18
-    },
-    {
-        id: "wellness",
-        name: "Wellness Dining",
-        description: "A fresh and balanced selection prepared with wholesome ingredients.",
-        price: 25
-    },
-    {
-        id: "signature",
-        name: "Signature Dining",
-        description: "A premium chef-inspired dining experience with elevated presentation and ingredients.",
-        price: 35
-    }
-];
-
-    var DEFAULT_FLIGHT = {
-        airline: "AEROVA",
-        flightNumber: "AV 101",
-        from: "Baku",
-        to: "London",
-        departureDate: "2026-10-10",
-        departure: "09:30",
-        arrival: "13:10",
-        cabinClass: "Economy",
-        aircraft: "AEROVA 787-9"
-    };
+    /* The choices offered by the backend, with the "none" choice first. */
+    var options = [];
 
     var passengersState = [];
 
@@ -129,104 +85,38 @@ var MEAL_OPTIONS = [
     }
 
     function getPassengerDisplayName(passenger, index) {
-        if (!passenger || typeof passenger !== "object") {
-            return MOCK_PASSENGER_NAMES[index % MOCK_PASSENGER_NAMES.length];
-        }
-
-        if (passenger.fullName) {
-            return String(passenger.fullName);
-        }
-
-        var parts = [passenger.firstName, passenger.middleName, passenger.lastName]
-            .map(function (part) {
-                return String(part || "").trim();
-            })
-            .filter(Boolean);
-
-        if (parts.length) {
-            return parts.join(" ");
-        }
-
-        if (passenger.name) {
-            return String(passenger.name);
-        }
-
-        return MOCK_PASSENGER_NAMES[index % MOCK_PASSENGER_NAMES.length];
+        return nameFor(passenger, index);
     }
 
     function resolvePassengers() {
         var bookingData = readJSON("bookingData");
-        var selectedFlight = readJSON("aerovaSelectedFlight");
-        var baggageData = readJSON("baggageData");
+        var stored = bookingData && Array.isArray(bookingData.passengers) ? bookingData.passengers : [];
 
-        var storedPassengers = bookingData && Array.isArray(bookingData.passengers)
-            ? bookingData.passengers
-            : [];
-
-        if (!storedPassengers.length && baggageData && Array.isArray(baggageData.passengers)) {
-            storedPassengers = baggageData.passengers;
-        }
-
-        var count = storedPassengers.length;
-
-        if (!count && bookingData && bookingData.passengerCount) {
-            count = Number(bookingData.passengerCount) || 0;
-        }
-
-        if (!count && selectedFlight && selectedFlight.passengers) {
-            count = Number(selectedFlight.passengers) || 0;
-        }
-
-        if (!count || count < 1) {
-            count = 2;
-        }
-
-        count = Math.min(Math.floor(count), 6);
-
-        var list = [];
-        for (var i = 0; i < count; i += 1) {
-            list.push({
-                index: i,
-                name: getPassengerDisplayName(storedPassengers[i], i),
-                optionId: "none"
-            });
-        }
-
-        return list;
+        return stored.map(function (passenger, index) {
+            return {
+                index: index,
+                name: getPassengerDisplayName(passenger, index),
+                optionId: passenger.mealOptionId ? String(passenger.mealOptionId) : "none"
+            };
+        });
     }
 
     function resolveFlightSummary() {
-        var bookingData = readJSON("bookingData");
-        var selectedFlight = readJSON("aerovaSelectedFlight");
-        var flight = (bookingData && bookingData.flight) || selectedFlight || {};
-
-        return {
-            airline: flight.airline || DEFAULT_FLIGHT.airline,
-            flightNumber: flight.flightNumber || DEFAULT_FLIGHT.flightNumber,
-            from: flight.from || DEFAULT_FLIGHT.from,
-            to: flight.to || DEFAULT_FLIGHT.to,
-            departureDate: flight.departureDate || flight.date || DEFAULT_FLIGHT.departureDate,
-            departure: flight.departure || flight.departureTime || DEFAULT_FLIGHT.departure,
-            arrival: flight.arrival || flight.arrivalTime || DEFAULT_FLIGHT.arrival,
-            cabinClass: (bookingData && bookingData.cabinClass) ||
-                flight.cabinClass ||
-                DEFAULT_FLIGHT.cabinClass,
-            aircraft: flight.aircraft || DEFAULT_FLIGHT.aircraft
-        };
+        return summaryOfFlight();
     }
 
     function getOptionById(optionId) {
-        for (var i = 0; i < MEAL_OPTIONS.length; i += 1) {
-            if (MEAL_OPTIONS[i].id === optionId) {
-                return MEAL_OPTIONS[i];
+        for (var i = 0; i < options.length; i += 1) {
+            if (options[i].id === optionId) {
+                return options[i];
             }
         }
 
-        return MEAL_OPTIONS[0];
+        return options[0];
     }
 
     function buildOptionsMarkup(passengerIndex, selectedOptionId) {
-        return MEAL_OPTIONS.map(function (option) {
+        return options.map(function (option) {
             var isSelected = option.id === selectedOptionId;
 
             return (
@@ -237,7 +127,7 @@ var MEAL_OPTIONS = [
                     ' data-option-id="' + escapeHtml(option.id) + '"' +
                     ' aria-pressed="' + (isSelected ? "true" : "false") + '"' +
                 ">" +
-                    '<span class="meal-option-media meal-option-media--' + escapeHtml(option.id) + '" aria-hidden="true"></span>' +
+                    '<span class="meal-option-media meal-option-media--' + escapeHtml(option.code) + '" aria-hidden="true"></span>' +
                     '<span class="meal-option-copy">' +
                         '<p class="meal-option-name">' + escapeHtml(option.name) + "</p>" +
                         '<p class="meal-option-description">' + escapeHtml(option.description) + "</p>" +
@@ -254,7 +144,7 @@ var MEAL_OPTIONS = [
 
         return (
             '<article class="details-card passenger-meal-card" data-passenger-index="' + passenger.index + '" aria-labelledby="' + titleId + '">' +
-                '<h2 class="details-card-title" id="' + titleId + '">Passenger ' + passengerNumber + "</h2>" +
+                '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(tr("api.options.passenger", "Passenger {n}", { n: passengerNumber })) + "</h2>" +
                 '<p class="passenger-meal-note">' + escapeHtml(passenger.name) + "</p>" +
                 '<div class="meal-options" role="group" aria-label="Meal options for ' + escapeHtml(passenger.name) + '">' +
                     buildOptionsMarkup(passenger.index, passenger.optionId) +
@@ -344,31 +234,155 @@ var MEAL_OPTIONS = [
         renderSummary();
     }
 
-    function buildMealData() {
-        return {
-            passengers: passengersState.map(function (passenger) {
-                var option = getOptionById(passenger.optionId);
+    function toOptions(list) {
+        return [{
+            id: "none",
+            code: "none",
+            name: tr("api.options.noMeal", "No Meal"),
+            description: tr("api.options.noMealText", "Skip in-flight dining for this passenger."),
+            price: 0
+        }].concat(list.map(function (option) {
+            return {
+                id: String(option.id),
+                code: option.code,
+                name: option.name,
+                description: option.description || "",
+                price: Number(option.price)
+            };
+        }));
+    }
 
-                return {
-                    passengerIndex: passenger.index,
-                    name: passenger.name,
-                    optionId: option.id,
-                    mealName: option.name,
-                    description: option.description,
-                    price: option.price
-                };
-            }),
-            totalMealCost: getTotalMealCost()
+    function showStatus(kind, title, text, actions) {
+        var panel = document.getElementById("options-status");
+        var layout = document.querySelector(".meal-layout");
+        var buttons = document.getElementById("options-status-actions");
+
+        if (!panel) {
+            return;
+        }
+
+        setText("options-status-title", title);
+        setText("options-status-text", text);
+        panel.setAttribute("role", kind === "error" ? "alert" : "status");
+        buttons.innerHTML = "";
+
+        (actions || []).forEach(function (action) {
+            var element = document.createElement(action.href ? "a" : "button");
+            element.className = "continue-button options-status-button";
+            element.textContent = action.label;
+            if (action.href) {
+                element.setAttribute("href", action.href);
+            } else {
+                element.type = "button";
+                element.addEventListener("click", action.onClick);
+            }
+            buttons.appendChild(element);
+        });
+
+        panel.hidden = false;
+        if (layout) {
+            layout.hidden = true;
+        }
+    }
+
+    function hideStatus() {
+        var panel = document.getElementById("options-status");
+        var layout = document.querySelector(".meal-layout");
+
+        if (panel) {
+            panel.hidden = true;
+        }
+        if (layout) {
+            layout.hidden = false;
+        }
+    }
+
+    function showFailure(error, retry) {
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+
+        if (!isApiError && window.console) {
+            window.console.error(error);
+        }
+
+        showStatus("error", tr("api.options.errorTitle", "We could not load the options"), isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), [
+            { label: tr("api.options.retry", "Try again"), onClick: retry }
+        ]);
+    }
+
+    function nameFor(passenger, index) {
+        var parts = [passenger && passenger.firstName, passenger && passenger.middleName, passenger && passenger.lastName]
+            .map(function (part) { return String(part || "").trim(); })
+            .filter(Boolean);
+
+        return parts.length ? parts.join(" ") : tr("api.options.passenger", "Passenger {n}", { n: index + 1 });
+    }
+
+    function summaryOfFlight() {
+        var bookingData = readJSON("bookingData");
+        var flight = bookingData && bookingData.flight;
+
+        if (!flight || !bookingData.passengers || !bookingData.passengers.length) {
+            return null;
+        }
+
+        return {
+            airline: flight.airline || "AEROVA",
+            flightNumber: flight.flightNumber || "\u2014",
+            from: flight.from || "\u2014",
+            to: flight.to || "\u2014",
+            departureDate: flight.departureDate || "",
+            departure: flight.departure || "\u2014",
+            arrival: flight.arrival || "\u2014",
+            cabinClass: bookingData.cabinClass || "\u2014",
+            aircraft: flight.aircraft || "\u2014"
         };
     }
 
-    function saveMealData() {
+    function missingBooking() {
+        showStatus("notice", tr("api.options.noBookingTitle", "No booking in progress"), tr("api.options.noBookingText", "Choose a flight and enter the passenger details first."), [
+            { label: tr("api.options.backToPassengers", "Back to passenger details"), href: "passenger-details.html" }
+        ]);
+    }
+
+    /* Writes the chosen option id of each passenger into bookingData, which the booking request is built from. */
+    function saveChoices(field) {
+        var bookingData = readJSON("bookingData");
+
+        if (!bookingData || !Array.isArray(bookingData.passengers)) {
+            return false;
+        }
+
+        passengersState.forEach(function (state) {
+            var passenger = bookingData.passengers[state.index];
+            if (passenger) {
+                passenger[field] = state.optionId === "none" ? null : Number(state.optionId);
+            }
+        });
+
         try {
-            sessionStorage.setItem("mealData", JSON.stringify(buildMealData()));
+            sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
             return true;
         } catch (error) {
             return false;
         }
+    }
+
+    function saveFailed() {
+        showStatus("error", tr("api.options.saveErrorTitle", "We could not save your choices"), tr("api.options.saveErrorText", "Your browser would not store them. Please try again."), [
+            { label: tr("api.options.retry", "Try again"), onClick: hideStatus }
+        ]);
+    }
+
+    function saveMealData() {
+        var saved = saveChoices("mealOptionId");
+        if (saved) {
+            try {
+                sessionStorage.removeItem("mealData");
+            } catch (error) {
+                // Nothing stored.
+            }
+        }
+        return saved;
     }
 
     function bindContinue() {
@@ -378,7 +392,10 @@ var MEAL_OPTIONS = [
         }
 
         button.addEventListener("click", function () {
-            saveMealData();
+            if (!saveMealData()) {
+                saveFailed();
+                return;
+            }
             window.location.href = "payment.html";
         });
     }
@@ -424,15 +441,38 @@ var MEAL_OPTIONS = [
         });
     }
 
+    function loadOptions() {
+        showStatus("loading", tr("api.options.loadingTitle", "Loading options"), tr("api.options.loadingText", "Please wait a moment."), []);
+
+        window.AEROVA_OPTIONS.meals().then(function (list) {
+            options = toOptions(list);
+            passengersState.forEach(function (passenger) {
+                if (getOptionById(passenger.optionId).id !== passenger.optionId) {
+                    passenger.optionId = "none";
+                }
+            });
+            hideStatus();
+            renderPassengerCards();
+            renderSummary();
+        }).catch(function (error) {
+            showFailure(error, loadOptions);
+        });
+    }
+
     function init() {
         var flight = resolveFlightSummary();
         passengersState = resolvePassengers();
 
-        renderFlightSummary(flight);
-        renderPassengerCards();
-        renderSummary();
         bindContinue();
         initMenuToggle();
+
+        if (!flight) {
+            missingBooking();
+            return;
+        }
+
+        renderFlightSummary(flight);
+        loadOptions();
     }
 
     if (document.readyState === "loading") {
