@@ -169,8 +169,8 @@
             pnr: dto.pnr,
             status: dto.status,
             passenger: getPassengerName(dto.passengers[0]),
-            flightNumber: leg.flightNumber,
-            route: leg.originCity + " \u2192 " + leg.destinationCity,
+            flightNumber: dto.legs.map(function (item) { return item.flightNumber; }).join(" \u00b7 "),
+            route: dto.legs.map(function (item) { return item.originCity + " \u2192 " + item.destinationCity; }).join(" \u00b7 "),
             date: departure.date
         };
     }

@@ -102,7 +102,9 @@
             arrival: arrival.time,
             duration: durationLabel(arrival.utcMinutes - departure.utcMinutes),
             aircraft: "AEROVA " + leg.aircraftModel,
-            seats: leg.seats.length ? leg.seats.join(", ") : "—"
+            seats: booking.legs.map(function (item) { return item.seats.join(", "); }).filter(Boolean).join(" | ") || "—",
+            returnRoute: booking.legs.length > 1 ? booking.legs[1].originCity + " \u2192 " + booking.legs[1].destinationCity : "",
+            returnFlight: booking.legs.length > 1 ? booking.legs[1].flightNumber : ""
         };
     }
 
@@ -121,6 +123,9 @@
                         '<p class="trip-card-airline">AEROVA</p>' +
                         '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
                         '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + card.flightNumber, { number: card.flightNumber })) + "</p>" +
+                        (card.returnFlight
+                            ? '<p class="trip-card-flight">' + escapeHtml(tr("api.journey.returnTripLine", "Return {flight}, {route}", { flight: card.returnFlight, route: card.returnRoute })) + "</p>"
+                            : "") +
                     "</div>" +
                     '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +
                 "</div>" +

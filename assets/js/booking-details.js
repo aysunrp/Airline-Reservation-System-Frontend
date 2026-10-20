@@ -160,15 +160,41 @@
         var departure = directory.localTime(leg.departureAt, origin.timeZoneId);
         var arrival = directory.localTime(leg.arrivalAt, destination.timeZoneId);
 
+        function pageFlight(item) {
+            var from = directory.find(airports, item.originCode);
+            var to = directory.find(airports, item.destinationCode);
+            var out = directory.localTime(item.departureAt, from.timeZoneId);
+            var back = directory.localTime(item.arrivalAt, to.timeZoneId);
+            return {
+                flightNumber: item.flightNumber,
+                route: item.originCity + " \u2192 " + item.destinationCity,
+                departureDate: out.date,
+                departure: out.time,
+                arrival: back.time,
+                aircraft: "AEROVA " + item.aircraftModel,
+                cabinClass: item.cabinClass
+            };
+        }
+
+        var seatsByLeg = dto.legs.map(function () { return []; });
+
         var passengers = dto.passengers.map(function (passenger) {
             var ticket = passenger.tickets.filter(function (item) { return item.legOrder === leg.legOrder; })[0] || {};
+            var perLeg = dto.legs.map(function (item, index) {
+                var other = passenger.tickets.filter(function (candidate) { return candidate.legOrder === item.legOrder; })[0];
+                if (other && other.seat) {
+                    seatsByLeg[index].push(other.seat);
+                    return other.seat;
+                }
+                return null;
+            });
             return {
                 title: passenger.title,
                 firstName: passenger.firstName,
                 middleName: passenger.middleName,
                 lastName: passenger.lastName,
                 passengerType: passenger.passengerType,
-                assignedSeat: ticket.seat || null,
+                assignedSeat: perLeg.filter(Boolean).join(" | ") || null,
                 baggageName: ticket.baggageName || null,
                 baggagePrice: ticket.baggagePrice || 0,
                 mealName: ticket.mealName || null,
@@ -193,7 +219,9 @@
                 utcDepartureAt: leg.departureAt
             },
             cabinClass: leg.cabinClass,
-            selectedSeats: passengers.map(function (passenger) { return passenger.assignedSeat; }).filter(Boolean),
+            returnFlight: dto.legs.length > 1 ? pageFlight(dto.legs[1]) : null,
+            returnSeats: dto.legs.length > 1 ? seatsByLeg[1].join(", ") : "",
+            selectedSeats: seatsByLeg[0],
             passengers: passengers,
             baggage: passengers.map(function (passenger) {
                 return { name: getPassengerName(passenger), label: passenger.baggageName || tr("api.options.noBaggage", "No Extra Baggage"), price: passenger.baggagePrice };
@@ -298,6 +326,26 @@
         });
     }
 
+    /* A round trip gets a second flight card, filled from the return flight. */
+    function renderReturnFlight(booking) {
+        var card = document.querySelector('article[aria-labelledby="flight-info-title"]');
+        var flight = booking.returnFlight;
+        var copy = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureReturnCard(card, !!flight, tr("api.journey.returnFlightTitle", "Return Flight")) : null;
+
+        if (!copy || !flight) {
+            return;
+        }
+
+        setText("details-flight-number-return", flight.flightNumber);
+        setText("details-route-return", flight.route);
+        setText("details-date-return", formatDisplayDate(flight.departureDate));
+        setText("details-departure-return", flight.departure);
+        setText("details-arrival-return", flight.arrival);
+        setText("details-aircraft-return", flight.aircraft);
+        setText("details-cabin-return", flight.cabinClass);
+        setText("details-seats-return", booking.returnSeats || "\u2014");
+    }
+
     function renderBooking(booking) {
         var flight = booking.flight || {};
         var seats = Array.isArray(booking.selectedSeats) ? booking.selectedSeats.join(", ") : "—";
@@ -346,6 +394,7 @@
         renderMeals(booking);
         renderRefundStatus(booking);
         updateActionAvailability(booking);
+        renderReturnFlight(booking);
     }
 
     /* The quote the backend gave for this booking, in the shape the cancel window shows. */

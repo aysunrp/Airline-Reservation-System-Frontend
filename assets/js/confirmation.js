@@ -184,19 +184,47 @@
         var departure = directory.localTime(leg.departureAt, origin.timeZoneId);
         var arrival = directory.localTime(leg.arrivalAt, destination.timeZoneId);
         var seats = [];
+        var seatsByLeg = booking.legs.map(function () { return []; });
 
         var passengers = booking.passengers.map(function (passenger) {
-            var seat = null;
-            passenger.tickets.forEach(function (ticket) {
-                if (ticket.seat && ticket.legOrder === leg.legOrder) {
-                    seat = ticket.seat;
+            var perLeg = booking.legs.map(function (item, index) {
+                var ticket = passenger.tickets.filter(function (candidate) { return candidate.legOrder === item.legOrder; })[0];
+                if (ticket && ticket.seat) {
+                    seatsByLeg[index].push(ticket.seat);
+                    if (index === 0) {
+                        seats.push(ticket.seat);
+                    }
+                    return ticket.seat;
                 }
-                if (ticket.seat) {
-                    seats.push(ticket.seat);
-                }
+                return null;
             });
-            return { title: passenger.title, firstName: passenger.firstName, middleName: passenger.middleName, lastName: passenger.lastName, assignedSeat: seat };
+
+            return {
+                title: passenger.title,
+                firstName: passenger.firstName,
+                middleName: passenger.middleName,
+                lastName: passenger.lastName,
+                // The seat on every flight of the trip, e.g. "11A | 12C".
+                assignedSeat: perLeg.filter(Boolean).join(" | ") || null
+            };
         });
+
+        function flightOf(item) {
+            var from = directory.find(airports, item.originCode);
+            var to = directory.find(airports, item.destinationCode);
+            var out = directory.localTime(item.departureAt, from.timeZoneId);
+            var back = directory.localTime(item.arrivalAt, to.timeZoneId);
+            return {
+                airline: "AEROVA",
+                flightNumber: item.flightNumber,
+                route: item.originCity + " \u2192 " + item.destinationCity,
+                departureDate: out.date,
+                departure: out.time,
+                arrival: back.time,
+                aircraft: "AEROVA " + item.aircraftModel,
+                cabinClass: item.cabinClass
+            };
+        }
 
         return {
             pnr: booking.pnr,
@@ -212,14 +240,45 @@
             cabinClass: leg.cabinClass,
             passengerCount: passengers.length,
             selectedSeats: seats,
+            seatsText: seatsByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | "),
+            returnFlight: booking.legs.length > 1 ? flightOf(booking.legs[1]) : null,
+            returnSeats: booking.legs.length > 1 ? seatsByLeg[1].join(", ") : "",
             passengers: passengers,
             totalPrice: booking.price.total
         };
     }
 
+    /* A round trip gets a second flight card, filled from the return flight. */
+    function paintReturnFlight(bookingData) {
+        var card = document.querySelector('article[aria-labelledby="flight-details-title"]');
+        var returnFlight = bookingData.returnFlight;
+        var copy = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureReturnCard(card, !!returnFlight, tr("api.journey.returnFlightTitle", "Return Flight")) : null;
+
+        if (!copy || !returnFlight) {
+            return;
+        }
+
+        setText("confirmation-flight-number-return", returnFlight.flightNumber);
+        setText("confirmation-route-return", returnFlight.route);
+        setText("confirmation-departure-date-return", formatDisplayDate(returnFlight.departureDate));
+        setText("confirmation-departure-time-return", returnFlight.departure);
+        setText("confirmation-arrival-time-return", returnFlight.arrival);
+        setText("confirmation-aircraft-return", returnFlight.aircraft);
+        setText("confirmation-cabin-return", returnFlight.cabinClass);
+        setText("confirmation-selected-seats-return", bookingData.returnSeats || "\u2014");
+
+        // The number of passengers and the total belong to the whole booking, shown once on the first card.
+        ["confirmation-passenger-count-return", "confirmation-total-price-return"].forEach(function (id) {
+            var element = document.getElementById(id);
+            if (element && element.parentNode) {
+                element.parentNode.hidden = true;
+            }
+        });
+    }
+
     function populateConfirmation(bookingData) {
         var flight = bookingData.flight;
-        var seatsText = bookingData.selectedSeats.length ? bookingData.selectedSeats.join(", ") : "\u2014";
+        var seatsText = bookingData.seatsText || (bookingData.selectedSeats.length ? bookingData.selectedSeats.join(", ") : "\u2014");
         var airlineEl = document.querySelector(".flight-airline");
 
         setText("confirmation-pnr", bookingData.pnr);
@@ -238,6 +297,7 @@
             airlineEl.textContent = flight.airline;
         }
 
+        paintReturnFlight(bookingData);
         renderPassengers(bookingData.passengers, bookingData.selectedSeats);
         populatePriceSummary(bookingData.passengerCount, bookingData.cabinClass, seatsText, bookingData.totalPrice);
     }
