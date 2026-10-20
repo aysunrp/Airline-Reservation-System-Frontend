@@ -1445,6 +1445,22 @@ window.AEROVA_LOCALES.en = {
       "backToPassengers": "Back to passenger details",
       "saveErrorTitle": "We could not save your choices",
       "saveErrorText": "Your browser would not store them. Please try again."
+    },
+    "payment": {
+      "processing": "Processing payment...",
+      "demoNote": "Demo payment: no real charge is made and no payment provider is connected. Card details are only checked for format and are not stored; only the last four digits are kept."
+    },
+    "confirmation": {
+      "loadingTitle": "Loading your booking",
+      "loadingText": "Please wait a moment.",
+      "errorTitle": "We could not load your booking",
+      "retry": "Try again",
+      "missingTitle": "No booking to show",
+      "missingText": "Your booking could not be found on this device. Use Manage Booking with your reference and last name.",
+      "manage": "Manage booking",
+      "notPaidTitle": "This booking is not confirmed",
+      "notPaidText": "The payment for this booking was not completed.",
+      "backHome": "Back to Home"
     }
   },
   "chat": {

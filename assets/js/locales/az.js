@@ -1445,6 +1445,22 @@ window.AEROVA_LOCALES.az = {
       "backToPassengers": "Sərnişin məlumatlarına qayıt",
       "saveErrorTitle": "Seçimlərinizi yadda saxlamaq mümkün olmadı",
       "saveErrorText": "Brauzeriniz onları saxlamadı. Zəhmət olmasa yenidən cəhd edin."
+    },
+    "payment": {
+      "processing": "Ödəniş emal olunur...",
+      "demoNote": "Demo ödəniş: real vəsait çıxarılmır və ödəniş provayderi qoşulmayıb. Kart məlumatları yalnız formatına görə yoxlanılır və saxlanılmır; yalnız son dörd rəqəm qalır."
+    },
+    "confirmation": {
+      "loadingTitle": "Rezervasiyanız yüklənir",
+      "loadingText": "Zəhmət olmasa bir az gözləyin.",
+      "errorTitle": "Rezervasiyanı yükləmək mümkün olmadı",
+      "retry": "Yenidən cəhd et",
+      "missingTitle": "Göstəriləcək rezervasiya yoxdur",
+      "missingText": "Rezervasiyanız bu cihazda tapılmadı. Rezervasiya kodu və soyadınızla Rezervasiyanı idarə et bölməsindən istifadə edin.",
+      "manage": "Rezervasiyanı idarə et",
+      "notPaidTitle": "Bu rezervasiya təsdiqlənməyib",
+      "notPaidText": "Bu rezervasiya üçün ödəniş tamamlanmayıb.",
+      "backHome": "Ana səhifəyə qayıt"
     }
   },
   "chat": {
