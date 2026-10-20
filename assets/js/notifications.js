@@ -1,4 +1,15 @@
+/*
+ * Notifications of the signed-in user, from GET api/notifications. Needs api-client.js and auth.js.
+ * Reading, "mark all as read", "clear" and the unread badge in the account menu all go through the API.
+ * The titles are translated here by notification type; the message text is the one the backend wrote (English).
+ */
 (function () {
+    "use strict";
+
+    var notifications = [];
+    var expandedIds = {};
+    var loadToken = 0;
+
     function tr(key, fallback, vars) {
         if (typeof window.t === "function") {
             var value = window.t(key, vars);
@@ -7,12 +18,6 @@
         return fallback;
     }
 
-    var STORAGE_KEY = "notificationsData";
-
-    var notificationsState = [];
-    var bookingFingerprint = "none";
-    var expandedIds = {};
-
     function escapeHtml(value) {
         return String(value)
             .replace(/&/g, "&amp;")
@@ -20,29 +25,6 @@
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
-    }
-
-    function readJSON(key) {
-        try {
-            var raw = sessionStorage.getItem(key);
-            if (!raw) {
-                return null;
-            }
-
-            var parsed = JSON.parse(raw);
-            return parsed && typeof parsed === "object" ? parsed : null;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function writeJSON(key, value) {
-        try {
-            sessionStorage.setItem(key, JSON.stringify(value));
-            return true;
-        } catch (error) {
-            return false;
-        }
     }
 
     function showMessage(text) {
@@ -55,294 +37,68 @@
         message.hidden = !text;
     }
 
-    function formatPrice(amount) {
-        var value = Number(amount);
-        if (!isFinite(value)) {
-            return "$0";
-        }
-        return "$" + value.toFixed(value % 1 === 0 ? 0 : 2);
-    }
-
+    /* API timestamps are UTC and may come without the "Z"; they are shown on the visitor's own clock. */
     function formatDateTime(value) {
-        if (!value) {
+        var text = String(value || "");
+        var date = new Date(/(Z|[+-]\d\d:?\d\d)$/i.test(text) ? text : text + "Z");
+        if (!text || isNaN(date.getTime())) {
             return "—";
         }
 
-        var date = new Date(value);
-        if (isNaN(date.getTime())) {
-            return String(value);
-        }
-
-        var months = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ];
-
-        return date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear() +
-            " · " +
-            String(date.getHours()).padStart(2, "0") + ":" +
-            String(date.getMinutes()).padStart(2, "0");
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear() + " · " +
+            String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
     }
 
-    function formatFlightDate(dateValue) {
-        if (!dateValue) {
-            return "your departure date";
-        }
+    var TYPES = {
+        BookingConfirmed: { icon: "✓", titleKey: "notifications.confirmedTitle" },
+        BookingCancelled: { icon: "✕", titleKey: "notifications.cancelledTitle" },
+        PaymentSuccessful: { icon: "$", titleKey: "notifications.paymentTitle" },
+        FlightUpdate: { icon: "✈", titleKey: "notifications.flightUpdateTitle" },
+        CheckInReminder: { icon: "⏱", titleKey: "notifications.checkinTitle" },
+        RefundCompleted: { icon: "↩", titleKey: "api.notifications.refundCompletedTitle" }
+    };
 
-        var parts = String(dateValue).split("-");
-        if (parts.length !== 3) {
-            return String(dateValue);
-        }
-
-        var months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-
-        var month = Number(parts[1]);
-        var day = Number(parts[2]);
-        var year = Number(parts[0]);
-
-        if (!month || !day || !year) {
-            return String(dateValue);
-        }
-
-        return day + " " + months[month - 1] + " " + year;
+    function titleFor(notification) {
+        var type = TYPES[notification.type];
+        return type ? tr(type.titleKey, notification.title) : notification.title;
     }
 
-    function getBookingData() {
-        return readJSON("bookingData");
+    function stateLabelMarkup(isUnread) {
+        return '<span class="notification-state ' +
+            (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
+            escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) +
+            "</span>";
     }
 
-    function getBookingFingerprint(booking) {
-        if (!booking) {
-            return "none";
-        }
-
-        var flight = booking.flight || {};
-
-        return [
-            booking.pnr || "",
-            booking.status || "",
-            booking.paymentStatus || "",
-            flight.departureDate || "",
-            flight.flightNumber || "",
-            booking.cabinClass || "",
-            booking.totalPrice != null ? String(booking.totalPrice) : ""
-        ].join("|");
-    }
-
-    function isCancelled(booking) {
-        var status = String(booking.status || "").toLowerCase();
-        var payment = String(booking.paymentStatus || "").toLowerCase();
-        return status === "cancelled" || payment === "cancelled";
-    }
-
-    function isPaid(booking) {
-        var payment = String(booking.paymentStatus || "").toLowerCase();
-        return payment === "paid" || payment === "confirmed";
-    }
-
-    function isConfirmed(booking) {
-        if (isCancelled(booking)) {
-            return false;
-        }
-
-        var status = String(booking.status || "").toLowerCase();
-        return status === "confirmed" || isPaid(booking) || !!booking.pnr;
-    }
-
-    function buildNotification(id, type, title, message, icon, datetime) {
-        return {
-            id: id,
-            type: type,
-            title: title,
-            message: message,
-            icon: icon,
-            datetime: datetime || new Date().toISOString(),
-            read: false
-        };
-    }
-
-    function generateFromBooking(booking) {
-        if (!booking) {
-            return [];
-        }
-
-        var flight = booking.flight || {};
-        var pnr = booking.pnr || "your booking";
-        var flightNumber = flight.flightNumber || "your flight";
-        var route = flight.from && flight.to
-            ? flight.from + " → " + flight.to
-            : (flight.route || "your route");
-        var departureDate = flight.departureDate || "";
-        var departureTime = flight.departure || "";
-        var now = Date.now();
-        var items = [];
-
-        if (isCancelled(booking)) {
-            items.push(buildNotification(
-                "cancelled-" + pnr,
-                "cancelled",
-                tr("notifications.cancelledTitle", "Booking Cancelled"),
-                tr("notifications.cancelledBody", "Reservation " + pnr + " for " + route + " has been cancelled.", { pnr: pnr, route: route }),
-                "X",
-                new Date(now).toISOString()
-            ));
-            return items;
-        }
-
-        if (isConfirmed(booking)) {
-            items.push(buildNotification(
-                "confirmed-" + pnr,
-                "booking",
-                tr("notifications.confirmedTitle", "Booking Confirmed"),
-                tr("notifications.confirmedBody", "Your AEROVA reservation " + pnr + " for " + route + " is confirmed.", { pnr: pnr, route: route }),
-                "B",
-                new Date(now - 120000).toISOString()
-            ));
-        }
-
-        if (isPaid(booking)) {
-            items.push(buildNotification(
-                "payment-" + pnr,
-                "payment",
-                tr("notifications.paymentTitle", "Payment Successful"),
-                tr("notifications.paymentBody", "Payment of " + formatPrice(booking.totalPrice) + " was received successfully for booking " + pnr + ".", { amount: formatPrice(booking.totalPrice), pnr: pnr }),
-                "P",
-                new Date(now - 90000).toISOString()
-            ));
-        }
-
-        if (flight.flightNumber || departureDate) {
-            items.push(buildNotification(
-                "flight-update-" + pnr,
-                "flight",
-                tr("notifications.flightUpdateTitle", "Flight Update"),
-                flightNumber + " is scheduled for " + formatFlightDate(departureDate) +
-                    (departureTime ? " at " + departureTime : "") +
-                    ". Cabin: " + (booking.cabinClass || "Economy") + ".",
-                "F",
-                new Date(now - 60000).toISOString()
-            ));
-        }
-
-        if (departureDate) {
-            items.push(buildNotification(
-                "checkin-" + pnr,
-                "checkin",
-                tr("notifications.checkinTitle", "Check-in Reminder"),
-                "Online check-in opens 24 hours before departure for flight " +
-                    flightNumber + " on " + formatFlightDate(departureDate) + ".",
-                "C",
-                new Date(now - 30000).toISOString()
-            ));
-        }
-
-        return items;
-    }
-
-    function mergeReadState(generated, previousNotifications) {
-        var readMap = {};
-
-        (previousNotifications || []).forEach(function (item) {
-            if (item && item.id) {
-                readMap[item.id] = !!item.read;
-            }
-        });
-
-        return generated.map(function (item) {
-            if (Object.prototype.hasOwnProperty.call(readMap, item.id)) {
-                return Object.assign({}, item, { read: readMap[item.id] });
-            }
-            return item;
-        });
-    }
-
-    function loadStoredPayload() {
-        var stored = readJSON(STORAGE_KEY);
-        if (!stored) {
-            return { notifications: [], clearedFingerprint: null };
-        }
-
-        if (Array.isArray(stored)) {
-            return { notifications: stored, clearedFingerprint: null };
-        }
-
-        return {
-            notifications: Array.isArray(stored.notifications) ? stored.notifications : [],
-            clearedFingerprint: stored.clearedFingerprint || null
-        };
-    }
-
-    function persistNotifications(options) {
-        var existing = loadStoredPayload();
-        var payload = {
-            notifications: notificationsState,
-            fingerprint: bookingFingerprint,
-            clearedFingerprint: existing.clearedFingerprint || null
-        };
-
-        if (options && Object.prototype.hasOwnProperty.call(options, "clearedFingerprint")) {
-            payload.clearedFingerprint = options.clearedFingerprint;
-        }
-
-        // If booking changed after a clear, drop the old clear lock.
-        if (payload.clearedFingerprint && payload.clearedFingerprint !== bookingFingerprint) {
-            payload.clearedFingerprint = null;
-        }
-
-        writeJSON(STORAGE_KEY, payload);
-
-        try {
-            window.dispatchEvent(new CustomEvent("aerova:notificationschange"));
-        } catch (error) {}
-    }
-
-    function loadNotifications() {
-        var booking = getBookingData();
-        bookingFingerprint = getBookingFingerprint(booking);
-        var stored = loadStoredPayload();
-
-        if (!booking) {
-            return stored.notifications.slice();
-        }
-
-        if (stored.clearedFingerprint && stored.clearedFingerprint === bookingFingerprint) {
-            return [];
-        }
-
-        var generated = generateFromBooking(booking);
-        return mergeReadState(generated, stored.notifications);
-    }
-
-    function countUnread() {
-        return notificationsState.filter(function (item) {
-            return !item.read;
-        }).length;
-    }
-
-    function renderNotifications() {
+    function paintList(markup) {
         var list = document.getElementById("notifications-list");
-        if (!list) {
+        if (list) {
+            list.innerHTML = markup;
+        }
+        return list;
+    }
+
+    function statusMarkup(kind, title, text, withRetry) {
+        return '<div class="notifications-empty" role="' + (kind === "error" ? "alert" : "status") + '">' +
+            '<h2 class="notifications-empty-title">' + escapeHtml(title) + "</h2>" +
+            '<p class="notifications-empty-text">' + escapeHtml(text) + "</p>" +
+            (withRetry ? '<button type="button" class="notifications-toolbar-button" id="notifications-retry">' + escapeHtml(tr("api.options.retry", "Try again")) + "</button>" : "") +
+            "</div>";
+    }
+
+    function render() {
+        if (!notifications.length) {
+            paintList(statusMarkup("empty", tr("notifications.emptyTitle", "No Notifications"), tr("notifications.emptyText", "You are all caught up. Booking and flight updates will appear here when available."), false));
             return;
         }
 
-        if (!notificationsState.length) {
-            list.innerHTML =
-                '<div class="notifications-empty">' +
-                    '<h2 class="notifications-empty-title">' + (typeof t === "function" ? t("notifications.emptyTitle") : "No Notifications") + '</h2>' +
-                    '<p class="notifications-empty-text">' + (typeof t === "function" ? t("notifications.emptyText") : "You are all caught up. Booking and flight updates will appear here when available.") + '</p>' +
-                "</div>";
-            return;
-        }
-
-        list.innerHTML = notificationsState.map(function (notification, index) {
-            var isUnread = !notification.read;
+        paintList(notifications.map(function (notification, index) {
+            var isUnread = !notification.isRead;
             var isExpanded = !!expandedIds[notification.id];
             var panelId = "notification-panel-" + index;
             var toggleId = "notification-toggle-" + index;
-            var reference = getNotificationReference(notification);
+            var type = TYPES[notification.type];
 
             return (
                 '<article class="notification-card' + (isUnread ? " is-unread" : "") + (isExpanded ? " is-expanded" : "") +
@@ -350,16 +106,14 @@
                     '<h2 class="notification-heading">' +
                     '<button class="notification-toggle" type="button" id="' + toggleId + '" aria-expanded="' + (isExpanded ? "true" : "false") +
                         '" aria-controls="' + panelId + '">' +
-                        '<span class="notification-icon" aria-hidden="true">' +
-                            escapeHtml(notification.icon || "•") +
-                        "</span>" +
+                        '<span class="notification-icon" aria-hidden="true">' + escapeHtml(type ? type.icon : "•") + "</span>" +
                         '<span class="notification-body">' +
                             '<span class="notification-title-row">' +
-                                '<span class="notification-title">' + escapeHtml(notification.title) + "</span>" +
+                                '<span class="notification-title">' + escapeHtml(titleFor(notification)) + "</span>" +
                                 stateLabelMarkup(isUnread) +
                             "</span>" +
                             '<span class="notification-preview">' + escapeHtml(notification.message) + "</span>" +
-                            '<span class="notification-time">' + escapeHtml(formatDateTime(notification.datetime)) + "</span>" +
+                            '<span class="notification-time">' + escapeHtml(formatDateTime(notification.createdAt)) + "</span>" +
                         "</span>" +
                         '<span class="notification-chevron" aria-hidden="true"></span>' +
                     "</button>" +
@@ -370,34 +124,52 @@
                             '<p class="notification-message">' + escapeHtml(notification.message) + "</p>" +
                             '<dl class="notification-details">' +
                                 '<div class="notification-detail"><dt>' + escapeHtml(tr("common.date", "Date")) + "</dt><dd>" +
-                                    escapeHtml(formatDateTime(notification.datetime)) + "</dd></div>" +
+                                    escapeHtml(formatDateTime(notification.createdAt)) + "</dd></div>" +
                                 '<div class="notification-detail"><dt>' + escapeHtml(tr("common.status", "Status")) + '</dt><dd class="notification-detail-status">' +
                                     escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) + "</dd></div>" +
-                                (reference
-                                    ? '<div class="notification-detail"><dt>' + escapeHtml(tr("trips.bookingReference", "Booking Reference")) + "</dt><dd>" +
-                                        escapeHtml(reference) + "</dd></div>"
-                                    : "") +
                             "</dl>" +
                         "</div>" +
                     "</div>" +
                 "</article>"
             );
-        }).join("");
+        }).join(""));
     }
 
-    function stateLabelMarkup(isUnread) {
-        return '<span class="notification-state ' +
-            (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
-            escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) +
-            "</span>";
+    function announceChange() {
+        window.dispatchEvent(new CustomEvent("aerova:notificationschange"));
     }
 
-    function getNotificationReference(notification) {
-        var booking = getBookingData();
-        if (booking && booking.pnr && String(notification.id || "").slice(-String(booking.pnr).length - 1) === "-" + booking.pnr) {
-            return booking.pnr;
+    function apiMessage(error) {
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+        if (!isApiError && window.console) {
+            window.console.error(error);
         }
-        return "";
+        return isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+    }
+
+    function load() {
+        var token = ++loadToken;
+
+        paintList(statusMarkup("loading", tr("api.notifications.loadingTitle", "Loading notifications"), tr("api.notifications.loadingText", "Please wait a moment."), false));
+
+        window.AEROVA_API.get("api/notifications").then(function (list) {
+            if (token !== loadToken) {
+                return;
+            }
+            notifications = list || [];
+            render();
+            announceChange();
+        }).catch(function (error) {
+            if (token !== loadToken) {
+                return;
+            }
+            notifications = [];
+            var list = paintList(statusMarkup("error", tr("api.notifications.errorTitle", "We could not load your notifications"), apiMessage(error), true));
+            var retry = list && list.querySelector("#notifications-retry");
+            if (retry) {
+                retry.addEventListener("click", load);
+            }
+        });
     }
 
     function setCardExpanded(card, expanded) {
@@ -420,63 +192,64 @@
     }
 
     function toggleNotification(card) {
-        var id = card.getAttribute("data-notification-id");
+        var id = Number(card.getAttribute("data-notification-id"));
         var expanded = !card.classList.contains("is-expanded");
 
         if (expanded) expandedIds[id] = true;
         else delete expandedIds[id];
         setCardExpanded(card, expanded);
 
-        if (!expanded) {
+        var notification = notifications.filter(function (item) { return item.id === id; })[0];
+        if (!expanded || !notification || notification.isRead) {
             return;
         }
 
-        var changed = false;
-        notificationsState = notificationsState.map(function (notification) {
-            if (notification.id !== id || notification.read) {
-                return notification;
-            }
-            changed = true;
-            return Object.assign({}, notification, { read: true });
-        });
-
-        if (changed) {
-            persistNotifications();
+        // Opening a notification reads it; the server is told, and the card only turns "read" once it agrees.
+        window.AEROVA_API.patch("api/notifications/" + id + "/read").then(function () {
+            notification.isRead = true;
             markCardRead(card);
-        }
+            announceChange();
+        }).catch(function (error) {
+            showMessage(apiMessage(error));
+        });
     }
 
     function markAllAsRead() {
-        if (!notificationsState.length) {
+        if (!notifications.length) {
             showMessage(tr("notifications.noneToUpdate", "There are no notifications to update."));
             return;
         }
 
-        if (!countUnread()) {
+        if (!notifications.some(function (item) { return !item.isRead; })) {
             showMessage(tr("notifications.allAlreadyRead", "All notifications are already read."));
             return;
         }
 
-        notificationsState = notificationsState.map(function (notification) {
-            return Object.assign({}, notification, { read: true });
+        window.AEROVA_API.patch("api/notifications/read-all").then(function () {
+            notifications.forEach(function (item) { item.isRead = true; });
+            render();
+            announceChange();
+            showMessage(tr("notifications.allMarkedRead", "All notifications marked as read."));
+        }).catch(function (error) {
+            showMessage(apiMessage(error));
         });
-
-        persistNotifications();
-        renderNotifications();
-        showMessage(tr("notifications.allMarkedRead", "All notifications marked as read."));
     }
 
     function clearNotifications() {
-        if (!notificationsState.length) {
+        if (!notifications.length) {
             showMessage(tr("notifications.noneToClear", "There are no notifications to clear."));
             return;
         }
 
-        notificationsState = [];
-        expandedIds = {};
-        persistNotifications({ clearedFingerprint: bookingFingerprint });
-        renderNotifications();
-        showMessage(tr("notifications.allCleared", "All notifications have been cleared."));
+        window.AEROVA_API.del("api/notifications").then(function () {
+            notifications = [];
+            expandedIds = {};
+            render();
+            announceChange();
+            showMessage(tr("notifications.allCleared", "All notifications have been cleared."));
+        }).catch(function (error) {
+            showMessage(apiMessage(error));
+        });
     }
 
     function bindActions() {
@@ -487,16 +260,10 @@
         if (list) {
             list.addEventListener("click", function (event) {
                 var button = event.target.closest(".notification-toggle");
-                if (!button) {
-                    return;
+                var card = button ? button.closest(".notification-card") : null;
+                if (card) {
+                    toggleNotification(card);
                 }
-
-                var card = button.closest(".notification-card");
-                if (!card) {
-                    return;
-                }
-
-                toggleNotification(card);
             });
         }
 
@@ -551,11 +318,9 @@
     }
 
     function init() {
-        notificationsState = loadNotifications();
-        persistNotifications();
-        renderNotifications();
         bindActions();
         initMenuToggle();
+        load();
     }
 
     if (document.readyState === "loading") {
@@ -563,7 +328,11 @@
     } else {
         init();
     }
+
     window.addEventListener("aerova:languagechange", function () {
-        if (typeof renderNotifications === 'function') { try { renderNotifications(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+        if (notifications.length) {
+            try { render(); } catch (error) { /* the next load repaints */ }
+        }
+        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
     });
 })();
