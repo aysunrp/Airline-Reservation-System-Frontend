@@ -35,6 +35,10 @@
 
     var appliedPromo = null;
 
+    /* The booking made in the backend: its price and when the seat hold ends. Nothing is priced locally once it exists. */
+    var heldBooking = null;
+    var holdTimer = null;
+
     function setText(id, value) {
         var element = document.getElementById(id);
         if (element) {
@@ -201,6 +205,21 @@
     }
 
     function calculatePriceBreakdown(bookingData) {
+        if (heldBooking && heldBooking.price) {
+            var price = heldBooking.price;
+            return {
+                baseFare: roundMoney(price.baseFare),
+                baggage: roundMoney(price.baggage),
+                meals: roundMoney(price.meals),
+                taxes: roundMoney(price.taxes),
+                subtotal: roundMoney(price.subtotal),
+                discount: roundMoney(price.discount),
+                promoCode: price.promoCode || "",
+                promoPercent: toNumber(price.promoPercent, 0),
+                grandTotal: roundMoney(price.total)
+            };
+        }
+
         var baggageData = readJSON("baggageData");
         var mealData = readJSON("mealData");
 
@@ -801,6 +820,138 @@
         }
     }
 
+    function bookingPanel(kind, title, text, actions) {
+        var panel = document.getElementById("booking-status");
+        var layout = document.querySelector(".payment-layout");
+        var buttons = document.getElementById("booking-status-actions");
+
+        if (!panel) {
+            return;
+        }
+
+        setText("booking-status-title", title);
+        setText("booking-status-text", text);
+        panel.setAttribute("role", kind === "error" ? "alert" : "status");
+        buttons.innerHTML = "";
+
+        (actions || []).forEach(function (action) {
+            var element = document.createElement(action.href ? "a" : "button");
+            element.className = "pay-button booking-action";
+            element.textContent = action.label;
+            if (action.href) {
+                element.setAttribute("href", action.href);
+            } else {
+                element.type = "button";
+                element.addEventListener("click", action.onClick);
+            }
+            buttons.appendChild(element);
+        });
+
+        panel.hidden = false;
+        if (layout) {
+            layout.hidden = true;
+        }
+    }
+
+    function stopHoldTimer() {
+        if (holdTimer) {
+            window.clearInterval(holdTimer);
+            holdTimer = null;
+        }
+        var hold = document.getElementById("booking-hold");
+        if (hold) {
+            hold.hidden = true;
+        }
+    }
+
+    function paintHold() {
+        var hold = document.getElementById("booking-hold");
+        if (!hold || !heldBooking) {
+            return;
+        }
+
+        var left = window.AEROVA_BOOKING.parseUtc(heldBooking.expiresAt).getTime() - Date.now();
+        if (left <= 0) {
+            stopHoldTimer();
+            window.AEROVA_BOOKING.forget();
+            heldBooking = null;
+            bookingPanel("error", tr("api.booking.expiredTitle", "Your seat hold has ended"), tr("api.booking.expiredText", "The seats were held for 15 minutes and are now released. Please choose your seats again."), [
+                { label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" }
+            ]);
+            return;
+        }
+
+        var totalSeconds = Math.ceil(left / 1000);
+        var clock = Math.floor(totalSeconds / 60) + ":" + (totalSeconds % 60 < 10 ? "0" : "") + (totalSeconds % 60);
+        hold.textContent = tr("api.booking.holdText", "Your seats are held for {time}. Booking reference {pnr}.", { time: clock, pnr: heldBooking.pnr });
+        hold.hidden = false;
+    }
+
+    function startHoldTimer() {
+        stopHoldTimer();
+        paintHold();
+        if (heldBooking) {
+            holdTimer = window.setInterval(paintHold, 1000);
+        }
+    }
+
+    function showBookingError(error, retry) {
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+        var status = isApiError ? error.status : 0;
+        var actions = [];
+        var title = tr("api.booking.errorTitle", "We could not reserve your seats");
+        var text;
+
+        if (!isApiError && window.console) {
+            window.console.error(error);
+        }
+
+        if (status === 409) {
+            title = tr("api.booking.conflictTitle", "A seat is no longer available");
+            text = tr("api.booking.conflictText", "Another traveller has just taken one of your seats. Please choose your seats again.");
+            actions.push({ label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" });
+        } else {
+            text = isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+            if (!isApiError || status === 0 || status >= 500) {
+                actions.push({ label: tr("api.booking.retry", "Try again"), onClick: retry });
+            }
+            actions.push({ label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" });
+        }
+
+        bookingPanel("error", title, text, actions);
+    }
+
+    /* Creates the booking in the backend (or reuses the one already held) before the payment page shows anything priced. */
+    function reserveBooking(bookingData, layout) {
+        var panel = document.getElementById("booking-status");
+
+        bookingPanel("loading", tr("api.booking.loadingTitle", "Reserving your seats"), tr("api.booking.loadingText", "Please wait while we hold your seats and confirm the price."), []);
+
+        window.AEROVA_BOOKING.ensure(bookingData).then(function (held) {
+            heldBooking = held;
+            if (panel) {
+                panel.hidden = true;
+            }
+            if (layout) {
+                layout.hidden = false;
+            }
+
+            var promoSection = document.getElementById("promo-code-section");
+            if (promoSection) {
+                // Promo codes are checked by the backend; until that is connected here, none is offered.
+                promoSection.hidden = true;
+            }
+
+            appliedPromo = null;
+            populatePaymentSummary(bookingData);
+            startHoldTimer();
+        }).catch(function (error) {
+            showBookingError(error, function () {
+                reserveBooking(bookingData, layout);
+            });
+        });
+    }
+
     function init() {
         var payButton = document.getElementById("pay-button");
         var layout = document.querySelector(".payment-layout");
@@ -824,12 +975,7 @@
         }
 
         showMessage("");
-        if (layout) {
-            layout.hidden = false;
-        }
-
-        restoreAppliedPromo(bookingData);
-        populatePaymentSummary(bookingData);
+        reserveBooking(bookingData, layout);
     }
 
     document.addEventListener("DOMContentLoaded", init);
