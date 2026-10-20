@@ -31,38 +31,55 @@
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    function getRegisteredUsers() {
-        var users = readJSON(localStorage, USERS_KEY);
-        return Array.isArray(users) ? users : [];
+    /* Older versions kept every account, with its password in plain text, in localStorage. Accounts now live in the backend. */
+    function purgeLegacyAccounts() {
+        try { localStorage.removeItem(USERS_KEY); } catch (error) { /* ignore */ }
+        try { localStorage.removeItem(LOGGED_IN_KEY); } catch (error) { /* ignore */ }
+        try { localStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
+        try { sessionStorage.removeItem(LOGGED_IN_KEY); } catch (error) { /* ignore */ }
     }
 
-    function saveRegisteredUsers(users) {
-        writeJSON(localStorage, USERS_KEY, users);
+    function hasSession() {
+        return !!(window.AEROVA_API && window.AEROVA_API.session.isActive());
     }
+
+
 
     function isLoggedIn() {
-        return sessionStorage.getItem(LOGGED_IN_KEY) === "true";
+        return hasSession();
     }
 
     function getCurrentUser() {
-        if (!isLoggedIn()) return null;
+        if (!hasSession()) {
+            try { sessionStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
+            return null;
+        }
         return readJSON(sessionStorage, USER_KEY);
     }
 
-    function setLoggedInUser(user) {
+    /* The token is kept by the API client; here only the name shown in the header and the role are kept. */
+    function setLoggedInUser(authResponse) {
+        var user = authResponse.user || {};
         var safeUser = {
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            email: user.email,
+            role: user.role
         };
+
+        if (!window.AEROVA_API.session.save(authResponse)) {
+            return null;
+        }
+
         writeJSON(sessionStorage, USER_KEY, safeUser);
-        sessionStorage.setItem(LOGGED_IN_KEY, "true");
-        try { localStorage.setItem(LOGGED_IN_KEY, "true"); } catch (error) { /* ignore */ }
         return safeUser;
     }
 
     function clearAuthState() {
+        if (window.AEROVA_API) {
+            window.AEROVA_API.session.clear();
+        }
         try { sessionStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
         try { sessionStorage.removeItem(LOGGED_IN_KEY); } catch (error) { /* ignore */ }
         try { sessionStorage.removeItem("currentUser"); } catch (error) { /* ignore */ }
@@ -447,6 +464,39 @@
         });
     }
 
+    /* Shows what the API says about each field, or the message under the password when it is about the form as a whole. */
+    function showApiFormError(error, fields) {
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+        var shown = false;
+
+        if (!isApiError) {
+            if (window.console) window.console.error(error);
+            setFieldError(fields.fallback, tr("api.errors.generic", "Something went wrong. Please try again."));
+            return;
+        }
+
+        if (error.status === 400 && error.errors && typeof error.errors === "object") {
+            Object.keys(error.errors).forEach(function (name) {
+                var input = fields[String(name).charAt(0).toLowerCase() + String(name).slice(1)];
+                var messages = error.errors[name];
+                if (input && messages && messages.length) {
+                    setFieldError(input, String(messages[0]));
+                    shown = true;
+                }
+            });
+        }
+
+        if (!shown) {
+            setFieldError(error.status === 409 && fields.email ? fields.email : fields.fallback, error.status === 409 ? tr("auth.emailExists", "An account with this email already exists") : error.userMessage);
+        }
+    }
+
+    /* After signing in, go back to the page the visitor wanted (a page of this site only), otherwise home. */
+    function pageAfterLogin() {
+        var wanted = new URLSearchParams(window.location.search).get("next") || "";
+        return /^[a-z0-9-]+\.html(\?[\w=&%.-]*)?$/i.test(wanted) ? wanted : "index.html";
+    }
+
     function handleLoginForm() {
         var form = document.getElementById("login-form");
         if (!form) return;
@@ -458,6 +508,7 @@
 
             var emailInput = document.getElementById("login-email");
             var passwordInput = document.getElementById("login-password");
+            var submit = form.querySelector(".auth-submit");
             var email = normalizeEmail(emailInput.value);
             var password = String(passwordInput.value || "");
             var valid = true;
@@ -483,19 +534,24 @@
 
             if (!valid) return;
 
-            var users = getRegisteredUsers();
-            var match = users.find(function (user) {
-                return normalizeEmail(user.email) === email && String(user.password) === password;
+            if (submit) submit.disabled = true;
+
+            window.AEROVA_API.post("api/auth/login", { email: email, password: password }).then(function (response) {
+                if (!setLoggedInUser(response)) {
+                    throw new TypeError("The sign-in response had no token.");
+                }
+                passwordInput.value = "";
+                window.location.href = pageAfterLogin();
+            }).catch(function (error) {
+                passwordInput.value = "";
+                if (error && error.status === 401) {
+                    setFieldError(emailInput, tr("auth.loginFailed", "Incorrect email or password"));
+                    setFieldError(passwordInput, tr("auth.loginFailed", "Incorrect email or password"));
+                } else {
+                    showApiFormError(error, { email: emailInput, password: passwordInput, fallback: passwordInput });
+                }
+                if (submit) submit.disabled = false;
             });
-
-            if (!match) {
-                setFieldError(emailInput, tr("auth.loginFailed", "Incorrect email or password"));
-                setFieldError(passwordInput, tr("auth.loginFailed", "Incorrect email or password"));
-                return;
-            }
-
-            setLoggedInUser(match);
-            window.location.href = "index.html";
         });
     }
 
@@ -559,26 +615,29 @@
 
             if (!valid) return;
 
-            var users = getRegisteredUsers();
-            var exists = users.some(function (user) {
-                return normalizeEmail(user.email) === email;
-            });
+            var submit = form.querySelector(".auth-submit");
+            if (submit) submit.disabled = true;
 
-            if (exists) {
-                setFieldError(emailInput, tr("auth.emailExists", "An account with this email already exists"));
-                return;
-            }
-
-            users.push({
-                id: "user-" + Date.now(),
+            window.AEROVA_API.post("api/auth/register", {
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
-                password: password
+                password: password,
+                confirmPassword: confirm
+            }).then(function (response) {
+                // Registering signs the new account in.
+                if (!setLoggedInUser(response)) {
+                    throw new TypeError("The sign-up response had no token.");
+                }
+                passwordInput.value = "";
+                confirmInput.value = "";
+                window.location.href = pageAfterLogin();
+            }).catch(function (error) {
+                passwordInput.value = "";
+                confirmInput.value = "";
+                showApiFormError(error, { firstName: firstInput, lastName: lastInput, email: emailInput, password: passwordInput, confirmPassword: confirmInput, fallback: emailInput });
+                if (submit) submit.disabled = false;
             });
-            saveRegisteredUsers(users);
-
-            window.location.href = "login.html";
         });
     }
 
@@ -692,7 +751,6 @@
 
     function guardAuthenticatedPages() {
         var path = window.location.pathname.toLowerCase();
-        var href = String(window.location.href || "").toLowerCase();
         var protectedPages = [
             "my-trips.html",
             "profile.html",
@@ -700,11 +758,11 @@
             "booking-details.html"
         ];
         var needsAuth = protectedPages.some(function (page) {
-            return path.indexOf(page) !== -1 || href.indexOf(page) !== -1;
+            return path.indexOf(page) !== -1;
         });
 
         if (needsAuth && !isLoggedIn()) {
-            window.location.replace("login.html");
+            window.location.replace("login.html?next=" + encodeURIComponent(currentPageName()));
             return true;
         }
 
@@ -712,12 +770,19 @@
     }
 
     function init() {
+        purgeLegacyAccounts();
         if (guardAuthenticatedPages()) return;
         updateNavigation();
         handleLoginForm();
         handleRegisterForm();
         window.addEventListener("aerova:languagechange", function () {
             updateNavigation();
+        });
+        // The API rejected the token (it ran out): forget it and send the visitor to sign in again.
+        window.addEventListener("aerova:session-expired", function () {
+            clearAuthState();
+            updateNavigation();
+            if (guardAuthenticatedPages()) return;
         });
         window.addEventListener("aerova:notificationschange", updateNotificationBadges);
         window.addEventListener("pageshow", updateNotificationBadges);
