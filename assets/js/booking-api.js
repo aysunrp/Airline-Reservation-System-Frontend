@@ -66,6 +66,7 @@
       documentNumber: document.number || passenger.documentNumber,
       documentIssuingCountry: document.issuingCountry,
       documentExpiryDate: document.expiryDate || passenger.documentExpiryDate || null,
+      savedPassengerId: passenger.savedPassengerId || null,
       baggageOptionId: passenger.baggageOptionId || null,
       mealOptionId: passenger.mealOptionId || null,
       seats: seats
