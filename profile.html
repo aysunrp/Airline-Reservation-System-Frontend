@@ -315,6 +315,45 @@
                         <input class="field-input" id="passenger-relationship" type="text" placeholder="e.g. Spouse, Child">
 
                     </div>
+                    <p class="profile-modal-hint field--full" data-i18n="api.profile.savedHint">Optional: with these details a saved passenger fills the booking form for you.</p>
+                    <div class="field">
+                        <label class="field-label" for="passenger-dob" data-i18n="travelDocs.dob">Date of Birth</label>
+                        <input class="field-input" id="passenger-dob" type="date">
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="passenger-gender" data-i18n="travelDocs.gender">Gender</label>
+                        <select class="field-input" id="passenger-gender">
+                            <option value="" data-i18n="travelDocs.selectGender">Select gender</option>
+                            <option value="Female" data-i18n="travelDocs.female">Female</option>
+                            <option value="Male" data-i18n="travelDocs.male">Male</option>
+                            <option value="Other" data-i18n="travelDocs.other">Other</option>
+                            <option value="PreferNotToSay" data-i18n="travelDocs.preferNot">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="field field--full">
+                        <label class="field-label" for="passenger-nationality" data-i18n="travelDocs.nationality">Nationality</label>
+                        <select class="field-input" id="passenger-nationality"></select>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="passenger-document-type" data-i18n="travelDocs.documentType">Document Type</label>
+                        <select class="field-input" id="passenger-document-type">
+                            <option value="" data-i18n="api.profile.noDocument">No document</option>
+                            <option value="Passport" data-i18n="travelDocs.docTypes.passport">Passport</option>
+                            <option value="NationalIdCard" data-i18n="travelDocs.docTypes.az_id_card">National ID card</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="passenger-document-number" data-i18n="travelDocs.documentNumber">Document Number</label>
+                        <input class="field-input" id="passenger-document-number" type="text" maxlength="30" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="passenger-issuing-country" data-i18n="travelDocs.issuingCountry">Issuing Country</label>
+                        <select class="field-input" id="passenger-issuing-country"></select>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="passenger-document-expiry" data-i18n="travelDocs.expiry">Document Expiry Date</label>
+                        <input class="field-input" id="passenger-document-expiry" type="date">
+                    </div>
 
                 </div>
 
@@ -524,7 +563,7 @@
     <script src="assets/js/auth.js?v=api5"></script>
 
     <script src="assets/js/travel-documents.js"></script>
-    <script src="assets/js/profile.js?v=api2"></script>
+    <script src="assets/js/profile.js?v=saved3"></script>
 
 </body>
 

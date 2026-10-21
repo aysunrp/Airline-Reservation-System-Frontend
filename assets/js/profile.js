@@ -143,7 +143,19 @@
     }
 
     function toSavedPassenger(dto) {
-        return { id: dto.id, firstName: dto.firstName, lastName: dto.lastName, relationship: dto.relationship || "" };
+        return {
+            id: dto.id,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            relationship: dto.relationship || "",
+            dateOfBirth: dto.dateOfBirth || "",
+            gender: dto.gender || "",
+            nationalityCode: dto.nationalityCode || "",
+            documentType: dto.documentType || "",
+            documentNumber: dto.documentNumber || "",
+            documentIssuingCountry: dto.documentIssuingCountry || "",
+            documentExpiryDate: dto.documentExpiryDate || ""
+        };
     }
 
     /* The profile and saved passengers from the API, in the shape the form below uses. */
@@ -172,18 +184,28 @@
     }
 
     function buildNationalityOptions() {
-        var select = document.getElementById("profile-nationality");
         var docs = window.AEROVA_TRAVEL_DOCS;
-        if (!select || !docs) {
+        if (!docs) {
             return;
         }
 
-        var current = select.value;
-        select.innerHTML = '<option value="" disabled selected>' + escapeHtml(tr("travelDocs.selectNationality", "Select nationality")) + "</option>" +
-            docs.countries.map(function (country) {
-                return '<option value="' + escapeHtml(country.code) + '">' + escapeHtml(tr("travelDocs.countries." + country.code, docs.countryName(country.code))) + "</option>";
-            }).join("");
-        select.value = current;
+        [
+            { id: "profile-nationality", placeholderKey: "travelDocs.selectNationality", placeholder: "Select nationality", required: true },
+            { id: "passenger-nationality", placeholderKey: "travelDocs.selectNationality", placeholder: "Select nationality", required: false },
+            { id: "passenger-issuing-country", placeholderKey: "travelDocs.selectCountry", placeholder: "Select country", required: false }
+        ].forEach(function (spec) {
+            var select = document.getElementById(spec.id);
+            if (!select) {
+                return;
+            }
+
+            var current = select.value;
+            select.innerHTML = '<option value=""' + (spec.required ? " disabled" : "") + " selected>" + escapeHtml(tr(spec.placeholderKey, spec.placeholder)) + "</option>" +
+                docs.countries.map(function (country) {
+                    return '<option value="' + escapeHtml(country.code) + '">' + escapeHtml(tr("travelDocs.countries." + country.code, docs.countryName(country.code))) + "</option>";
+                }).join("");
+            select.value = current;
+        });
     }
 
     function setProfileStatus(kind, title, text, retry) {
@@ -258,6 +280,7 @@
                         "</p>" +
                         '<p class="saved-passenger-meta">' +
                             escapeHtml(passenger.relationship || "Travel companion") +
+                            (passenger.documentNumber ? " \u00b7 " + escapeHtml(tr("api.profile.documentSaved", "document saved")) : "") +
                         "</p>" +
                     "</div>" +
                     '<div class="saved-passenger-actions">' +
@@ -403,6 +426,13 @@
         setFieldValue("passenger-first-name", passenger ? passenger.firstName : "");
         setFieldValue("passenger-last-name", passenger ? passenger.lastName : "");
         setFieldValue("passenger-relationship", passenger ? passenger.relationship : "");
+        setFieldValue("passenger-dob", passenger ? passenger.dateOfBirth : "");
+        setFieldValue("passenger-gender", passenger ? passenger.gender : "");
+        setFieldValue("passenger-nationality", passenger ? passenger.nationalityCode : "");
+        setFieldValue("passenger-document-type", passenger ? passenger.documentType : "");
+        setFieldValue("passenger-document-number", passenger ? passenger.documentNumber : "");
+        setFieldValue("passenger-issuing-country", passenger ? passenger.documentIssuingCountry : "");
+        setFieldValue("passenger-document-expiry", passenger ? passenger.documentExpiryDate : "");
 
         if (modal) {
             modal.hidden = false;
@@ -423,10 +453,12 @@
     function validatePassengerModal() {
         var firstName = document.getElementById("passenger-first-name");
         var lastName = document.getElementById("passenger-last-name");
+        var documentType = document.getElementById("passenger-document-type");
         var isValid = true;
 
         clearFieldError(firstName);
         clearFieldError(lastName);
+        clearFieldError(documentType);
 
         if (!getTrimmedValue("passenger-first-name")) {
             markInvalid(firstName, "Enter first name");
@@ -435,6 +467,12 @@
 
         if (!getTrimmedValue("passenger-last-name")) {
             markInvalid(lastName, "Enter last name");
+            isValid = false;
+        }
+
+        // A document number only makes sense together with its type (the backend checks this too).
+        if (getTrimmedValue("passenger-document-number") && !getTrimmedValue("passenger-document-type")) {
+            markInvalid(documentType, tr("travelDocs.errors.documentType", "Select document type"));
             isValid = false;
         }
 
@@ -452,7 +490,14 @@
         var body = {
             firstName: getTrimmedValue("passenger-first-name"),
             lastName: getTrimmedValue("passenger-last-name"),
-            relationship: getTrimmedValue("passenger-relationship") || null
+            relationship: getTrimmedValue("passenger-relationship") || null,
+            dateOfBirth: getTrimmedValue("passenger-dob") || null,
+            gender: getTrimmedValue("passenger-gender") || null,
+            nationalityCode: getTrimmedValue("passenger-nationality") || null,
+            documentType: getTrimmedValue("passenger-document-type") || null,
+            documentNumber: getTrimmedValue("passenger-document-number").toUpperCase().replace(/[\s-]/g, "") || null,
+            documentIssuingCountry: getTrimmedValue("passenger-issuing-country") || null,
+            documentExpiryDate: getTrimmedValue("passenger-document-expiry") || null
         };
 
         var request = editId
@@ -474,8 +519,12 @@
             closePassengerModal();
             showMessage(tr("profile.passengerUpdated", "Saved passenger profile updated."), true);
         }).catch(function (error) {
-            closePassengerModal();
+            // Stay in the window so what was typed is not lost; the reason is shown at the top of the page.
             showMessage(apiMessage(error));
+            var message = document.getElementById("profile-message");
+            if (message && message.scrollIntoView) {
+                message.scrollIntoView({ block: "nearest" });
+            }
         });
     }
 
