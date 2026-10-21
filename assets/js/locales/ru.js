@@ -1489,7 +1489,10 @@ window.AEROVA_LOCALES.ru = {
     "profile": {
       "loadingTitle": "Загрузка профиля",
       "loadingText": "Пожалуйста, подождите.",
-      "errorTitle": "Не удалось загрузить профиль"
+      "errorTitle": "Не удалось загрузить профиль",
+      "savedHint": "По желанию: с этими данными сохранённый пассажир сам заполнит форму бронирования.",
+      "noDocument": "Без документа",
+      "documentSaved": "документ сохранён"
     },
     "manage": {
       "awaitingPayment": "Ожидает оплаты"

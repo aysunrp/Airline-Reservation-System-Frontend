@@ -1489,7 +1489,10 @@ window.AEROVA_LOCALES.az = {
     "profile": {
       "loadingTitle": "Profiliniz yüklənir",
       "loadingText": "Zəhmət olmasa bir az gözləyin.",
-      "errorTitle": "Profilinizi yükləmək mümkün olmadı"
+      "errorTitle": "Profilinizi yükləmək mümkün olmadı",
+      "savedHint": "İxtiyari: bu məlumatlarla saxlanmış sərnişin rezervasiya formunu sizin üçün doldurur.",
+      "noDocument": "Sənəd yoxdur",
+      "documentSaved": "sənəd saxlanıb"
     },
     "manage": {
       "awaitingPayment": "Ödəniş gözlənilir"

@@ -1489,7 +1489,10 @@ window.AEROVA_LOCALES.en = {
     "profile": {
       "loadingTitle": "Loading your profile",
       "loadingText": "Please wait a moment.",
-      "errorTitle": "We could not load your profile"
+      "errorTitle": "We could not load your profile",
+      "savedHint": "Optional: with these details a saved passenger fills the booking form for you.",
+      "noDocument": "No document",
+      "documentSaved": "document saved"
     },
     "manage": {
       "awaitingPayment": "Awaiting payment"
