@@ -660,6 +660,112 @@
         refreshInfantState();
     }
 
+    /*
+     * Saved passengers (GET api/profile/saved-passengers) for signed-in travellers. Each card gets a list to fill it from one of them;
+     * the choice is sent as savedPassengerId so the backend can check it belongs to the account. Guests see nothing here.
+     */
+    var savedPassengers = [];
+
+    var SAVED_GENDERS = { Male: "Male", Female: "Female", Other: "Other", PreferNotToSay: "Prefer not to say" };
+    var SAVED_DOCUMENTS = { Passport: "passport", NationalIdCard: "az_id_card" };
+
+    function savedLabel(saved) {
+        return (saved.firstName + " " + saved.lastName).trim() + (saved.relationship ? " (" + saved.relationship + ")" : "");
+    }
+
+    function setCardField(id, value, bubbles) {
+        var field = document.getElementById(id);
+        if (!field || value == null || value === "") {
+            return;
+        }
+        field.value = value;
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+        field.dispatchEvent(new Event("change", { bubbles: bubbles !== false }));
+    }
+
+    /* Fills what the saved passenger knows; the traveller completes the rest (title, and any detail that was never saved). */
+    function fillCardFromSaved(card, saved) {
+        var prefix = "passenger-" + card.getAttribute("data-passenger-index") + "-";
+
+        setCardField(prefix + "first-name", saved.firstName);
+        setCardField(prefix + "last-name", saved.lastName);
+        setCardField(prefix + "dob", saved.dateOfBirth);
+        setCardField(prefix + "gender", saved.gender ? SAVED_GENDERS[saved.gender] : "");
+        // The nationality decides which documents are offered, so it goes first.
+        setCardField(prefix + "nationality", saved.nationalityCode);
+        setCardField(prefix + "document-type", saved.documentType ? SAVED_DOCUMENTS[saved.documentType] : "");
+        setCardField(prefix + "document-number", saved.documentNumber);
+        setCardField(prefix + "issuing-country", saved.documentIssuingCountry);
+        setCardField(prefix + "document-expiry", saved.documentExpiryDate);
+    }
+
+    function refreshSavedChoices() {
+        var taken = {};
+        document.querySelectorAll(".passenger-card[data-saved-id]").forEach(function (card) {
+            taken[card.getAttribute("data-saved-id")] = true;
+        });
+
+        document.querySelectorAll(".saved-picker select").forEach(function (select) {
+            Array.prototype.forEach.call(select.options, function (option) {
+                option.disabled = !!option.value && !!taken[option.value] && option.value !== select.value;
+            });
+        });
+    }
+
+    function attachSavedPickers() {
+        if (!savedPassengers.length) {
+            return;
+        }
+
+        document.querySelectorAll(".passenger-card").forEach(function (card) {
+            if (card.querySelector(".saved-picker")) {
+                return;
+            }
+
+            var number = card.getAttribute("data-passenger-index");
+            var id = "passenger-" + number + "-saved";
+            var wrapper = document.createElement("div");
+            wrapper.className = "field field--full saved-picker";
+            wrapper.innerHTML =
+                '<label class="field-label" for="' + id + '">' + escapeHtml(tr("api.passengers.savedLabel", "Saved passenger")) + "</label>" +
+                '<select class="field-input" id="' + id + '">' +
+                    '<option value="">' + escapeHtml(tr("api.passengers.savedNone", "Enter the details myself")) + "</option>" +
+                    savedPassengers.map(function (saved) {
+                        return '<option value="' + saved.id + '">' + escapeHtml(savedLabel(saved)) + "</option>";
+                    }).join("") +
+                "</select>";
+
+            var firstSection = card.querySelector(".details-section");
+            card.insertBefore(wrapper, firstSection);
+
+            wrapper.querySelector("select").addEventListener("change", function (event) {
+                var chosen = savedPassengers.filter(function (saved) { return String(saved.id) === event.target.value; })[0];
+
+                if (chosen) {
+                    card.setAttribute("data-saved-id", String(chosen.id));
+                    fillCardFromSaved(card, chosen);
+                } else {
+                    card.removeAttribute("data-saved-id");
+                }
+
+                refreshSavedChoices();
+            });
+        });
+    }
+
+    function loadSavedPassengers() {
+        if (!window.AerovaAuth || !window.AerovaAuth.isLoggedIn() || !window.AEROVA_API) {
+            return;
+        }
+
+        window.AEROVA_API.get("api/profile/saved-passengers").then(function (list) {
+            savedPassengers = list || [];
+            attachSavedPickers();
+        }).catch(function () {
+            // The list is a convenience: without it the traveller simply types the details.
+        });
+    }
+
     function bindDocumentControls() {
         var container = document.getElementById("passenger-cards");
         if (!container) return;
@@ -851,6 +957,7 @@
                 documentExpiryDate: expiryValue,
                 passengerType: passengerType,
                 assignedSeat: isInfant ? null : seat,
+                savedPassengerId: card && Number(card.getAttribute("data-saved-id")) > 0 ? Number(card.getAttribute("data-saved-id")) : null,
                 assignedSeatId: isInfant ? null : (activeSelectedSeatIds[index] || null),
                 assignedSeats: isInfant ? [] : activeLegs.map(function (leg, legIndex) {
                     return { flightId: leg.id, flightSeatId: activeLegSeatIds[legIndex][index] || null, label: activeLegSeats[legIndex][index] || null };
@@ -1189,6 +1296,7 @@
         setFormsVisibility(true);
         renderPassengerCards(selectedSeats);
         bindInfantRule();
+        loadSavedPassengers();
     }
 
     if (document.readyState === "loading") {
