@@ -139,6 +139,10 @@
 
 
                 <button class="admin-nav-link" type="button" data-section="passengers" data-i18n="admin.passengers">Passengers</button>
+                <button class="admin-nav-link" type="button" data-section="airports" data-i18n="api.admin.airports">Airports</button>
+                <button class="admin-nav-link" type="button" data-section="promos" data-i18n="api.admin.promos">Promo Codes</button>
+                <button class="admin-nav-link" type="button" data-section="options" data-i18n="api.admin.options">Baggage &amp; Meals</button>
+                <button class="admin-nav-link" type="button" data-section="rules" data-i18n="api.admin.rules">Cancellation Rules</button>
 
 
 
@@ -1107,6 +1111,82 @@
 
             </section>
 
+            <!-- AIRPORTS -->
+            <section class="admin-section" id="section-airports" data-section-panel="airports" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <input class="admin-search" id="airport-search" type="search" placeholder="Search code, city, name">
+                        <button class="admin-btn admin-btn--primary" id="add-airport-btn" type="button" data-i18n="api.admin.addAirport">Add Airport</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.city">City</th><th data-i18n="api.admin.country">Country</th><th data-i18n="api.admin.timeZone">Time zone</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="airports-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROMO CODES -->
+            <section class="admin-section" id="section-promos" data-section-panel="promos" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <input class="admin-search" id="promo-search" type="search" placeholder="Search code">
+                        <button class="admin-btn admin-btn--primary" id="add-promo-btn" type="button" data-i18n="api.admin.addPromo">Add Promo Code</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.discount">Discount</th><th data-i18n="api.admin.validFrom">Valid from</th><th data-i18n="api.admin.validUntil">Valid until</th><th data-i18n="api.admin.uses">Uses</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="promos-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BAGGAGE AND MEALS -->
+            <section class="admin-section" id="section-options" data-section-panel="options" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.baggage">Extra baggage</h2></div>
+                    <div class="admin-toolbar">
+                        <button class="admin-btn admin-btn--primary" id="add-baggage-btn" type="button" data-i18n="api.admin.addBaggage">Add Baggage Option</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.weightKg">Weight (kg)</th><th data-i18n="api.admin.price">Price</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="baggage-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.meals">Meals</h2></div>
+                    <div class="admin-toolbar">
+                        <button class="admin-btn admin-btn--primary" id="add-meal-btn" type="button" data-i18n="api.admin.addMeal">Add Meal</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.description">Description</th><th data-i18n="api.admin.price">Price</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="meals-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CANCELLATION RULES -->
+            <section class="admin-section" id="section-rules" data-section-panel="rules" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <button class="admin-btn admin-btn--primary" id="add-rule-btn" type="button" data-i18n="api.admin.addRule">Add Rule</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="admin.cabin">Cabin</th><th data-i18n="api.admin.minDays">Cancelled at least (days before departure)</th><th data-i18n="api.admin.feePercent">Fee</th><th data-i18n="api.admin.refund">Refund</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="rules-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
 
 
         </main>
@@ -1238,7 +1318,7 @@
 
 
     <script src="assets/js/auth.js?v=api5"></script>
-    <script src="assets/js/admin.js?v=api2"></script>
+    <script src="assets/js/admin.js?v=api3"></script>
 
 
 
