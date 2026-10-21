@@ -1414,7 +1414,9 @@ window.AEROVA_LOCALES.en = {
       "infantNote": "Infant under 2: travels on an adult's lap, so seat {seat} will be released.",
       "needAdult": "At least one passenger must be 12 or older.",
       "tooManyInfants": "Each infant needs an adult: there cannot be more infants than adults.",
-      "seatDataMissing": "Seat details are missing. Please return to seat selection."
+      "seatDataMissing": "Seat details are missing. Please return to seat selection.",
+      "savedLabel": "Saved passenger",
+      "savedNone": "Enter the details myself"
     },
     "booking": {
       "loadingTitle": "Reserving your seats",

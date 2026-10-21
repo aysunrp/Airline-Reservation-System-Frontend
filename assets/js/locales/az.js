@@ -1414,7 +1414,9 @@ window.AEROVA_LOCALES.az = {
       "infantNote": "2 yaşdan kiçik körpə: böyüyün qucağında uçur, ona görə {seat} oturacağı azad ediləcək.",
       "needAdult": "Ən azı bir sərnişin 12 yaşda və ya daha böyük olmalıdır.",
       "tooManyInfants": "Hər körpəyə bir böyük lazımdır: körpələrin sayı böyüklərdən çox ola bilməz.",
-      "seatDataMissing": "Oturacaq məlumatları yoxdur. Zəhmət olmasa oturacaq seçiminə qayıdın."
+      "seatDataMissing": "Oturacaq məlumatları yoxdur. Zəhmət olmasa oturacaq seçiminə qayıdın.",
+      "savedLabel": "Saxlanmış sərnişin",
+      "savedNone": "Məlumatları özüm daxil edəcəyəm"
     },
     "booking": {
       "loadingTitle": "Yerləriniz rezerv olunur",
