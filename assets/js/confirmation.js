@@ -241,38 +241,46 @@
             passengerCount: passengers.length,
             selectedSeats: seats,
             seatsText: seatsByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | "),
-            returnFlight: booking.legs.length > 1 ? flightOf(booking.legs[1]) : null,
-            returnSeats: booking.legs.length > 1 ? seatsByLeg[1].join(", ") : "",
+            // The other flights of the trip: the return flight of a round trip, or the next flights of a multi-city trip.
+            multiCity: booking.tripType === "MultiCity",
+            extraFlights: booking.legs.slice(1).map(function (item, index) {
+                var other = flightOf(item);
+                other.seats = seatsByLeg[index + 1].join(", ");
+                return other;
+            }),
             passengers: passengers,
             totalPrice: booking.price.total
         };
     }
 
-    /* A round trip gets a second flight card, filled from the return flight. */
+    /* Every other flight of the trip gets a flight card of its own, filled like the first one. */
     function paintReturnFlight(bookingData) {
         var card = document.querySelector('article[aria-labelledby="flight-details-title"]');
-        var returnFlight = bookingData.returnFlight;
-        var copy = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureReturnCard(card, !!returnFlight, tr("api.journey.returnFlightTitle", "Return Flight")) : null;
+        var extra = bookingData.extraFlights || [];
+        var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
+            return bookingData.multiCity ? tr("api.journey.flightTitle", "Flight {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Return Flight");
+        }) : [];
 
-        if (!copy || !returnFlight) {
-            return;
-        }
+        copies.forEach(function (copy, index) {
+            var flight = extra[index];
+            var suffix = copy.suffix;
 
-        setText("confirmation-flight-number-return", returnFlight.flightNumber);
-        setText("confirmation-route-return", returnFlight.route);
-        setText("confirmation-departure-date-return", formatDisplayDate(returnFlight.departureDate));
-        setText("confirmation-departure-time-return", returnFlight.departure);
-        setText("confirmation-arrival-time-return", returnFlight.arrival);
-        setText("confirmation-aircraft-return", returnFlight.aircraft);
-        setText("confirmation-cabin-return", returnFlight.cabinClass);
-        setText("confirmation-selected-seats-return", bookingData.returnSeats || "\u2014");
+            setText("confirmation-flight-number" + suffix, flight.flightNumber);
+            setText("confirmation-route" + suffix, flight.route);
+            setText("confirmation-departure-date" + suffix, formatDisplayDate(flight.departureDate));
+            setText("confirmation-departure-time" + suffix, flight.departure);
+            setText("confirmation-arrival-time" + suffix, flight.arrival);
+            setText("confirmation-aircraft" + suffix, flight.aircraft);
+            setText("confirmation-cabin" + suffix, flight.cabinClass);
+            setText("confirmation-selected-seats" + suffix, flight.seats || "\u2014");
 
-        // The number of passengers and the total belong to the whole booking, shown once on the first card.
-        ["confirmation-passenger-count-return", "confirmation-total-price-return"].forEach(function (id) {
-            var element = document.getElementById(id);
-            if (element && element.parentNode) {
-                element.parentNode.hidden = true;
-            }
+            // The number of passengers and the total belong to the whole booking, shown once on the first card.
+            ["confirmation-passenger-count" + suffix, "confirmation-total-price" + suffix].forEach(function (id) {
+                var element = document.getElementById(id);
+                if (element && element.parentNode) {
+                    element.parentNode.hidden = true;
+                }
+            });
         });
     }
 

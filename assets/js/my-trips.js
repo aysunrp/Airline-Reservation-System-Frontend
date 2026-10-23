@@ -103,8 +103,10 @@
             duration: durationLabel(arrival.utcMinutes - departure.utcMinutes),
             aircraft: "AEROVA " + leg.aircraftModel,
             seats: booking.legs.map(function (item) { return item.seats.join(", "); }).filter(Boolean).join(" | ") || "—",
-            returnRoute: booking.legs.length > 1 ? booking.legs[1].originCity + " \u2192 " + booking.legs[1].destinationCity : "",
-            returnFlight: booking.legs.length > 1 ? booking.legs[1].flightNumber : ""
+            multiCity: booking.tripType === "MultiCity",
+            extraFlights: booking.legs.slice(1).map(function (item) {
+                return { flight: item.flightNumber, route: item.originCity + " \u2192 " + item.destinationCity };
+            })
         };
     }
 
@@ -123,9 +125,11 @@
                         '<p class="trip-card-airline">AEROVA</p>' +
                         '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
                         '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + card.flightNumber, { number: card.flightNumber })) + "</p>" +
-                        (card.returnFlight
-                            ? '<p class="trip-card-flight">' + escapeHtml(tr("api.journey.returnTripLine", "Return {flight}, {route}", { flight: card.returnFlight, route: card.returnRoute })) + "</p>"
-                            : "") +
+                        card.extraFlights.map(function (other, index) {
+                            return '<p class="trip-card-flight">' + escapeHtml(card.multiCity
+                                ? tr("api.journey.tripLegLine", "Flight {n}: {flight}, {route}", { n: index + 2, flight: other.flight, route: other.route })
+                                : tr("api.journey.returnTripLine", "Return {flight}, {route}", { flight: other.flight, route: other.route })) + "</p>";
+                        }).join("") +
                     "</div>" +
                     '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +
                 "</div>" +

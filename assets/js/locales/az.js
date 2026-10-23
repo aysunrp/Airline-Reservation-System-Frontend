@@ -1638,7 +1638,16 @@ window.AEROVA_LOCALES.az = {
       "returnLine": "Qayıdış: {flight}, {route}, {date}, {times}",
       "outboundMissing": "Bu gediş-qayıdış səyahətinin gediş reysi tapılmadı. Zəhmət olmasa axtarışa yenidən başlayın.",
       "returnFlightTitle": "Qayıdış reysi",
-      "returnTripLine": "Qayıdış {flight}, {route}"
+      "returnTripLine": "Qayıdış {flight}, {route}",
+      "chooseLeg": "{total} reysdən {n}-ci reysi seçin",
+      "previousChosen": "Reys {n}: {flight}, {route}, {date}, {cabin}{seats}",
+      "hiddenBeforePrevious": "{count} əvvəlki reys göstərilmir, çünki əvvəlki reysiniz yerə enməmiş yola düşür.",
+      "flightTitle": "Reys {n}",
+      "legLine": "Reys {n}: {flight}, {route}, {date}, {times}",
+      "tripLegLine": "Reys {n}: {flight}, {route}",
+      "seatsLeg": "Yerlərinizi seçin: {total} reysdən {n}-ci",
+      "legsMissing": "Bu səfərin bəzi reysləri çatışmır. Axtarışı yenidən başladın.",
+      "multiDates": "Hər reys özündən əvvəlki reysin tarixində və ya ondan sonra olmalıdır."
     }
   },
   "chat": {

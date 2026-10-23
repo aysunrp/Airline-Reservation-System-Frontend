@@ -219,8 +219,13 @@
                 utcDepartureAt: leg.departureAt
             },
             cabinClass: leg.cabinClass,
-            returnFlight: dto.legs.length > 1 ? pageFlight(dto.legs[1]) : null,
-            returnSeats: dto.legs.length > 1 ? seatsByLeg[1].join(", ") : "",
+            // The other flights of the trip: the return flight of a round trip, or the next flights of a multi-city trip.
+            multiCity: dto.tripType === "MultiCity",
+            extraFlights: dto.legs.slice(1).map(function (item, index) {
+                var other = pageFlight(item);
+                other.seats = seatsByLeg[index + 1].join(", ");
+                return other;
+            }),
             selectedSeats: seatsByLeg[0],
             passengers: passengers,
             baggage: passengers.map(function (passenger) {
@@ -326,24 +331,27 @@
         });
     }
 
-    /* A round trip gets a second flight card, filled from the return flight. */
+    /* Every other flight of the trip gets a flight card of its own, filled like the first one. */
     function renderReturnFlight(booking) {
         var card = document.querySelector('article[aria-labelledby="flight-info-title"]');
-        var flight = booking.returnFlight;
-        var copy = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureReturnCard(card, !!flight, tr("api.journey.returnFlightTitle", "Return Flight")) : null;
+        var extra = booking.extraFlights || [];
+        var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
+            return booking.multiCity ? tr("api.journey.flightTitle", "Flight {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Return Flight");
+        }) : [];
 
-        if (!copy || !flight) {
-            return;
-        }
+        copies.forEach(function (copy, index) {
+            var flight = extra[index];
+            var suffix = copy.suffix;
 
-        setText("details-flight-number-return", flight.flightNumber);
-        setText("details-route-return", flight.route);
-        setText("details-date-return", formatDisplayDate(flight.departureDate));
-        setText("details-departure-return", flight.departure);
-        setText("details-arrival-return", flight.arrival);
-        setText("details-aircraft-return", flight.aircraft);
-        setText("details-cabin-return", flight.cabinClass);
-        setText("details-seats-return", booking.returnSeats || "\u2014");
+            setText("details-flight-number" + suffix, flight.flightNumber);
+            setText("details-route" + suffix, flight.route);
+            setText("details-date" + suffix, formatDisplayDate(flight.departureDate));
+            setText("details-departure" + suffix, flight.departure);
+            setText("details-arrival" + suffix, flight.arrival);
+            setText("details-aircraft" + suffix, flight.aircraft);
+            setText("details-cabin" + suffix, flight.cabinClass);
+            setText("details-seats" + suffix, flight.seats || "\u2014");
+        });
     }
 
     function renderBooking(booking) {

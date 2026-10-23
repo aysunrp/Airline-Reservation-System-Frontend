@@ -83,6 +83,9 @@
       cabinPrices: cabinPrices,
       date: departure.date,
       arrivalDate: arrival.date,
+      // The same moments in UTC, to compare flights of one trip whatever airports they use.
+      departureAtUtc: dto.departureAt,
+      arrivalAtUtc: dto.arrivalAt,
       segments: segments
     };
   }

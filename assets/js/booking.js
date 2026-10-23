@@ -343,6 +343,19 @@ function tr(key, fallback, vars) {
             return null;
         }
 
+        // Each flight is on the same day as the one before it or later.
+        for (var next = 1; next < items.length; next += 1) {
+            var previousDate = items[next - 1].querySelector(".segment-date").value.trim();
+            var thisDate = items[next].querySelector(".segment-date");
+
+            if (thisDate.value.trim() < previousDate) {
+                markInvalid(thisDate);
+                showMessage(tr("api.journey.multiDates", "Each flight must be on or after the date of the flight before it."));
+                thisDate.focus();
+                return null;
+            }
+        }
+
         if (!validateSharedOptions()) {
             return null;
         }

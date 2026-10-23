@@ -221,7 +221,9 @@
         var flight = flightData || {};
 
         var title = document.querySelector(".seat-title");
-        if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isRoundTrip(flight)) {
+        if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(flight)) {
+            title.textContent = tr("api.journey.seatsLeg", "Select Your Seats: Flight {n} of {total}", { n: window.AEROVA_JOURNEY.legNumber(flight), total: flight.multi.count });
+        } else if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isRoundTrip(flight)) {
             title.textContent = window.AEROVA_JOURNEY.isReturnLeg(flight)
                 ? tr("api.journey.seatsReturn", "Select Your Return Seats")
                 : tr("api.journey.seatsOutbound", "Select Your Outbound Seats");

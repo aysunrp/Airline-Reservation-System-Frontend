@@ -1638,7 +1638,16 @@ window.AEROVA_LOCALES.ru = {
       "returnLine": "Обратно: {flight}, {route}, {date}, {times}",
       "outboundMissing": "Рейс туда для этой поездки не найден. Пожалуйста, начните поиск заново.",
       "returnFlightTitle": "Обратный рейс",
-      "returnTripLine": "Обратно {flight}, {route}"
+      "returnTripLine": "Обратно {flight}, {route}",
+      "chooseLeg": "Выберите рейс {n} из {total}",
+      "previousChosen": "Рейс {n}: {flight}, {route}, {date}, {cabin}{seats}",
+      "hiddenBeforePrevious": "Более ранних рейсов скрыто: {count}, они вылетают до посадки предыдущего рейса.",
+      "flightTitle": "Рейс {n}",
+      "legLine": "Рейс {n}: {flight}, {route}, {date}, {times}",
+      "tripLegLine": "Рейс {n}: {flight}, {route}",
+      "seatsLeg": "Выберите места: рейс {n} из {total}",
+      "legsMissing": "Некоторые рейсы этой поездки отсутствуют. Начните поиск заново.",
+      "multiDates": "Каждый рейс должен быть в день предыдущего рейса или позже."
     }
   },
   "chat": {

@@ -1205,8 +1205,8 @@
         var chosen = readSelectedFlight();
         activeLegs = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.legs(chosen) : (chosen ? [chosen] : []);
 
-        // A return flight without its outbound flight cannot be booked on its own.
-        var returnWithoutOutbound = !!chosen && !!window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isReturnLeg(chosen) && activeLegs.length < 2;
+        // A flight of a round trip or a multi-city trip without the other flights cannot be booked on its own.
+        var returnWithoutOutbound = !!chosen && !!window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isIncomplete(chosen, activeLegs);
         var flightData = returnWithoutOutbound ? null : (activeLegs[0] || null);
         var passengerCount = resolvePassengerCount(flightData);
         var selectedSeats = resolveSelectedSeats(flightData);
@@ -1226,7 +1226,9 @@
 
         if (!flightData) {
             showMessage(returnWithoutOutbound
-                ? tr("api.journey.outboundMissing", "The outbound flight of this round trip is missing. Please start your search again.")
+                ? (window.AEROVA_JOURNEY.isMultiCity(chosen)
+                    ? tr("api.journey.legsMissing", "Some flights of this trip are missing. Please start your search again.")
+                    : tr("api.journey.outboundMissing", "The outbound flight of this round trip is missing. Please start your search again."))
                 : tr("passengers.noBooking", "No booking data found. Please select a flight and seats first."));
             setFormsVisibility(false);
             if (container) {

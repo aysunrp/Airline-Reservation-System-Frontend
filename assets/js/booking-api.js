@@ -100,7 +100,7 @@
     });
   }
 
-  /* The request the API expects, from bookingData: one flight, or the two flights of a round trip. */
+  /* The request the API expects, from bookingData: one flight, the two flights of a round trip, or the flights of a multi-city trip. */
   function buildRequest(bookingData) {
     if (!bookingData || !bookingData.flight || !Array.isArray(bookingData.passengers) || !bookingData.passengers.length) {
       throw new TypeError("Booking data is incomplete.");
@@ -110,18 +110,14 @@
     var legs = bookingData.legs && bookingData.legs.length
       ? bookingData.legs
       : [{ flight: bookingData.flight, cabinClass: bookingData.cabinClass }];
-    var tripType = legs.length > 1
-      ? "RoundTrip"
-      : (bookingData.flight.tripType ? lookup(TRIP_TYPES, bookingData.flight.tripType, "trip type") : "OneWay");
-
-    if (tripType === "MultiCity" || legs.length > 2) {
-      throw new TypeError("Only one-way and round trips can be booked for now.");
-    }
+    var chosen = bookingData.flight.tripType ? lookup(TRIP_TYPES, bookingData.flight.tripType, "trip type") : "OneWay";
+    // Two to six flights chosen as a multi-city trip; two flights back and forth are a round trip.
+    var tripType = legs.length > 1 ? (chosen === "MultiCity" || legs.length > 2 ? "MultiCity" : "RoundTrip") : "OneWay";
 
     var flightId = positiveInteger(legs[0].flight.id, "flight");
 
     return {
-      tripType: legs.length > 1 ? "RoundTrip" : "OneWay",
+      tripType: tripType,
       legs: legs.map(function (leg) {
         return { flightId: positiveInteger(leg.flight.id, "flight"), cabinClass: lookup(CABINS, leg.cabinClass || bookingData.cabinClass, "cabin") };
       }),

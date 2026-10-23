@@ -219,12 +219,31 @@
             return params.get(name) || stored[name] || "";
         }
 
+        var tripType = pick("tripType") || "oneway";
+        var leg = Math.max(1, Math.floor(Number(params.get("leg")) || 1));
+        var multi = null;
+
+        // A multi-city trip carries all of its searches in the link.
+        if (/multi/i.test(tripType)) {
+            var segments = [];
+            try {
+                segments = JSON.parse(params.get("segmentsJson") || "[]");
+            } catch (error) {
+                segments = [];
+            }
+            if (Array.isArray(segments) && segments.length >= 2) {
+                multi = { count: segments.length, segments: segments.slice(0, 6) };
+                leg = Math.min(leg, multi.count);
+            }
+        }
+
         return {
             passengers: pick("passengers") || "1",
-            tripType: pick("tripType") || "oneway",
+            tripType: tripType,
             returnDate: pick("returnDate"),
             departureDate: pick("departureDate"),
-            leg: params.get("leg") === "2" ? 2 : 1
+            leg: multi ? leg : (leg === 2 ? 2 : 1),
+            multi: multi
         };
     }
 
@@ -247,6 +266,8 @@
             stopsCount: page.stopsCount,
             aircraft: page.aircraft,
             segments: page.segments,
+            departureAtUtc: page.departureAtUtc,
+            arrivalAtUtc: page.arrivalAtUtc,
             cabinPrices: page.cabinPrices
         };
 
@@ -422,11 +443,17 @@
             departureDate: flight.departureDate || context.departureDate,
             returnDate: context.returnDate,
             tripType: context.tripType,
-            leg: context.leg
+            leg: context.leg,
+            departureAtUtc: flight.departureAtUtc || null,
+            arrivalAtUtc: flight.arrivalAtUtc || null
         };
 
-        // Choosing a new outbound flight starts a new trip; the return flight keeps the outbound one.
-        if (context.leg !== 2 && window.AEROVA_JOURNEY) {
+        if (context.multi) {
+            selection.multi = context.multi;
+        }
+
+        // Choosing a new first flight starts a new trip; the later flights keep the ones before them.
+        if (context.leg === 1 && window.AEROVA_JOURNEY) {
             window.AEROVA_JOURNEY.reset();
         }
 

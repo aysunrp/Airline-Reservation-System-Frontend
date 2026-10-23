@@ -24,10 +24,32 @@
             .replace(/'/g, "&#39;");
     }
 
+    /* The searches of a multi-city trip: they all travel in the link as JSON (and as from1, to1, departureDate1... too). */
+    function readSegments(params) {
+        var list = [];
+
+        try {
+            list = JSON.parse(params.get("segmentsJson") || "[]");
+        } catch (error) {
+            list = [];
+        }
+
+        if (!Array.isArray(list) || list.length < 2) {
+            list = [];
+            for (var number = 1; number <= 6 && params.get("from" + number); number += 1) {
+                list.push({ from: params.get("from" + number), to: params.get("to" + number) || "", departureDate: params.get("departureDate" + number) || "" });
+            }
+        }
+
+        return list.filter(function (item) {
+            return item && typeof item.from === "string" && typeof item.to === "string" && typeof item.departureDate === "string";
+        }).slice(0, 6);
+    }
+
     function readSearchCriteria() {
         var params = new URLSearchParams(window.location.search);
 
-        return {
+        var criteria = {
             tripType: params.get("tripType") || "",
             from: (params.get("from") || "").trim(),
             to: (params.get("to") || "").trim(),
@@ -35,9 +57,65 @@
             returnDate: params.get("returnDate") || "",
             passengers: params.get("passengers") || "1",
             cabinClass: (params.get("cabinClass") || "").trim(),
-            // 2 = choosing the return flight of a round trip (the link already holds the way back as from/to and the return date).
-            leg: params.get("leg") === "2" ? 2 : 1
+            // Which flight of the trip is being chosen. 2 on a round trip = the return flight (the link already holds the way
+            // back as from/to and the return date); on a multi-city trip it counts up to the number of searches.
+            leg: Math.max(1, Math.floor(Number(params.get("leg")) || 1)),
+            multi: null
         };
+
+        if (/multi/i.test(criteria.tripType)) {
+            var segments = readSegments(params);
+
+            if (segments.length >= 2) {
+                criteria.leg = Math.min(criteria.leg, segments.length);
+                var segment = segments[criteria.leg - 1];
+                criteria.from = segment.from.trim();
+                criteria.to = segment.to.trim();
+                criteria.departureDate = segment.departureDate;
+                criteria.multi = { count: segments.length, segments: segments };
+            }
+        } else {
+            criteria.leg = criteria.leg === 2 ? 2 : 1;
+        }
+
+        return criteria;
+    }
+
+    /* The flight chosen just before the one being chosen now: the outbound flight, or the earlier flight of a multi-city trip. */
+    function previousFlight(criteria) {
+        var journey = window.AEROVA_JOURNEY;
+
+        if (!journey || criteria.leg < 2) {
+            return null;
+        }
+
+        if (criteria.multi) {
+            return journey.previous(criteria.leg);
+        }
+
+        return criteria.leg === 2 ? journey.outbound() : null;
+    }
+
+    function utcMillis(value) {
+        var text = String(value || "");
+        return text ? Date.parse(/(Z|[+-]\d\d:?\d\d)$/i.test(text) ? text : text + "Z") : NaN;
+    }
+
+    /* A flight of the trip must leave after the flight before it has landed (compared in UTC, whatever the airports are). */
+    function leavesAfterLanding(flight, before) {
+        var landed = utcMillis(before.arrivalAtUtc);
+        var leaves = utcMillis(flight.departureAtUtc);
+
+        if (!isNaN(landed) && !isNaN(leaves)) {
+            return leaves > landed;
+        }
+
+        // A selection kept by an older page has local times only.
+        if (before.arrivalDate && before.arrival) {
+            return (flight.date + " " + flight.departure) > (before.arrivalDate + " " + before.arrival);
+        }
+
+        return true;
     }
 
     function formatDisplayDate(dateValue) {
@@ -267,14 +345,13 @@
             var found = (legs && legs[0] && legs[0].flights) || [];
             var pageFlights = found.map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
 
-            // The way back starts at the airport where the outbound flight lands, so both times are on the same clock.
-            var outbound = criteria.leg === 2 && window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.outbound() : null;
+            // Flights that leave before the flight chosen earlier has landed are not offered.
+            var before = previousFlight(criteria);
             hiddenBeforeArrival = 0;
 
-            if (outbound && outbound.arrivalDate && outbound.arrival) {
-                var landing = outbound.arrivalDate + " " + outbound.arrival;
+            if (before) {
                 pageFlights = pageFlights.filter(function (flight) {
-                    var later = (flight.date + " " + flight.departure) > landing;
+                    var later = leavesAfterLanding(flight, before);
                     if (!later) {
                         hiddenBeforeArrival++;
                     }
@@ -309,7 +386,7 @@
         });
     }
 
-    /* While choosing the way back, remind the traveller of the flight and seats already chosen for the way out. */
+    /* While choosing a later flight, remind the traveller of the flight and seats already chosen before it. */
     function paintOutboundNote(criteria) {
         var meta = document.querySelector(".results-meta");
         var note = document.getElementById("journey-note");
@@ -318,9 +395,9 @@
             return;
         }
 
-        var outbound = criteria.leg === 2 && window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.outbound() : null;
+        var before = previousFlight(criteria);
 
-        if (!outbound) {
+        if (!before) {
             if (note) {
                 note.hidden = true;
             }
@@ -334,17 +411,24 @@
             meta.parentNode.insertBefore(note, meta.nextSibling);
         }
 
-        var seats = (outbound.selectedSeats || []).join(", ");
-        note.textContent = say("api.journey.outboundChosen", "Outbound: {flight}, {route}, {date}, {cabin}{seats}", {
-            flight: outbound.flightNumber,
-            route: outbound.from + " \u2192 " + outbound.to,
-            date: formatDisplayDate(outbound.departureDate),
-            cabin: outbound.cabinClass,
+        var seats = (before.selectedSeats || []).join(", ");
+        var vars = {
+            n: criteria.leg - 1,
+            flight: before.flightNumber,
+            route: before.from + " \u2192 " + before.to,
+            date: formatDisplayDate(before.departureDate),
+            cabin: before.cabinClass,
             seats: seats ? ", " + seats : ""
-        });
+        };
+
+        note.textContent = criteria.multi
+            ? say("api.journey.previousChosen", "Flight {n}: {flight}, {route}, {date}, {cabin}{seats}", vars)
+            : say("api.journey.outboundChosen", "Outbound: {flight}, {route}, {date}, {cabin}{seats}", vars);
 
         if (hiddenBeforeArrival > 0) {
-            note.textContent += " \u00b7 " + say("api.journey.hiddenBeforeArrival", "{count} earlier flight(s) are not shown because they leave before your outbound flight lands.", { count: hiddenBeforeArrival });
+            note.textContent += " \u00b7 " + (criteria.multi
+                ? say("api.journey.hiddenBeforePrevious", "{count} earlier flight(s) are not shown because they leave before your previous flight lands.", { count: hiddenBeforeArrival })
+                : say("api.journey.hiddenBeforeArrival", "{count} earlier flight(s) are not shown because they leave before your outbound flight lands.", { count: hiddenBeforeArrival }));
         }
 
         note.hidden = false;
@@ -359,7 +443,9 @@
         if (eyebrowElement) {
             eyebrowElement.textContent = (typeof t === "function" ? t("results.eyebrow") : "Available Flights");
 
-            if (criteria.leg === 2) {
+            if (criteria.multi) {
+                eyebrowElement.textContent = say("api.journey.chooseLeg", "Choose flight {n} of {total}", { n: criteria.leg, total: criteria.multi.count });
+            } else if (criteria.leg === 2) {
                 eyebrowElement.textContent = say("api.journey.chooseReturn", "Choose your return flight");
             } else if (/round/i.test(criteria.tripType || "") && criteria.returnDate) {
                 eyebrowElement.textContent = say("api.journey.chooseOutbound", "Choose your outbound flight");
@@ -744,11 +830,18 @@
             departureDate: flight.date || criteria.departureDate,
             returnDate: criteria.returnDate,
             tripType: criteria.tripType,
-            leg: criteria.leg
+            leg: criteria.leg,
+            departureAtUtc: flight.departureAtUtc || null,
+            arrivalAtUtc: flight.arrivalAtUtc || null
         };
 
-        // Choosing a new outbound flight starts a new trip; the return flight keeps the outbound one.
-        if (criteria.leg !== 2 && window.AEROVA_JOURNEY) {
+        // A multi-city trip carries all of its searches, so every page can open the next flight's results.
+        if (criteria.multi) {
+            selection.multi = criteria.multi;
+        }
+
+        // Choosing a new first flight starts a new trip; the later flights keep the ones before them.
+        if (criteria.leg === 1 && window.AEROVA_JOURNEY) {
             window.AEROVA_JOURNEY.reset();
         }
 
@@ -774,8 +867,11 @@
         if (criteria.returnDate) {
             params.set("returnDate", criteria.returnDate);
         }
-        if (criteria.leg === 2) {
-            params.set("leg", "2");
+        if (criteria.leg > 1) {
+            params.set("leg", String(criteria.leg));
+        }
+        if (criteria.multi) {
+            params.set("segmentsJson", JSON.stringify(criteria.multi.segments));
         }
         if (flight.date || criteria.departureDate) {
             params.set("departureDate", flight.date || criteria.departureDate);

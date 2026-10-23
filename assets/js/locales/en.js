@@ -1638,7 +1638,16 @@ window.AEROVA_LOCALES.en = {
       "returnLine": "Return: {flight}, {route}, {date}, {times}",
       "outboundMissing": "The outbound flight of this round trip is missing. Please start your search again.",
       "returnFlightTitle": "Return Flight",
-      "returnTripLine": "Return {flight}, {route}"
+      "returnTripLine": "Return {flight}, {route}",
+      "chooseLeg": "Choose flight {n} of {total}",
+      "previousChosen": "Flight {n}: {flight}, {route}, {date}, {cabin}{seats}",
+      "hiddenBeforePrevious": "{count} earlier flight(s) are not shown because they leave before your previous flight lands.",
+      "flightTitle": "Flight {n}",
+      "legLine": "Flight {n}: {flight}, {route}, {date}, {times}",
+      "tripLegLine": "Flight {n}: {flight}, {route}",
+      "seatsLeg": "Select Your Seats: Flight {n} of {total}",
+      "legsMissing": "Some flights of this trip are missing. Please start your search again.",
+      "multiDates": "Each flight must be on or after the date of the flight before it."
     }
   },
   "chat": {
