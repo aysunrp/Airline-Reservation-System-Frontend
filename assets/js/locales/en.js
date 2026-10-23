@@ -1484,7 +1484,19 @@ window.AEROVA_LOCALES.en = {
       "loadingTitle": "Loading notifications",
       "loadingText": "Please wait a moment.",
       "errorTitle": "We could not load your notifications",
-      "refundCompletedTitle": "Refund Completed"
+      "refundCompletedTitle": "Refund Completed",
+      "msg": {
+        "confirmed": "Your booking {pnr} is confirmed.",
+        "payment": "We received your payment of {amount} for booking {pnr}.",
+        "cancelled": "Your booking {pnr} has been cancelled.",
+        "cancelledRefund": "Your booking {pnr} has been cancelled. An estimated refund of {amount} has been requested.",
+        "cancelledNoRefund": "Your booking {pnr} has been cancelled. Under the fare rules no refund is due.",
+        "refundCompleted": "Your refund of {amount} for booking {pnr} has been completed.",
+        "checkin": "Your flight {flight} from {from} to {to} departs within {hours} hours. Booking reference {pnr}.",
+        "flightCancelled": "Flight {flight} on {date} has been cancelled.",
+        "flightTimes": "Flight {flight} now departs at {departure} UTC and arrives at {arrival} UTC.",
+        "flightStatus": "The status of flight {flight} on {date} is now {status}."
+      }
     },
     "profile": {
       "loadingTitle": "Loading your profile",

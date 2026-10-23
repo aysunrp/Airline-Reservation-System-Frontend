@@ -1484,7 +1484,19 @@ window.AEROVA_LOCALES.az = {
       "loadingTitle": "Bildirişlər yüklənir",
       "loadingText": "Zəhmət olmasa bir az gözləyin.",
       "errorTitle": "Bildirişlərinizi yükləmək mümkün olmadı",
-      "refundCompletedTitle": "Geri ödəniş tamamlandı"
+      "refundCompletedTitle": "Geri ödəniş tamamlandı",
+      "msg": {
+        "confirmed": "{pnr} nömrəli bronunuz təsdiqləndi.",
+        "payment": "{pnr} nömrəli bron üçün {amount} məbləğində ödənişiniz qəbul edildi.",
+        "cancelled": "{pnr} nömrəli bronunuz ləğv edildi.",
+        "cancelledRefund": "{pnr} nömrəli bronunuz ləğv edildi. Təxmini {amount} məbləğində geri ödəniş tələb olundu.",
+        "cancelledNoRefund": "{pnr} nömrəli bronunuz ləğv edildi. Tarif qaydalarına görə geri ödəniş nəzərdə tutulmur.",
+        "refundCompleted": "{pnr} nömrəli bron üçün {amount} məbləğində geri ödənişiniz tamamlandı.",
+        "checkin": "{flight} reysiniz ({from} → {to}) {hours} saat ərzində yola düşür. Bron nömrəsi: {pnr}.",
+        "flightCancelled": "{date} tarixli {flight} reysi ləğv edildi.",
+        "flightTimes": "{flight} reysi indi {departure} UTC-də yola düşür və {arrival} UTC-də enir.",
+        "flightStatus": "{date} tarixli {flight} reysinin statusu indi: {status}."
+      }
     },
     "profile": {
       "loadingTitle": "Profiliniz yüklənir",

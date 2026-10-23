@@ -1484,7 +1484,19 @@ window.AEROVA_LOCALES.ru = {
       "loadingTitle": "Загрузка уведомлений",
       "loadingText": "Пожалуйста, подождите.",
       "errorTitle": "Не удалось загрузить уведомления",
-      "refundCompletedTitle": "Возврат завершён"
+      "refundCompletedTitle": "Возврат завершён",
+      "msg": {
+        "confirmed": "Ваше бронирование {pnr} подтверждено.",
+        "payment": "Мы получили ваш платёж {amount} за бронирование {pnr}.",
+        "cancelled": "Ваше бронирование {pnr} отменено.",
+        "cancelledRefund": "Ваше бронирование {pnr} отменено. Запрошен ориентировочный возврат {amount}.",
+        "cancelledNoRefund": "Ваше бронирование {pnr} отменено. По правилам тарифа возврат не предусмотрен.",
+        "refundCompleted": "Возврат {amount} по бронированию {pnr} завершён.",
+        "checkin": "Ваш рейс {flight} из {from} в {to} вылетает в течение {hours} ч. Код бронирования: {pnr}.",
+        "flightCancelled": "Рейс {flight} от {date} отменён.",
+        "flightTimes": "Рейс {flight} теперь вылетает в {departure} UTC и прибывает в {arrival} UTC.",
+        "flightStatus": "Статус рейса {flight} от {date} теперь: {status}."
+      }
     },
     "profile": {
       "loadingTitle": "Загрузка профиля",

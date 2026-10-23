@@ -1,7 +1,9 @@
 /*
  * Notifications of the signed-in user, from GET api/notifications. Needs api-client.js and auth.js.
  * Reading, "mark all as read", "clear" and the unread badge in the account menu all go through the API.
- * The titles are translated here by notification type; the message text is the one the backend wrote (English).
+ * The titles are translated here by notification type. The message text is written by the backend in English from fixed
+ * sentences; each one is recognised below and shown again in the page language with the same values (booking reference,
+ * amount, flight...). A sentence that is not recognised is shown as the backend wrote it.
  */
 (function () {
     "use strict";
@@ -59,6 +61,55 @@
         RefundCompleted: { icon: "↩", titleKey: "api.notifications.refundCompletedTitle" }
     };
 
+    /* The backend sentences, by notification type: the pattern that finds the values, and the translated sentence with them. */
+    var MESSAGES = {
+        BookingConfirmed: [
+            { pattern: /^Your booking (\S+) is confirmed\.$/, key: "confirmed", vars: ["pnr"] }
+        ],
+        PaymentSuccessful: [
+            { pattern: /^We received your payment of ([\d.,]+) for booking (\S+)\.$/, key: "payment", vars: ["amount", "pnr"] }
+        ],
+        BookingCancelled: [
+            { pattern: /^Your booking (\S+) has been cancelled\. An estimated refund of ([\d.,]+) has been requested\.$/, key: "cancelledRefund", vars: ["pnr", "amount"] },
+            { pattern: /^Your booking (\S+) has been cancelled\. Under the fare rules no refund is due\.$/, key: "cancelledNoRefund", vars: ["pnr"] },
+            { pattern: /^Your booking (\S+) has been cancelled\.$/, key: "cancelled", vars: ["pnr"] }
+        ],
+        RefundCompleted: [
+            { pattern: /^Your refund of ([\d.,]+) for booking (\S+) has been completed\.$/, key: "refundCompleted", vars: ["amount", "pnr"] }
+        ],
+        CheckInReminder: [
+            { pattern: /^Your flight (\S+) from (.+) to (.+) departs within (\d+) hours\. Booking reference (\S+)\.$/, key: "checkin", vars: ["flight", "from", "to", "hours", "pnr"] }
+        ],
+        FlightUpdate: [
+            { pattern: /^Flight (\S+) on (.+) has been cancelled\.$/, key: "flightCancelled", vars: ["flight", "date"] },
+            { pattern: /^Flight (\S+) now departs at (.+) UTC and arrives at (.+) UTC\.$/, key: "flightTimes", vars: ["flight", "departure", "arrival"] },
+            { pattern: /^The status of flight (\S+) on (.+) is now (.+)\.$/, key: "flightStatus", vars: ["flight", "date", "status"] }
+        ]
+    };
+
+    function messageFor(notification) {
+        var original = String(notification.message || "");
+        var rules = MESSAGES[notification.type] || [];
+
+        for (var index = 0; index < rules.length; index++) {
+            var match = rules[index].pattern.exec(original);
+
+            if (!match) {
+                continue;
+            }
+
+            var vars = {};
+            rules[index].vars.forEach(function (name, position) {
+                var value = match[position + 1];
+                vars[name] = name === "amount" ? "$" + value : value;
+            });
+
+            return tr("api.notifications.msg." + rules[index].key, original, vars);
+        }
+
+        return original;
+    }
+
     function titleFor(notification) {
         var type = TYPES[notification.type];
         return type ? tr(type.titleKey, notification.title) : notification.title;
@@ -112,7 +163,7 @@
                                 '<span class="notification-title">' + escapeHtml(titleFor(notification)) + "</span>" +
                                 stateLabelMarkup(isUnread) +
                             "</span>" +
-                            '<span class="notification-preview">' + escapeHtml(notification.message) + "</span>" +
+                            '<span class="notification-preview">' + escapeHtml(messageFor(notification)) + "</span>" +
                             '<span class="notification-time">' + escapeHtml(formatDateTime(notification.createdAt)) + "</span>" +
                         "</span>" +
                         '<span class="notification-chevron" aria-hidden="true"></span>' +
@@ -121,7 +172,7 @@
                     '<div class="notification-panel" id="' + panelId + '" role="region" aria-labelledby="' + toggleId + '"' +
                         (isExpanded ? "" : " inert") + ">" +
                         '<div class="notification-panel-inner">' +
-                            '<p class="notification-message">' + escapeHtml(notification.message) + "</p>" +
+                            '<p class="notification-message">' + escapeHtml(messageFor(notification)) + "</p>" +
                             '<dl class="notification-details">' +
                                 '<div class="notification-detail"><dt>' + escapeHtml(tr("common.date", "Date")) + "</dt><dd>" +
                                     escapeHtml(formatDateTime(notification.createdAt)) + "</dd></div>" +
