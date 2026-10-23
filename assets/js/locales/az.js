@@ -1610,6 +1610,7 @@ window.AEROVA_LOCALES.az = {
       "chooseOutbound": "Gediş reysini seçin",
       "chooseReturn": "Qayıdış reysini seçin",
       "outboundChosen": "Gediş: {flight}, {route}, {date}, {cabin}{seats}",
+      "hiddenBeforeArrival": "{count} əvvəlki reys göstərilmir, çünki gediş reysiniz yerə enməmiş yola düşür.",
       "seatsOutbound": "Gediş yerlərini seçin",
       "seatsReturn": "Qayıdış yerlərini seçin",
       "returnLine": "Qayıdış: {flight}, {route}, {date}, {times}",

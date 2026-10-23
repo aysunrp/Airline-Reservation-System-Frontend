@@ -1610,6 +1610,7 @@ window.AEROVA_LOCALES.ru = {
       "chooseOutbound": "Выберите рейс туда",
       "chooseReturn": "Выберите обратный рейс",
       "outboundChosen": "Туда: {flight}, {route}, {date}, {cabin}{seats}",
+      "hiddenBeforeArrival": "Рейсов, вылетающих до посадки вашего рейса туда, не показано: {count}.",
       "seatsOutbound": "Выберите места на рейс туда",
       "seatsReturn": "Выберите места на обратный рейс",
       "returnLine": "Обратно: {flight}, {route}, {date}, {times}",

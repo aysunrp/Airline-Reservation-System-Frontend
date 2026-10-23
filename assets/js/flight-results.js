@@ -265,7 +265,26 @@
             }
 
             var found = (legs && legs[0] && legs[0].flights) || [];
-            baseFlights = sortFlightsChronologically(found.map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); }));
+            var pageFlights = found.map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
+
+            // The way back starts at the airport where the outbound flight lands, so both times are on the same clock.
+            var outbound = criteria.leg === 2 && window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.outbound() : null;
+            hiddenBeforeArrival = 0;
+
+            if (outbound && outbound.arrivalDate && outbound.arrival) {
+                var landing = outbound.arrivalDate + " " + outbound.arrival;
+                pageFlights = pageFlights.filter(function (flight) {
+                    var later = (flight.date + " " + flight.departure) > landing;
+                    if (!later) {
+                        hiddenBeforeArrival++;
+                    }
+                    return later;
+                });
+            }
+
+            baseFlights = sortFlightsChronologically(pageFlights);
+            // The note about the outbound flight also says how many flights were left out, so it is drawn again now.
+            paintOutboundNote(criteria);
             viewState = "ready";
             statusSpec = null;
             refreshResults();
@@ -323,6 +342,11 @@
             cabin: outbound.cabinClass,
             seats: seats ? ", " + seats : ""
         });
+
+        if (hiddenBeforeArrival > 0) {
+            note.textContent += " \u00b7 " + say("api.journey.hiddenBeforeArrival", "{count} earlier flight(s) are not shown because they leave before your outbound flight lands.", { count: hiddenBeforeArrival });
+        }
+
         note.hidden = false;
     }
 
@@ -483,6 +507,8 @@
 
     var searchCriteria = null;
     var baseFlights = [];
+    // Return flights that leave before the outbound flight lands are not offered; this is how many were left out.
+    var hiddenBeforeArrival = 0;
     var activeCabin = "Economy";
 
     function renderEmptyState(container) {

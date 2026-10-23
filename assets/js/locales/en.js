@@ -1610,6 +1610,7 @@ window.AEROVA_LOCALES.en = {
       "chooseOutbound": "Choose your outbound flight",
       "chooseReturn": "Choose your return flight",
       "outboundChosen": "Outbound: {flight}, {route}, {date}, {cabin}{seats}",
+      "hiddenBeforeArrival": "{count} earlier flight(s) are not shown because they leave before your outbound flight lands.",
       "seatsOutbound": "Select Your Outbound Seats",
       "seatsReturn": "Select Your Return Seats",
       "returnLine": "Return: {flight}, {route}, {date}, {times}",
