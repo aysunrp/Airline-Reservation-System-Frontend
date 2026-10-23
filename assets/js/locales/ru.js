@@ -1,6 +1,7 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.ru = {
   "nav": {
+    "adminPanel": "Панель администратора",
     "home": "Главная",
     "booking": "Бронирование",
     "destinations": "Направления",

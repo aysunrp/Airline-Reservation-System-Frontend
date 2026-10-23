@@ -1,6 +1,7 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.en = {
   "nav": {
+    "adminPanel": "Admin Panel",
     "home": "Home",
     "booking": "Booking",
     "destinations": "Destinations",

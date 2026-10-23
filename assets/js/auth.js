@@ -179,7 +179,20 @@
         { href: "notifications.html", key: "nav.notifications", fallback: "Notifications", badge: true },
         { logout: true, key: "nav.logout", fallback: "Logout" }
     ];
+    var ADMIN_ITEM = { href: "admin.html", key: "nav.adminPanel", fallback: "Admin Panel" };
     var accountDocumentBound = false;
+
+    /* The menu items for the signed-in user: an Admin also sees the admin panel (the backend still checks the role on every admin request). */
+    function accountItems() {
+        var user = getCurrentUser();
+        var items = ACCOUNT_ITEMS.slice();
+
+        if (user && user.role === "Admin") {
+            items.splice(items.length - 1, 0, ADMIN_ITEM);
+        }
+
+        return items;
+    }
 
     function currentPageName() {
         var parts = String(window.location.pathname || "").split("/");
@@ -215,7 +228,7 @@
 
     function buildAccountItems(list, asMenu) {
         var page = currentPageName();
-        ACCOUNT_ITEMS.forEach(function (item) {
+        accountItems().forEach(function (item) {
             var li = document.createElement("li");
             if (asMenu) li.setAttribute("role", "none");
             if (item.logout) li.className = "account-menu-sep";
@@ -252,7 +265,7 @@
     function refreshAccountLabels(root) {
         root.querySelectorAll(".account-menu-label[data-i18n]").forEach(function (label) {
             var key = label.getAttribute("data-i18n");
-            var item = ACCOUNT_ITEMS.filter(function (entry) { return entry.key === key; })[0];
+            var item = accountItems().filter(function (entry) { return entry.key === key; })[0];
             label.textContent = tr(key, item ? item.fallback : label.textContent);
         });
     }
@@ -491,10 +504,19 @@
         }
     }
 
-    /* After signing in, go back to the page the visitor wanted (a page of this site only), otherwise home. */
-    function pageAfterLogin() {
+    /*
+     * After signing in, go back to the page the visitor wanted (a page of this site only). Without one, an Admin goes to the
+     * admin panel and everybody else home; a page asked for ("next") that is the admin panel is only kept for an Admin.
+     */
+    function pageAfterLogin(user) {
         var wanted = new URLSearchParams(window.location.search).get("next") || "";
-        return /^[a-z0-9-]+\.html(\?[\w=&%.-]*)?$/i.test(wanted) ? wanted : "index.html";
+        var isAdmin = !!user && user.role === "Admin";
+
+        if (/^[a-z0-9-]+\.html(\?[\w=&%.-]*)?$/i.test(wanted) && (isAdmin || !/^admin\.html/i.test(wanted))) {
+            return wanted;
+        }
+
+        return isAdmin ? "admin.html" : "index.html";
     }
 
     function handleLoginForm() {
@@ -537,11 +559,12 @@
             if (submit) submit.disabled = true;
 
             window.AEROVA_API.post("api/auth/login", { email: email, password: password }).then(function (response) {
-                if (!setLoggedInUser(response)) {
+                var signedIn = setLoggedInUser(response);
+                if (!signedIn) {
                     throw new TypeError("The sign-in response had no token.");
                 }
                 passwordInput.value = "";
-                window.location.href = pageAfterLogin();
+                window.location.href = pageAfterLogin(signedIn);
             }).catch(function (error) {
                 passwordInput.value = "";
                 if (error && error.status === 401) {
@@ -626,12 +649,13 @@
                 confirmPassword: confirm
             }).then(function (response) {
                 // Registering signs the new account in.
-                if (!setLoggedInUser(response)) {
+                var registered = setLoggedInUser(response);
+                if (!registered) {
                     throw new TypeError("The sign-up response had no token.");
                 }
                 passwordInput.value = "";
                 confirmInput.value = "";
-                window.location.href = pageAfterLogin();
+                window.location.href = pageAfterLogin(registered);
             }).catch(function (error) {
                 passwordInput.value = "";
                 confirmInput.value = "";

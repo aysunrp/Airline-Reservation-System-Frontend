@@ -1,6 +1,7 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.az = {
   "nav": {
+    "adminPanel": "Admin paneli",
     "home": "Ana səhifə",
     "booking": "Bron",
     "destinations": "İstiqamətlər",
