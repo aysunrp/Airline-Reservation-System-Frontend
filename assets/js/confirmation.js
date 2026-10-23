@@ -302,6 +302,120 @@
         populatePriceSummary(bookingData.passengerCount, bookingData.cabinClass, seatsText, bookingData.totalPrice);
     }
 
+    /*
+     * Passengers typed in by hand are offered for the profile (payment.js keeps them in "aerovaSavable" for this booking only).
+     * People who are already saved (same name and date of birth) are left out. Nothing is saved unless the traveller chooses to.
+     */
+    function readSavable(pnr) {
+        try {
+            var parsed = JSON.parse(sessionStorage.getItem("aerovaSavable") || "null");
+            return parsed && parsed.pnr === pnr && Array.isArray(parsed.passengers) ? parsed.passengers : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function clearSavable() {
+        try {
+            sessionStorage.removeItem("aerovaSavable");
+        } catch (error) {
+            // nothing to clear
+        }
+    }
+
+    function sameSaved(a, b) {
+        var same = function (x, y) { return String(x || "").trim().toLowerCase() === String(y || "").trim().toLowerCase(); };
+        return same(a.firstName, b.firstName) && same(a.lastName, b.lastName) && (!a.dateOfBirth || !b.dateOfBirth || a.dateOfBirth === b.dateOfBirth);
+    }
+
+    function setSaveMessage(text) {
+        var message = document.getElementById("save-passengers-message");
+        message.textContent = text || "";
+        message.hidden = !text;
+    }
+
+    function paintSaveCard(card, passengers, errorText) {
+        var list = document.getElementById("save-passengers-list");
+        var actions = document.getElementById("save-passengers-actions");
+        var saveButton = document.getElementById("save-passengers-save");
+        var skipButton = document.getElementById("save-passengers-skip");
+
+        list.innerHTML = passengers.map(function (passenger, index) {
+            var hint = [passenger.dateOfBirth ? formatDisplayDate(passenger.dateOfBirth) : "", passenger.documentNumber ? tr("api.profile.documentSaved", "document saved") : ""].filter(Boolean).join(" \u00b7 ");
+            return '<li><label class="save-passengers-item"><input type="checkbox" data-index="' + index + '" checked>' +
+                "<span>" + escapeHtml(passenger.firstName + " " + passenger.lastName) + (hint ? "<small>" + escapeHtml(hint) + "</small>" : "") + "</span></label></li>";
+        }).join("");
+
+        setSaveMessage(errorText);
+        list.hidden = false;
+        actions.hidden = false;
+        card.hidden = false;
+        saveButton.disabled = false;
+
+        saveButton.onclick = function () {
+            var chosen = Array.prototype.map.call(list.querySelectorAll("input:checked"), function (box) { return passengers[Number(box.getAttribute("data-index"))]; });
+
+            if (!chosen.length) {
+                setSaveMessage(tr("api.confirmation.selectOne", "Select at least one passenger."));
+                return;
+            }
+
+            saveButton.disabled = true;
+            setSaveMessage(tr("api.confirmation.saving", "Saving..."));
+
+            var failed = [];
+            var saved = 0;
+            chosen.reduce(function (chain, passenger) {
+                return chain.then(function () {
+                    return window.AEROVA_API.post("api/profile/saved-passengers", passenger).then(function () { saved += 1; }, function () { failed.push(passenger); });
+                });
+            }, Promise.resolve()).then(function () {
+                if (failed.length) {
+                    paintSaveCard(card, failed, tr("api.confirmation.saveError", "Some passengers could not be saved. You can try again or add them later in your profile."));
+                    return;
+                }
+
+                clearSavable();
+                list.hidden = true;
+                actions.hidden = true;
+                setSaveMessage(tr("api.confirmation.savedDone", "{count} passenger(s) saved to your profile.", { count: saved }));
+            });
+        };
+
+        skipButton.onclick = function () {
+            clearSavable();
+            card.hidden = true;
+        };
+    }
+
+    function offerSaving(pnr) {
+        var card = document.getElementById("save-passengers-card");
+        var candidates = readSavable(pnr);
+
+        if (!card || !candidates.length || !window.AerovaAuth || !window.AerovaAuth.isLoggedIn()) {
+            return;
+        }
+
+        window.AEROVA_API.get("api/profile/saved-passengers").then(function (saved) {
+            var fresh = [];
+
+            candidates.forEach(function (candidate) {
+                if (!(saved || []).some(function (known) { return sameSaved(known, candidate); }) && !fresh.some(function (known) { return sameSaved(known, candidate); })) {
+                    fresh.push(candidate);
+                }
+            });
+
+            if (!fresh.length) {
+                clearSavable();
+                return;
+            }
+
+            paintSaveCard(card, fresh, "");
+        }).catch(function () {
+            // This is only an offer: without the saved list nothing is shown.
+        });
+    }
+
     function load() {
         var paid = readPaid();
 
@@ -329,6 +443,7 @@
 
             populateConfirmation(toPageData(booking, results[0]));
             showBooking();
+            offerSaving(paid.pnr);
         }).catch(function (error) {
             var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
 

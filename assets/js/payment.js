@@ -613,6 +613,15 @@
     function paymentSucceeded(pnr, lastName) {
         try {
             sessionStorage.setItem("aerovaPaid", JSON.stringify({ pnr: pnr, lastName: lastName }));
+
+            // Signed-in travellers are offered to save the passengers they typed in; guests have no profile.
+            var savable = window.AerovaAuth && window.AerovaAuth.isLoggedIn() ? window.AEROVA_BOOKING.savablePassengers(readBookingData()) : [];
+            if (savable.length) {
+                sessionStorage.setItem("aerovaSavable", JSON.stringify({ pnr: pnr, passengers: savable }));
+            } else {
+                sessionStorage.removeItem("aerovaSavable");
+            }
+
             sessionStorage.removeItem("bookingData");
         } catch (error) {
             // The confirmation page then asks for the reference again.

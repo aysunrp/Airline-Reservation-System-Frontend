@@ -73,6 +73,33 @@
     };
   }
 
+  /*
+   * The passengers the traveller typed in by hand (not picked from the saved list), in the shape of a saved passenger.
+   * After paying, the confirmation page offers them for the profile. A document is only included with its number and type.
+   */
+  function savablePassengers(bookingData) {
+    return ((bookingData && bookingData.passengers) || []).filter(function (passenger) {
+      return !passenger.savedPassengerId && passenger.firstName && passenger.lastName;
+    }).map(function (passenger) {
+      var document = passenger.document || {};
+      var number = String(document.number || passenger.documentNumber || "").replace(/[\s-]/g, "").toUpperCase();
+      var type = DOCUMENT_TYPES[String(document.type || passenger.documentType || "").trim().toLowerCase()] || null;
+      var hasDocument = !!number && !!type;
+
+      return {
+        firstName: passenger.firstName,
+        lastName: passenger.lastName,
+        dateOfBirth: passenger.dateOfBirth || null,
+        gender: GENDERS[String(passenger.gender || "").trim().toLowerCase()] || null,
+        nationalityCode: passenger.nationalityCode || null,
+        documentType: hasDocument ? type : null,
+        documentNumber: hasDocument ? number : null,
+        documentIssuingCountry: hasDocument ? (document.issuingCountry || null) : null,
+        documentExpiryDate: hasDocument ? (document.expiryDate || passenger.documentExpiryDate || null) : null
+      };
+    });
+  }
+
   /* The request the API expects, from bookingData: one flight, or the two flights of a round trip. */
   function buildRequest(bookingData) {
     if (!bookingData || !bookingData.flight || !Array.isArray(bookingData.passengers) || !bookingData.passengers.length) {
@@ -183,6 +210,7 @@
 
   window.AEROVA_BOOKING = {
     buildRequest: buildRequest,
+    savablePassengers: savablePassengers,
     quote: quote,
     ensure: ensure,
     forget: forget,

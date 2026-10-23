@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
 
-    <link rel="stylesheet" href="assets/css/confirmation.css">
+    <link rel="stylesheet" href="assets/css/confirmation.css?v=save1">
 
 </head>
 
@@ -288,6 +288,28 @@
 
 
 
+                <article class="confirmation-card save-passengers" id="save-passengers-card" aria-labelledby="save-passengers-title" hidden>
+
+                    <h2 class="confirmation-card-title" id="save-passengers-title" data-i18n="api.confirmation.saveTitle">Save passengers to your profile</h2>
+
+                    <p class="save-passengers-text" data-i18n="api.confirmation.saveText">Next time these travellers can be picked from your saved passengers instead of typing their details again.</p>
+
+                    <ul class="save-passengers-list" id="save-passengers-list"></ul>
+
+                    <p class="save-passengers-message" id="save-passengers-message" role="status" hidden></p>
+
+                    <div class="save-passengers-actions" id="save-passengers-actions">
+
+                        <button type="button" class="confirmation-button confirmation-button--primary" id="save-passengers-save" data-i18n="api.confirmation.saveButton">Save selected</button>
+
+                        <button type="button" class="confirmation-button save-passengers-skip" id="save-passengers-skip" data-i18n="api.confirmation.skipButton">Not now</button>
+
+                    </div>
+
+                </article>
+
+
+
                 <div class="confirmation-actions">
 
                     <a class="confirmation-button confirmation-button--primary" href="my-trips.html" data-i18n="ui.viewMyTrips">View My Trips</a>
@@ -499,7 +521,7 @@
     <script src="assets/js/auth.js?v=api5"></script>
 
     <script src="assets/js/journey.js"></script>
-    <script src="assets/js/confirmation.js?v=journey1"></script>
+    <script src="assets/js/confirmation.js?v=save1"></script>
 
 </body>
 

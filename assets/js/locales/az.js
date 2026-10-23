@@ -1462,7 +1462,15 @@ window.AEROVA_LOCALES.az = {
       "manage": "Rezervasiyanı idarə et",
       "notPaidTitle": "Bu rezervasiya təsdiqlənməyib",
       "notPaidText": "Bu rezervasiya üçün ödəniş tamamlanmayıb.",
-      "backHome": "Ana səhifəyə qayıt"
+      "backHome": "Ana səhifəyə qayıt",
+      "saveTitle": "Sərnişinləri profilinizə saxlayın",
+      "saveText": "Növbəti dəfə bu sərnişinləri məlumatları yenidən yazmadan saxlanmış sərnişinlərinizdən seçə bilərsiniz.",
+      "saveButton": "Seçilənləri saxla",
+      "skipButton": "İndi yox",
+      "saving": "Saxlanılır...",
+      "selectOne": "Ən azı bir sərnişin seçin.",
+      "savedDone": "{count} sərnişin profilinizə saxlanıldı.",
+      "saveError": "Bəzi sərnişinləri saxlamaq mümkün olmadı. Yenidən cəhd edə və ya sonra profilinizdən əlavə edə bilərsiniz."
     },
     "bookingDetails": {
       "loadingTitle": "Rezervasiyanız yüklənir",

@@ -1462,7 +1462,15 @@ window.AEROVA_LOCALES.en = {
       "manage": "Manage booking",
       "notPaidTitle": "This booking is not confirmed",
       "notPaidText": "The payment for this booking was not completed.",
-      "backHome": "Back to Home"
+      "backHome": "Back to Home",
+      "saveTitle": "Save passengers to your profile",
+      "saveText": "Next time these travellers can be picked from your saved passengers instead of typing their details again.",
+      "saveButton": "Save selected",
+      "skipButton": "Not now",
+      "saving": "Saving...",
+      "selectOne": "Select at least one passenger.",
+      "savedDone": "{count} passenger(s) saved to your profile.",
+      "saveError": "Some passengers could not be saved. You can try again or add them later in your profile."
     },
     "bookingDetails": {
       "loadingTitle": "Loading your booking",
