@@ -1369,6 +1369,7 @@ window.AEROVA_LOCALES.az = {
   "api": {
     "errors": {
       "network": "Serverlə əlaqə qurulmur. İnternet bağlantınızı yoxlayıb yenidən cəhd edin.",
+      "fileProtocol": "Bu səhifə fayl kimi açılıb, ona görə brauzer onun serverə çatmasını bloklayır. Onu http://localhost:5500 ünvanından açın.",
       "timeout": "Server çox gec cavab verdi. Zəhmət olmasa yenidən cəhd edin.",
       "invalid": "Bəzi məlumatlar düzgün deyil. Zəhmət olmasa yoxlayıb yenidən cəhd edin.",
       "unauthorized": "Davam etmək üçün daxil olun.",

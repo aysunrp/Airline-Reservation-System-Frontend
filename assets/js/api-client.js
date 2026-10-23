@@ -27,6 +27,7 @@
 
   var FALLBACKS = {
     network: "Cannot reach the server. Check your connection and try again.",
+    fileProtocol: "This page was opened as a file, so the browser blocks it from reaching the server. Open it at http://localhost:5500 instead.",
     timeout: "The server took too long to answer. Please try again.",
     invalid: "Some of the details are not valid. Please check them and try again.",
     unauthorized: "Please sign in to continue.",
@@ -269,7 +270,8 @@
       throw new ApiError({
         status: 0,
         code: timedOut ? "timeout" : "network",
-        userMessage: tr(timedOut ? "timeout" : "network")
+        // A page opened straight from the folder (file://) is always blocked by the browser: say how to open it properly.
+        userMessage: tr(timedOut ? "timeout" : (window.location && window.location.protocol === "file:" ? "fileProtocol" : "network"))
       });
     });
   }
