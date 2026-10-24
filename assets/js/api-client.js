@@ -36,6 +36,7 @@
     notFound: "We could not find what you were looking for.",
     conflict: "This was changed by someone else. Please refresh and try again.",
     businessRule: "This action is not allowed right now.",
+    emailNotVerified: "Please confirm your email address before booking. Open the link we sent you, or ask for a new one in your profile.",
     rateLimited: "Too many requests. Please wait a moment and try again.",
     server: "Something went wrong on our side. Please try again later.",
     generic: "Something went wrong. Please try again."
@@ -172,6 +173,11 @@
     } else if (status === 422) {
       code = "businessRule";
       message = detail || tr("businessRule");
+      // Booking before the address is confirmed: shown in the page language.
+      if (/confirm your email address before booking/i.test(detail)) {
+        code = "emailNotVerified";
+        message = tr("emailNotVerified");
+      }
     } else if (status === 429) {
       code = "rateLimited";
       message = tr("rateLimited");

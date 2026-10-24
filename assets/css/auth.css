@@ -280,3 +280,71 @@ h1 {
         width: min(1120px, calc(100% - 1.5rem));
     }
 }
+
+/* Messages inside the card: sign-in notices and the results of the e-mail pages */
+.auth-notice {
+    margin-top: 1.1rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 12px;
+    background: rgba(198, 163, 106, 0.08);
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    color: var(--color-cream-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.auth-notice[hidden] {
+    display: none !important;
+}
+
+.auth-notice--success {
+    background: rgba(98, 160, 120, 0.12);
+    border-color: rgba(120, 190, 145, 0.4);
+}
+
+.auth-notice--error {
+    background: rgba(143, 79, 79, 0.16);
+    border-color: #8f4f4f;
+    color: #e8c2be;
+}
+
+.auth-forgot {
+    margin: -0.25rem 0 0;
+    text-align: right;
+    font-size: 0.82rem;
+}
+
+.auth-forgot a,
+.auth-links a {
+    color: var(--color-gold-light);
+    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
+}
+
+.auth-forgot a:hover,
+.auth-links a:hover {
+    color: var(--color-gold);
+}
+
+.auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    margin-top: 1.2rem;
+    font-size: 0.9rem;
+}
+
+.auth-links[hidden],
+.auth-link-button[hidden] {
+    display: none !important;
+}
+
+.auth-link-button {
+    padding: 0;
+    color: var(--color-gold-light);
+    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
+    font-size: 0.9rem;
+}
+
+.auth-link-button:hover {
+    color: var(--color-gold);
+}

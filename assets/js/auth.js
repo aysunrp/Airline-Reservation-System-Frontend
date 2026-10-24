@@ -65,7 +65,9 @@
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            role: user.role
+            role: user.role,
+            // False until the owner opens the link that was e-mailed; older sessions have no value (nothing is shown for them).
+            emailVerified: user.emailVerified
         };
 
         if (!window.AEROVA_API.session.save(authResponse)) {
@@ -570,6 +572,9 @@
                 if (error && error.status === 401) {
                     setFieldError(emailInput, tr("auth.loginFailed", "Incorrect email or password"));
                     setFieldError(passwordInput, tr("auth.loginFailed", "Incorrect email or password"));
+                } else if (error && error.status === 429) {
+                    // Sign-in is paused for this address after repeated failures, or this network sent too many requests.
+                    setFieldError(passwordInput, tr("api.account.loginLocked", "Too many failed attempts. Please wait about 15 minutes before trying again."));
                 } else {
                     showApiFormError(error, { email: emailInput, password: passwordInput, fallback: passwordInput });
                 }
@@ -646,16 +651,13 @@
                 lastName: lastName,
                 email: email,
                 password: password,
-                confirmPassword: confirm
+                confirmPassword: confirm,
+                language: currentLanguage()
             }).then(function (response) {
-                // Registering signs the new account in.
-                var registered = setLoggedInUser(response);
-                if (!registered) {
-                    throw new TypeError("The sign-up response had no token.");
-                }
+                // Registering does not sign anybody in: the person confirms the address with the e-mailed link and signs in.
                 passwordInput.value = "";
                 confirmInput.value = "";
-                window.location.href = pageAfterLogin(registered);
+                window.location.href = "login.html?registered=" + (response && response.verificationEmailSent ? "sent" : "nomail");
             }).catch(function (error) {
                 passwordInput.value = "";
                 confirmInput.value = "";
@@ -663,6 +665,286 @@
                 if (submit) submit.disabled = false;
             });
         });
+    }
+
+    function currentLanguage() {
+        if (window.AEROVA_I18N && typeof window.AEROVA_I18N.getLanguage === "function") {
+            return window.AEROVA_I18N.getLanguage();
+        }
+        return document.documentElement.lang || "en";
+    }
+
+    /* A message inside the card; kind is "success", "error" or nothing. */
+    function showNotice(element, text, kind) {
+        if (!element) return;
+        element.removeAttribute("data-i18n");
+        element.textContent = text || "";
+        element.className = "auth-notice" + (kind ? " auth-notice--" + kind : "");
+        element.hidden = !text;
+    }
+
+    /* The same with a text from the language files: the key stays on the element, so the text follows a change of language. */
+    function showNoticeKey(element, key, fallback, kind) {
+        if (!element) return;
+        showNotice(element, tr(key, fallback), kind);
+        element.setAttribute("data-i18n", key);
+    }
+
+    /* The token of an e-mailed link. It is a secret for one use: take it out of the address bar and the history right away. */
+    function takeTokenFromAddress() {
+        var token = new URLSearchParams(window.location.search).get("token") || "";
+        if (token && window.history && typeof window.history.replaceState === "function") {
+            window.history.replaceState(null, "", window.location.pathname);
+        }
+        return token;
+    }
+
+    /* The login page after registering or choosing a new password. */
+    function showLoginNotice() {
+        var notice = document.getElementById("login-notice");
+        if (!notice) return;
+
+        var params = new URLSearchParams(window.location.search);
+        var registered = params.get("registered");
+
+        if (registered === "sent") {
+            showNoticeKey(notice, "api.account.registeredSent", "Account created. We sent a confirmation link to your email address. Open it, then sign in.", "success");
+        } else if (registered === "nomail") {
+            showNoticeKey(notice, "api.account.registeredNoMail", "Account created. We could not send the confirmation email right now. Sign in, then ask for a new link in your profile.", "");
+        } else if (params.get("reset") === "1") {
+            showNoticeKey(notice, "api.account.resetDone", "Your password was changed. Sign in with your new password.", "success");
+        }
+    }
+
+    function handleForgotPasswordForm() {
+        var form = document.getElementById("forgot-form");
+        if (!form) return;
+
+        bindClearOnInput(form);
+        var result = document.getElementById("forgot-result");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var emailInput = document.getElementById("forgot-email");
+            var email = normalizeEmail(emailInput.value);
+            clearFieldError(emailInput);
+            showNotice(result, "");
+
+            if (!email) {
+                setFieldError(emailInput, tr("auth.emailRequired", "Email is required"));
+                return;
+            }
+            if (!isValidEmail(email)) {
+                setFieldError(emailInput, tr("auth.emailInvalid", "Enter a valid email address"));
+                return;
+            }
+
+            var submit = form.querySelector(".auth-submit");
+            if (submit) submit.disabled = true;
+
+            window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
+                // The same words whether or not an account exists.
+                showNoticeKey(result, "api.account.forgotSent", "If an account exists for this address, we sent a link to choose a new password. It works for one hour. Check your spam folder too.", "success");
+                emailInput.value = "";
+            }).catch(function (error) {
+                if (error && error.status === 503) {
+                    showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
+                } else {
+                    showApiFormError(error, { email: emailInput, fallback: emailInput });
+                }
+            }).then(function () {
+                if (submit) submit.disabled = false;
+            });
+        });
+    }
+
+    function handleResetPasswordForm() {
+        var form = document.getElementById("reset-form");
+        if (!form) return;
+
+        bindClearOnInput(form);
+        var result = document.getElementById("reset-result");
+        var links = document.getElementById("reset-links");
+        var token = takeTokenFromAddress();
+
+        function linkProblem(key, fallback) {
+            form.hidden = true;
+            showNoticeKey(result, key, fallback, "error");
+            if (links) links.hidden = false;
+        }
+
+        if (!token) {
+            linkProblem("api.account.resetNoToken", "This link is incomplete. Ask for a new one.");
+            return;
+        }
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var passwordInput = document.getElementById("reset-password");
+            var confirmInput = document.getElementById("reset-confirm");
+            var password = String(passwordInput.value || "");
+            var confirm = String(confirmInput.value || "");
+            var valid = true;
+
+            [passwordInput, confirmInput].forEach(clearFieldError);
+
+            if (!password) {
+                setFieldError(passwordInput, tr("auth.passwordRequired", "Password is required"));
+                valid = false;
+            } else if (password.length < 6) {
+                setFieldError(passwordInput, tr("auth.passwordShort", "Password must be at least 6 characters"));
+                valid = false;
+            }
+
+            if (!confirm) {
+                setFieldError(confirmInput, tr("auth.confirmRequired", "Please confirm your password"));
+                valid = false;
+            } else if (password && confirm !== password) {
+                setFieldError(confirmInput, tr("auth.passwordMismatch", "Passwords do not match"));
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            var submit = form.querySelector(".auth-submit");
+            if (submit) submit.disabled = true;
+
+            window.AEROVA_API.post("api/auth/reset-password", { token: token, newPassword: password, confirmPassword: confirm }).then(function () {
+                passwordInput.value = "";
+                confirmInput.value = "";
+                window.location.href = "login.html?reset=1";
+            }).catch(function (error) {
+                passwordInput.value = "";
+                confirmInput.value = "";
+                if (error && error.status === 422) {
+                    linkProblem("api.account.resetInvalid", "This link is invalid or has expired. Ask for a new one.");
+                } else {
+                    showApiFormError(error, { newPassword: passwordInput, confirmPassword: confirmInput, fallback: passwordInput });
+                }
+                if (submit) submit.disabled = false;
+            });
+        });
+    }
+
+    /* Asks for a new verification e-mail for the signed-in account; done(kind) gets "sent", "already", "wait", "unavailable", "signin" or "error". */
+    function requestNewVerificationLink(done) {
+        window.AEROVA_API.post("api/auth/resend-verification", { language: currentLanguage() }).then(function () {
+            done("sent");
+        }).catch(function (error) {
+            var status = error && error.status;
+            if (status === 409) {
+                markEmailVerified();
+                done("already");
+            } else if (status === 429) {
+                done("wait");
+            } else if (status === 503) {
+                done("unavailable");
+            } else if (status === 401) {
+                done("signin");
+            } else {
+                done("error");
+            }
+        });
+    }
+
+    function resendMessage(kind) {
+        var texts = {
+            sent: ["api.account.verifyResent", "We sent a new link. Check your inbox and spam folder."],
+            already: ["api.account.verifyAlready", "Your email address is already confirmed."],
+            wait: ["api.account.verifyWait", "Please wait a minute before asking for another link."],
+            unavailable: ["api.account.verifyUnavailable", "We cannot send email right now. Please try again later."],
+            signin: ["api.account.verifySignInFirst", "Sign in to get a new link."],
+            error: ["api.errors.generic", "Something went wrong. Please try again."]
+        };
+        var pair = texts[kind] || texts.error;
+        return tr(pair[0], pair[1]);
+    }
+
+    /* The page of the link in the e-mail: confirms the address right away. */
+    function handleVerifyEmailPage() {
+        var message = document.getElementById("verify-message");
+        var resend = document.getElementById("verify-resend");
+        if (!message || !resend) return;
+
+        var token = takeTokenFromAddress();
+
+        function failed() {
+            showNoticeKey(message, "api.account.verifyInvalid", "This link is invalid or has expired.", "error");
+            resend.hidden = !isLoggedIn();
+        }
+
+        resend.addEventListener("click", function () {
+            resend.disabled = true;
+            requestNewVerificationLink(function (kind) {
+                showNotice(message, resendMessage(kind), kind === "sent" || kind === "already" ? "success" : "error");
+                resend.disabled = false;
+            });
+        });
+
+        if (!token) {
+            failed();
+            return;
+        }
+
+        window.AEROVA_API.post("api/auth/verify-email", { token: token }).then(function () {
+            markEmailVerified();
+            showNoticeKey(message, "api.account.verifyDone", "Your email address is confirmed. Thank you!", "success");
+        }).catch(function (error) {
+            if (error && error.status === 422) {
+                failed();
+            } else {
+                showNotice(message, error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), "error");
+            }
+        });
+    }
+
+    /* Remembers in this tab that the signed-in address is confirmed (what the profile banner reads). */
+    function markEmailVerified() {
+        var user = getCurrentUser();
+        if (!user) return;
+        user.emailVerified = true;
+        writeJSON(sessionStorage, USER_KEY, user);
+    }
+
+    /* The profile page: a reminder with a button while the address is not confirmed. */
+    function handleVerifyBanner() {
+        var banner = document.getElementById("email-verify-banner");
+        if (!banner) return;
+
+        function paint(extra) {
+            var user = getCurrentUser();
+            if (!user || user.emailVerified !== false) {
+                banner.hidden = true;
+                return;
+            }
+
+            banner.innerHTML = "";
+            var text = document.createElement("p");
+            text.className = "verify-banner-text";
+            text.textContent = extra || tr("api.account.bannerText", "Your email address is not confirmed yet. Confirm it to book flights.");
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "verify-banner-button";
+            button.textContent = tr("api.account.bannerButton", "Resend link");
+            button.addEventListener("click", function () {
+                button.disabled = true;
+                requestNewVerificationLink(function (kind) {
+                    if (kind === "already") {
+                        paint();
+                        return;
+                    }
+                    paint(resendMessage(kind));
+                });
+            });
+            banner.appendChild(text);
+            banner.appendChild(button);
+            banner.hidden = false;
+        }
+
+        paint();
+        window.addEventListener("aerova:languagechange", function () { paint(); });
     }
 
 
@@ -762,8 +1044,14 @@
         updateNavigation();
         handleLoginForm();
         handleRegisterForm();
+        showLoginNotice();
+        handleForgotPasswordForm();
+        handleResetPasswordForm();
+        handleVerifyEmailPage();
+        handleVerifyBanner();
         window.addEventListener("aerova:languagechange", function () {
             updateNavigation();
+            showLoginNotice();
         });
         // The API rejected the token (it ran out): forget it and send the visitor to sign in again.
         window.addEventListener("aerova:session-expired", function () {
