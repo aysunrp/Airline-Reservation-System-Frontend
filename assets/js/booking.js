@@ -351,6 +351,22 @@ function tr(key, fallback, vars) {
         passengersInput.value = String(passengerMix.adults + passengerMix.children);
     }
 
+    /* The price calendar hides days whose flights have fewer free seats than the travellers need, so it follows the seat count. */
+    var lastSeatCount = 1;
+
+    function seatCount() {
+        return Math.max(1, parseInt(passengersInput.value, 10) || 1);
+    }
+
+    function refreshFaresForTravellers() {
+        if (seatCount() === lastSeatCount) {
+            return;
+        }
+
+        lastSeatCount = seatCount();
+        document.dispatchEvent(new CustomEvent("aerova:travellersChanged"));
+    }
+
     function setMixOpen(open) {
         mixPanel.hidden = !open;
         mixTrigger.setAttribute("aria-expanded", open ? "true" : "false");
@@ -372,6 +388,7 @@ function tr(key, fallback, vars) {
             passengerMix[kind] += step;
             clampMix();
             renderMix();
+            refreshFaresForTravellers();
         }
     });
 
@@ -402,6 +419,7 @@ function tr(key, fallback, vars) {
                 passengerRules = rules;
                 clampMix();
                 renderMix();
+                refreshFaresForTravellers();
             }
         }).catch(function () {
             // The defaults are the server's usual limits; the server checks every booking anyway.
@@ -1025,8 +1043,14 @@ function tr(key, fallback, vars) {
      */
     var fareMonths = {};
 
+    /* Seats the travellers need (adults + children), as the passenger picker keeps them; lowest fares only count flights with that many free seats. */
+    function seatCount() {
+        var input = document.getElementById("booking-passengers");
+        return Math.max(1, parseInt(input && input.value, 10) || 1);
+    }
+
     function monthKey(fromCity, toCity, year, month) {
-        return normalizeCity(fromCity) + "|" + normalizeCity(toCity) + "|" + year + "-" + pad(month + 1);
+        return normalizeCity(fromCity) + "|" + normalizeCity(toCity) + "|" + year + "-" + pad(month + 1) + "|" + seatCount();
     }
 
     function cityCode(city) {
@@ -1056,7 +1080,7 @@ function tr(key, fallback, vars) {
         var last = new Date(year, month + 1, 0);
         var query = "api/flights/lowest-fares?originCode=" + encodeURIComponent(originCode) +
             "&destinationCode=" + encodeURIComponent(destinationCode) +
-            "&from=" + toISODate(first) + "&to=" + toISODate(last);
+            "&from=" + toISODate(first) + "&to=" + toISODate(last) + "&passengers=" + seatCount();
 
         window.AEROVA_API.get(query).then(function (days) {
             (days || []).forEach(function (day) {
@@ -1717,6 +1741,12 @@ function tr(key, fallback, vars) {
         document.addEventListener("aerova:tripTypeChange", function (event) {
             var nextType = event && event.detail ? event.detail.tripType : "round-trip";
             applyTripType(nextType);
+        });
+
+        document.addEventListener("aerova:travellersChanged", function () {
+            refreshDeparturePrice();
+            refreshReturnPrice();
+            renderCalendar();
         });
 
         document.addEventListener("aerova:openPriceCalendar", function (event) {
