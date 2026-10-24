@@ -314,13 +314,77 @@
         });
     }
 
-    /* Ages are counted on the first travel day, with the backend's limits (Pricing:InfantMaxAgeYears, ChildMaxAgeYears). */
+    /*
+     * Ages are counted on the day of the last flight of the trip (its departure airport's local day), with the server's limits
+     * (GET api/booking-options/passenger-rules: Pricing:InfantMaxAgeYears, ChildMaxAgeYears). The server decides in the end.
+     */
     var INFANT_UNDER_AGE = 2;
     var ADULT_FROM_AGE = 12;
 
+    function loadPassengerRules() {
+        if (!window.AEROVA_API || typeof window.AEROVA_API.get !== "function") {
+            return;
+        }
+
+        window.AEROVA_API.get("api/booking-options/passenger-rules").then(function (rules) {
+            if (rules && rules.infantMaxAgeYears > 0 && rules.childMaxAgeYears > rules.infantMaxAgeYears) {
+                INFANT_UNDER_AGE = rules.infantMaxAgeYears;
+                ADULT_FROM_AGE = rules.childMaxAgeYears;
+                refreshPassengerCardText();
+            }
+        }).catch(function () {
+            // The defaults are the server's usual limits; the server checks every booking anyway.
+        });
+    }
+
+    /* The last flight of the trip. */
+    function lastFlightDate() {
+        var last = activeLegs.length ? activeLegs[activeLegs.length - 1] : activeFlightData;
+        return parseISODate(last && last.departureDate);
+    }
+
+    /*
+     * Who travels, as chosen in the search: adults and children have the seats picked on the seat page, infants none.
+     * Null when the selection does not carry it (an older selection): then the type only follows the date of birth.
+     */
+    function declaredMix() {
+        var data = activeFlightData;
+        if (!data || data.adults == null || data.adults === "") {
+            return null;
+        }
+
+        var mix = {
+            adults: Math.max(0, Math.floor(Number(data.adults)) || 0),
+            children: Math.max(0, Math.floor(Number(data.children)) || 0),
+            infants: Math.max(0, Math.floor(Number(data.infants)) || 0)
+        };
+
+        return mix.adults + mix.children === activeSelectedSeats.length ? mix : null;
+    }
+
+    function declaredInfants() {
+        var mix = declaredMix();
+        return mix ? mix.infants : 0;
+    }
+
+    /* Adults first, then children, then infants. */
+    function declaredType(index) {
+        var mix = declaredMix();
+        if (!mix) {
+            return "";
+        }
+        return index < mix.adults ? "Adult" : (index < mix.adults + mix.children ? "Child" : "Infant");
+    }
+
+    function cardTitle(number, type) {
+        return type
+            ? tr("api.passengers.card" + type, "Passenger {n} \u00b7 " + type, { n: number })
+            : tr("passengers.passengerN", "Passenger {n}", { n: number });
+    }
+
     function passengerTypeFor(dateOfBirthText) {
         var birth = parseISODate(dateOfBirthText);
-        var travel = parseISODate(activeFlightData && activeFlightData.departureDate);
+        var travel = lastFlightDate();
 
         if (!birth || !travel || birth > travel) {
             return "";
@@ -337,6 +401,15 @@
 
     /* An infant travels on an adult's lap: the seat chosen for that passenger is released. */
     function refreshInfantState() {
+        // With the travellers chosen in the search the seats stay as picked; infants never had one.
+        if (declaredMix()) {
+            document.querySelectorAll(".passenger-card").forEach(function (card) {
+                var birthField = card.querySelector('input[name$="[dateOfBirth]"]');
+                card.setAttribute("data-passenger-type", passengerTypeFor(birthField ? birthField.value : ""));
+            });
+            return;
+        }
+
         var keptSeats = [];
         var keptByLeg = activeLegSeats.map(function () { return []; });
 
@@ -456,10 +529,14 @@
             return ' aria-describedby="' + (hint ? id + "-hint " : "") + id + '-error"';
         };
 
+        var declared = declaredType(index);
+
         return (
-            '<article class="details-card passenger-card" data-passenger-index="' + passengerNumber + '" data-seat="' + escapeHtml(seat) + '" aria-labelledby="' + titleId + '">' +
-                '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(tr("passengers.passengerN", "Passenger {n}", { n: passengerNumber })) + "</h2>" +
-                '<p class="passenger-seat">' + escapeHtml(tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: seat })) + "</p>" +
+            '<article class="details-card passenger-card" data-passenger-index="' + passengerNumber + '" data-seat="' + escapeHtml(seat) + '" data-declared-type="' + declared + '" aria-labelledby="' + titleId + '">' +
+                '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(cardTitle(passengerNumber, declared)) + "</h2>" +
+                '<p class="passenger-seat">' + escapeHtml(declared === "Infant"
+                    ? tr("api.passengers.infantLap", "Infant: travels on an adult's lap, no seat needed.")
+                    : tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: seat })) + "</p>" +
 
                 '<section class="details-section" aria-labelledby="' + personalId + '">' +
                     '<h3 class="details-section-title" id="' + personalId + '" data-i18n="travelDocs.personalInfo">' + escapeHtml(tr("travelDocs.personalInfo", "Personal Information")) + "</h3>" +
@@ -648,7 +725,15 @@
     function refreshPassengerCardText() {
         document.querySelectorAll(".passenger-card").forEach(function (card) {
             var index = Number(card.getAttribute("data-passenger-index"));
-            setText("passenger-" + index + "-title", tr("passengers.passengerN", "Passenger {n}", { n: index }));
+            var declared = card.getAttribute("data-declared-type") || "";
+            setText("passenger-" + index + "-title", cardTitle(index, declared));
+
+            var seatLine = card.querySelector(".passenger-seat");
+            if (seatLine && declared) {
+                seatLine.textContent = declared === "Infant"
+                    ? tr("api.passengers.infantLap", "Infant: travels on an adult's lap, no seat needed.")
+                    : tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: card.getAttribute("data-seat") });
+            }
             updateDocumentFields(card);
             card.querySelectorAll(".field-error[data-error-key]").forEach(function (element) {
                 var vars = {};
@@ -901,6 +986,24 @@
             invalid(fields.dateOfBirth, "travelDocs.errors.dobInvalid", "Enter a valid date of birth in the past");
         }
 
+        // The type chosen in the search must match the date of birth (the server checks it again).
+        var wantedType = card ? card.getAttribute("data-declared-type") : "";
+        if (wantedType && dateOfBirth && dateOfBirth < today) {
+            var typeNow = passengerTypeFor(getTrimmedValue(fields.dateOfBirth));
+            if (typeNow && typeNow !== wantedType) {
+                invalid(
+                    fields.dateOfBirth,
+                    "api.passengers.type" + wantedType,
+                    wantedType === "Adult"
+                        ? "An adult must be {age} or older on the day of the last flight ({date})."
+                        : (wantedType === "Child"
+                            ? "A child must be {min} to {max} years old on the day of the last flight ({date})."
+                            : "An infant must be under {age} on the day of the last flight ({date})."),
+                    { age: wantedType === "Adult" ? ADULT_FROM_AGE : INFANT_UNDER_AGE, min: INFANT_UNDER_AGE, max: ADULT_FROM_AGE - 1, date: localizedDate(minimumExpiryDate(0).travel) }
+                );
+            }
+        }
+
         if (getTrimmedValue(fields.documentType) && (!definition || options.documents.indexOf(definition.code) === -1)) {
             invalid(fields.documentType, "travelDocs.errors.documentTypeNotAllowed", "This document type is not accepted for this route");
         } else if (definition && numberValue && !definition.numberPattern.test(numberValue)) {
@@ -1030,9 +1133,10 @@
 
     function buildBookingData(passengers, contact) {
         var flightData = activeFlightData || {};
-        var passengerCount = Number(flightData.passengers) || passengers.length;
+        // Everyone on the booking, infants included; the price estimate counts the seats (the server prices the booking).
+        var passengerCount = passengers.length;
         var unitPrice = Number(flightData.price);
-        var totalPrice = isFinite(unitPrice) ? unitPrice * passengerCount : 0;
+        var totalPrice = isFinite(unitPrice) ? unitPrice * (Number(flightData.passengers) || passengers.length) : 0;
 
         function legData(leg, legIndex) {
             return {
@@ -1120,8 +1224,8 @@
         var isValid = true;
         var focusField = null;
 
-        for (i = 0; i < activeSelectedSeats.length; i += 1) {
-            passengerResult = collectPassengerData(i, activeSelectedSeats[i]);
+        for (i = 0; i < activeSelectedSeats.length + declaredInfants(); i += 1) {
+            passengerResult = collectPassengerData(i, activeSelectedSeats[i] || "");
 
             if (!passengerResult.valid) {
                 isValid = false;
@@ -1152,7 +1256,7 @@
         var infants = passengers.filter(function (passenger) { return passenger.passengerType === "Infant"; }).length;
 
         if (adults === 0) {
-            showMessage(tr("api.passengers.needAdult", "At least one passenger must be 12 or older."));
+            showMessage(tr("api.passengers.needAdult", "At least one passenger must be {age} or older.", { age: ADULT_FROM_AGE }));
             return;
         }
 
@@ -1218,7 +1322,7 @@
         activeLegSeats = activeLegs.map(resolveSelectedSeats);
         activeLegSeatIds = activeLegs.map(resolveSelectedSeatIds);
 
-        populateBookingSummary(flightData, passengerCount, selectedSeats);
+        populateBookingSummary(flightData, passengerCount + declaredInfants(), selectedSeats);
         bindContinueButton();
         bindClearInvalidOnInput();
         bindDocumentControls();
@@ -1296,9 +1400,15 @@
 
         showMessage("");
         setFormsVisibility(true);
-        renderPassengerCards(selectedSeats);
+        // Infants get a form too, without a seat.
+        var cardSeats = selectedSeats.slice();
+        for (var infant = 0; infant < declaredInfants(); infant += 1) {
+            cardSeats.push("");
+        }
+        renderPassengerCards(cardSeats);
         bindInfantRule();
         loadSavedPassengers();
+        loadPassengerRules();
     }
 
     if (document.readyState === "loading") {

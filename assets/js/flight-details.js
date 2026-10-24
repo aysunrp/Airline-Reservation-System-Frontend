@@ -237,8 +237,22 @@
             }
         }
 
+        // Who travels (an older link only has the number of seats, all of them adults).
+        var seats = Math.max(1, parseInt(pick("passengers"), 10) || 1);
+        var adults = parseInt(pick("adults"), 10);
+        var children = Math.max(0, parseInt(pick("children"), 10) || 0);
+        var infants = Math.max(0, parseInt(pick("infants"), 10) || 0);
+        if (!(adults >= 1) || adults + children !== seats) {
+            adults = seats;
+            children = 0;
+            infants = 0;
+        }
+
         return {
             passengers: pick("passengers") || "1",
+            adults: adults,
+            children: children,
+            infants: infants,
             tripType: tripType,
             returnDate: pick("returnDate"),
             departureDate: pick("departureDate"),
@@ -440,6 +454,9 @@
             cabinClass: cabinClass,
             price: price,
             passengers: context.passengers,
+            adults: context.adults,
+            children: context.children,
+            infants: context.infants,
             departureDate: flight.departureDate || context.departureDate,
             returnDate: context.returnDate,
             tripType: context.tripType,

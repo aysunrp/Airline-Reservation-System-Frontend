@@ -62,6 +62,13 @@
     if (selection.cabinClass) {
       params.set("cabinClass", selection.cabinClass);
     }
+
+    // Who travels: the same adults, children and infants on every flight of the trip.
+    ["adults", "children", "infants"].forEach(function (kind) {
+      if (selection[kind] != null) {
+        params.set(kind, String(selection[kind]));
+      }
+    });
     return "flight-results.html?" + params.toString();
   }
 

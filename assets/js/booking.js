@@ -271,6 +271,143 @@ function tr(key, fallback, vars) {
         }
     }
 
+    /*
+     * Who travels: adults, children and infants. The server works the type out from each date of birth, so these numbers decide
+     * how many seats are asked for (adults + children; an infant sits on an adult's lap) and how many forms the passenger page
+     * shows. The limits are the server's own (GET api/booking-options/passenger-rules); until they arrive the defaults apply.
+     */
+    var passengerRules = { infantMaxAgeYears: 2, childMaxAgeYears: 12, maxPassengers: 9 };
+    var passengerMix = { adults: 1, children: 0, infants: 0 };
+    var mixTrigger = document.getElementById("booking-passengers-trigger");
+    var mixPanel = document.getElementById("passenger-panel");
+
+    function mixTotal() {
+        return passengerMix.adults + passengerMix.children + passengerMix.infants;
+    }
+
+    function canChangeMix(kind, step) {
+        if (step < 0) {
+            // Fewer adults must still leave one adult for every infant.
+            return kind === "adults" ? passengerMix.adults > 1 && passengerMix.adults > passengerMix.infants : passengerMix[kind] > 0;
+        }
+
+        if (mixTotal() >= passengerRules.maxPassengers) {
+            return false;
+        }
+
+        return kind === "infants" ? passengerMix.infants < passengerMix.adults : true;
+    }
+
+    function clampMix() {
+        passengerMix.adults = Math.max(1, passengerMix.adults);
+        passengerMix.infants = Math.min(passengerMix.infants, passengerMix.adults);
+
+        while (mixTotal() > passengerRules.maxPassengers) {
+            if (passengerMix.infants > 0) {
+                passengerMix.infants -= 1;
+            } else if (passengerMix.children > 0) {
+                passengerMix.children -= 1;
+            } else {
+                passengerMix.adults -= 1;
+            }
+        }
+    }
+
+    function renderMix() {
+        var kinds = ["adults", "children", "infants"];
+        var labels = {
+            adults: tr("api.passengers.adults", "Adults"),
+            children: tr("api.passengers.children", "Children"),
+            infants: tr("api.passengers.infants", "Infants")
+        };
+
+        kinds.forEach(function (kind) {
+            document.getElementById("passenger-count-" + kind).textContent = String(passengerMix[kind]);
+            document.getElementById("passenger-title-" + kind).textContent = labels[kind];
+            Array.prototype.forEach.call(mixPanel.querySelectorAll('[data-kind="' + kind + '"]'), function (button) {
+                var step = Number(button.getAttribute("data-step"));
+                button.disabled = !canChangeMix(kind, step);
+                button.setAttribute("aria-label", tr(step < 0 ? "api.passengers.fewer" : "api.passengers.more", step < 0 ? "Fewer {kind}" : "More {kind}", { kind: labels[kind].toLowerCase() }));
+            });
+        });
+
+        document.getElementById("passenger-hint-adults").textContent = tr("api.passengers.adultsHint", "{age} years and older", { age: passengerRules.childMaxAgeYears });
+        document.getElementById("passenger-hint-children").textContent = tr("api.passengers.childrenHint", "{min} to {max} years", { min: passengerRules.infantMaxAgeYears, max: passengerRules.childMaxAgeYears - 1 });
+        document.getElementById("passenger-hint-infants").textContent = tr("api.passengers.infantsHint", "Under {age}, on an adult's lap", { age: passengerRules.infantMaxAgeYears });
+        document.getElementById("passenger-done").textContent = tr("api.passengers.done", "Done");
+
+        var note = tr("api.passengers.limitNote", "Up to {max} travellers on one booking.", { max: passengerRules.maxPassengers });
+        if (passengerMix.infants > 0 && passengerMix.infants >= passengerMix.adults) {
+            note += " " + tr("api.passengers.infantsLimit", "Each infant travels on an adult's lap, so there cannot be more infants than adults.");
+        }
+        document.getElementById("passenger-note").textContent = note;
+
+        document.getElementById("passenger-summary").textContent = kinds
+            .filter(function (kind) { return kind === "adults" || passengerMix[kind] > 0; })
+            .map(function (kind) { return labels[kind] + " " + passengerMix[kind]; })
+            .join(" \u00b7 ");
+
+        // The search asks for seats only for those who need one.
+        passengersInput.value = String(passengerMix.adults + passengerMix.children);
+    }
+
+    function setMixOpen(open) {
+        mixPanel.hidden = !open;
+        mixTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    mixTrigger.addEventListener("click", function () {
+        setMixOpen(mixPanel.hidden);
+    });
+
+    mixPanel.addEventListener("click", function (event) {
+        var button = event.target.closest(".passenger-step");
+        if (!button || button.disabled) {
+            return;
+        }
+
+        var kind = button.getAttribute("data-kind");
+        var step = Number(button.getAttribute("data-step"));
+        if (canChangeMix(kind, step)) {
+            passengerMix[kind] += step;
+            clampMix();
+            renderMix();
+        }
+    });
+
+    document.getElementById("passenger-done").addEventListener("click", function () {
+        setMixOpen(false);
+        mixTrigger.focus();
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!mixPanel.hidden && !event.target.closest("#passenger-picker")) {
+            setMixOpen(false);
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !mixPanel.hidden) {
+            setMixOpen(false);
+            mixTrigger.focus();
+        }
+    });
+
+    window.addEventListener("aerova:languagechange", renderMix);
+    renderMix();
+
+    if (window.AEROVA_API && typeof window.AEROVA_API.get === "function") {
+        window.AEROVA_API.get("api/booking-options/passenger-rules").then(function (rules) {
+            if (rules && rules.infantMaxAgeYears > 0 && rules.childMaxAgeYears > rules.infantMaxAgeYears && rules.maxPassengers >= 1) {
+                passengerRules = rules;
+                clampMix();
+                renderMix();
+            }
+        }).catch(function () {
+            // The defaults are the server's usual limits; the server checks every booking anyway.
+        });
+    }
+
     function validateSharedOptions() {
         if (!passengersInput.value) {
             markInvalid(passengersInput);
@@ -363,6 +500,9 @@ function tr(key, fallback, vars) {
         return {
             tripType: "multicity",
             passengers: passengersInput.value,
+            adults: String(passengerMix.adults),
+            children: String(passengerMix.children),
+            infants: String(passengerMix.infants),
             cabinClass: cabinInput.value,
             segments: collectMultiCitySegments()
         };
@@ -428,6 +568,9 @@ function tr(key, fallback, vars) {
             to: toValue,
             departureDate: departureValue,
             passengers: passengersInput.value,
+            adults: String(passengerMix.adults),
+            children: String(passengerMix.children),
+            infants: String(passengerMix.infants),
             cabinClass: cabinInput.value
         };
 
@@ -453,6 +596,9 @@ function tr(key, fallback, vars) {
         var params = new URLSearchParams();
         params.set("tripType", data.tripType);
         params.set("passengers", data.passengers);
+        params.set("adults", data.adults);
+        params.set("children", data.children);
+        params.set("infants", data.infants);
         params.set("cabinClass", data.cabinClass);
 
         if (data.tripType === "multicity") {

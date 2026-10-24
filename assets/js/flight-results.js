@@ -46,6 +46,19 @@
         }).slice(0, 6);
     }
 
+    /* Who travels: adults, children and infants. An older link only has the number of seats, all of them adults. */
+    function readMix(params, seats) {
+        var adults = parseInt(params.get("adults"), 10);
+        var children = Math.max(0, parseInt(params.get("children"), 10) || 0);
+        var infants = Math.max(0, parseInt(params.get("infants"), 10) || 0);
+
+        if (!(adults >= 1) || adults + children !== seats) {
+            return { adults: seats, children: 0, infants: 0 };
+        }
+
+        return { adults: adults, children: children, infants: infants };
+    }
+
     function readSearchCriteria() {
         var params = new URLSearchParams(window.location.search);
 
@@ -62,6 +75,11 @@
             leg: Math.max(1, Math.floor(Number(params.get("leg")) || 1)),
             multi: null
         };
+
+        var mix = readMix(params, Math.max(1, parseInt(criteria.passengers, 10) || 1));
+        criteria.adults = mix.adults;
+        criteria.children = mix.children;
+        criteria.infants = mix.infants;
 
         if (/multi/i.test(criteria.tripType)) {
             var segments = readSegments(params);
@@ -827,6 +845,9 @@
             cabinClass: cabinClass,
             price: price,
             passengers: criteria.passengers,
+            adults: criteria.adults,
+            children: criteria.children,
+            infants: criteria.infants,
             departureDate: flight.date || criteria.departureDate,
             returnDate: criteria.returnDate,
             tripType: criteria.tripType,
@@ -860,6 +881,9 @@
 
         if (criteria.passengers) {
             params.set("passengers", criteria.passengers);
+            params.set("adults", String(criteria.adults));
+            params.set("children", String(criteria.children));
+            params.set("infants", String(criteria.infants));
         }
         if (criteria.tripType) {
             params.set("tripType", criteria.tripType);

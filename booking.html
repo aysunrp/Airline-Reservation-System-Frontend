@@ -737,51 +737,51 @@
 
 
 
-                            <label class="field-label" for="booking-passengers" data-i18n="booking.passengers">Passengers</label>
-
-
-
-                            <select id="booking-passengers" class="field-input" name="passengers">
-
-
-
-                                <option value="1" selected data-i18n="ui.1Passenger">1 Passenger</option>
-
-
-
-                                <option value="2" data-i18n="ui.2Passengers">2 Passengers</option>
-
-
-
-                                <option value="3" data-i18n="ui.3Passengers">3 Passengers</option>
-
-
-
-                                <option value="4" data-i18n="ui.4Passengers">4 Passengers</option>
-
-
-
-                                <option value="5" data-i18n="ui.5Passengers">5 Passengers</option>
-
-
-
-                                <option value="6" data-i18n="ui.6Passengers">6 Passengers</option>
-
-
-
-                                <option value="7" data-i18n="ui.7Passengers">7 Passengers</option>
-
-
-
-                                <option value="8" data-i18n="ui.8Passengers">8 Passengers</option>
-
-
-
-                                <option value="9" data-i18n="ui.9Passengers">9 Passengers</option>
-
-
-
-                            </select>
+                            <label class="field-label" for="booking-passengers-trigger" data-i18n="booking.passengers">Passengers</label>
+                            <div class="field-control passenger-picker" id="passenger-picker">
+                                <input type="hidden" id="booking-passengers" name="passengers" value="1">
+                                <button type="button" class="field-input passenger-trigger" id="booking-passengers-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="passenger-panel">
+                                    <span class="passenger-trigger-text" id="passenger-summary">Adults 1</span>
+                                    <span class="passenger-caret" aria-hidden="true">&#9662;</span>
+                                </button>
+                                <div class="passenger-panel" id="passenger-panel" role="dialog" aria-labelledby="booking-passengers-trigger" hidden>
+                                    <div class="passenger-row">
+                                        <div>
+                                            <p class="passenger-row-title" id="passenger-title-adults">Adults</p>
+                                            <p class="passenger-row-hint" id="passenger-hint-adults">12 years and older</p>
+                                        </div>
+                                        <div class="passenger-stepper">
+                                            <button type="button" class="passenger-step" data-kind="adults" data-step="-1" aria-label="Fewer adults">&minus;</button>
+                                            <output class="passenger-count" id="passenger-count-adults">1</output>
+                                            <button type="button" class="passenger-step" data-kind="adults" data-step="1" aria-label="More adults">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="passenger-row">
+                                        <div>
+                                            <p class="passenger-row-title" id="passenger-title-children">Children</p>
+                                            <p class="passenger-row-hint" id="passenger-hint-children">2 to 11 years</p>
+                                        </div>
+                                        <div class="passenger-stepper">
+                                            <button type="button" class="passenger-step" data-kind="children" data-step="-1" aria-label="Fewer children">&minus;</button>
+                                            <output class="passenger-count" id="passenger-count-children">0</output>
+                                            <button type="button" class="passenger-step" data-kind="children" data-step="1" aria-label="More children">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="passenger-row">
+                                        <div>
+                                            <p class="passenger-row-title" id="passenger-title-infants">Infants</p>
+                                            <p class="passenger-row-hint" id="passenger-hint-infants">Under 2, on an adult's lap</p>
+                                        </div>
+                                        <div class="passenger-stepper">
+                                            <button type="button" class="passenger-step" data-kind="infants" data-step="-1" aria-label="Fewer infants">&minus;</button>
+                                            <output class="passenger-count" id="passenger-count-infants">0</output>
+                                            <button type="button" class="passenger-step" data-kind="infants" data-step="1" aria-label="More infants">+</button>
+                                        </div>
+                                    </div>
+                                    <p class="passenger-panel-note" id="passenger-note"></p>
+                                    <button type="button" class="passenger-done" id="passenger-done">Done</button>
+                                </div>
+                            </div>
 
 
 

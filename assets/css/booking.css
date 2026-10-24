@@ -1371,3 +1371,131 @@ select.field-input {
     font: inherit;
     cursor: pointer;
 }
+
+/* Who travels: adults, children and infants */
+.passenger-picker {
+    position: relative;
+}
+
+.passenger-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.passenger-trigger-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.passenger-caret {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+}
+
+.passenger-trigger[aria-expanded="true"] .passenger-caret {
+    transform: rotate(180deg);
+}
+
+.passenger-panel {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    z-index: 40;
+    box-sizing: border-box;
+    width: 19rem;
+    min-width: 100%;
+    max-width: calc(100vw - 2rem);
+    padding: 0.7rem 1rem 1rem;
+    background: linear-gradient(180deg, rgba(18, 32, 50, 0.98) 0%, rgba(8, 16, 28, 0.99) 100%);
+    border: 1px solid rgba(198, 163, 106, 0.42);
+    border-radius: 14px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+.passenger-panel[hidden] {
+    display: none !important;
+}
+
+.passenger-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(246, 241, 231, 0.08);
+}
+
+.passenger-row-title {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 0.95rem;
+}
+
+.passenger-row-hint {
+    margin: 0.1rem 0 0;
+    color: rgba(246, 241, 231, 0.6);
+    font-size: 0.78rem;
+    font-weight: 300;
+}
+
+.passenger-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.passenger-step {
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 1px solid rgba(198, 163, 106, 0.6);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-gold);
+    font: inherit;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.passenger-step:hover:not(:disabled) {
+    background: rgba(198, 163, 106, 0.16);
+}
+
+.passenger-step:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.passenger-count {
+    min-width: 1.4rem;
+    color: var(--color-cream);
+    text-align: center;
+}
+
+.passenger-panel-note {
+    margin: 0.7rem 0 0;
+    color: rgba(246, 241, 231, 0.65);
+    font-size: 0.78rem;
+    font-weight: 300;
+}
+
+.passenger-done {
+    width: 100%;
+    min-height: 42px;
+    margin-top: 0.8rem;
+    border: 1px solid var(--color-gold);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-gold);
+    font: inherit;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
