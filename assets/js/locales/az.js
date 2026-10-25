@@ -614,7 +614,11 @@ window.AEROVA_LOCALES.az = {
     "lastNamePh": "Soyad",
     "passwordPhLong": "Ən azı 6 simvol",
     "confirmPh": "Şifrəni təkrarlayın",
-    "createAccount": "Hesab yarat"
+    "createAccount": "Hesab yarat",
+    "showPassword": "Şifrəni göstər",
+    "hidePassword": "Şifrəni gizlət",
+    "reqLength": "Ən azı 6 simvol",
+    "reqMatch": "Şifrələr üst-üstə düşür"
   },
   "profile": {
     "title": "Profilim",
@@ -1682,7 +1686,22 @@ window.AEROVA_LOCALES.az = {
       "verifySignInFirst": "Yeni keçid almaq üçün daxil olun.",
       "signIn": "Daxil ol",
       "bannerText": "E-poçt ünvanınız hələ təsdiqlənməyib. Reys almaq üçün onu təsdiqləyin.",
-      "bannerButton": "Keçidi yenidən göndər"
+      "bannerButton": "Keçidi yenidən göndər",
+      "checkEyebrow": "Az qalıb",
+      "checkTitle": "E-poçtunuzu yoxlayın",
+      "checkText": "{email} ünvanına təsdiq keçidi göndərdik. Hesabınızı aktivləşdirmək üçün onu açın.",
+      "checkTextNoAddress": "Sizə təsdiq keçidi göndərdik. Hesabınızı aktivləşdirmək üçün onu açın.",
+      "checkNoMailTitle": "Hesabınız hazırdır",
+      "checkNoMailText": "Təsdiq məktubunu indi göndərə bilmədik. Daxil olun və profilinizdə \"Keçidi yenidən göndər\" düyməsinə basın.",
+      "helpTitle": "Məktub gəlmədi?",
+      "helpSpam": "Spam və ya Təkliflər qovluğuna baxın.",
+      "helpWait": "Bir-iki dəqiqə gözləyin, çatdırılma gecikə bilər.",
+      "helpResend": "Daxil olun və yeni keçid üçün profilinizdə \"Keçidi yenidən göndər\" düyməsinə basın.",
+      "verifyDoneTitle": "E-poçt təsdiqləndi!",
+      "verifyDoneText": "Hesabınız hazırdır. İndi təhlükəsiz şəkildə daxil ola bilərsiniz.",
+      "verifyRedirect": "Giriş səhifəsinə yönləndirilirsiniz...",
+      "verifyFailedTitle": "Bu keçid işləməyəcək",
+      "verifiedLogin": "E-poçtunuz təsdiqləndi. İndi daxil ola bilərsiniz."
     },
     "journey": {
       "chooseOutbound": "Gediş reysini seçin",

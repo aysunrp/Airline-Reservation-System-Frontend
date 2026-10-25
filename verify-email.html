@@ -18,7 +18,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/css/auth.css?v=mail1">
+    <link rel="stylesheet" href="assets/css/auth.css?v=ui1">
     <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
 
@@ -48,18 +48,33 @@
 
     <main class="auth-main">
 
-        <section class="auth-card" aria-label="Confirm email">
+        <section class="auth-card auth-card--status" aria-label="Confirm email">
 
-            <p class="auth-eyebrow" data-i18n="api.account.verifyEyebrow">Email address</p>
+            <div class="auth-status" id="verify-status" data-state="loading" aria-live="polite" aria-busy="true">
 
-            <h1 class="auth-title" data-i18n="api.account.verifyTitle">Confirm your email</h1>
+                <div class="auth-status-icon" aria-hidden="true">
+                    <span class="auth-spinner auth-status-glyph auth-status-glyph--loading"></span>
+                    <svg class="auth-status-glyph auth-status-glyph--mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg>
+                    <svg class="auth-status-glyph auth-status-glyph--success" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    <svg class="auth-status-glyph auth-status-glyph--error" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
+                </div>
 
-            <p class="auth-notice" id="verify-message" role="status" data-i18n="api.account.verifyLoading">Confirming your email address...</p>
+                <p class="auth-eyebrow" data-i18n="api.account.verifyEyebrow">Email address</p>
 
-            <p class="auth-links" id="verify-links">
-                <a href="login.html" data-i18n="api.account.signIn">Sign in</a>
-                <button type="button" class="auth-link-button" id="verify-resend" data-i18n="api.account.verifyResend" hidden>Send me a new link</button>
-            </p>
+                <h1 class="auth-title" id="verify-title" data-i18n="api.account.verifyTitle">Confirm your email</h1>
+
+                <p class="auth-status-text" id="verify-message" data-i18n="api.account.verifyLoading">Confirming your email address...</p>
+
+                <p class="auth-redirect" id="verify-redirect" data-i18n="api.account.verifyRedirect" hidden>Taking you to sign in...</p>
+
+                <p class="auth-notice" id="verify-feedback" role="status" hidden></p>
+
+                <div class="auth-actions" id="verify-links">
+                    <a class="auth-submit" id="verify-login" href="login.html" data-i18n="api.account.signIn" hidden>Sign in</a>
+                    <button type="button" class="auth-link-button" id="verify-resend" data-i18n="api.account.verifyResend" hidden>Send me a new link</button>
+                </div>
+
+            </div>
 
         </section>
     </main>
@@ -73,7 +88,7 @@
     <script src="assets/js/api-config.js?v=base1"></script>
     <script src="assets/js/api-client.js?v=mail1"></script>
     <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=mail2"></script>
+    <script src="assets/js/auth.js?v=ui1"></script>
 
 </body>
 

@@ -614,7 +614,11 @@ window.AEROVA_LOCALES.en = {
     "lastNamePh": "Last name",
     "passwordPhLong": "At least 6 characters",
     "confirmPh": "Repeat password",
-    "createAccount": "Create Account"
+    "createAccount": "Create Account",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "reqLength": "At least 6 characters",
+    "reqMatch": "Passwords match"
   },
   "profile": {
     "title": "My Profile",
@@ -1682,7 +1686,22 @@ window.AEROVA_LOCALES.en = {
       "verifySignInFirst": "Sign in to get a new link.",
       "signIn": "Sign in",
       "bannerText": "Your email address is not confirmed yet. Confirm it to book flights.",
-      "bannerButton": "Resend link"
+      "bannerButton": "Resend link",
+      "checkEyebrow": "Almost there",
+      "checkTitle": "Check your email",
+      "checkText": "We sent a confirmation link to {email}. Open it to activate your account.",
+      "checkTextNoAddress": "We sent you a confirmation link. Open it to activate your account.",
+      "checkNoMailTitle": "Your account is ready",
+      "checkNoMailText": "We could not send the confirmation email right now. Sign in and press \"Resend link\" in your profile.",
+      "helpTitle": "Did not get it?",
+      "helpSpam": "Look in your spam or promotions folder.",
+      "helpWait": "Wait a minute or two, delivery can be slow.",
+      "helpResend": "Sign in and press \"Resend link\" in your profile to get a new one.",
+      "verifyDoneTitle": "Email confirmed!",
+      "verifyDoneText": "Your account is ready. You can now sign in securely.",
+      "verifyRedirect": "Taking you to sign in...",
+      "verifyFailedTitle": "This link will not work",
+      "verifiedLogin": "Your email is confirmed. You can now sign in."
     },
     "journey": {
       "chooseOutbound": "Choose your outbound flight",

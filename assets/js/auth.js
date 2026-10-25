@@ -2,6 +2,7 @@
     var USERS_KEY = "aerovaRegisteredUsers";
     var USER_KEY = "aerovaUser";
     var LOGGED_IN_KEY = "isLoggedIn";
+    var PENDING_EMAIL_KEY = "aerovaPendingEmail";
 
     function readJSON(storage, key) {
         try {
@@ -451,6 +452,7 @@
         var error = control ? control.querySelector(".auth-error") : null;
         input.classList.remove("is-invalid");
         input.removeAttribute("aria-invalid");
+        input.removeAttribute("aria-describedby");
         if (control) control.classList.remove("is-invalid");
         if (error) {
             error.textContent = "";
@@ -468,7 +470,87 @@
         if (error) {
             error.textContent = message;
             error.hidden = false;
+            error.setAttribute("role", "alert");
+            if (!error.id && input.id) error.id = input.id + "-error";
+            if (error.id) input.setAttribute("aria-describedby", error.id);
         }
+    }
+
+    /* The submit button while a request is on its way: a spinner replaces the label, and it cannot be pressed twice. */
+    function setBusy(button, busy) {
+        if (!button) return;
+        button.disabled = !!busy;
+        button.classList.toggle("is-loading", !!busy);
+        if (busy) {
+            button.setAttribute("aria-busy", "true");
+        } else {
+            button.removeAttribute("aria-busy");
+        }
+    }
+
+    var EYE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var EYE_OFF_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6A10.8 10.8 0 0 1 12 5.5c6.4 0 10 6.5 10 6.5a17 17 0 0 1-3.2 4M6.6 7.6A16.6 16.6 0 0 0 2 12s3.6 6.5 10 6.5c1.6 0 3-.4 4.3-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+
+    /* A show/hide button inside every password field of the sign-in pages. */
+    function enhancePasswordFields() {
+        document.querySelectorAll(".auth-card .auth-control").forEach(function (control) {
+            var input = control.querySelector("input[type='password']");
+            if (!input || control.querySelector(".auth-reveal")) return;
+
+            var row = document.createElement("div");
+            row.className = "auth-input-row";
+            control.insertBefore(row, input);
+            row.appendChild(input);
+
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "auth-reveal";
+            row.appendChild(button);
+
+            function paint() {
+                var shown = input.type === "text";
+                button.innerHTML = shown ? EYE_OFF_ICON : EYE_ICON;
+                button.setAttribute("aria-pressed", shown ? "true" : "false");
+                button.setAttribute("aria-label", shown ? tr("auth.hidePassword", "Hide password") : tr("auth.showPassword", "Show password"));
+            }
+
+            button.addEventListener("click", function () {
+                input.type = input.type === "password" ? "text" : "password";
+                paint();
+            });
+            window.addEventListener("aerova:languagechange", paint);
+            paint();
+        });
+    }
+
+    /* The two checks under the password fields of the register page turn gold as they are met. */
+    function handleRegisterRules() {
+        var list = document.getElementById("register-rules");
+        var password = document.getElementById("register-password");
+        var confirm = document.getElementById("register-confirm-password");
+        if (!list || !password || !confirm) return;
+
+        function mark(rule, met) {
+            var item = list.querySelector('[data-rule="' + rule + '"]');
+            if (item) item.classList.toggle("is-met", met);
+        }
+
+        function paint() {
+            mark("length", password.value.length >= 6);
+            mark("match", password.value.length > 0 && password.value === confirm.value);
+        }
+
+        password.addEventListener("input", paint);
+        confirm.addEventListener("input", paint);
+        paint();
+    }
+
+    /* "ay***@example.com": enough to recognise the address, not enough to hand it to anybody looking over a shoulder. */
+    function maskEmail(email) {
+        var at = String(email || "").indexOf("@");
+        if (at < 1) return "";
+        var keep = at > 3 ? 2 : 1;
+        return email.slice(0, keep) + "***" + email.slice(at);
     }
 
     function bindClearOnInput(form) {
@@ -558,7 +640,7 @@
 
             if (!valid) return;
 
-            if (submit) submit.disabled = true;
+            setBusy(submit, true);
 
             window.AEROVA_API.post("api/auth/login", { email: email, password: password }).then(function (response) {
                 var signedIn = setLoggedInUser(response);
@@ -578,7 +660,7 @@
                 } else {
                     showApiFormError(error, { email: emailInput, password: passwordInput, fallback: passwordInput });
                 }
-                if (submit) submit.disabled = false;
+                setBusy(submit, false);
             });
         });
     }
@@ -588,6 +670,7 @@
         if (!form) return;
 
         bindClearOnInput(form);
+        handleRegisterRules();
 
         form.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -644,7 +727,7 @@
             if (!valid) return;
 
             var submit = form.querySelector(".auth-submit");
-            if (submit) submit.disabled = true;
+            setBusy(submit, true);
 
             window.AEROVA_API.post("api/auth/register", {
                 firstName: firstName,
@@ -657,12 +740,15 @@
                 // Registering does not sign anybody in: the person confirms the address with the e-mailed link and signs in.
                 passwordInput.value = "";
                 confirmInput.value = "";
-                window.location.href = "login.html?registered=" + (response && response.verificationEmailSent ? "sent" : "nomail");
+                try {
+                    window.sessionStorage.setItem(PENDING_EMAIL_KEY, maskEmail(email));
+                } catch (storageError) { /* the page then says "your email address" instead of the masked one */ }
+                window.location.href = "check-email.html?status=" + (response && response.verificationEmailSent ? "sent" : "nomail");
             }).catch(function (error) {
                 passwordInput.value = "";
                 confirmInput.value = "";
                 showApiFormError(error, { firstName: firstInput, lastName: lastInput, email: emailInput, password: passwordInput, confirmPassword: confirmInput, fallback: emailInput });
-                if (submit) submit.disabled = false;
+                setBusy(submit, false);
             });
         });
     }
@@ -711,6 +797,8 @@
             showNoticeKey(notice, "api.account.registeredSent", "Account created. We sent a confirmation link to your email address. Open it, then sign in.", "success");
         } else if (registered === "nomail") {
             showNoticeKey(notice, "api.account.registeredNoMail", "Account created. We could not send the confirmation email right now. Sign in, then ask for a new link in your profile.", "");
+        } else if (params.get("verified") === "1") {
+            showNoticeKey(notice, "api.account.verifiedLogin", "Your email is confirmed. You can now sign in.", "success");
         } else if (params.get("reset") === "1") {
             showNoticeKey(notice, "api.account.resetDone", "Your password was changed. Sign in with your new password.", "success");
         }
@@ -741,7 +829,7 @@
             }
 
             var submit = form.querySelector(".auth-submit");
-            if (submit) submit.disabled = true;
+            setBusy(submit, true);
 
             window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
                 // The same words whether or not an account exists.
@@ -754,7 +842,7 @@
                     showApiFormError(error, { email: emailInput, fallback: emailInput });
                 }
             }).then(function () {
-                if (submit) submit.disabled = false;
+                setBusy(submit, false);
             });
         });
     }
@@ -809,7 +897,7 @@
             if (!valid) return;
 
             var submit = form.querySelector(".auth-submit");
-            if (submit) submit.disabled = true;
+            setBusy(submit, true);
 
             window.AEROVA_API.post("api/auth/reset-password", { token: token, newPassword: password, confirmPassword: confirm }).then(function () {
                 passwordInput.value = "";
@@ -823,7 +911,7 @@
                 } else {
                     showApiFormError(error, { newPassword: passwordInput, confirmPassword: confirmInput, fallback: passwordInput });
                 }
-                if (submit) submit.disabled = false;
+                setBusy(submit, false);
             });
         });
     }
@@ -862,42 +950,104 @@
         return tr(pair[0], pair[1]);
     }
 
-    /* The page of the link in the e-mail: confirms the address right away. */
+    function setKeyedText(element, key, fallback) {
+        element.textContent = tr(key, fallback);
+        element.setAttribute("data-i18n", key);
+    }
+
+    /* The page of the link in the e-mail: confirms the address right away and shows how it went. */
     function handleVerifyEmailPage() {
+        var status = document.getElementById("verify-status");
+        var title = document.getElementById("verify-title");
         var message = document.getElementById("verify-message");
+        var redirect = document.getElementById("verify-redirect");
+        var feedback = document.getElementById("verify-feedback");
+        var signIn = document.getElementById("verify-login");
         var resend = document.getElementById("verify-resend");
-        if (!message || !resend) return;
+        if (!status || !title || !message || !resend || !signIn) return;
 
         var token = takeTokenFromAddress();
 
-        function failed() {
-            showNoticeKey(message, "api.account.verifyInvalid", "This link is invalid or has expired.", "error");
-            resend.hidden = !isLoggedIn();
+        function show(state, titleKey, titleFallback, textKey, textFallback) {
+            status.setAttribute("data-state", state);
+            status.removeAttribute("aria-busy");
+            setKeyedText(title, titleKey, titleFallback);
+            setKeyedText(message, textKey, textFallback);
+            signIn.hidden = false;
+        }
+
+        function failed(textKey, textFallback) {
+            show("error", "api.account.verifyFailedTitle", "This link will not work", textKey, textFallback);
+            if (isLoggedIn()) {
+                resend.hidden = false;
+            } else {
+                showNoticeKey(feedback, "api.account.verifySignInFirst", "Sign in to get a new link.", "");
+            }
         }
 
         resend.addEventListener("click", function () {
             resend.disabled = true;
             requestNewVerificationLink(function (kind) {
-                showNotice(message, resendMessage(kind), kind === "sent" || kind === "already" ? "success" : "error");
+                showNotice(feedback, resendMessage(kind), kind === "sent" || kind === "already" ? "success" : "error");
                 resend.disabled = false;
             });
         });
 
         if (!token) {
-            failed();
+            failed("api.account.verifyInvalid", "This link is invalid or has expired.");
             return;
         }
 
         window.AEROVA_API.post("api/auth/verify-email", { token: token }).then(function () {
             markEmailVerified();
-            showNoticeKey(message, "api.account.verifyDone", "Your email address is confirmed. Thank you!", "success");
+            show("success", "api.account.verifyDoneTitle", "Email confirmed!", "api.account.verifyDoneText", "Your account is ready. You can now sign in securely.");
+            signIn.setAttribute("href", "login.html?verified=1");
+            redirect.hidden = false;
+            // Long enough to read the result; the button is there for anybody who does not want to wait.
+            window.setTimeout(function () {
+                window.location.href = "login.html?verified=1";
+            }, 2200);
         }).catch(function (error) {
             if (error && error.status === 422) {
-                failed();
+                failed("api.account.verifyInvalid", "This link is invalid or has expired.");
             } else {
-                showNotice(message, error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), "error");
+                show("error", "api.account.verifyFailedTitle", "This link will not work", "api.errors.generic", "Something went wrong. Please try again.");
+                if (error && error.userMessage) message.textContent = error.userMessage;
             }
         });
+    }
+
+    /* The page after registering: tells the person to look for the e-mail, with the address partly hidden. */
+    function handleCheckEmailPage() {
+        var status = document.getElementById("check-status");
+        var title = document.getElementById("check-title");
+        var text = document.getElementById("check-text");
+        if (!status || !title || !text) return;
+
+        var noMail = new URLSearchParams(window.location.search).get("status") === "nomail";
+        var masked = "";
+        try {
+            masked = window.sessionStorage.getItem(PENDING_EMAIL_KEY) || "";
+        } catch (storageError) { masked = ""; }
+
+        function paint() {
+            status.setAttribute("data-state", noMail ? "success" : "mail");
+            if (noMail) {
+                title.textContent = tr("api.account.checkNoMailTitle", "Your account is ready");
+                text.textContent = tr("api.account.checkNoMailText", "We could not send the confirmation email right now. Sign in and press \"Resend link\" in your profile.");
+            } else {
+                title.textContent = tr("api.account.checkTitle", "Check your email");
+                text.textContent = masked
+                    ? tr("api.account.checkText", "We sent a confirmation link to {email}. Open it to activate your account.").replace("{email}", masked)
+                    : tr("api.account.checkTextNoAddress", "We sent you a confirmation link. Open it to activate your account.");
+            }
+            status.querySelectorAll("[data-sent-only]").forEach(function (item) {
+                item.hidden = noMail;
+            });
+        }
+
+        paint();
+        window.addEventListener("aerova:languagechange", paint);
     }
 
     /* Remembers in this tab that the signed-in address is confirmed (what the profile banner reads). */
@@ -1042,12 +1192,14 @@
         purgeLegacyAccounts();
         if (guardAuthenticatedPages()) return;
         updateNavigation();
+        enhancePasswordFields();
         handleLoginForm();
         handleRegisterForm();
         showLoginNotice();
         handleForgotPasswordForm();
         handleResetPasswordForm();
         handleVerifyEmailPage();
+        handleCheckEmailPage();
         handleVerifyBanner();
         window.addEventListener("aerova:languagechange", function () {
             updateNavigation();
