@@ -4,6 +4,9 @@
     var LOGGED_IN_KEY = "isLoggedIn";
     var PENDING_EMAIL_KEY = "aerovaPendingEmail";
 
+    /* The three roles, written once: every other script asks the helpers below instead of comparing words. */
+    var ROLES = { user: "User", admin: "Admin", superAdmin: "SuperAdmin" };
+
     function readJSON(storage, key) {
         try {
             var raw = storage.getItem(key);
@@ -56,6 +59,17 @@
             return null;
         }
         return readJSON(sessionStorage, USER_KEY);
+    }
+
+    /* The stored role only decides what is offered (menus, which page to open); the API decides what is allowed. */
+    function canUseAdminPanel(user) {
+        var current = user || getCurrentUser();
+        return !!current && (current.role === ROLES.admin || current.role === ROLES.superAdmin);
+    }
+
+    function isSuperAdmin(user) {
+        var current = user || getCurrentUser();
+        return !!current && current.role === ROLES.superAdmin;
     }
 
     /* The token is kept by the API client; here only the name shown in the header and the role are kept. */
@@ -190,7 +204,7 @@
         var user = getCurrentUser();
         var items = ACCOUNT_ITEMS.slice();
 
-        if (user && user.role === "Admin") {
+        if (canUseAdminPanel(user)) {
             items.splice(items.length - 1, 0, ADMIN_ITEM);
         }
 
@@ -594,7 +608,7 @@
      */
     function pageAfterLogin(user) {
         var wanted = new URLSearchParams(window.location.search).get("next") || "";
-        var isAdmin = !!user && user.role === "Admin";
+        var isAdmin = canUseAdminPanel(user);
 
         if (/^[a-z0-9-]+\.html(\?[\w=&%.-]*)?$/i.test(wanted) && (isAdmin || !/^admin\.html/i.test(wanted))) {
             return wanted;
@@ -1232,6 +1246,9 @@
     }
 
     window.AerovaAuth = {
+        roles: ROLES,
+        canUseAdminPanel: canUseAdminPanel,
+        isSuperAdmin: isSuperAdmin,
         updateCurrentUser: updateCurrentUser,
         isLoggedIn: isLoggedIn,
         getCurrentUser: getCurrentUser,

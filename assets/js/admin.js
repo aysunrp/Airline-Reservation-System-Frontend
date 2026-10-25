@@ -1,12 +1,15 @@
 /*
- * AEROVA admin. Everything on this page comes from and goes to the backend (api/admin/*), which only answers to the Admin role.
- * The role is checked here too, but only so a customer sees a clear message instead of failing requests; the server decides.
+ * AEROVA admin. Everything on this page comes from and goes to the backend (api/admin/*): an Admin or a SuperAdmin reaches most of it,
+ * and the SuperAdmin alone the deletions, flight generation, cancellation rules, users and the audit log.
+ * The stored role only decides what is offered here (and shows a clear message to a customer); the server decides what is allowed,
+ * and the page stays hidden until the server has accepted the token.
  * Needs api-client.js, airports.js and auth.js.
  */
 (function () {
     "use strict";
 
     var api = window.AEROVA_API;
+    var auth = window.AerovaAuth;
     var directory = window.AEROVA_AIRPORTS;
     var PAGE_SIZE = 50;
 
@@ -58,7 +61,9 @@
             airports: { title: tr("api.admin.airports", "Airports"), subtitle: tr("api.admin.airportsSub", "Where AEROVA flies and the time zone of each airport") },
             promos: { title: tr("api.admin.promos", "Promo Codes"), subtitle: tr("api.admin.promosSub", "Discount codes for the payment page") },
             options: { title: tr("api.admin.options", "Baggage & Meals"), subtitle: tr("api.admin.optionsSub", "Extras travellers can add to a booking") },
-            rules: { title: tr("api.admin.rules", "Cancellation Rules"), subtitle: tr("api.admin.rulesSub", "Fees by cabin and days before departure") }
+            rules: { title: tr("api.admin.rules", "Cancellation Rules"), subtitle: tr("api.admin.rulesSub", "Fees by cabin and days before departure") },
+            users: { title: tr("api.admin.users", "Users"), subtitle: tr("api.admin.usersSub", "Accounts, roles and access") },
+            audit: { title: tr("api.admin.audit", "Audit Log"), subtitle: tr("api.admin.auditSub", "Who did what, and when") }
         };
     }
 
@@ -88,6 +93,8 @@
         baggage: [],
         meals: [],
         rules: [],
+        users: [],
+        audit: [],
         seatFlights: [],
         seatInventory: null,
         formContext: null,
@@ -176,6 +183,7 @@
             document.body.appendChild(panel);
         }
 
+        panel.hidden = false;
         panel.setAttribute("role", "alert");
         panel.innerHTML = '<h1 class="admin-access-title">' + escapeHtml(title) + "</h1>" +
             '<p class="admin-access-text">' + escapeHtml(text) + "</p>" +
@@ -323,7 +331,7 @@
                     "<td>" + statusBadge(item.status) + "</td>" +
                     '<td><div class="admin-actions">' +
                     '<button class="admin-btn admin-btn--ghost" type="button" data-edit-flight="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
-                    '<button class="admin-btn admin-btn--ghost" type="button" data-delete-flight="' + item.id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>" +
+                    deleteButton("flight", item.id) +
                     "</div></td></tr>";
             }).join("");
         }
@@ -376,7 +384,7 @@
                 "<td>" + statusBadge(item.isActive ? "Active" : "Inactive") + "</td>" +
                 '<td><div class="admin-actions">' +
                 '<button class="admin-btn admin-btn--ghost" type="button" data-edit-route="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-delete-route="' + item.id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>" +
+                deleteButton("route", item.id) +
                 "</div></td></tr>";
         }).join("");
     }
@@ -423,9 +431,9 @@
                 "<td>" + escapeHtml(String(item.arrivalTime).slice(0, 5) + (item.arrivalDayOffset ? " +" + item.arrivalDayOffset : "")) + "</td>" +
                 "<td>" + statusBadge(item.isActive ? "Active" : "Inactive") + "</td>" +
                 '<td><div class="admin-actions">' +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-generate-schedule="' + item.id + '">' + escapeHtml(tr("api.admin.generate", "Create flights")) + "</button>" +
+                generateButton(item.id) +
                 '<button class="admin-btn admin-btn--ghost" type="button" data-edit-schedule="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-delete-schedule="' + item.id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>" +
+                deleteButton("schedule", item.id) +
                 "</div></td></tr>";
         }).join("");
     }
@@ -467,7 +475,7 @@
                 '<td><div class="admin-actions">' +
                 '<button class="admin-btn admin-btn--ghost" type="button" data-view-aircraft="' + item.id + '">' + escapeHtml(tr("admin.viewDetails", "View Details")) + "</button>" +
                 '<button class="admin-btn admin-btn--ghost" type="button" data-edit-aircraft="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-delete-aircraft="' + item.id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>" +
+                deleteButton("aircraft", item.id) +
                 "</div></td></tr>";
         }).join("");
     }
@@ -738,9 +746,14 @@
     }
 
     function rowButtons(kind, id) {
+        // An Admin can read the cancellation rules; changing them is for a SuperAdmin.
+        if (kind === "rule" && !isSuperAdmin()) {
+            return "<td></td>";
+        }
+
         return '<td><div class="admin-actions">' +
             '<button class="admin-btn admin-btn--ghost" type="button" data-edit-' + kind + '="' + id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
-            '<button class="admin-btn admin-btn--ghost" type="button" data-delete-' + kind + '="' + id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>" +
+            deleteButton(kind, id) +
             "</div></td>";
     }
 
@@ -935,6 +948,22 @@
     }
 
     var FORMS = {
+        admin: {
+            title: tr("api.admin.adminAccount", "Admin account"),
+            path: "api/admin/users",
+            fields: function () {
+                return [
+                    { key: "firstName", label: tr("api.admin.fieldFirstName", "First name") },
+                    { key: "lastName", label: tr("api.admin.fieldLastName", "Last name") },
+                    { key: "email", label: tr("api.admin.colEmail", "Email"), type: "email", full: true },
+                    { key: "password", label: tr("api.admin.fieldPassword", "Password (8+ characters, letters and digits)"), type: "password", full: true }
+                ];
+            },
+            defaults: function () { return {}; },
+            toForm: function () { return {}; },
+            toRequest: function (data) { return { firstName: data.firstName, lastName: data.lastName, email: data.email, password: data.password }; },
+            reload: loadUsers
+        },
         flight: {
             title: tr("admin.flight", "Flight"),
             path: "api/admin/flights",
@@ -1237,21 +1266,33 @@
     }
 
     function remove(config, id, label) {
-        if (!window.confirm(tr("api.admin.confirmDelete", "Delete {name}? This cannot be undone.", { name: label }))) {
-            return;
-        }
+        confirmAction({
+            title: tr("admin.delete", "Delete"),
+            text: tr("api.admin.confirmDelete", "Delete {name}? This cannot be undone.", { name: label }),
+            confirm: tr("admin.delete", "Delete"),
+            danger: true
+        }).then(function (confirmed) {
+            if (!confirmed) return;
 
-        api.del(config.path + "/" + id).then(function () {
-            showMessage(config.title + tr("api.admin.deleted", " deleted."));
-            config.reload();
-        }).catch(function (error) {
-            showMessage(apiMessage(error), true);
+            api.del(config.path + "/" + id).then(function () {
+                showMessage(config.title + tr("api.admin.deleted", " deleted."));
+                config.reload();
+            }).catch(function (error) {
+                showMessage(apiMessage(error), true);
+            });
         });
     }
 
     /* ------------------------------------------------------------------ sections */
 
+    var SUPER_ADMIN_SECTIONS = { users: true, audit: true };
+
     function showSection(sectionId) {
+        // The SuperAdmin sections are not offered to an Admin; asking for one anyway lands on the dashboard.
+        if (SUPER_ADMIN_SECTIONS[sectionId] && !isSuperAdmin()) {
+            sectionId = "dashboard";
+        }
+
         var meta = getSectionMeta();
         var current = meta[sectionId] || meta.dashboard;
         state.section = meta[sectionId] ? sectionId : "dashboard";
@@ -1273,7 +1314,8 @@
         var loaders = {
             dashboard: loadDashboard, flights: resetFlightsAndLoad, routes: loadRoutes, schedules: loadSchedules,
             aircraft: loadAircraft, seats: loadSeatFlights, bookings: loadBookings, passengers: loadPassengers,
-            airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules
+            airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules,
+            users: loadUsers, audit: loadAudit
         };
         loaders[state.section]();
     }
@@ -1282,7 +1324,8 @@
         var painters = {
             dashboard: renderDashboard, flights: renderFlights, routes: renderRoutes, schedules: renderSchedules,
             aircraft: renderAircraft, seats: renderSeatInventory, bookings: renderBookings, passengers: renderPassengers,
-            airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules
+            airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules,
+            users: renderUsers, audit: renderAudit
         };
         var meta = getSectionMeta()[state.section];
         byId("admin-page-title").textContent = meta.title;
@@ -1333,15 +1376,20 @@
     }
 
     function cancelBooking(pnr) {
-        if (!window.confirm(tr("api.admin.confirmCancel", "Cancel booking {pnr}? The seats are released and a refund is requested where the fare rules allow it.", { pnr: pnr }))) {
-            return;
-        }
+        confirmAction({
+            title: tr("admin.cancelBooking", "Cancel Booking"),
+            text: tr("api.admin.confirmCancel", "Cancel booking {pnr}? The seats are released and a refund is requested where the fare rules allow it.", { pnr: pnr }),
+            confirm: tr("admin.cancelBooking", "Cancel Booking"),
+            danger: true
+        }).then(function (confirmed) {
+            if (!confirmed) return;
 
-        api.post("api/admin/bookings/" + encodeURIComponent(pnr) + "/cancel", {}).then(function () {
-            showMessage(tr("admin.bookingCancelledMsg", "Booking {pnr} cancelled.", { pnr: pnr }));
-            loadBookings();
-        }).catch(function (error) {
-            showMessage(apiMessage(error), true);
+            api.post("api/admin/bookings/" + encodeURIComponent(pnr) + "/cancel", {}).then(function () {
+                showMessage(tr("admin.bookingCancelledMsg", "Booking {pnr} cancelled.", { pnr: pnr }));
+                loadBookings();
+            }).catch(function (error) {
+                showMessage(apiMessage(error), true);
+            });
         });
     }
 
@@ -1396,6 +1444,225 @@
             showMessage(tr("api.admin.generated", "{created} flights created, {existing} already existed, {skipped} skipped.", { created: result.created.length, existing: result.alreadyExisting, skipped: result.skipped.length }) + (result.skipped.length ? " " + result.skipped[0].reason : ""));
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
+        });
+    }
+
+    /* ------------------------------------------------------------------ roles and the confirmation window */
+
+    function isSuperAdmin() {
+        return !!auth && auth.isSuperAdmin();
+    }
+
+    /* Deleting and creating flights from a schedule are for a SuperAdmin; an Admin is not shown them (the server refuses them too). */
+    function deleteButton(kind, id) {
+        return isSuperAdmin()
+            ? '<button class="admin-btn admin-btn--ghost admin-btn--danger-text" type="button" data-delete-' + kind + '="' + id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>"
+            : "";
+    }
+
+    function generateButton(id) {
+        return isSuperAdmin()
+            ? '<button class="admin-btn admin-btn--ghost" type="button" data-generate-schedule="' + id + '">' + escapeHtml(tr("api.admin.generate", "Create flights")) + "</button>"
+            : "";
+    }
+
+    /* The account chip in the sidebar and the SuperAdmin-only controls. */
+    function applyRole() {
+        var user = auth && auth.getCurrentUser();
+        var superAdmin = isSuperAdmin();
+
+        document.querySelectorAll("[data-super-only]").forEach(function (element) {
+            element.hidden = !superAdmin;
+        });
+
+        var chip = byId("admin-user");
+        if (chip && user) {
+            byId("admin-user-name").textContent = (String(user.firstName || "") + " " + String(user.lastName || "")).trim() || user.email || "";
+            var badge = byId("admin-user-role");
+            badge.textContent = roleLabel(user.role);
+            badge.classList.toggle("admin-role-badge--super", user.role === "SuperAdmin");
+            chip.hidden = false;
+        }
+    }
+
+    function roleLabel(role) {
+        var keys = { User: "api.admin.roleUser", Admin: "api.admin.roleAdmin", SuperAdmin: "api.admin.roleSuperAdmin" };
+        return keys[role] ? tr(keys[role], role) : String(role || "");
+    }
+
+    var confirmResolve = null;
+
+    /* Asks before something that cannot be taken back; resolves true or false. The safe answer (Cancel) has the focus. */
+    function confirmAction(options) {
+        return new Promise(function (resolve) {
+            if (confirmResolve) closeConfirm(false);
+            confirmResolve = resolve;
+
+            byId("confirm-modal-title").textContent = options.title;
+            byId("confirm-modal-text").textContent = options.text;
+            var accept = byId("confirm-accept");
+            accept.textContent = options.confirm || tr("api.admin.confirm", "Confirm");
+            accept.classList.toggle("admin-btn--danger", !!options.danger);
+            accept.classList.toggle("admin-btn--primary", !options.danger);
+            byId("confirm-modal").hidden = false;
+            byId("confirm-cancel").focus();
+        });
+    }
+
+    function closeConfirm(answer) {
+        byId("confirm-modal").hidden = true;
+        if (confirmResolve) {
+            var resolve = confirmResolve;
+            confirmResolve = null;
+            resolve(answer);
+        }
+    }
+
+    /* ------------------------------------------------------------------ users (SuperAdmin) */
+
+    function userQuery() {
+        var params = ["take=200"];
+        var search = byId("user-search").value.trim();
+        var role = byId("user-role-filter").value;
+        var active = byId("user-status-filter").value;
+
+        if (search) params.push("search=" + encodeURIComponent(search));
+        if (role) params.push("role=" + encodeURIComponent(role));
+        if (active) params.push("isActive=" + encodeURIComponent(active));
+        return "api/admin/users?" + params.join("&");
+    }
+
+    function roleBadge(role) {
+        var tone = role === "SuperAdmin" ? "role-super" : (role === "Admin" ? "role-admin" : "neutral");
+        return '<span class="admin-badge admin-badge--' + tone + '">' + escapeHtml(roleLabel(role)) + "</span>";
+    }
+
+    function userButton(action, id, label, danger) {
+        return '<button class="admin-btn admin-btn--ghost' + (danger ? " admin-btn--danger-text" : "") + '" type="button" data-user-action="' + action + '" data-user-id="' + id + '">' + escapeHtml(label) + "</button>";
+    }
+
+    function renderUsers() {
+        var body = byId("users-body");
+
+        if (!state.users.length) {
+            body.innerHTML = emptyRow(7, tr("api.admin.noUsers", "No accounts found."));
+            return;
+        }
+
+        var me = auth && auth.getCurrentUser();
+        body.innerHTML = state.users.map(function (item) {
+            var self = !!me && me.id === item.id;
+            var buttons = "";
+
+            // A SuperAdmin's role is not changed here; nobody changes or removes their own account.
+            if (item.role === "User") buttons += userButton("make-admin", item.id, tr("api.admin.makeAdmin", "Make Admin"));
+            if (item.role === "Admin") buttons += userButton("remove-admin", item.id, tr("api.admin.removeAdmin", "Remove Admin"));
+            if (!self) {
+                buttons += userButton(item.isActive ? "deactivate" : "activate", item.id, item.isActive ? tr("api.admin.deactivate", "Deactivate") : tr("api.admin.activate", "Activate"), item.isActive);
+                buttons += userButton("delete", item.id, tr("admin.delete", "Delete"), true);
+            }
+
+            return "<tr>" +
+                "<td>" + escapeHtml(item.firstName + " " + item.lastName) + (self ? '<span class="admin-you">' + escapeHtml(tr("api.admin.you", "(you)")) + "</span>" : "") + "</td>" +
+                '<td class="admin-cell-wrap">' + escapeHtml(item.email) + "</td>" +
+                "<td>" + roleBadge(item.role) + "</td>" +
+                "<td>" + activeBadge(item.isActive) + "</td>" +
+                "<td>" + escapeHtml(item.emailVerified ? tr("api.admin.yes", "Yes") : tr("api.admin.no", "No")) + "</td>" +
+                "<td>" + escapeHtml(utcDay(item.createdAt)) + "</td>" +
+                '<td><div class="admin-actions">' + buttons + "</div></td></tr>";
+        }).join("");
+    }
+
+    function loadUsers() {
+        loading("users-body", 7);
+        api.get(userQuery()).then(function (rows) {
+            state.users = rows;
+            renderUsers();
+        }).catch(function (error) {
+            failed(error, "users-body", 7, loadUsers);
+        });
+    }
+
+    function userAction(action, user) {
+        var name = user.firstName + " " + user.lastName;
+        var plans = {
+            "make-admin": { text: "api.admin.confirmMakeAdmin", fallback: "Give {name} the Admin role? They will be able to use the admin area.", label: tr("api.admin.makeAdmin", "Make Admin"), done: "api.admin.roleChangedMsg", run: function () { return api.put("api/admin/users/" + user.id + "/role", { role: "Admin" }); } },
+            "remove-admin": { text: "api.admin.confirmRemoveAdmin", fallback: "Take the Admin role away from {name}? Their open sessions stop working at once.", label: tr("api.admin.removeAdmin", "Remove Admin"), done: "api.admin.roleChangedMsg", danger: true, run: function () { return api.put("api/admin/users/" + user.id + "/role", { role: "User" }); } },
+            "deactivate": { text: "api.admin.confirmDeactivate", fallback: "Deactivate {name}? They cannot sign in and their open sessions stop at once.", label: tr("api.admin.deactivate", "Deactivate"), done: "api.admin.userUpdatedMsg", danger: true, run: function () { return api.put("api/admin/users/" + user.id + "/active", { isActive: false }); } },
+            "activate": { text: "api.admin.confirmActivate", fallback: "Activate {name} again?", label: tr("api.admin.activate", "Activate"), done: "api.admin.userUpdatedMsg", run: function () { return api.put("api/admin/users/" + user.id + "/active", { isActive: true }); } },
+            "delete": { text: "api.admin.confirmDeleteUser", fallback: "Delete the account of {name}? This cannot be undone. An account with bookings cannot be deleted; deactivate it instead.", label: tr("admin.delete", "Delete"), done: "api.admin.userDeletedMsg", danger: true, run: function () { return api.del("api/admin/users/" + user.id); } }
+        };
+        var plan = plans[action];
+        if (!plan) return;
+
+        confirmAction({
+            title: plan.label,
+            text: tr(plan.text, plan.fallback, { name: name }),
+            confirm: plan.label,
+            danger: !!plan.danger
+        }).then(function (confirmed) {
+            if (!confirmed) return;
+
+            plan.run().then(function () {
+                showMessage(tr(plan.done, "Done."));
+                loadUsers();
+            }).catch(function (error) {
+                showMessage(apiMessage(error), true);
+            });
+        });
+    }
+
+    /* ------------------------------------------------------------------ audit log (SuperAdmin) */
+
+    var AUDIT_ACTIONS = ["UserCreated", "UserRoleChanged", "UserDeactivated", "UserActivated", "UserDeleted", "FlightCreated", "FlightUpdated",
+        "FlightDeleted", "SeatChanged", "ScheduleCreated", "ScheduleUpdated", "ScheduleDeleted", "FlightsGenerated", "BookingCancelledByAdmin",
+        "AccessDenied", "SuperAdminBootstrapped"];
+
+    function auditActionLabel(action) {
+        return tr("api.admin.act." + action, action);
+    }
+
+    function paintAuditFilter() {
+        var select = byId("audit-action-filter");
+        var chosen = select.value;
+        select.innerHTML = '<option value="">' + escapeHtml(tr("api.admin.allActions", "All actions")) + "</option>" + AUDIT_ACTIONS.map(function (action) {
+            return '<option value="' + action + '">' + escapeHtml(auditActionLabel(action)) + "</option>";
+        }).join("");
+        select.value = chosen;
+    }
+
+    function renderAudit() {
+        var body = byId("audit-body");
+
+        if (!state.audit.length) {
+            body.innerHTML = emptyRow(5, tr("api.admin.noAudit", "No entries yet."));
+            return;
+        }
+
+        body.innerHTML = state.audit.map(function (item) {
+            var who = item.actorUserId != null
+                ? "#" + item.actorUserId + (item.actorRole ? " · " + roleLabel(item.actorRole) : "")
+                : (item.actorRole === "Server" ? tr("api.admin.auditServer", "Server") : tr("api.admin.auditNobody", "Not signed in"));
+            var when = String(item.createdAt || "").replace("T", " ").slice(0, 19);
+            var target = item.targetType + (item.targetId ? " · " + item.targetId : "");
+
+            return "<tr>" +
+                "<td>" + escapeHtml(when) + "</td>" +
+                "<td>" + escapeHtml(who) + "</td>" +
+                "<td>" + escapeHtml(auditActionLabel(item.action)) + "</td>" +
+                '<td class="admin-cell-wrap">' + escapeHtml(target) + "</td>" +
+                '<td class="admin-cell-wrap">' + escapeHtml(item.details || "—") + "</td></tr>";
+        }).join("");
+    }
+
+    function loadAudit() {
+        loading("audit-body", 5);
+        var action = byId("audit-action-filter").value;
+        api.get("api/admin/audit-logs?take=200" + (action ? "&action=" + encodeURIComponent(action) : "")).then(function (rows) {
+            state.audit = rows;
+            renderAudit();
+        }).catch(function (error) {
+            failed(error, "audit-body", 5, loadAudit);
         });
     }
 
@@ -1491,6 +1758,25 @@
         byId("airport-search").addEventListener("input", renderAirports);
         byId("promo-search").addEventListener("input", renderPromos);
 
+        var reloadUsers = debounce(loadUsers, 300);
+        byId("user-search").addEventListener("input", reloadUsers);
+        byId("user-role-filter").addEventListener("change", loadUsers);
+        byId("user-status-filter").addEventListener("change", loadUsers);
+        byId("add-user-btn").addEventListener("click", function () { openEntityForm(FORMS.admin, null); });
+        byId("users-body").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-user-action]");
+            var user = button ? find(state.users, button.getAttribute("data-user-id")) : null;
+            if (button && user) userAction(button.getAttribute("data-user-action"), user);
+        });
+
+        paintAuditFilter();
+        byId("audit-action-filter").addEventListener("change", loadAudit);
+        byId("audit-refresh-btn").addEventListener("click", loadAudit);
+
+        byId("confirm-accept").addEventListener("click", function () { closeConfirm(true); });
+        byId("confirm-cancel").addEventListener("click", function () { closeConfirm(false); });
+        document.querySelectorAll("[data-close-confirm]").forEach(function (el) { el.addEventListener("click", function () { closeConfirm(false); }); });
+
         // One listener per table: Edit opens the form with the row, Delete asks first.
         [
             { bodyId: "airports-body", kind: "airport", list: "adminAirports", label: function (item) { return item.code; } },
@@ -1567,14 +1853,46 @@
 
         document.addEventListener("keydown", function (event) {
             if (event.key === "Escape") {
+                if (!byId("confirm-modal").hidden) {
+                    closeConfirm(false);
+                    return;
+                }
                 setSidebarOpen(false);
                 closeModal();
                 closeDetails();
+            }
+
+            // Tab stays between the two answers while the question is open.
+            if (event.key === "Tab" && !byId("confirm-modal").hidden) {
+                var buttons = [byId("confirm-cancel"), byId("confirm-accept")];
+                var index = buttons.indexOf(document.activeElement);
+                event.preventDefault();
+                buttons[(index + (event.shiftKey ? buttons.length - 1 : 1)) % buttons.length].focus();
             }
         });
 
         window.addEventListener("resize", function () {
             if (window.innerWidth > 900) setSidebarOpen(false);
+        });
+    }
+
+    function reveal() {
+        var placeholder = byId("admin-access");
+        if (placeholder) placeholder.hidden = true;
+        byId("admin-shell").hidden = false;
+
+        bindUi();
+        applyRole();
+        showSection("dashboard");
+
+        window.addEventListener("aerova:languagechange", function () {
+            // The page's own words first, then the ones set from code (the title of the open section, the account chip, the table).
+            if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
+                window.AEROVA_I18N.applyTranslations(document);
+            }
+            applyRole();
+            paintAuditFilter();
+            repaint();
         });
     }
 
@@ -1584,18 +1902,29 @@
             return;
         }
 
-        if (currentRole() !== "Admin") {
+        // The session expired while the page is open: back to sign-in, then back here.
+        window.addEventListener("aerova:session-expired", function () {
+            window.location.replace("login.html?next=admin.html");
+        });
+
+        if (!auth || !auth.canUseAdminPanel()) {
             denyAccess();
             return;
         }
 
-        bindUi();
-        showSection("dashboard");
-
-        window.addEventListener("aerova:languagechange", function () {
-            repaint();
-            if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
-                window.AEROVA_I18N.applyTranslations(document);
+        // The stored role is only a hint. Nothing of the page is shown until the server has accepted the token for the admin area.
+        api.get("api/admin/dashboard").then(reveal).catch(function (error) {
+            var status = error instanceof api.ApiError ? error.status : 0;
+            if (status === 401) {
+                window.location.replace("login.html?next=admin.html");
+            } else if (status === 403) {
+                denyAccess();
+            } else {
+                showAccessPanel(
+                    tr("api.admin.unreachableTitle", "We could not check your access"),
+                    apiMessage(error),
+                    [{ label: tr("api.options.retry", "Try again"), href: "admin.html" }, { label: tr("auth.backHome", "Back to Home"), href: "index.html" }]
+                );
             }
         });
     }

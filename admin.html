@@ -34,7 +34,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=roles1">
 
 
     <link rel="stylesheet" href="assets/css/i18n.css">
@@ -50,7 +50,12 @@
 
 
 
-    <div class="admin-shell" id="admin-shell">
+    <main class="admin-access" id="admin-access" role="status" aria-live="polite">
+        <span class="admin-spinner" aria-hidden="true"></span>
+        <p class="admin-access-text" data-i18n="api.admin.checkingAccess">Checking your access...</p>
+    </main>
+
+    <div class="admin-shell" id="admin-shell" hidden>
 
 
 
@@ -143,6 +148,9 @@
                 <button class="admin-nav-link" type="button" data-section="promos" data-i18n="api.admin.promos">Promo Codes</button>
                 <button class="admin-nav-link" type="button" data-section="options" data-i18n="api.admin.options">Baggage &amp; Meals</button>
                 <button class="admin-nav-link" type="button" data-section="rules" data-i18n="api.admin.rules">Cancellation Rules</button>
+                <p class="admin-nav-group" data-super-only hidden data-i18n="api.admin.superAdminGroup">SuperAdmin</p>
+                <button class="admin-nav-link" type="button" data-section="users" data-super-only hidden data-i18n="api.admin.users">Users</button>
+                <button class="admin-nav-link" type="button" data-section="audit" data-super-only hidden data-i18n="api.admin.audit">Audit Log</button>
 
 
 
@@ -155,6 +163,10 @@
 
 
             <div class="admin-nav-footer">
+                <div class="admin-user" id="admin-user" hidden>
+                    <span class="admin-user-name" id="admin-user-name"></span>
+                    <span class="admin-role-badge" id="admin-user-role"></span>
+                </div>
 
 
 
@@ -1175,7 +1187,7 @@
             <section class="admin-section" id="section-rules" data-section-panel="rules" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <button class="admin-btn admin-btn--primary" id="add-rule-btn" type="button" data-i18n="api.admin.addRule">Add Rule</button>
+                        <button class="admin-btn admin-btn--primary" id="add-rule-btn" type="button" data-super-only hidden data-i18n="api.admin.addRule">Add Rule</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
@@ -1189,6 +1201,48 @@
 
 
 
+            <!-- USERS (SuperAdmin) -->
+            <section class="admin-section" id="section-users" data-section-panel="users" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <input class="admin-search" id="user-search" type="search" data-i18n-placeholder="api.admin.searchUsers" placeholder="Search name or email">
+                        <select class="admin-select" id="user-role-filter" aria-label="Role">
+                            <option value="" data-i18n="api.admin.allRoles">All roles</option>
+                            <option value="User" data-i18n="api.admin.roleUser">User</option>
+                            <option value="Admin" data-i18n="api.admin.roleAdmin">Admin</option>
+                            <option value="SuperAdmin" data-i18n="api.admin.roleSuperAdmin">SuperAdmin</option>
+                        </select>
+                        <select class="admin-select" id="user-status-filter" aria-label="Status">
+                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+                            <option value="true" data-i18n="common.statusActive">Active</option>
+                            <option value="false" data-i18n="common.statusInactive">Inactive</option>
+                        </select>
+                        <button class="admin-btn admin-btn--primary" id="add-user-btn" type="button" data-i18n="api.admin.addAdmin">Add Admin</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.colEmail">Email</th><th data-i18n="api.admin.colRole">Role</th><th data-i18n="admin.status">Status</th><th data-i18n="api.admin.colConfirmed">Email confirmed</th><th data-i18n="api.admin.colCreated">Created</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="users-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AUDIT LOG (SuperAdmin) -->
+            <section class="admin-section" id="section-audit" data-section-panel="audit" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <select class="admin-select" id="audit-action-filter" aria-label="Action"></select>
+                        <button class="admin-btn admin-btn--secondary" id="audit-refresh-btn" type="button" data-i18n="api.admin.refresh">Refresh</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.colWhen">When (UTC)</th><th data-i18n="api.admin.colWho">Who</th><th data-i18n="api.admin.colAction">Action</th><th data-i18n="api.admin.colTarget">Target</th><th data-i18n="api.admin.colDetails">Details</th></tr></thead>
+                            <tbody id="audit-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </main>
 
 
@@ -1257,6 +1311,18 @@
 
 
 
+    <div class="admin-modal" id="confirm-modal" hidden>
+        <div class="admin-modal-backdrop" data-close-confirm></div>
+        <div class="admin-modal-dialog admin-modal-dialog--confirm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-text">
+            <h2 class="admin-modal-title" id="confirm-modal-title"></h2>
+            <p class="admin-confirm-text" id="confirm-modal-text"></p>
+            <div class="admin-modal-actions">
+                <button class="admin-btn admin-btn--secondary" type="button" id="confirm-cancel" data-i18n="common.cancel">Cancel</button>
+                <button class="admin-btn admin-btn--primary" type="button" id="confirm-accept">OK</button>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-modal" id="details-modal" hidden>
 
 
@@ -1317,8 +1383,8 @@
     <script src="assets/js/chat-widget.js"></script>
 
 
-    <script src="assets/js/auth.js?v=ui1"></script>
-    <script src="assets/js/admin.js?v=api3"></script>
+    <script src="assets/js/auth.js?v=roles1"></script>
+    <script src="assets/js/admin.js?v=roles1"></script>
 
 
 
