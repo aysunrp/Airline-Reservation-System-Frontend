@@ -1,0 +1,107 @@
+/*
+ * AEROVA logo: every few seconds a small jet flies through the name. Each letter lifts and glows as the jet passes it, and a
+ * short gold contrail follows the jet. logo.js splits the name into letters and adds the jet; without it the name is plain text.
+ */
+.logo-text,
+.auth-logo-text,
+.admin-brand-text {
+    position: relative;
+    width: fit-content;
+}
+
+/* The name itself, larger than the pages' own 1.1 rem; the jet and its trail follow the letter size (they are sized in em). */
+.logo-text,
+.auth-logo-text {
+    font-size: 1.5rem;
+}
+
+/* The name keeps the pages' own font (Cinzel); only the letters are closer together than the pages' 0.34em. */
+.logo-text,
+.auth-logo-text,
+.admin-brand-text {
+    letter-spacing: 0.18em;
+}
+
+.admin-brand-text {
+    font-size: 1.35rem;
+}
+
+@media (max-width: 480px) {
+    .logo-text,
+    .auth-logo-text {
+        font-size: 1.3rem;
+    }
+}
+
+.logo-letter {
+    display: inline-block;
+    transform-origin: 50% 80%;
+    /* The letter's turn comes when the jet reaches it: the jet crosses from -10% to 108% of the name in 1.5 s of the 3 s round. */
+    animation: logo-letter 3s ease-in-out infinite;
+    animation-delay: calc((var(--at) + 0.1) / 1.18 * 1.5s - 0.12s);
+}
+
+.logo-jet {
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    width: 0.85em;
+    height: 0.85em;
+    margin: -0.425em 0 0 -0.425em;
+    opacity: 0;
+    pointer-events: none;
+    animation: logo-jet-fly 3s linear infinite;
+}
+
+.logo-jet svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: var(--color-gold-light, #e0c48a);
+    filter: drop-shadow(0 0 3px rgba(224, 196, 138, 0.7));
+    animation: logo-jet-wobble 0.9s ease-in-out infinite alternate;
+}
+
+.logo-jet::before {
+    content: "";
+    position: absolute;
+    right: 70%;
+    top: 50%;
+    width: 2.2em;
+    height: 2px;
+    transform: translateY(-50%);
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, rgba(224, 196, 138, 0.35) 55%, var(--color-gold-light, #e0c48a));
+}
+
+/* Straight across, a touch of life while it does: opacity switches on at 10% and off at 56%, the position runs evenly in between. */
+@keyframes logo-jet-fly {
+    0%, 8% { left: -10%; opacity: 0; }
+    10% { left: -5.28%; opacity: 1; }
+    56% { left: 103.28%; opacity: 1; }
+    58%, 100% { left: 108%; opacity: 0; }
+}
+
+@keyframes logo-jet-wobble {
+    from { transform: translateY(-1.6px) rotate(-5deg); }
+    to { transform: translateY(1.6px) rotate(4deg); }
+}
+
+@keyframes logo-letter {
+    0%, 7%, 21%, 100% { transform: none; text-shadow: none; }
+    12% {
+        transform: translateY(-1.5px) scale(1.04);
+        color: var(--color-gold-light, #e0c48a);
+        text-shadow: 0 0 6px rgba(224, 196, 138, 0.5);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logo-letter {
+        animation: none;
+    }
+
+    .logo-jet {
+        display: none;
+    }
+}
