@@ -249,20 +249,37 @@ h1 {
     inset: 0;
 }
 
+/*
+ * Sunset jet on the apron. The photo is shifted right so the aircraft clears the
+ * text column; its left edge fades into the navy backdrop.
+ */
 .hero-background {
     z-index: 0;
+    overflow: hidden;
     background-color: var(--color-navy-deep);
-    background-image: url("../images/hero-aircraft.jpg");
-    background-size: cover;
-    background-position: center 42%;
-    background-repeat: no-repeat;
+}
+
+.hero-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("../images/hero-jet-dusk-hd.webp") center / cover no-repeat;
+    transform: translate(12%, 9%);
+    -webkit-mask-image:
+        linear-gradient(90deg, transparent 0%, #000 22%, #000 100%),
+        linear-gradient(180deg, transparent 0%, #000 18%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(90deg, transparent 0%, #000 22%, #000 100%),
+        linear-gradient(180deg, transparent 0%, #000 18%, #000 100%);
+    mask-composite: intersect;
 }
 
 .hero-overlay {
     z-index: 1;
     background:
-        linear-gradient(180deg, rgba(5, 12, 22, 0.55) 0%, rgba(5, 12, 22, 0.22) 38%, rgba(5, 12, 22, 0.58) 100%),
-        linear-gradient(100deg, rgba(5, 12, 22, 0.72) 0%, rgba(5, 12, 22, 0.28) 52%, rgba(5, 12, 22, 0.18) 100%);
+        linear-gradient(180deg, rgba(5, 12, 22, 0.5) 0%, rgba(5, 12, 22, 0.08) 30%, rgba(5, 12, 22, 0.1) 55%, rgba(5, 12, 22, 0.7) 100%),
+        linear-gradient(100deg, rgba(5, 12, 22, 0.84) 0%, rgba(5, 12, 22, 0.55) 34%, rgba(5, 12, 22, 0.1) 62%, rgba(5, 12, 22, 0) 100%);
 }
 
 .hero-content {
