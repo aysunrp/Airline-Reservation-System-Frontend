@@ -283,7 +283,15 @@
             : '<tr><td colspan="5" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "No flights found.")) + "</td></tr>";
     }
 
+    /* The six numbers show a dash until the API has answered, so nothing made up is ever on screen. */
+    function clearDashboardStats() {
+        document.querySelectorAll(".admin-stat-value").forEach(function (value) {
+            value.textContent = "—";
+        });
+    }
+
     function loadDashboard() {
+        clearDashboardStats();
         loading("dashboard-bookings-body", 5);
         loading("dashboard-flights-body", 5);
 
@@ -1913,7 +1921,8 @@
         }
 
         // The stored role is only a hint. Nothing of the page is shown until the server has accepted the token for the admin area.
-        api.get("api/admin/dashboard").then(reveal).catch(function (error) {
+        // A small admin request does that: the dashboard counts every seat, and the page must not wait for it before it appears.
+        api.get("api/admin/cancellation-rules").then(reveal).catch(function (error) {
             var status = error instanceof api.ApiError ? error.status : 0;
             if (status === 401) {
                 window.location.replace("login.html?next=admin.html");
