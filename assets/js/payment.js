@@ -639,6 +639,18 @@
         }
     }
 
+    /* The confirmation link can be asked for again right here; a 409 means the address was confirmed in the meantime. */
+    function resendVerificationLink() {
+        window.AEROVA_API.post("api/auth/resend-verification", {}).then(function () {
+            setText("booking-status-text", tr("api.booking.linkSent", "A new confirmation link is on its way. Open it, then come back here."));
+        }).catch(function (error) {
+            var status = error && error.status;
+            setText("booking-status-text", status === 409
+                ? tr("api.booking.alreadyConfirmed", "Your email is already confirmed. Press the button to continue.")
+                : (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+        });
+    }
+
     function showBookingError(error, retry) {
         var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
         var status = isApiError ? error.status : 0;
@@ -650,7 +662,13 @@
             window.console.error(error);
         }
 
-        if (status === 409) {
+        if (isApiError && error.code === "emailNotVerified") {
+            title = tr("api.booking.verifyTitle", "Confirm your email to book");
+            text = tr("api.booking.verifyText", "Your seats are not held yet. Open the confirmation link we sent to your email, then press the button below. You only confirm once, not for every booking.");
+            actions.push({ label: tr("api.booking.verifiedRetry", "I have confirmed my email"), onClick: retry });
+            actions.push({ label: tr("api.booking.sendLink", "Send a new link"), onClick: resendVerificationLink });
+            actions.push({ label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" });
+        } else if (status === 409) {
             title = tr("api.booking.conflictTitle", "A seat is no longer available");
             text = tr("api.booking.conflictText", "Another traveller has just taken one of your seats. Please choose your seats again.");
             actions.push({ label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" });
