@@ -420,3 +420,9 @@
 .trips-status-actions:empty {
     display: none;
 }
+
+/* The refund amount next to its status. */
+.trip-card-refund-amount {
+    color: #f6f1e7;
+    font-weight: 500;
+}

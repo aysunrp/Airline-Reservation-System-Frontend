@@ -66,8 +66,10 @@
     }
 
     /* The demo tag is only for the pretend provider; a refund at Stripe is real, and one that went wrong points to support. */
-    function buildRefundMarkup(status, demo) {
+    function buildRefundMarkup(status, demo, amount, currency) {
         var key = refundKey(status);
+        var value = Number(amount);
+        var shown = key !== "notEligible" && isFinite(value) && value > 0;
         var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible", failed: "Failed", cancelled: "Cancelled" }[key];
         var problem = key === "failed" || key === "cancelled";
 
@@ -75,6 +77,7 @@
             '<p class="trip-card-refund">' +
                 '<span class="trip-card-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Refund status")) + "</span>" +
                 '<span class="trip-card-refund-status trip-card-refund-status--' + key + '">' + escapeHtml(tr("cancellation.status." + key, fallback)) + "</span>" +
+                (shown ? '<span class="trip-card-refund-amount">' + escapeHtml(value.toFixed(2) + " " + String(currency || "USD").toUpperCase()) + "</span>" : "") +
                 (demo ? '<span class="trip-card-refund-demo">' + escapeHtml(tr("cancellation.demoTag", "Demo")) + "</span>" : "") +
                 (problem ? '<span class="trip-card-refund-note">' + escapeHtml(tr("cancellation.tripNoteFailed", "Contact AEROVA support")) + "</span>" : "") +
             "</p>"
@@ -148,7 +151,7 @@
                     meta(tr("trips.passengerCount", "Passenger Count"), String(booking.passengerCount)) +
                     meta(tr("trips.selectedSeats", "Selected Seats"), card.seats) +
                 "</dl>" +
-                (cancelled ? buildRefundMarkup(booking.refundStatus, booking.refundIsDemo) : "") +
+                (cancelled ? buildRefundMarkup(booking.refundStatus, booking.refundIsDemo, booking.refundAmount, booking.refundCurrency) : "") +
                 '<div class="trip-card-footer">' +
                     '<div class="trip-card-price">' +
                         '<p class="trip-card-price-label">' + tr("trips.total", "Total") + "</p>" +

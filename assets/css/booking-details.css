@@ -144,6 +144,34 @@
     font-size: 1.3rem;
 }
 
+/* The saved amounts of a cancelled booking: paid, fee, refund, what is kept and where the refund goes. */
+.details-refund-facts {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0.8rem 0 0;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgba(198, 163, 106, 0.22);
+    border-radius: 12px;
+}
+
+.details-refund-fact {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.86rem;
+}
+
+.details-refund-fact dt {
+    color: rgba(246, 241, 231, 0.55);
+}
+
+.details-refund-fact dd {
+    margin: 0;
+    color: #f6f1e7;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
 .details-refund-meta {
     margin: 0.45rem 0 0;
     color: rgba(246, 241, 231, 0.5);

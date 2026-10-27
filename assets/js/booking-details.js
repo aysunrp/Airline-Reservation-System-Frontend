@@ -244,7 +244,17 @@
         };
 
         if (dto.cancellation) {
-            booking.refund = { status: refundLabel(dto.cancellation.refundStatus), amount: dto.cancellation.refundAmount, demo: !!dto.cancellation.refundIsDemo };
+            var cancelled = dto.cancellation;
+            booking.refund = {
+                status: refundLabel(cancelled.refundStatus),
+                amount: cancelled.refundAmount,
+                paid: cancelled.amountPaid,
+                fee: cancelled.feeAmount,
+                currency: cancelled.currency || "USD",
+                reason: cancelled.reason || "",
+                requestedAt: cancelled.requestedAt,
+                demo: !!cancelled.refundIsDemo
+            };
         }
 
         return booking;
@@ -460,6 +470,7 @@
             (refund.reference
                 ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.refundReference", "Refund request {ref}", { ref: refund.reference })) + "</p>"
                 : "") +
+            refundFactsMarkup(key, refund) +
             refundNoteMarkup(key, refund, booking);
 
         var refresh = document.getElementById("details-refund-refresh");
@@ -470,6 +481,47 @@
         }
     }
 
+    function money(amount, currency) {
+        var value = Number(amount);
+        return (isFinite(value) ? value : 0).toFixed(2) + " " + String(currency || "USD").toUpperCase();
+    }
+
+    function shortDate(value) {
+        if (!value) return "";
+        var text = String(value);
+        var date = new Date(/(Z|[+-]\d\d:?\d\d)$/i.test(text) ? text : text + "Z");
+        if (isNaN(date.getTime())) return "";
+        // Day.month.year reads the same in all three languages (some browsers have no Azerbaijani month names).
+        var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+        return pad(date.getDate()) + "." + pad(date.getMonth() + 1) + "." + date.getFullYear();
+    }
+
+    /*
+     * The amounts the server saved when the booking was cancelled (never worked out on the page): what was paid, the fee the fare rules
+     * keep, what comes back and what does not (a partial refund), and where it goes. A Stripe refund goes back to the card that paid.
+     */
+    function refundFactsMarkup(key, refund) {
+        var rows = [];
+        var cancelledOn = shortDate(refund.requestedAt);
+        if (cancelledOn) rows.push([tr("cancellation.factsCancelledOn", "Cancelled on"), cancelledOn]);
+        if (refund.reason) rows.push([tr("cancellation.factsReason", "Reason"), refund.reason]);
+        if (refund.paid != null) rows.push([tr("cancellation.factsPaid", "Amount paid"), money(refund.paid, refund.currency)]);
+        if (Number(refund.fee) > 0) rows.push([tr("cancellation.factsFee", "Cancellation fee"), money(refund.fee, refund.currency)]);
+        if (key !== "notEligible") {
+            rows.push([tr("cancellation.factsRefund", "Refund"), money(refund.amount, refund.currency)]);
+            var kept = Number(refund.paid) - Number(refund.amount);
+            if (kept > 0.004 && Number(refund.amount) > 0) rows.push([tr("cancellation.factsKept", "Not refunded"), money(kept, refund.currency)]);
+            rows.push([tr("cancellation.factsMethod", "Refunded to"), refund.demo
+                ? tr("cancellation.methodOther", "The original payment method")
+                : tr("cancellation.methodCard", "The card you paid with")]);
+        }
+
+        if (!rows.length) return "";
+        return '<dl class="details-refund-facts">' + rows.map(function (row) {
+            return '<div class="details-refund-fact"><dt>' + escapeHtml(row[0]) + "</dt><dd>" + escapeHtml(row[1]) + "</dd></div>";
+        }).join("") + "</dl>";
+    }
+
     /* What the traveller should know about the refund as it stands. A demo refund says so; a Stripe refund is never shown as arrived before Stripe confirms it. */
     function refundNoteMarkup(key, refund, booking) {
         if (refund.demo) {
@@ -477,16 +529,20 @@
         }
 
         var fallbacks = {
-            pending: "Your refund is being sent to your card.",
-            processing: "Your refund has been sent to your card. Your bank usually shows it within 5 to 10 business days.",
-            completed: "Your refund has been sent back to your card. It can take a few days to appear on your statement.",
+            pending: "Your refund has been requested to the card you paid with. Nothing has been paid back yet; it will show here once it is confirmed.",
+            processing: "The refund has been started to the card you used for the original payment and is still being processed. Once it is done, your bank usually shows it within 5 to 10 business days.",
+            completed: "Stripe has confirmed the refund to the card you used for the original payment. Depending on your bank it usually takes 5 to 10 business days to appear on your statement; this is an estimate, not a guarantee.",
             failed: "The refund did not go through, but your booking is cancelled. Please contact AEROVA support with booking reference {pnr}; we will pay you back.",
             cancelled: "The refund was cancelled before it reached your bank. Please contact AEROVA support with booking reference {pnr}."
         };
         var note = fallbacks[key] ? tr("cancellation.note." + key, fallbacks[key], { pnr: booking.pnr }) : "";
         var open = key === "pending" || key === "processing";
 
-        return (note ? '<p class="details-refund-meta details-refund-meta--' + key + '">' + escapeHtml(note) + "</p>" : "") +
+        var late = key === "processing" || key === "completed"
+            ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.noteLate", "If the amount has not appeared after 10 business days, please contact your bank first and, if needed, AEROVA support.")) + "</p>"
+            : "";
+
+        return (note ? '<p class="details-refund-meta details-refund-meta--' + key + '">' + escapeHtml(note) + "</p>" : "") + late +
             (open
                 ? '<button type="button" class="details-refund-refresh" id="details-refund-refresh">' + escapeHtml(tr("cancellation.refreshStatus", "Check refund status")) + "</button>"
                 : "");
@@ -725,7 +781,9 @@
             button.textContent = tr("cancellation.cancelling", "Cancelling...");
         }
 
-        window.AEROVA_API.post(bookingPath("/cancel"), { lastName: ownerLastName() }).then(function (dto) {
+        // The page language goes along so the cancellation and refund e-mails are written in it.
+        var language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
+        window.AEROVA_API.post(bookingPath("/cancel"), { lastName: ownerLastName(), language: language }).then(function (dto) {
             activeBooking = toPageBooking(dto, activeAirports);
             renderBooking(activeBooking);
             closeCancelModal();
