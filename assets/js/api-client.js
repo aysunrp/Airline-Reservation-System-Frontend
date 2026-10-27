@@ -173,6 +173,10 @@
     } else if (status === 422) {
       code = "businessRule";
       message = detail || tr("businessRule");
+      // A short reason the server names (link_expired, code_invalid...) lets a page react without reading the text.
+      if (typeof problem.code === "string" && /^[a-z_]{3,40}$/.test(problem.code)) {
+        code = problem.code;
+      }
       // Booking before the address is confirmed: shown in the page language.
       if (/confirm your email address before booking/i.test(detail)) {
         code = "emailNotVerified";

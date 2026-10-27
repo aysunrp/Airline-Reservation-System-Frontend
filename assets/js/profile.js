@@ -239,6 +239,9 @@
 
         Promise.all([window.AEROVA_API.get("api/profile"), window.AEROVA_API.get("api/profile/saved-passengers")]).then(function (results) {
             profileState = toPageProfile(results[0], results[1]);
+            if (window.AerovaAuth && window.AerovaAuth.updateCurrentUser && typeof results[0].emailVerified === "boolean") {
+                window.AerovaAuth.updateCurrentUser({ emailVerified: results[0].emailVerified });
+            }
             populateForm(profileState);
             renderSavedPassengers();
             setProfileStatus(null);
@@ -376,7 +379,7 @@
             profileState = toPageProfile(saved, profileState.savedPassengers);
             populateForm(profileState);
             if (window.AerovaAuth && window.AerovaAuth.updateCurrentUser) {
-                window.AerovaAuth.updateCurrentUser({ firstName: saved.firstName, lastName: saved.lastName, email: saved.email });
+                window.AerovaAuth.updateCurrentUser({ firstName: saved.firstName, lastName: saved.lastName, email: saved.email, emailVerified: saved.emailVerified });
             }
             showMessage(tr("profile.saved", "Your profile changes have been saved."), true);
         }).catch(function (error) {

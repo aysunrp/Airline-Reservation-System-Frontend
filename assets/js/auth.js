@@ -110,12 +110,18 @@
         window.location.href = "login.html";
     }
 
-    function tr(key, fallback) {
+    function tr(key, fallback, vars) {
         if (typeof window.t === "function") {
-            var value = window.t(key);
+            var value = window.t(key, vars);
             if (value && value !== key) return value;
         }
-        return fallback;
+        var text = fallback;
+        if (vars && typeof text === "string") {
+            Object.keys(vars).forEach(function (name) {
+                text = text.split("{" + name + "}").join(String(vars[name]));
+            });
+        }
+        return text;
     }
 
     function displayName(user) {
@@ -848,9 +854,9 @@
             setBusy(submit, true);
 
             window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
-                // The same words whether or not an account exists.
-                showNoticeKey(result, "api.account.forgotSent", "If an account exists for this address, we sent a link to choose a new password. It works for one hour. Check your spam folder too.", "success");
-                emailInput.value = "";
+                // The same step whether or not an account exists: the code page says "if an account exists".
+                try { sessionStorage.setItem(RESET_EMAIL_KEY, email); } catch (error) { /* ignore */ }
+                window.location.href = "verify-reset-code.html";
             }).catch(function (error) {
                 if (error && error.status === 503) {
                     showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
@@ -863,6 +869,208 @@
         });
     }
 
+    /* The ticket a correct code is traded for lives in this tab only; an older reset link still carries its token in the address. */
+    var RESET_EMAIL_KEY = "aerovaResetEmail";
+    var RESET_TICKET_KEY = "aerovaResetTicket";
+
+    function takeResetTicket() {
+        var ticket = "";
+        try { ticket = sessionStorage.getItem(RESET_TICKET_KEY) || ""; } catch (error) { /* ignore */ }
+        return ticket || takeTokenFromAddress();
+    }
+
+    function forgetResetTicket() {
+        try { sessionStorage.removeItem(RESET_TICKET_KEY); } catch (error) { /* ignore */ }
+    }
+
+    /* Step two of "Forgot your password": six boxes for the code that was e-mailed, then the new password. */
+    function handleVerifyResetCodePage() {
+        var form = document.getElementById("code-form");
+        if (!form) return;
+
+        var email = "";
+        try { email = sessionStorage.getItem(RESET_EMAIL_KEY) || ""; } catch (error) { /* ignore */ }
+        if (!email) {
+            window.location.replace("forgot-password.html");
+            return;
+        }
+
+        var boxes = Array.prototype.slice.call(form.querySelectorAll(".code-box"));
+        var result = document.getElementById("code-result");
+        var errorLine = document.getElementById("code-error");
+        var subtitle = document.getElementById("code-subtitle");
+        var submit = form.querySelector(".auth-submit");
+        var resend = document.getElementById("code-resend");
+        var cooldown = 0;
+        var timer = null;
+
+        function paintSubtitle() {
+            subtitle.textContent = tr("api.account.codeSubtitle", "If an account exists for {email}, we sent a 6-digit code. It works for 10 minutes. Check your spam folder too.", { email: email });
+        }
+
+        function showError(text) {
+            errorLine.textContent = text || "";
+            errorLine.hidden = !text;
+            boxes.forEach(function (box) {
+                box.classList.toggle("is-invalid", !!text);
+                box.setAttribute("aria-invalid", text ? "true" : "false");
+            });
+        }
+
+        function readCode() {
+            return boxes.map(function (box) { return box.value; }).join("");
+        }
+
+        function clearBoxes() {
+            boxes.forEach(function (box) { box.value = ""; });
+            boxes[0].focus();
+        }
+
+        function paintResend() {
+            resend.disabled = cooldown > 0;
+            resend.textContent = cooldown > 0
+                ? tr("api.account.codeResendIn", "New code in {seconds} s", { seconds: cooldown })
+                : tr("api.account.codeResend", "Send a new code");
+        }
+
+        function startCooldown(seconds) {
+            cooldown = seconds;
+            paintResend();
+            window.clearInterval(timer);
+            timer = window.setInterval(function () {
+                cooldown -= 1;
+                if (cooldown <= 0) {
+                    cooldown = 0;
+                    window.clearInterval(timer);
+                }
+                paintResend();
+            }, 1000);
+        }
+
+        function fillFrom(startIndex, text) {
+            var digits = String(text || "").replace(/\D/g, "");
+            for (var i = 0; i < digits.length && startIndex + i < boxes.length; i += 1) {
+                boxes[startIndex + i].value = digits.charAt(i);
+            }
+            var next = Math.min(startIndex + digits.length, boxes.length - 1);
+            boxes[next].focus();
+        }
+
+        function paintLabels() {
+            boxes.forEach(function (box, index) {
+                box.setAttribute("aria-label", tr("api.account.codeDigit", "Digit {n} of 6", { n: index + 1 }));
+            });
+        }
+
+        boxes.forEach(function (box, index) {
+            box.addEventListener("input", function () {
+                showError("");
+                var digits = box.value.replace(/\D/g, "");
+                box.value = "";
+                if (digits) fillFrom(index, digits);
+            });
+
+            box.addEventListener("keydown", function (event) {
+                if (event.key === "Backspace" && !box.value && index > 0) {
+                    boxes[index - 1].value = "";
+                    boxes[index - 1].focus();
+                    event.preventDefault();
+                } else if (event.key === "ArrowLeft" && index > 0) {
+                    boxes[index - 1].focus();
+                    event.preventDefault();
+                } else if (event.key === "ArrowRight" && index < boxes.length - 1) {
+                    boxes[index + 1].focus();
+                    event.preventDefault();
+                }
+            });
+
+            box.addEventListener("paste", function (event) {
+                var text = (event.clipboardData || window.clipboardData).getData("text");
+                event.preventDefault();
+                showError("");
+                fillFrom(0, text);
+            });
+        });
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            showNotice(result, "");
+
+            var code = readCode();
+            if (!/^\d{6}$/.test(code)) {
+                showError(tr("api.account.codeIncomplete", "Enter all six digits."));
+                (boxes.filter(function (box) { return !box.value; })[0] || boxes[0]).focus();
+                return;
+            }
+
+            showError("");
+            setBusy(submit, true);
+
+            window.AEROVA_API.post("api/auth/verify-reset-code", { email: email, code: code }).then(function (answer) {
+                try {
+                    sessionStorage.setItem(RESET_TICKET_KEY, answer.ticket);
+                    sessionStorage.removeItem(RESET_EMAIL_KEY);
+                } catch (error) { /* ignore */ }
+                window.location.href = "reset-password.html";
+            }).catch(function (error) {
+                var status = error && error.status;
+                if (status === 429) {
+                    showError(tr("api.account.codeTooMany", "Too many attempts. Please wait a minute and try again."));
+                } else if (status === 422) {
+                    showError(tr("api.account.codeInvalid", "That code is not correct or has expired. Check it or ask for a new one."));
+                    clearBoxes();
+                } else if (status === 400) {
+                    showError(tr("api.account.codeIncomplete", "Enter all six digits."));
+                } else {
+                    showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."), "error");
+                }
+                setBusy(submit, false);
+            });
+        });
+
+        resend.addEventListener("click", function () {
+            if (cooldown > 0) return;
+            showNotice(result, "");
+            showError("");
+            startCooldown(60);
+
+            window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
+                // The same words whether or not an account exists.
+                showNoticeKey(result, "api.account.codeResent", "If an account exists for this address, a new code is on its way. The old one no longer works.", "success");
+                clearBoxes();
+            }).catch(function (error) {
+                if (error && error.status === 503) {
+                    showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
+                } else {
+                    showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."), "error");
+                }
+            });
+        });
+
+        paintSubtitle();
+        paintLabels();
+        startCooldown(60);
+        window.addEventListener("aerova:languagechange", function () { paintSubtitle(); paintResend(); paintLabels(); });
+        boxes[0].focus();
+    }
+
+    /*
+     * The confirmed state is kept in this tab at sign-in. A link opened in another tab or on another device changes it on the server
+     * only, so while this tab still says "not confirmed" the server is asked once per page. The server stays the judge at booking.
+     */
+    function refreshVerification() {
+        var user = getCurrentUser();
+        if (!user || user.emailVerified !== false || !isLoggedIn()) return;
+
+        window.AEROVA_API.get("api/profile").then(function (profile) {
+            if (profile && typeof profile.emailVerified === "boolean") {
+                updateCurrentUser({ emailVerified: profile.emailVerified });
+            }
+        }).catch(function () {
+            // The stored state stays; nothing is shown for a failed refresh.
+        });
+    }
+
     function handleResetPasswordForm() {
         var form = document.getElementById("reset-form");
         if (!form) return;
@@ -870,7 +1078,7 @@
         bindClearOnInput(form);
         var result = document.getElementById("reset-result");
         var links = document.getElementById("reset-links");
-        var token = takeTokenFromAddress();
+        var token = takeResetTicket();
 
         function linkProblem(key, fallback) {
             form.hidden = true;
@@ -918,12 +1126,14 @@
             window.AEROVA_API.post("api/auth/reset-password", { token: token, newPassword: password, confirmPassword: confirm }).then(function () {
                 passwordInput.value = "";
                 confirmInput.value = "";
+                forgetResetTicket();
                 window.location.href = "login.html?reset=1";
             }).catch(function (error) {
                 passwordInput.value = "";
                 confirmInput.value = "";
                 if (error && error.status === 422) {
-                    linkProblem("api.account.resetInvalid", "This link is invalid or has expired. Ask for a new one.");
+                    forgetResetTicket();
+                    linkProblem("api.account.resetInvalid", "This step has expired or was already used. Ask for a new code.");
                 } else {
                     showApiFormError(error, { newPassword: passwordInput, confirmPassword: confirmInput, fallback: passwordInput });
                 }
@@ -992,8 +1202,8 @@
             signIn.hidden = false;
         }
 
-        function failed(textKey, textFallback) {
-            show("error", "api.account.verifyFailedTitle", "This link will not work", textKey, textFallback);
+        function failed(textKey, textFallback, titleKey, titleFallback) {
+            show("error", titleKey || "api.account.verifyFailedTitle", titleFallback || "This link will not work", textKey, textFallback);
             if (isLoggedIn()) {
                 resend.hidden = false;
             } else {
@@ -1024,7 +1234,16 @@
                 window.location.href = "login.html?verified=1";
             }, 2200);
         }).catch(function (error) {
-            if (error && error.status === 422) {
+            var reason = error && error.status === 422 ? error.code : "";
+            if (reason === "link_expired") {
+                failed("api.account.verifyExpiredText", "Confirmation links work for 24 hours. Sign in and ask for a new one.", "api.account.verifyExpiredTitle", "This link has expired");
+            } else if (reason === "link_confirmed") {
+                // Opened twice, or a mail program opened it first: the address is confirmed, nothing is wrong.
+                markEmailVerified();
+                show("success", "api.account.verifyConfirmedTitle", "Already confirmed", "api.account.verifyConfirmedText", "Your email address was confirmed with this link. You can sign in.");
+            } else if (reason === "link_used") {
+                failed("api.account.verifyUsedText", "Ask for a new link, or sign in if your address is confirmed.", "api.account.verifyUsedTitle", "This link was already used");
+            } else if (error && error.status === 422) {
                 failed("api.account.verifyInvalid", "This link is invalid or has expired.");
             } else {
                 show("error", "api.account.verifyFailedTitle", "This link will not work", "api.errors.generic", "Something went wrong. Please try again.");
@@ -1111,6 +1330,7 @@
 
         paint();
         window.addEventListener("aerova:languagechange", function () { paint(); });
+        window.addEventListener("aerova:userchange", function () { paint(); });
     }
 
 
@@ -1224,8 +1444,10 @@
         handleRegisterForm();
         showLoginNotice();
         handleForgotPasswordForm();
+        handleVerifyResetCodePage();
         handleResetPasswordForm();
         handleVerifyEmailPage();
+        refreshVerification();
         handleCheckEmailPage();
         handleVerifyBanner();
         window.addEventListener("aerova:languagechange", function () {
@@ -1254,14 +1476,17 @@
         ["firstName", "lastName", "email"].forEach(function (key) {
             if (changes && changes[key]) user[key] = changes[key];
         });
+        if (changes && typeof changes.emailVerified === "boolean") user.emailVerified = changes.emailVerified;
         writeJSON(sessionStorage, USER_KEY, user);
         updateNavigation();
+        try { window.dispatchEvent(new CustomEvent("aerova:userchange")); } catch (error) { /* older browsers: the next page load shows it */ }
     }
 
     window.AerovaAuth = {
         roles: ROLES,
         canUseAdminPanel: canUseAdminPanel,
         isSuperAdmin: isSuperAdmin,
+        refreshVerification: refreshVerification,
         updateCurrentUser: updateCurrentUser,
         isLoggedIn: isLoggedIn,
         getCurrentUser: getCurrentUser,
