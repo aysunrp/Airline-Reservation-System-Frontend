@@ -815,6 +815,8 @@
             showNoticeKey(notice, "api.account.verifiedLogin", "Your email is confirmed. You can now sign in.", "success");
         } else if (params.get("reset") === "1") {
             showNoticeKey(notice, "api.account.resetDone", "Your password was changed. Sign in with your new password.", "success");
+        } else if (params.get("needed") === "booking") {
+            showNoticeKey(notice, "api.account.signInToBook", "Sign in to continue your booking. The flight and seats you chose are kept.", "");
         }
     }
 
@@ -1179,13 +1181,24 @@
 
     function guardAuthenticatedPages() {
         var path = window.location.pathname.toLowerCase();
+        // A booking can only be made while signed in (the server refuses guests), so the pages from choosing seats to paying ask first.
+        var bookingPages = [
+            "seat-selection.html",
+            "passenger-details.html",
+            "baggage-selection.html",
+            "meal-selection.html",
+            "payment.html"
+        ];
         var protectedPages = [
             "my-trips.html",
             "profile.html",
             "notifications.html",
             "booking-details.html"
-        ];
+        ].concat(bookingPages);
         var needsAuth = protectedPages.some(function (page) {
+            return path.indexOf(page) !== -1;
+        });
+        var inBookingFlow = bookingPages.some(function (page) {
             return path.indexOf(page) !== -1;
         });
 
@@ -1195,7 +1208,7 @@
         }
 
         if (needsAuth && !isLoggedIn()) {
-            window.location.replace("login.html?next=" + encodeURIComponent(currentPageName()));
+            window.location.replace("login.html?next=" + encodeURIComponent(currentPageName()) + (inBookingFlow ? "&needed=booking" : ""));
             return true;
         }
 

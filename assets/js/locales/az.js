@@ -1794,6 +1794,7 @@ window.AEROVA_LOCALES.az = {
       "registeredSent": "Hesab yaradıldı. E-poçt ünvanınıza təsdiq keçidi göndərdik. Onu açın, sonra daxil olun.",
       "registeredNoMail": "Hesab yaradıldı, amma təsdiq məktubunu indi göndərə bilmədik. Daxil olun və profilinizdən yeni keçid istəyin.",
       "resetDone": "Şifrəniz dəyişdirildi. Yeni şifrənizlə daxil olun.",
+      "signInToBook": "Rezervasiyanı davam etdirmək üçün daxil olun. Seçdiyiniz uçuş və oturacaqlar saxlanılır.",
       "loginLocked": "Çox sayda uğursuz cəhd oldu. Zəhmət olmasa təxminən 15 dəqiqə gözləyib yenidən cəhd edin.",
       "forgotEyebrow": "Hesab köməyi",
       "forgotTitle": "Şifrəni unutmusunuz?",

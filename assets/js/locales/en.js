@@ -1794,6 +1794,7 @@ window.AEROVA_LOCALES.en = {
       "registeredSent": "Account created. We sent a confirmation link to your email address. Open it, then sign in.",
       "registeredNoMail": "Account created. We could not send the confirmation email right now. Sign in, then ask for a new link in your profile.",
       "resetDone": "Your password was changed. Sign in with your new password.",
+      "signInToBook": "Sign in to continue your booking. The flight and seats you chose are kept.",
       "loginLocked": "Too many failed attempts. Please wait about 15 minutes before trying again.",
       "forgotEyebrow": "Account help",
       "forgotTitle": "Forgot your password?",
