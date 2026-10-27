@@ -798,6 +798,174 @@
         bookingPanel("error", title, text, actions);
     }
 
+    function showReserved(held, bookingData, layout) {
+        var panel = document.getElementById("booking-status");
+
+        heldBooking = held;
+        if (panel) {
+            panel.hidden = true;
+        }
+        if (layout) {
+            layout.hidden = false;
+        }
+
+        restoreAppliedPromo();
+        populatePaymentSummary(bookingData);
+        startHoldTimer();
+    }
+
+    /*
+     * Every booking is confirmed by its own link, e-mailed to the contact address. The seats are held while the page waits. It asks the
+     * server (with this tab's own sign-in; nothing is read from the link) every few seconds for a few minutes, when the tab comes back
+     * into view, and when the confirmation page in another tab of this browser says so. Payment is only offered once the server says the
+     * booking is confirmed, and the answer is used once, so a repeated one cannot open the summary or a payment twice.
+     */
+    var linkWatch = { timer: null, polls: 0, busy: false, held: null, bookingData: null, layout: null, listening: false };
+
+    function stopLinkTimer() {
+        if (linkWatch.timer) {
+            window.clearInterval(linkWatch.timer);
+            linkWatch.timer = null;
+        }
+    }
+
+    function linkText(key, fallback) {
+        var email = (linkWatch.bookingData && linkWatch.bookingData.contact && linkWatch.bookingData.contact.email) || "";
+        var text = tr(key, fallback);
+        return text.replace("{email}", email);
+    }
+
+    function holdClock(held) {
+        var until = window.AEROVA_BOOKING.parseUtc(held.expiresAt);
+        var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+        return pad(until.getHours()) + ":" + pad(until.getMinutes());
+    }
+
+    function checkBookingLink(manual) {
+        var held = linkWatch.held;
+        if (linkWatch.busy || !held) {
+            return;
+        }
+
+        if (window.AEROVA_BOOKING.parseUtc(held.expiresAt).getTime() <= Date.now()) {
+            linkWatch.held = null;
+            stopLinkTimer();
+            holdEnded();
+            return;
+        }
+
+        linkWatch.busy = true;
+        window.AEROVA_API.get("api/bookings/my/" + encodeURIComponent(held.pnr)).then(function (booking) {
+            linkWatch.busy = false;
+            if (!linkWatch.held) {
+                return;
+            }
+
+            if (booking && booking.status && String(booking.status).toLowerCase() !== "pending") {
+                linkWatch.held = null;
+                stopLinkTimer();
+                holdEnded();
+            } else if (booking && booking.contactConfirmed === true) {
+                var confirmed = linkWatch.held;
+                linkWatch.held = null;
+                stopLinkTimer();
+                confirmed.contactConfirmed = true;
+                window.AEROVA_BOOKING.markConfirmed();
+                setText("booking-status-text", tr("api.booking.confirmedResuming", "Your email is confirmed. Continuing with your booking..."));
+                showReserved(confirmed, linkWatch.bookingData, linkWatch.layout);
+            } else if (manual) {
+                setText("booking-status-text", tr("api.booking.notYetConfirmed", "We cannot see the confirmation yet. Open the link in your email, then try again in a moment."));
+            }
+        }).catch(function (error) {
+            linkWatch.busy = false;
+            if (error && (error.status === 401 || error.status === 404)) {
+                // The sign-in ended (the site handles that itself) or the booking is gone: waiting on would only repeat the refusal.
+                linkWatch.held = null;
+                stopLinkTimer();
+                if (error.status === 404) {
+                    holdEnded();
+                }
+                return;
+            }
+            if (manual) {
+                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+            }
+        });
+    }
+
+    function resendBookingLink() {
+        var held = linkWatch.held;
+        if (!held) {
+            return;
+        }
+
+        var language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
+        window.AEROVA_API.post("api/bookings/" + encodeURIComponent(held.pnr) + "/resend-confirmation", { language: language }).then(function () {
+            setText("booking-status-text", linkText("api.booking.bookingLinkResent", "A new link is on its way to {email}. The old one no longer works."));
+        }).catch(function (error) {
+            var status = error && error.status;
+            if (status === 409) {
+                checkBookingLink(false);
+            } else if (status === 429) {
+                setText("booking-status-text", tr("api.booking.bookingLinkWait", "A message was sent a moment ago. Please wait a minute before asking for another."));
+            } else {
+                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+            }
+        });
+    }
+
+    function waitForBookingLink(held, bookingData, layout) {
+        linkWatch.held = held;
+        linkWatch.bookingData = bookingData;
+        linkWatch.layout = layout;
+        linkWatch.polls = 0;
+        stopLinkTimer();
+
+        var text = linkText("api.booking.bookingLinkText", "We sent a confirmation link to {email}. Open it and this page continues to payment by itself. Your seats are held until {time}.")
+            .replace("{time}", holdClock(held));
+        bookingPanel("info", tr("api.booking.bookingLinkTitle", "Confirm your booking"), text, [
+            { label: tr("api.booking.bookingLinkOpened", "I opened the link"), onClick: function () { checkBookingLink(true); } },
+            { label: tr("api.booking.bookingLinkResend", "Send the link again"), onClick: resendBookingLink },
+            { label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" }
+        ]);
+
+        linkWatch.timer = window.setInterval(function () {
+            linkWatch.polls += 1;
+            if (linkWatch.polls > VERIFY_MAX_POLLS) {
+                stopLinkTimer();
+                setText("booking-status-text", tr("api.booking.watchStopped", "We stopped checking by ourselves. Press the button once you have opened the link."));
+                return;
+            }
+            checkBookingLink(false);
+        }, VERIFY_POLL_MS);
+
+        if (linkWatch.listening) {
+            return;
+        }
+        linkWatch.listening = true;
+
+        document.addEventListener("visibilitychange", function () {
+            if (!document.hidden) {
+                checkBookingLink(false);
+            }
+        });
+        window.addEventListener("pagehide", stopLinkTimer);
+
+        if (window.BroadcastChannel) {
+            try {
+                var channel = new window.BroadcastChannel("aerova-email");
+                channel.onmessage = function (event) {
+                    if (event && event.data && event.data.type === "booking-confirmed" && linkWatch.held) {
+                        channel.postMessage({ type: "ack" });
+                        checkBookingLink(false);
+                    }
+                };
+            } catch (error) {
+                // Without the channel the timer and the focus check still do the job.
+            }
+        }
+    }
+
     /* Creates the booking in the backend (or reuses the one already held) before the payment page shows anything priced. */
     function reserveBooking(bookingData, layout) {
         var panel = document.getElementById("booking-status");
@@ -805,17 +973,11 @@
         bookingPanel("loading", tr("api.booking.loadingTitle", "Reserving your seats"), tr("api.booking.loadingText", "Please wait while we hold your seats and confirm the price."), []);
 
         window.AEROVA_BOOKING.ensure(bookingData).then(function (held) {
-            heldBooking = held;
-            if (panel) {
-                panel.hidden = true;
+            if (held.contactConfirmed === false) {
+                waitForBookingLink(held, bookingData, layout);
+                return;
             }
-            if (layout) {
-                layout.hidden = false;
-            }
-
-            restoreAppliedPromo();
-            populatePaymentSummary(bookingData);
-            startHoldTimer();
+            showReserved(held, bookingData, layout);
         }).catch(function (error) {
             showBookingError(error, function () {
                 reserveBooking(bookingData, layout);

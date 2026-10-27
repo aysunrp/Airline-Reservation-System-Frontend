@@ -191,10 +191,16 @@
       : Promise.resolve();
 
     forget();
+    // The page language is for the e-mail that confirms the booking; it is not part of what makes two bookings the same.
+    request.language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
     return release.then(function () {
       return window.AEROVA_API.post("api/bookings", request);
     }).then(function (booking) {
-      var created = { fingerprint: key, id: booking.id, pnr: booking.pnr, expiresAt: booking.expiresAt, price: booking.price };
+      var created = {
+        fingerprint: key, id: booking.id, pnr: booking.pnr, expiresAt: booking.expiresAt, price: booking.price,
+        // Each booking is confirmed by its own e-mailed link before it can be paid.
+        contactConfirmed: booking.contactConfirmed !== false
+      };
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(created));
       } catch (error) {
@@ -218,7 +224,22 @@
     }
   }
 
+  /* The link of this booking was opened (the server said so). */
+  function markConfirmed() {
+    var held = readHeld();
+    if (!held) {
+      return;
+    }
+    held.contactConfirmed = true;
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(held));
+    } catch (error) {
+      // The page asks the server again after a reload.
+    }
+  }
+
   window.AEROVA_BOOKING = {
+    markConfirmed: markConfirmed,
     extendHold: extendHold,
     buildRequest: buildRequest,
     savablePassengers: savablePassengers,
