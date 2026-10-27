@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
 
-    <link rel="stylesheet" href="assets/css/payment.css?v=stripe1">
+    <link rel="stylesheet" href="assets/css/payment.css?v=layout1">
 
 </head>
 
@@ -130,13 +130,51 @@
                                 <div class="stripe-checkout-copy">
                                     <h3 class="card-details-title" data-i18n="api.payment.stripeTitle">Secure payment by Stripe</h3>
                                     <p class="stripe-checkout-text" data-i18n="api.payment.stripeText">You will pay on Stripe's secure page by card, Apple Pay or Google Pay. AEROVA never sees or stores your card details.</p>
-                                    <ul class="stripe-checkout-points">
-                                        <li data-i18n="api.payment.stripePointMethods">Visa, Mastercard and other major cards; Apple Pay and Google Pay where your device supports them</li>
-                                        <li data-i18n="api.payment.stripePointConfirm">Your booking is confirmed as soon as Stripe confirms the payment</li>
-                                        <li data-i18n="api.payment.stripePointReturn">You come back to AEROVA automatically afterwards</li>
-                                    </ul>
                                 </div>
                             </div>
+
+                        <div class="promo-code-section" id="promo-code-section">
+
+                            <p class="promo-code-title" data-i18n="payment.promo">Promo Code</p>
+
+                            <div class="promo-code-row">
+
+                                <div class="promo-code-control" id="promo-code-control">
+
+                                    <input class="promo-code-input" id="promo-code-input" type="text" name="promoCode" data-i18n-placeholder="payment.promoPlaceholder" placeholder="Enter promo code"" autocomplete="off" maxlength="24">
+
+                                    <p class="promo-code-error" id="promo-code-error" hidden></p>
+
+                                </div>
+
+                                <button class="promo-code-button" id="promo-apply-button" type="button" data-i18n="payment.applyPromo">Apply</button>
+
+                            </div>
+
+                            <div class="promo-code-applied" id="promo-code-applied" hidden>
+
+                                <p class="promo-code-success" id="promo-code-success"></p>
+
+                                <button class="promo-code-remove" id="promo-remove-button" type="button" data-i18n="booking.remove">Remove</button>
+
+                            </div>
+
+                        </div>
+
+                            <ol class="payment-steps">
+                                <li class="payment-step">
+                                    <span class="payment-step-number" aria-hidden="true">1</span>
+                                    <span class="payment-step-text" data-i18n="api.payment.stripePointMethods">Visa, Mastercard and other major cards; Apple Pay and Google Pay where your device supports them</span>
+                                </li>
+                                <li class="payment-step">
+                                    <span class="payment-step-number" aria-hidden="true">2</span>
+                                    <span class="payment-step-text" data-i18n="api.payment.stripePointConfirm">Your booking is confirmed as soon as Stripe confirms the payment</span>
+                                </li>
+                                <li class="payment-step">
+                                    <span class="payment-step-number" aria-hidden="true">3</span>
+                                    <span class="payment-step-text" data-i18n="api.payment.stripePointReturn">You come back to AEROVA automatically afterwards</span>
+                                </li>
+                            </ol>
 
                         </article>
 
@@ -251,36 +289,6 @@
                             </div>
 
                         </dl>
-
-
-
-                        <div class="promo-code-section" id="promo-code-section">
-
-                            <p class="promo-code-title" data-i18n="payment.promo">Promo Code</p>
-
-                            <div class="promo-code-row">
-
-                                <div class="promo-code-control" id="promo-code-control">
-
-                                    <input class="promo-code-input" id="promo-code-input" type="text" name="promoCode" data-i18n-placeholder="payment.promoPlaceholder" placeholder="Enter promo code"" autocomplete="off" maxlength="24">
-
-                                    <p class="promo-code-error" id="promo-code-error" hidden></p>
-
-                                </div>
-
-                                <button class="promo-code-button" id="promo-apply-button" type="button" data-i18n="payment.applyPromo">Apply</button>
-
-                            </div>
-
-                            <div class="promo-code-applied" id="promo-code-applied" hidden>
-
-                                <p class="promo-code-success" id="promo-code-success"></p>
-
-                                <button class="promo-code-remove" id="promo-remove-button" type="button" data-i18n="booking.remove">Remove</button>
-
-                            </div>
-
-                        </div>
 
 
 

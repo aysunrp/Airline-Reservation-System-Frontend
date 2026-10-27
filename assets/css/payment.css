@@ -47,11 +47,19 @@
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
     gap: 1.5rem;
-    align-items: start;
+    /* Both cards end on the same line: the short one stretches to the height of the summary. */
+    align-items: stretch;
 }
 
 .payment-forms {
+    display: flex;
     min-width: 0;
+}
+
+.payment-forms > .payment-card {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
 }
 
 .payment-card,
@@ -65,8 +73,7 @@
 }
 
 .payment-summary {
-    position: sticky;
-    top: calc(var(--header-height) + 1.25rem);
+    min-width: 0;
 }
 
 .payment-card-title {
@@ -405,6 +412,10 @@
     border: 1px solid rgba(28, 21, 12, 0.1);
 }
 
+.payment-card .promo-code-section {
+    margin: 1.1rem 0 0;
+}
+
 .promo-code-title {
     margin: 0 0 0.7rem;
     color: rgba(28, 21, 12, 0.62);
@@ -596,8 +607,11 @@
     }
 
     .payment-summary {
-        position: static;
         order: -1;
+    }
+
+    .payment-steps::before {
+        display: none;
     }
 }
 
@@ -743,30 +757,60 @@
     line-height: 1.55;
 }
 
-.stripe-checkout-points {
-    display: grid;
-    gap: 0.45rem;
-    margin: 0.9rem 0 0;
+/* How paying works, in three steps; the rows share the height the card has left, so the card is as tall as the summary. */
+.payment-steps {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.4rem 0 0;
     padding: 0;
     list-style: none;
-    color: rgba(28, 21, 12, 0.66);
-    font-size: 0.88rem;
 }
 
-.stripe-checkout-points li {
-    position: relative;
-    padding-left: 1.2rem;
-}
-
-.stripe-checkout-points li::before {
+/* A thin line joins the three steps, so the space between them reads as a path and not as emptiness. */
+.payment-steps::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 0.55em;
-    width: 6px;
-    height: 6px;
+    top: 2.3rem;
+    bottom: 2.3rem;
+    left: calc(2.2rem - 1px);
+    width: 2px;
+    background: rgba(198, 163, 106, 0.5);
+}
+
+.payment-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.95rem 1.1rem;
+    border-radius: 14px;
+    background: #fdfaf4;
+    border: 1px solid rgba(198, 163, 106, 0.32);
+}
+
+.payment-step-number {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius: 50%;
-    background: #c6a36a;
+    background: linear-gradient(180deg, #e0c48a 0%, #c6a36a 100%);
+    color: #1c150c;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.payment-step-text {
+    color: rgba(28, 21, 12, 0.78);
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.5;
 }
 
 .payment-redirect-note {
