@@ -1450,6 +1450,8 @@ window.AEROVA_LOCALES.az = {
       "noFlightText": "Əvvəlcə uçuş seçin, sonra oturacaqlarınızı seçin.",
       "noSeatsTitle": "Göstəriləcək oturacaq yoxdur",
       "noSeatsText": "Bu uçuşda bu kabində oturacaq yoxdur.",
+      "passengerSeat": "Sərnişin {n}: {seat}",
+      "passengerSeatEmpty": "Sərnişin {n}: hələ seçilməyib",
       "extraLegroom": "Əlavə ayaq yeri"
     },
     "passengers": {
@@ -1905,6 +1907,13 @@ window.AEROVA_LOCALES.az = {
       "hiddenBeforeArrival": "{count} əvvəlki reys göstərilmir, çünki gediş reysiniz yerə enməmiş yola düşür.",
       "seatsOutbound": "Gediş yerlərini seçin",
       "seatsReturn": "Qayıdış yerlərini seçin",
+      "seatOutbound": "Gediş oturacağı: {seat}",
+      "seatReturn": "Qayıdış oturacağı: {seat}",
+      "seatLeg": "Reys {n} oturacağı: {seat}",
+      "seatsOutboundList": "Gediş: {seats}",
+      "seatsReturnList": "Qayıdış: {seats}",
+      "seatsLegList": "Reys {n}: {seats}",
+      "outboundSeatsNote": "Gediş oturacaqlarınız ({seats}) gediş reysində qalır. Qayıdış oturacaqlarını burada seçin; bu reysdə boşdursa, eyni nömrələri də seçə bilərsiniz.",
       "returnLine": "Qayıdış: {flight}, {route}, {date}, {times}",
       "outboundMissing": "Bu gediş-qayıdış səyahətinin gediş reysi tapılmadı. Zəhmət olmasa axtarışa yenidən başlayın.",
       "returnFlightTitle": "Qayıdış reysi",

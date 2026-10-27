@@ -1450,6 +1450,8 @@ window.AEROVA_LOCALES.ru = {
       "noFlightText": "Сначала выберите рейс, затем выберите места.",
       "noSeatsTitle": "Нет мест для показа",
       "noSeatsText": "В этом салоне на этом рейсе нет мест.",
+      "passengerSeat": "Пассажир {n}: {seat}",
+      "passengerSeatEmpty": "Пассажир {n}: ещё не выбрано",
       "extraLegroom": "Больше места для ног"
     },
     "passengers": {
@@ -1905,6 +1907,13 @@ window.AEROVA_LOCALES.ru = {
       "hiddenBeforeArrival": "Рейсов, вылетающих до посадки вашего рейса туда, не показано: {count}.",
       "seatsOutbound": "Выберите места на рейс туда",
       "seatsReturn": "Выберите места на обратный рейс",
+      "seatOutbound": "Место туда: {seat}",
+      "seatReturn": "Место обратно: {seat}",
+      "seatLeg": "Место на рейсе {n}: {seat}",
+      "seatsOutboundList": "Туда: {seats}",
+      "seatsReturnList": "Обратно: {seats}",
+      "seatsLegList": "Рейс {n}: {seats}",
+      "outboundSeatsNote": "Ваши места туда ({seats}) остаются на рейсе туда. Выберите места на обратный рейс здесь; можно взять те же номера, если они свободны на этом рейсе.",
       "returnLine": "Обратно: {flight}, {route}, {date}, {times}",
       "outboundMissing": "Рейс туда для этой поездки не найден. Пожалуйста, начните поиск заново.",
       "returnFlightTitle": "Обратный рейс",

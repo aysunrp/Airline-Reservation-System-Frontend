@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/seat-selection.css">
+    <link rel="stylesheet" href="assets/css/seat-selection.css?v=legs1">
     <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -119,6 +119,7 @@
                                     <p class="seat-info-label" id="selected-seat-label" data-i18n="seats.selectedSeats">Selected Seats</p>
                                     <p class="seat-info-value" id="selected-seat-value" data-i18n="seats.noSeat">No seat selected</p>
                                     <p class="seat-progress" id="seat-progress" data-i18n="ui.0Of1SeatsSelected">0 of 1 seats selected</p>
+                                    <ol class="seat-assignments" id="seat-assignments" aria-label="Seat of each passenger"></ol>
                                 </div>
                                 <div class="seat-info-item">
                                     <p class="seat-info-label" data-i18n="results.price">Price</p>
@@ -127,6 +128,7 @@
                             </div>
                             <button class="continue-button" id="continue-button" type="button" data-i18n="common.continue">Continue</button>
                         </div>
+                        <p class="seat-selection-message seat-outbound-note" id="seat-outbound-note" hidden></p>
                         <p class="seat-selection-message" id="seat-selection-message" aria-live="polite" hidden></p>
                     </div>
                 </div>
@@ -221,17 +223,17 @@
         </div>
     </footer>
 
-        <script src="assets/js/locales/en.js?v=authcode2"></script>
-    <script src="assets/js/locales/az.js?v=authcode2"></script>
-    <script src="assets/js/locales/ru.js?v=authcode2"></script>
+        <script src="assets/js/locales/en.js?v=legs1"></script>
+    <script src="assets/js/locales/az.js?v=legs1"></script>
+    <script src="assets/js/locales/ru.js?v=legs1"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/api-config.js?v=base1"></script>
     <script src="assets/js/api-client.js?v=code1"></script>
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js?v=profile1"></script>
-    <script src="assets/js/journey.js?v=mix1"></script>
+    <script src="assets/js/journey.js?v=legs1"></script>
     <script src="assets/js/seat-layouts.js"></script>
-    <script src="assets/js/seat-selection.js?v=multi1"></script>
+    <script src="assets/js/seat-selection.js?v=legs1"></script>
     <script src="assets/js/logo.js?v=thru1"></script>
 
 </body>

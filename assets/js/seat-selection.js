@@ -193,7 +193,52 @@
             tr("seats.ofSelected", selectedSeats.length + " of " + requiredSeats + " seats selected", { selected: selectedSeats.length, total: requiredSeats })
         );
         setText("selected-seat-price", tr("seats.priceIncluded", "Included"));
+        paintAssignments();
         updateContinueAvailability();
+    }
+
+    /* Seats go to the passengers in the order they are picked: the first seat is passenger 1's on this flight, and so on. */
+    function paintAssignments() {
+        var list = document.getElementById("seat-assignments");
+        if (!list) {
+            return;
+        }
+
+        list.innerHTML = "";
+        if (requiredSeats < 2) {
+            list.hidden = true;
+            return;
+        }
+
+        list.hidden = false;
+        for (var index = 0; index < requiredSeats; index += 1) {
+            var item = document.createElement("li");
+            var seat = selectedSeats[index];
+            item.className = "seat-assignment" + (seat ? " is-chosen" : "");
+            item.textContent = seat
+                ? tr("api.seats.passengerSeat", "Passenger {n}: {seat}", { n: index + 1, seat: seat }).replace("{n}", index + 1).replace("{seat}", seat)
+                : tr("api.seats.passengerSeatEmpty", "Passenger {n}: not chosen yet", { n: index + 1 }).replace("{n}", index + 1);
+            list.appendChild(item);
+        }
+    }
+
+    /*
+     * On the return flight of a round trip the outbound seats are shown for reference only: they belong to the other flight and are
+     * never picked here. The same seat numbers can be chosen again when they are free on this flight.
+     */
+    function paintOutboundNote() {
+        var note = document.getElementById("seat-outbound-note");
+        var journey = window.AEROVA_JOURNEY;
+        if (!note) {
+            return;
+        }
+
+        var outbound = journey && currentFlightData && journey.isReturnLeg(currentFlightData) ? journey.outbound() : null;
+        var seats = outbound && Array.isArray(outbound.selectedSeats) ? outbound.selectedSeats.join(", ") : "";
+        note.hidden = !seats;
+        note.textContent = seats
+            ? tr("api.journey.outboundSeatsNote", "Your outbound seats ({seats}) stay on the outbound flight. Choose the return seats here; the same numbers are fine when they are free on this flight.", { seats: seats }).replace("{seats}", seats)
+            : "";
     }
 
     function persistSelectedSeats(flightData) {
@@ -595,6 +640,7 @@
 
         populateFlightSummary(flightData, activeLayout);
         updateSelectedSeatSummary();
+        paintOutboundNote();
         bindSeatInteractions(flightData);
         bindContinue(flightData);
         loadSeats();
@@ -602,6 +648,7 @@
 
     function refreshForLanguage() {
         populateFlightSummary(currentFlightData, activeLayout);
+        paintOutboundNote();
         if (seatList) {
             renderSeatMap(activeLayout, seatList);
         } else {

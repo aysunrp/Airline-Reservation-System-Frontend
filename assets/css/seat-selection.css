@@ -788,6 +788,52 @@ h2 {
     line-height: 1.15;
 }
 
+/* Which passenger has which seat on this flight. */
+.seat-assignments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.7rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.seat-assignments[hidden] {
+    display: none;
+}
+
+.seat-assignment {
+    padding: 0.3rem 0.65rem;
+    border: 1px dashed rgba(198, 163, 106, 0.45);
+    border-radius: 999px;
+    color: rgba(246, 241, 231, 0.62);
+    font-size: 0.8rem;
+    font-weight: 300;
+}
+
+.seat-assignment.is-chosen {
+    border-style: solid;
+    background: rgba(198, 163, 106, 0.14);
+    color: #f6f1e7;
+}
+
+/* On the return flight: the outbound seats, for reference only. */
+.seat-outbound-note {
+    margin: 1rem auto 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(198, 163, 106, 0.32);
+    border-radius: 12px;
+    background: rgba(198, 163, 106, 0.08);
+    color: rgba(246, 241, 231, 0.78);
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+.seat-outbound-note[hidden] {
+    display: none;
+}
+
 .seat-progress {
     margin: 0.4rem 0 0;
     color: rgba(246, 241, 231, 0.62);

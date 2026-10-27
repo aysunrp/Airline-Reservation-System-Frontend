@@ -376,6 +376,42 @@
         return index < mix.adults ? "Adult" : (index < mix.adults + mix.children ? "Child" : "Infant");
     }
 
+    /*
+     * The seats of one passenger (card number n) on every flight of the trip, named by flight: "Outbound seat: 12A · Return seat:
+     * 14C" on a round trip, "Flight 1 seat: ... · Flight 2 seat: ..." on a multi-city trip. Each flight has its own seat.
+     */
+    function seatLineFor(number, fallbackSeat) {
+        var legs = activeLegSeats.length > 1 ? activeLegSeats : null;
+        if (!legs) {
+            return tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: fallbackSeat });
+        }
+
+        var roundTrip = legs.length === 2 && !(activeLegs[0] && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(activeLegs[0]));
+        return legs.map(function (legSeats, legIndex) {
+            var seat = legSeats[number - 1] || "—";
+            if (roundTrip) {
+                return legIndex === 0
+                    ? tr("api.journey.seatOutbound", "Outbound seat: {seat}", { seat: seat })
+                    : tr("api.journey.seatReturn", "Return seat: {seat}", { seat: seat });
+            }
+            return tr("api.journey.seatLeg", "Flight {n} seat: {seat}", { n: legIndex + 1, seat: seat });
+        }).join(" · ");
+    }
+
+    /* The seats of the whole trip for the summary, named by flight. */
+    function legSeatsSummary(lists) {
+        var roundTrip = lists.length === 2 && !(activeLegs[0] && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(activeLegs[0]));
+        return lists.map(function (list, legIndex) {
+            var seats = list.join(", ") || "—";
+            if (roundTrip) {
+                return legIndex === 0
+                    ? tr("api.journey.seatsOutboundList", "Outbound: {seats}", { seats: seats })
+                    : tr("api.journey.seatsReturnList", "Return: {seats}", { seats: seats });
+            }
+            return tr("api.journey.seatsLegList", "Flight {n}: {seats}", { n: legIndex + 1, seats: seats });
+        }).join(" · ");
+    }
+
     function cardTitle(number, type) {
         return type
             ? tr("api.passengers.card" + type, "Passenger {n} \u00b7 " + type, { n: number })
@@ -424,7 +460,7 @@
             if (seatLine) {
                 seatLine.textContent = type === "Infant"
                     ? tr("api.passengers.infantNote", "Infant under 2: travels on an adult's lap, so seat {seat} will be released.", { seat: seat })
-                    : tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: seat });
+                    : seatLineFor(index + 1, seat);
             }
 
             if (type !== "Infant" && seat) {
@@ -435,7 +471,7 @@
             }
         });
 
-        var text = keptByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | ");
+        var text = keptByLeg.length > 1 ? legSeatsSummary(keptByLeg) : keptByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | ");
         setText("summary-seats", text || "\u2014");
     }
 
@@ -536,7 +572,7 @@
                 '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(cardTitle(passengerNumber, declared)) + "</h2>" +
                 '<p class="passenger-seat">' + escapeHtml(declared === "Infant"
                     ? tr("api.passengers.infantLap", "Infant: travels on an adult's lap, no seat needed.")
-                    : tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: seat })) + "</p>" +
+                    : seatLineFor(passengerNumber, seat)) + "</p>" +
 
                 '<section class="details-section" aria-labelledby="' + personalId + '">' +
                     '<h3 class="details-section-title" id="' + personalId + '" data-i18n="travelDocs.personalInfo">' + escapeHtml(tr("travelDocs.personalInfo", "Personal Information")) + "</h3>" +
@@ -732,7 +768,7 @@
             if (seatLine && declared) {
                 seatLine.textContent = declared === "Infant"
                     ? tr("api.passengers.infantLap", "Infant: travels on an adult's lap, no seat needed.")
-                    : tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: card.getAttribute("data-seat") });
+                    : seatLineFor(index, card.getAttribute("data-seat"));
             }
             updateDocumentFields(card);
             card.querySelectorAll(".field-error[data-error-key]").forEach(function (element) {
@@ -997,7 +1033,7 @@
             }));
         }
         if (activeLegSeats.length > 1) {
-            setText("summary-seats", activeLegSeats.map(function (list) { return list.join(", "); }).join(" | "));
+            setText("summary-seats", legSeatsSummary(activeLegSeats));
         }
     }
 

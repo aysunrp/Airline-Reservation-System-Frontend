@@ -1450,6 +1450,8 @@ window.AEROVA_LOCALES.en = {
       "noFlightText": "Choose a flight first, then select your seats.",
       "noSeatsTitle": "No seats to show",
       "noSeatsText": "This cabin has no seats on this flight.",
+      "passengerSeat": "Passenger {n}: {seat}",
+      "passengerSeatEmpty": "Passenger {n}: not chosen yet",
       "extraLegroom": "Extra legroom"
     },
     "passengers": {
@@ -1905,6 +1907,13 @@ window.AEROVA_LOCALES.en = {
       "hiddenBeforeArrival": "{count} earlier flight(s) are not shown because they leave before your outbound flight lands.",
       "seatsOutbound": "Select Your Outbound Seats",
       "seatsReturn": "Select Your Return Seats",
+      "seatOutbound": "Outbound seat: {seat}",
+      "seatReturn": "Return seat: {seat}",
+      "seatLeg": "Flight {n} seat: {seat}",
+      "seatsOutboundList": "Outbound: {seats}",
+      "seatsReturnList": "Return: {seats}",
+      "seatsLegList": "Flight {n}: {seats}",
+      "outboundSeatsNote": "Your outbound seats ({seats}) stay on the outbound flight. Choose the return seats here; the same numbers are fine when they are free on this flight.",
       "returnLine": "Return: {flight}, {route}, {date}, {times}",
       "outboundMissing": "The outbound flight of this round trip is missing. Please start your search again.",
       "returnFlightTitle": "Return Flight",
