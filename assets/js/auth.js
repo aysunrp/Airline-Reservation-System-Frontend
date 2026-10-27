@@ -1224,15 +1224,63 @@
             return;
         }
 
+        /*
+         * Tells the other tabs of this browser (a booking may be waiting in one) that the address is confirmed. The message holds
+         * no token or id. A tab that answers carries the booking on, so this one must not send the person to the sign-in page.
+         */
+        function askOtherTabs(done) {
+            var channel = null;
+            var finished = false;
+            function finish(answered) {
+                if (finished) return;
+                finished = true;
+                try { channel.close(); } catch (closeError) { /* ignore */ }
+                done(answered);
+            }
+            if (!window.BroadcastChannel) { done(false); return; }
+            try {
+                channel = new window.BroadcastChannel("aerova-email");
+            } catch (channelError) { done(false); return; }
+            channel.onmessage = function (event) {
+                if (event && event.data && event.data.type === "ack") finish(true);
+            };
+            channel.postMessage({ type: "email-verified" });
+            window.setTimeout(function () { finish(false); }, 1200);
+        }
+
+        function leaveAfterConfirming() {
+            var booking = false;
+            try { booking = !!window.sessionStorage.getItem("bookingData"); } catch (storageError) { booking = false; }
+
+            // A mail link usually opens in a new tab with no sign-in of its own; a tab that is signed in keeps its session and its booking.
+            if (isLoggedIn()) {
+                askOtherTabs(function () {});
+                setKeyedText(redirect, "api.account.verifyContinue", "Taking you back to your booking...");
+                redirect.hidden = false;
+                window.setTimeout(function () {
+                    window.location.href = booking ? "payment.html" : "profile.html";
+                }, 1500);
+                return;
+            }
+
+            signIn.setAttribute("href", "login.html?verified=1");
+            askOtherTabs(function (answered) {
+                if (answered) {
+                    setKeyedText(message, "api.account.verifyBookingWaits", "Your booking is waiting in the other AEROVA tab and continues there by itself. You can close this tab.");
+                    return;
+                }
+                redirect.hidden = false;
+                // Long enough to read the result; the button is there for anybody who does not want to wait.
+                window.setTimeout(function () {
+                    window.location.href = "login.html?verified=1";
+                }, 2200);
+            });
+        }
+
         window.AEROVA_API.post("api/auth/verify-email", { token: token }).then(function () {
             markEmailVerified();
             show("success", "api.account.verifyDoneTitle", "Email confirmed!", "api.account.verifyDoneText", "Your account is ready. You can now sign in securely.");
-            signIn.setAttribute("href", "login.html?verified=1");
-            redirect.hidden = false;
-            // Long enough to read the result; the button is there for anybody who does not want to wait.
-            window.setTimeout(function () {
-                window.location.href = "login.html?verified=1";
-            }, 2200);
+            leaveAfterConfirming();
         }).catch(function (error) {
             var reason = error && error.status === 422 ? error.code : "";
             if (reason === "link_expired") {
@@ -1241,6 +1289,7 @@
                 // Opened twice, or a mail program opened it first: the address is confirmed, nothing is wrong.
                 markEmailVerified();
                 show("success", "api.account.verifyConfirmedTitle", "Already confirmed", "api.account.verifyConfirmedText", "Your email address was confirmed with this link. You can sign in.");
+                askOtherTabs(function () {});
             } else if (reason === "link_used") {
                 failed("api.account.verifyUsedText", "Ask for a new link, or sign in if your address is confirmed.", "api.account.verifyUsedTitle", "This link was already used");
             } else if (error && error.status === 422) {

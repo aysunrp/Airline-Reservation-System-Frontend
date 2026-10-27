@@ -639,6 +639,98 @@
         }
     }
 
+    /*
+     * While the address is not confirmed this page waits for it and carries on by itself: it asks the server (with this tab's own
+     * sign-in, nothing is read from the link) every few seconds for a few minutes, when the tab comes back into view, and when the
+     * confirmation page in another tab of this browser says so. Nothing is created until the server says the address is confirmed,
+     * and a repeated answer cannot reserve twice: the retry is used up by the first one.
+     */
+    var VERIFY_POLL_MS = 5000;
+    var VERIFY_MAX_POLLS = 36;
+    var verifyWatch = { timer: null, polls: 0, busy: false, retry: null, listening: false };
+
+    function stopVerifyTimer() {
+        if (verifyWatch.timer) {
+            window.clearInterval(verifyWatch.timer);
+            verifyWatch.timer = null;
+        }
+    }
+
+    function checkVerification(manual) {
+        if (verifyWatch.busy || !verifyWatch.retry) {
+            return;
+        }
+
+        verifyWatch.busy = true;
+        window.AEROVA_API.get("api/profile").then(function (profile) {
+            verifyWatch.busy = false;
+            var retry = verifyWatch.retry;
+            if (profile && profile.emailVerified === true && retry) {
+                verifyWatch.retry = null;
+                stopVerifyTimer();
+                if (window.AerovaAuth && window.AerovaAuth.updateCurrentUser) {
+                    window.AerovaAuth.updateCurrentUser({ emailVerified: true });
+                }
+                setText("booking-status-text", tr("api.booking.confirmedResuming", "Your email is confirmed. Continuing with your booking..."));
+                retry();
+            } else if (manual) {
+                setText("booking-status-text", tr("api.booking.notYetConfirmed", "We cannot see the confirmation yet. Open the link in your email, then try again in a moment."));
+            }
+        }).catch(function (error) {
+            verifyWatch.busy = false;
+            if (error && error.status === 401) {
+                // The sign-in ended: the site handles that itself; waiting on would only repeat the refusal.
+                verifyWatch.retry = null;
+                stopVerifyTimer();
+                return;
+            }
+            if (manual) {
+                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+            }
+        });
+    }
+
+    function watchVerification(retry) {
+        verifyWatch.retry = retry;
+        verifyWatch.polls = 0;
+        stopVerifyTimer();
+        verifyWatch.timer = window.setInterval(function () {
+            verifyWatch.polls += 1;
+            if (verifyWatch.polls > VERIFY_MAX_POLLS) {
+                stopVerifyTimer();
+                setText("booking-status-text", tr("api.booking.watchStopped", "We stopped checking by ourselves. Press the button once you have opened the link."));
+                return;
+            }
+            checkVerification(false);
+        }, VERIFY_POLL_MS);
+
+        if (verifyWatch.listening) {
+            return;
+        }
+        verifyWatch.listening = true;
+
+        document.addEventListener("visibilitychange", function () {
+            if (!document.hidden) {
+                checkVerification(false);
+            }
+        });
+        window.addEventListener("pagehide", stopVerifyTimer);
+
+        if (window.BroadcastChannel) {
+            try {
+                var channel = new window.BroadcastChannel("aerova-email");
+                channel.onmessage = function (event) {
+                    if (event && event.data && event.data.type === "email-verified" && verifyWatch.retry) {
+                        channel.postMessage({ type: "ack" });
+                        checkVerification(false);
+                    }
+                };
+            } catch (error) {
+                // Without the channel the timer and the focus check still do the job.
+            }
+        }
+    }
+
     /* The confirmation link can be asked for again right here; a 409 means the address was confirmed in the meantime. */
     function resendVerificationLink() {
         window.AEROVA_API.post("api/auth/resend-verification", {}).then(function () {
@@ -665,9 +757,10 @@
         if (isApiError && error.code === "emailNotVerified") {
             title = tr("api.booking.verifyTitle", "Confirm your email to book");
             text = tr("api.booking.verifyText", "Your seats are not held yet. Open the confirmation link we sent to your email, then press the button below. You only confirm once, not for every booking.");
-            actions.push({ label: tr("api.booking.verifiedRetry", "I have confirmed my email"), onClick: retry });
+            actions.push({ label: tr("api.booking.verifiedRetry", "I have confirmed my email"), onClick: function () { checkVerification(true); } });
             actions.push({ label: tr("api.booking.sendLink", "Send a new link"), onClick: resendVerificationLink });
             actions.push({ label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" });
+            watchVerification(retry);
         } else if (status === 409) {
             title = tr("api.booking.conflictTitle", "A seat is no longer available");
             text = tr("api.booking.conflictText", "Another traveller has just taken one of your seats. Please choose your seats again.");
