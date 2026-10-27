@@ -858,7 +858,12 @@
                 try { sessionStorage.setItem(RESET_EMAIL_KEY, email); } catch (error) { /* ignore */ }
                 window.location.href = "verify-reset-code.html";
             }).catch(function (error) {
-                if (error && error.status === 503) {
+                var status = error && error.status;
+                if (status === 404) {
+                    setFieldError(emailInput, tr("api.account.forgotNoAccount", "No account was found for this email address."));
+                } else if (status === 429) {
+                    showNoticeKey(result, "api.account.forgotWait", "A code was sent a moment ago. Please wait a minute before asking for another.", "error");
+                } else if (status === 503) {
                     showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
                 } else {
                     showApiFormError(error, { email: emailInput, fallback: emailInput });
@@ -905,7 +910,7 @@
         var timer = null;
 
         function paintSubtitle() {
-            subtitle.textContent = tr("api.account.codeSubtitle", "If an account exists for {email}, we sent a 6-digit code. It works for 10 minutes. Check your spam folder too.", { email: email });
+            subtitle.textContent = tr("api.account.codeSubtitle", "We sent a 6-digit code to {email}. It works for 10 minutes. Check your spam folder too.", { email: email });
         }
 
         function showError(text) {
@@ -1036,10 +1041,15 @@
 
             window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
                 // The same words whether or not an account exists.
-                showNoticeKey(result, "api.account.codeResent", "If an account exists for this address, a new code is on its way. The old one no longer works.", "success");
+                showNoticeKey(result, "api.account.codeResent", "A new code is on its way. The old one no longer works.", "success");
                 clearBoxes();
             }).catch(function (error) {
-                if (error && error.status === 503) {
+                var status = error && error.status;
+                if (status === 404) {
+                    showNoticeKey(result, "api.account.forgotNoAccount", "No account was found for this email address.", "error");
+                } else if (status === 429) {
+                    showNoticeKey(result, "api.account.forgotWait", "A code was sent a moment ago. Please wait a minute before asking for another.", "error");
+                } else if (status === 503) {
                     showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
                 } else {
                     showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."), "error");
