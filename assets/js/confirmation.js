@@ -450,6 +450,7 @@
             }
 
             populateConfirmation(toPageData(booking, results[0]));
+            linkBookingDetails(paid);
             showBooking();
             offerSaving(paid.pnr);
         }).catch(function (error) {
@@ -463,6 +464,30 @@
                 { label: tr("api.confirmation.retry", "Try again"), onClick: load }
             ], true);
         });
+    }
+
+    /*
+     * "Booking Details" opens this very booking. A signed-in traveller opens it from the account (its reference in the address); without a
+     * sign-in the reference and a passenger's last name, kept only in this tab, find it as Manage Booking does.
+     */
+    function linkBookingDetails(paid) {
+        var link = document.querySelector('a[href^="booking-details.html"]');
+        if (!link) {
+            return;
+        }
+
+        var signedIn = !!(window.AerovaAuth && window.AerovaAuth.isLoggedIn && window.AerovaAuth.isLoggedIn());
+        if (signedIn) {
+            link.setAttribute("href", "booking-details.html?pnr=" + encodeURIComponent(paid.pnr));
+            return;
+        }
+
+        try {
+            sessionStorage.setItem("aerovaManaged", JSON.stringify({ pnr: paid.pnr, lastName: paid.lastName }));
+        } catch (error) {
+            // Without storage the page explains how to find the booking.
+        }
+        link.setAttribute("href", "booking-details.html?source=manage");
     }
 
     function init() {

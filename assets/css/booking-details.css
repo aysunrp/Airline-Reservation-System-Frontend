@@ -145,6 +145,12 @@
 }
 
 /* The saved amounts of a cancelled booking: paid, fee, refund, what is kept and where the refund goes. */
+/* The page shows only its message while a booking loads or is missing; the layout must not stay behind it. */
+.details-layout[hidden],
+.details-message[hidden] {
+    display: none !important;
+}
+
 .details-refund-facts {
     display: grid;
     gap: 0.35rem;
