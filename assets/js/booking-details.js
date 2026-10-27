@@ -685,6 +685,11 @@
             return;
         }
 
+        if (isApiError && error.status === 429) {
+            showMessage(tr("cancellation.linkWait", "A confirmation link was sent a moment ago. Please wait a minute before asking for another."));
+            return;
+        }
+
         showMessage(isApiError ? error.userMessage : fallback);
     }
 
@@ -784,6 +789,13 @@
         // The page language goes along so the cancellation and refund e-mails are written in it.
         var language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
         window.AEROVA_API.post(bookingPath("/cancel"), { lastName: ownerLastName(), language: language }).then(function (dto) {
+            // A paid booking is not cancelled yet: a confirmation link went to the account's e-mail, and the booking stays as it is.
+            if (dto && dto.confirmationSent) {
+                closeCancelModal();
+                showMessage(tr("cancellation.linkSent", "We sent a confirmation link to {email}. Your booking stays active until you open the link and confirm the cancellation.", { email: dto.email }));
+                return;
+            }
+
             activeBooking = toPageBooking(dto, activeAirports);
             renderBooking(activeBooking);
             closeCancelModal();
