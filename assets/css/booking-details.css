@@ -178,6 +178,41 @@
     color: #c4e0c9;
 }
 
+.refund-status-badge--failed,
+.refund-status-badge--cancelled {
+    border-color: rgba(200, 120, 115, 0.6);
+    background: rgba(200, 120, 115, 0.14);
+    color: #f0c9c6;
+}
+
+.details-refund-meta--failed,
+.details-refund-meta--cancelled {
+    color: #f0c9c6;
+}
+
+.details-refund-refresh {
+    margin-top: 0.7rem;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-gold-light);
+    font: inherit;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.details-refund-refresh:hover:not(:disabled) {
+    background: rgba(198, 163, 106, 0.14);
+}
+
+.details-refund-refresh:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
 .refund-status-badge--notEligible {
     border-color: rgba(246, 241, 231, 0.2);
     background: rgba(246, 241, 231, 0.06);

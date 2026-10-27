@@ -244,7 +244,7 @@
         };
 
         if (dto.cancellation) {
-            booking.refund = { status: refundLabel(dto.cancellation.refundStatus), amount: dto.cancellation.refundAmount };
+            booking.refund = { status: refundLabel(dto.cancellation.refundStatus), amount: dto.cancellation.refundAmount, demo: !!dto.cancellation.refundIsDemo };
         }
 
         return booking;
@@ -423,12 +423,14 @@
         if (value === "processing") return "processing";
         if (value === "completed") return "completed";
         if (value === "noteligible") return "notEligible";
+        if (value === "failed") return "failed";
+        if (value === "cancelled" || value === "canceled") return "cancelled";
         return "pending";
     }
 
     function getRefundStatusLabel(status) {
         var key = getRefundStatusKey(status);
-        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible" }[key];
+        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible", failed: "Failed", cancelled: "Cancelled" }[key];
         return tr("cancellation.status." + key, fallback);
     }
 
@@ -458,7 +460,59 @@
             (refund.reference
                 ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.refundReference", "Refund request {ref}", { ref: refund.reference })) + "</p>"
                 : "") +
-            '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.demoShort", "Demo refund status: no real payment provider is contacted.")) + "</p>";
+            refundNoteMarkup(key, refund, booking);
+
+        var refresh = document.getElementById("details-refund-refresh");
+        if (refresh) {
+            refresh.addEventListener("click", function () {
+                refreshRefundStatus(refresh);
+            });
+        }
+    }
+
+    /* What the traveller should know about the refund as it stands. A demo refund says so; a Stripe refund is never shown as arrived before Stripe confirms it. */
+    function refundNoteMarkup(key, refund, booking) {
+        if (refund.demo) {
+            return '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.demoShort", "Demo refund status: no real payment provider is contacted.")) + "</p>";
+        }
+
+        var fallbacks = {
+            pending: "Your refund is being sent to your card.",
+            processing: "Your refund has been sent to your card. Your bank usually shows it within 5 to 10 business days.",
+            completed: "Your refund has been sent back to your card. It can take a few days to appear on your statement.",
+            failed: "The refund did not go through, but your booking is cancelled. Please contact AEROVA support with booking reference {pnr}; we will pay you back.",
+            cancelled: "The refund was cancelled before it reached your bank. Please contact AEROVA support with booking reference {pnr}."
+        };
+        var note = fallbacks[key] ? tr("cancellation.note." + key, fallbacks[key], { pnr: booking.pnr }) : "";
+        var open = key === "pending" || key === "processing";
+
+        return (note ? '<p class="details-refund-meta details-refund-meta--' + key + '">' + escapeHtml(note) + "</p>" : "") +
+            (open
+                ? '<button type="button" class="details-refund-refresh" id="details-refund-refresh">' + escapeHtml(tr("cancellation.refreshStatus", "Check refund status")) + "</button>"
+                : "");
+    }
+
+    /* Reads the booking again so a refund that Stripe has finished since shows its new state. */
+    function refreshRefundStatus(button) {
+        var request = requestBooking();
+        if (!request || !activeBooking) {
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = tr("cancellation.refreshing", "Checking...");
+
+        request.then(function (dto) {
+            activeBooking = toPageBooking(dto, activeAirports);
+            renderBooking(activeBooking);
+        }).catch(function () {
+            showMessage(tr("cancellation.refreshFailed", "We could not refresh the refund status. Please try again."));
+            var again = document.getElementById("details-refund-refresh");
+            if (again) {
+                again.disabled = false;
+                again.textContent = tr("cancellation.refreshStatus", "Check refund status");
+            }
+        });
     }
 
     function updateActionAvailability(booking) {
@@ -563,9 +617,52 @@
                 dialog.focus();
             }
         }).catch(function (error) {
-            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
-            showMessage(isApiError ? error.userMessage : tr("api.bookingDetails.quoteFailed", "We could not check the cancellation terms. Please try again."));
+            showCancelError(error, tr("api.bookingDetails.quoteFailed", "We could not check the cancellation terms. Please try again."));
         });
+    }
+
+    /* A booking made under an account can only be cancelled while signed in to it: the server answers 401 and the page offers the sign-in. */
+    function showCancelError(error, fallback) {
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+        if (isApiError && error.status === 401) {
+            showSignInMessage(tr("cancellation.noteSignIn", "Sign in to the account that made this booking to cancel it."));
+            return;
+        }
+
+        showMessage(isApiError ? error.userMessage : fallback);
+    }
+
+    function showSignInMessage(text) {
+        var message = document.getElementById("details-message");
+        if (!message) {
+            return;
+        }
+
+        var next = (window.location.pathname.split("/").pop() || "booking-details.html") + window.location.search;
+        var link = document.createElement("a");
+        link.href = "login.html?next=" + encodeURIComponent(next);
+        link.textContent = tr("cancellation.signInLink", "Sign in");
+
+        message.textContent = text + " ";
+        message.appendChild(link);
+        message.hidden = false;
+    }
+
+    /* The sentence after cancelling, from the refund the server recorded (its amount and state), never from anything typed on this page. */
+    function cancelledMessage(refund, pnr) {
+        if (!refund || !(refund.amount > 0)) {
+            return tr("cancellation.cancelledNoRefund", "Booking {pnr} has been cancelled. It is not eligible for a refund.", { pnr: pnr });
+        }
+
+        var vars = { pnr: pnr, amount: formatPrice(refund.amount) };
+        if (refund.demo) {
+            return tr("api.bookingDetails.cancelledWithRefund", "Booking {pnr} has been cancelled. A refund of {amount} was requested (demo: no real payment provider is contacted).", vars);
+        }
+
+        var key = getRefundStatusKey(refund.status);
+        return key === "failed" || key === "cancelled"
+            ? tr("cancellation.cancelledRefundFailed", "Booking {pnr} has been cancelled, but the refund of {amount} could not be sent yet. Please contact AEROVA support with this booking reference.", vars)
+            : tr("cancellation.cancelledStripe", "Booking {pnr} has been cancelled. A refund of {amount} is on its way to your card.", vars);
     }
 
     function closeCancelModal() {
@@ -620,9 +717,12 @@
         }
 
         var button = document.getElementById("confirm-cancellation-button");
+        var idleLabel = button ? button.textContent : "";
         var pnr = activeBooking.pnr;
         if (button) {
             button.disabled = true;
+            button.setAttribute("aria-busy", "true");
+            button.textContent = tr("cancellation.cancelling", "Cancelling...");
         }
 
         window.AEROVA_API.post(bookingPath("/cancel"), { lastName: ownerLastName() }).then(function (dto) {
@@ -630,10 +730,7 @@
             renderBooking(activeBooking);
             closeCancelModal();
 
-            var refund = activeBooking.refund;
-            showMessage(refund && refund.amount > 0
-                ? tr("api.bookingDetails.cancelledWithRefund", "Booking {pnr} has been cancelled. A refund of {amount} was requested (demo: no real payment provider is contacted).", { pnr: pnr, amount: formatPrice(refund.amount) })
-                : tr("cancellation.cancelledNoRefund", "Booking {pnr} has been cancelled. It is not eligible for a refund.", { pnr: pnr }));
+            showMessage(cancelledMessage(activeBooking.refund, pnr));
 
             var focusTarget = document.getElementById("details-message");
             if (focusTarget) {
@@ -641,12 +738,13 @@
                 focusTarget.focus();
             }
         }).catch(function (error) {
-            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
             closeCancelModal();
-            showMessage(isApiError ? error.userMessage : tr("bookingDetails.cancelFail", "Unable to cancel this booking. Please try again."));
+            showCancelError(error, tr("bookingDetails.cancelFail", "Unable to cancel this booking. Please try again."));
         }).then(function () {
             if (button) {
                 button.disabled = false;
+                button.removeAttribute("aria-busy");
+                button.textContent = idleLabel;
             }
         });
     }

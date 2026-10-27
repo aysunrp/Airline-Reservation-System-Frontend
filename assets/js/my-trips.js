@@ -61,18 +61,22 @@
 
     function refundKey(status) {
         var value = String(status || "").toLowerCase().replace(/[^a-z]/g, "");
-        return value === "processing" ? "processing" : (value === "completed" ? "completed" : (value === "noteligible" ? "notEligible" : "pending"));
+        var keys = { processing: "processing", completed: "completed", noteligible: "notEligible", failed: "failed", cancelled: "cancelled", canceled: "cancelled" };
+        return keys[value] || "pending";
     }
 
-    function buildRefundMarkup(status) {
+    /* The demo tag is only for the pretend provider; a refund at Stripe is real, and one that went wrong points to support. */
+    function buildRefundMarkup(status, demo) {
         var key = refundKey(status);
-        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible" }[key];
+        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible", failed: "Failed", cancelled: "Cancelled" }[key];
+        var problem = key === "failed" || key === "cancelled";
 
         return (
             '<p class="trip-card-refund">' +
                 '<span class="trip-card-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Refund status")) + "</span>" +
                 '<span class="trip-card-refund-status trip-card-refund-status--' + key + '">' + escapeHtml(tr("cancellation.status." + key, fallback)) + "</span>" +
-                '<span class="trip-card-refund-demo">' + escapeHtml(tr("cancellation.demoTag", "Demo")) + "</span>" +
+                (demo ? '<span class="trip-card-refund-demo">' + escapeHtml(tr("cancellation.demoTag", "Demo")) + "</span>" : "") +
+                (problem ? '<span class="trip-card-refund-note">' + escapeHtml(tr("cancellation.tripNoteFailed", "Contact AEROVA support")) + "</span>" : "") +
             "</p>"
         );
     }
@@ -144,7 +148,7 @@
                     meta(tr("trips.passengerCount", "Passenger Count"), String(booking.passengerCount)) +
                     meta(tr("trips.selectedSeats", "Selected Seats"), card.seats) +
                 "</dl>" +
-                (cancelled ? buildRefundMarkup(booking.refundStatus) : "") +
+                (cancelled ? buildRefundMarkup(booking.refundStatus, booking.refundIsDemo) : "") +
                 '<div class="trip-card-footer">' +
                     '<div class="trip-card-price">' +
                         '<p class="trip-card-price-label">' + tr("trips.total", "Total") + "</p>" +

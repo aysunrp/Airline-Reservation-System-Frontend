@@ -129,6 +129,7 @@
 
 
                 <button class="admin-nav-link" type="button" data-section="bookings" data-i18n="admin.bookings">Bookings</button>
+                <button class="admin-nav-link" type="button" data-section="refunds" data-i18n="cancellation.admin.nav">Refunds</button>
 
 
 
@@ -1218,6 +1219,29 @@
             </section>
 
             <!-- AUDIT LOG (SuperAdmin) -->
+            <section class="admin-section" id="section-refunds" data-section-panel="refunds" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <select class="admin-select" id="refund-status-filter" aria-label="Status">
+                            <option value="" data-i18n="cancellation.admin.allStatuses">All statuses</option>
+                            <option value="Pending" data-i18n="cancellation.status.pending">Pending</option>
+                            <option value="Processing" data-i18n="cancellation.status.processing">Processing</option>
+                            <option value="Completed" data-i18n="cancellation.status.completed">Completed</option>
+                            <option value="Failed" data-i18n="cancellation.status.failed">Failed</option>
+                            <option value="Cancelled" data-i18n="cancellation.status.cancelled">Cancelled</option>
+                            <option value="NotEligible" data-i18n="cancellation.status.notEligible">Not Eligible</option>
+                        </select>
+                        <button class="admin-btn admin-btn--secondary" id="refund-refresh-btn" type="button" data-i18n="api.admin.refresh">Refresh</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="cancellation.admin.colBooking">Booking</th><th data-i18n="cancellation.admin.colAmount">Amount</th><th data-i18n="admin.status">Status</th><th data-i18n="cancellation.admin.colStripe">Stripe refund</th><th data-i18n="cancellation.admin.colReason">Reason</th><th data-i18n="cancellation.admin.colBy">Started by</th><th data-i18n="cancellation.admin.colCreated">Requested (UTC)</th><th data-i18n="cancellation.admin.colUpdated">Updated (UTC)</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="refunds-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <section class="admin-section" id="section-audit" data-section-panel="audit" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
@@ -1356,13 +1380,13 @@
 
 
 
-        <script src="assets/js/locales/en.js"></script>
+        <script src="assets/js/locales/en.js?v=refund1"></script>
 
 
-    <script src="assets/js/locales/az.js"></script>
+    <script src="assets/js/locales/az.js?v=refund1"></script>
 
 
-    <script src="assets/js/locales/ru.js"></script>
+    <script src="assets/js/locales/ru.js?v=refund1"></script>
 
 
     <script src="assets/js/i18n.js"></script>
@@ -1373,7 +1397,7 @@
 
 
     <script src="assets/js/auth.js?v=roles1"></script>
-    <script src="assets/js/admin.js?v=roles3"></script>
+    <script src="assets/js/admin.js?v=refund1"></script>
 
 
 

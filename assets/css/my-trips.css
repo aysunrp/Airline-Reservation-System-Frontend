@@ -204,6 +204,18 @@
     text-transform: uppercase;
 }
 
+.trip-card-refund-status--failed,
+.trip-card-refund-status--cancelled {
+    border-color: rgba(176, 80, 72, 0.55);
+    background: rgba(176, 80, 72, 0.12);
+    color: #9a3d36;
+}
+
+.trip-card-refund-note {
+    color: #9a3d36;
+    font-size: 0.78rem;
+}
+
 .trip-card-refund-status--notEligible {
     border-color: rgba(120, 120, 120, 0.4);
     background: rgba(120, 120, 120, 0.1);

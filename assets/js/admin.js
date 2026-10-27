@@ -37,7 +37,10 @@
             "Available": "common.available",
             "Occupied": "common.occupied",
             "Reserved": "common.reserved",
-            "Blocked": "common.blocked"
+            "Blocked": "common.blocked",
+            "Processing": "cancellation.status.processing",
+            "Failed": "cancellation.status.failed",
+            "Not Eligible": "cancellation.status.notEligible"
         };
         var key = map[status];
         return key ? tr(key, status) : status;
@@ -57,6 +60,7 @@
             aircraft: { title: tr("admin.aircraft", "Aircraft"), subtitle: tr("admin.aircraftSub", "Fleet configuration and seat capacity") },
             seats: { title: tr("admin.seats", "Seat Inventory"), subtitle: tr("admin.seatsSub", "Cabin availability by flight") },
             bookings: { title: tr("admin.bookings", "Bookings"), subtitle: tr("admin.bookingsSub", "Reservation management and cancellations") },
+            refunds: { title: tr("cancellation.admin.nav", "Refunds"), subtitle: tr("cancellation.admin.sub", "Refunds of cancelled bookings and their Stripe status") },
             passengers: { title: tr("admin.passengers", "Passengers"), subtitle: tr("admin.passengersSub", "Traveler records and contact details") },
             airports: { title: tr("api.admin.airports", "Airports"), subtitle: tr("api.admin.airportsSub", "Where AEROVA flies and the time zone of each airport") },
             promos: { title: tr("api.admin.promos", "Promo Codes"), subtitle: tr("api.admin.promosSub", "Discount codes for the payment page") },
@@ -95,6 +99,7 @@
         rules: [],
         users: [],
         audit: [],
+        refunds: [],
         seatFlights: [],
         seatInventory: null,
         formContext: null,
@@ -141,8 +146,8 @@
         var lower = value.toLowerCase().replace(/\s+/g, "");
         var tone = "neutral";
         if (["active", "scheduled", "confirmed", "available", "ontime", "completed"].indexOf(lower) !== -1) tone = "success";
-        else if (["delayed", "pending", "reserved", "held", "maintenance"].indexOf(lower) !== -1) tone = "warning";
-        else if (["cancelled", "canceled", "blocked", "inactive", "occupied", "booked", "expired"].indexOf(lower) !== -1) tone = "danger";
+        else if (["delayed", "pending", "processing", "reserved", "held", "maintenance"].indexOf(lower) !== -1) tone = "warning";
+        else if (["cancelled", "canceled", "blocked", "inactive", "occupied", "booked", "expired", "failed"].indexOf(lower) !== -1) tone = "danger";
         return '<span class="admin-badge admin-badge--' + tone + '">' + escapeHtml(statusText(value)) + "</span>";
     }
 
@@ -1323,7 +1328,7 @@
             dashboard: loadDashboard, flights: resetFlightsAndLoad, routes: loadRoutes, schedules: loadSchedules,
             aircraft: loadAircraft, seats: loadSeatFlights, bookings: loadBookings, passengers: loadPassengers,
             airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules,
-            users: loadUsers, audit: loadAudit
+            users: loadUsers, audit: loadAudit, refunds: loadRefunds
         };
         loaders[state.section]();
     }
@@ -1333,7 +1338,7 @@
             dashboard: renderDashboard, flights: renderFlights, routes: renderRoutes, schedules: renderSchedules,
             aircraft: renderAircraft, seats: renderSeatInventory, bookings: renderBookings, passengers: renderPassengers,
             airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules,
-            users: renderUsers, audit: renderAudit
+            users: renderUsers, audit: renderAudit, refunds: renderRefunds
         };
         var meta = getSectionMeta()[state.section];
         byId("admin-page-title").textContent = meta.title;
@@ -1620,10 +1625,79 @@
         });
     }
 
+    /* ------------------------------------------------------------------ refunds */
+
+    function refundWhen(value) {
+        return String(value || "").replace("T", " ").slice(0, 19) || "\u2014";
+    }
+
+    function renderRefunds() {
+        var body = byId("refunds-body");
+
+        if (!state.refunds.length) {
+            body.innerHTML = emptyRow(9, tr("cancellation.admin.empty", "No refunds yet."));
+            return;
+        }
+
+        // Only a SuperAdmin sends money again, and only a refund that Stripe refused or cancelled; the server enforces both.
+        var canRetry = isSuperAdmin();
+
+        body.innerHTML = state.refunds.map(function (item) {
+            var retryable = canRetry && (item.status === "Failed" || item.status === "Cancelled");
+            var why = [item.reason, item.failureReason].filter(Boolean).join(" \u00b7 ");
+
+            return "<tr>" +
+                "<td>" + escapeHtml(item.pnr) + "</td>" +
+                "<td>" + escapeHtml(formatMoney(item.amount)) + "</td>" +
+                "<td>" + statusBadge(item.status) + "</td>" +
+                '<td class="admin-cell-wrap">' + escapeHtml(item.providerReference || "\u2014") + "</td>" +
+                '<td class="admin-cell-wrap">' + escapeHtml(why || "\u2014") + "</td>" +
+                "<td>" + escapeHtml(item.initiatedBy) + "</td>" +
+                "<td>" + escapeHtml(refundWhen(item.createdAt)) + "</td>" +
+                "<td>" + escapeHtml(refundWhen(item.updatedAt || item.processedAt)) + "</td>" +
+                '<td><div class="admin-actions">' +
+                (retryable ? '<button class="admin-btn admin-btn--ghost" type="button" data-retry-refund="' + escapeHtml(String(item.id)) + '">' + escapeHtml(tr("cancellation.admin.retry", "Send again")) + "</button>" : "") +
+                "</div></td></tr>";
+        }).join("");
+    }
+
+    function loadRefunds() {
+        loading("refunds-body", 9);
+        var status = byId("refund-status-filter").value;
+        api.get("api/admin/refunds?take=200" + (status ? "&status=" + encodeURIComponent(status) : "")).then(function (rows) {
+            state.refunds = rows;
+            renderRefunds();
+        }).catch(function (error) {
+            failed(error, "refunds-body", 9, loadRefunds);
+        });
+    }
+
+    function retryRefund(id) {
+        var item = find(state.refunds, id);
+        if (!item) return;
+
+        confirmAction({
+            title: tr("cancellation.admin.retryTitle", "Send the refund again"),
+            text: tr("cancellation.admin.retryText", "Ask Stripe again to refund {amount} for booking {pnr}? The amount stays what the cancellation worked out.", { pnr: item.pnr, amount: formatMoney(item.amount) }),
+            confirm: tr("cancellation.admin.retry", "Send again"),
+            danger: true
+        }).then(function (confirmed) {
+            if (!confirmed) return;
+
+            api.post("api/admin/refunds/" + encodeURIComponent(item.id) + "/retry", {}).then(function () {
+                showMessage(tr("cancellation.admin.retried", "The refund of booking {pnr} was sent again.", { pnr: item.pnr }));
+                loadRefunds();
+            }).catch(function (error) {
+                showMessage(apiMessage(error), true);
+                loadRefunds();
+            });
+        });
+    }
+
     /* ------------------------------------------------------------------ audit log (SuperAdmin) */
 
     var AUDIT_ACTIONS = ["UserCreated", "UserRoleChanged", "UserDeactivated", "UserActivated", "UserDeleted", "FlightCreated", "FlightUpdated",
-        "FlightDeleted", "SeatChanged", "ScheduleCreated", "ScheduleUpdated", "ScheduleDeleted", "FlightsGenerated", "BookingCancelledByAdmin",
+        "FlightDeleted", "SeatChanged", "ScheduleCreated", "ScheduleUpdated", "ScheduleDeleted", "FlightsGenerated", "BookingCancelledByAdmin", "RefundRetried",
         "AccessDenied", "SuperAdminBootstrapped"];
 
     function auditActionLabel(action) {
@@ -1780,6 +1854,13 @@
         paintAuditFilter();
         byId("audit-action-filter").addEventListener("change", loadAudit);
         byId("audit-refresh-btn").addEventListener("click", loadAudit);
+
+        byId("refund-status-filter").addEventListener("change", loadRefunds);
+        byId("refund-refresh-btn").addEventListener("click", loadRefunds);
+        byId("refunds-body").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-retry-refund]");
+            if (button && !button.disabled) retryRefund(button.getAttribute("data-retry-refund"));
+        });
 
         byId("confirm-accept").addEventListener("click", function () { closeConfirm(true); });
         byId("confirm-cancel").addEventListener("click", function () { closeConfirm(false); });
