@@ -1,0 +1,61 @@
+/* Payment return pages: what Stripe sends the customer back to. Built on the sign-in pages' card. */
+.auth-status[data-state="cancel"] .auth-status-glyph--cancel {
+    display: block;
+}
+
+.auth-status[data-state="cancel"] .auth-status-icon {
+    border-color: rgba(198, 163, 106, 0.5);
+}
+
+.auth-status[data-state="cancel"] .auth-status-glyph--cancel {
+    stroke: var(--color-gold-light);
+}
+
+.payment-return-summary {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1.5rem 0 0;
+    padding: 1.1rem 1.2rem;
+    border-radius: 14px;
+    text-align: left;
+    background: rgba(198, 163, 106, 0.07);
+    border: 1px solid rgba(198, 163, 106, 0.22);
+}
+
+.payment-return-summary[hidden] {
+    display: none;
+}
+
+.payment-return-summary div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.2rem 1rem;
+}
+
+.payment-return-summary dt {
+    color: rgba(246, 241, 231, 0.6);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.payment-return-summary dd {
+    margin: 0;
+    color: var(--color-cream);
+    font-size: 0.98rem;
+    text-align: right;
+}
+
+.payment-return-summary .payment-return-pnr {
+    color: var(--color-gold-light);
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: 0.18em;
+}
+
+#return-actions .auth-submit,
+#return-actions .auth-link-button {
+    text-align: center;
+}

@@ -47,6 +47,11 @@
 
         message.textContent = text || "";
         message.hidden = !text;
+
+        // The message sits above the summary: bring it into view so a failed click is never silent.
+        if (text && message.scrollIntoView) {
+            message.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
     }
 
     function toNumber(value, fallback) {
@@ -144,37 +149,6 @@
                 return !!part;
             })
             .join(" ");
-    }
-
-    function getSelectedPaymentMethod() {
-        var selected = document.querySelector('input[name="payment-method"]:checked');
-        return selected ? selected.value : "card";
-    }
-
-    function getPaymentMethodLabel(method) {
-        if (method === "apple") {
-            return tr("payment.applePayLabel", "Apple Pay");
-        }
-        if (method === "google") {
-            return tr("payment.googlePayLabel", "Google Pay");
-        }
-        return tr("payment.cardLabel", "Credit / Debit Card");
-    }
-
-    function updateWalletMethodMessage() {
-        var method = getSelectedPaymentMethod();
-        var messageText = document.getElementById("wallet-method-message-text");
-        if (!messageText) {
-            return;
-        }
-
-        if (method === "apple") {
-            messageText.textContent = typeof t === "function" ? t("payment.applePay") : "Continue with Apple Pay to complete your payment securely.";
-        } else if (method === "google") {
-            messageText.textContent = typeof t === "function" ? t("payment.googlePay") : "Continue with Google Pay to complete your payment securely.";
-        } else {
-            messageText.textContent = "";
-        }
     }
 
     function clearPromoError() {
@@ -417,183 +391,7 @@
         reserveBooking(bookingData, document.querySelector(".payment-layout"));
     }
 
-    function getTrimmedValue(input) {
-        return input ? String(input.value || "").trim() : "";
-    }
-
-    function digitsOnly(value) {
-        return String(value || "").replace(/\D/g, "");
-    }
-
-    function rememberOriginalPlaceholder(input) {
-        if (!input || input.getAttribute("data-original-placeholder") !== null) {
-            return;
-        }
-        input.setAttribute("data-original-placeholder", input.getAttribute("placeholder") || "");
-    }
-
-    function clearFieldError(input) {
-        if (!input || !input.classList.contains("is-invalid")) {
-            return;
-        }
-
-        input.classList.remove("is-invalid");
-
-        var original = input.getAttribute("data-original-placeholder");
-        if (original === null) {
-            return;
-        }
-
-        if (original) {
-            input.setAttribute("placeholder", original);
-        } else {
-            input.removeAttribute("placeholder");
-        }
-    }
-
-    function clearFieldErrors() {
-        var invalidInputs = document.querySelectorAll(".payment-field-input.is-invalid");
-        for (var i = 0; i < invalidInputs.length; i += 1) {
-            clearFieldError(invalidInputs[i]);
-        }
-    }
-
-    function markInvalid(input, message) {
-        if (!input) {
-            return;
-        }
-
-        rememberOriginalPlaceholder(input);
-        input.classList.add("is-invalid");
-        input.setAttribute("placeholder", message || tr("payment.fieldRequired", "This field is required"));
-
-        if (!getTrimmedValue(input)) {
-            input.value = "";
-        }
-    }
-
-    function isValidCardNumber(value) {
-        var digits = digitsOnly(value);
-        return digits.length >= 13 && digits.length <= 19;
-    }
-
-    function isValidExpiry(value) {
-        var normalized = String(value || "").replace(/\s+/g, "");
-        var match = normalized.match(/^(\d{2})\/(\d{2})$/);
-
-        if (!match) {
-            return false;
-        }
-
-        var month = Number(match[1]);
-        var year = Number(match[2]);
-
-        if (month < 1 || month > 12) {
-            return false;
-        }
-
-        var fullYear = 2000 + year;
-        var expiryEnd = new Date(fullYear, month, 0, 23, 59, 59, 999);
-        return expiryEnd >= new Date();
-    }
-
-    function isValidCvv(value) {
-        return /^\d{3,4}$/.test(digitsOnly(value));
-    }
-
-    function validateCardDetails() {
-        var cardholderInput = document.getElementById("cardholder-name");
-        var cardNumberInput = document.getElementById("card-number");
-        var expiryInput = document.getElementById("card-expiry");
-        var cvvInput = document.getElementById("card-cvv");
-
-        var isValid = true;
-        var focusField = null;
-
-        var cardholderName = getTrimmedValue(cardholderInput);
-        var cardNumber = getTrimmedValue(cardNumberInput);
-        var expiry = getTrimmedValue(expiryInput);
-        var cvv = getTrimmedValue(cvvInput);
-
-        if (!cardholderName) {
-            markInvalid(cardholderInput, tr("payment.cardholder", "Enter cardholder name"));
-            focusField = cardholderInput;
-            isValid = false;
-        }
-
-        if (!cardNumber) {
-            markInvalid(cardNumberInput, tr("payment.enterCard", "Enter card number"));
-            if (!focusField) {
-                focusField = cardNumberInput;
-            }
-            isValid = false;
-        } else if (!isValidCardNumber(cardNumber)) {
-            markInvalid(cardNumberInput, tr("payment.validCard", "Enter a valid card number"));
-            cardNumberInput.value = "";
-            if (!focusField) {
-                focusField = cardNumberInput;
-            }
-            isValid = false;
-        }
-
-        if (!expiry) {
-            markInvalid(expiryInput, tr("payment.enterExpiry", "Enter expiry date"));
-            if (!focusField) {
-                focusField = expiryInput;
-            }
-            isValid = false;
-        } else if (!isValidExpiry(expiry)) {
-            markInvalid(expiryInput, tr("payment.validExpiry", "Enter a valid expiry date"));
-            expiryInput.value = "";
-            if (!focusField) {
-                focusField = expiryInput;
-            }
-            isValid = false;
-        }
-
-        if (!cvv) {
-            markInvalid(cvvInput, tr("payment.enterCvv", "Enter CVV"));
-            if (!focusField) {
-                focusField = cvvInput;
-            }
-            isValid = false;
-        } else if (!isValidCvv(cvv)) {
-            markInvalid(cvvInput, tr("payment.validCvv", "Enter a valid CVV"));
-            cvvInput.value = "";
-            if (!focusField) {
-                focusField = cvvInput;
-            }
-            isValid = false;
-        }
-
-        return {
-            valid: isValid,
-            focusField: focusField
-        };
-    }
-
     var paying = false;
-
-    function paymentMethodFor(method) {
-        return method === "apple" ? "ApplePay" : (method === "google" ? "GooglePay" : "Card");
-    }
-
-    /* Card details go to the backend only to be checked; nothing of them is kept on this page or in storage. */
-    function buildPaymentRequest(method) {
-        var request = { pnr: heldBooking.pnr, method: paymentMethodFor(method) };
-
-        if (method === "card") {
-            var expiry = getTrimmedValue(document.getElementById("card-expiry")).replace(/\s+/g, "").split("/");
-
-            request.cardholderName = getTrimmedValue(document.getElementById("cardholder-name"));
-            request.cardNumber = digitsOnly(getTrimmedValue(document.getElementById("card-number")));
-            request.expiryMonth = Number(expiry[0]);
-            request.expiryYear = 2000 + Number(expiry[1]);
-            request.cvv = digitsOnly(getTrimmedValue(document.getElementById("card-cvv")));
-        }
-
-        return request;
-    }
 
     function setPaying(isPaying) {
         var payButton = document.getElementById("pay-button");
@@ -602,7 +400,7 @@
         if (payButton) {
             payButton.disabled = isPaying;
             if (isPaying) {
-                payButton.textContent = tr("api.payment.processing", "Processing payment...");
+                payButton.textContent = tr("api.payment.opening", "Opening secure payment...");
             } else {
                 refreshTotals();
             }
@@ -629,22 +427,11 @@
 
         window.AEROVA_BOOKING.forget();
         stopHoldTimer();
-        ["card-number", "card-cvv", "card-expiry", "cardholder-name"].forEach(function (id) {
-            var field = document.getElementById(id);
-            if (field) {
-                field.value = "";
-            }
-        });
         window.location.href = "./confirmation.html";
     }
 
     function paymentFailed(error, pnr, lastName) {
         var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
-        var cvv = document.getElementById("card-cvv");
-
-        if (cvv) {
-            cvv.value = "";
-        }
 
         if (!isApiError) {
             if (window.console) {
@@ -681,6 +468,29 @@
         showMessage(error.userMessage);
     }
 
+    /* Only Stripe's own Checkout pages: the address comes from the backend, and nothing else is ever opened from here. */
+    function isStripeCheckoutUrl(url) {
+        return /^https:\/\/checkout\.stripe\.com\//.test(String(url || ""));
+    }
+
+    /* What the return page needs to show the booking afterwards: the payment, its reference and a passenger's last name. */
+    function rememberCheckout(session, pnr, lastName) {
+        try {
+            sessionStorage.setItem("aerovaCheckout", JSON.stringify({ paymentId: session.paymentId, pnr: pnr, lastName: lastName }));
+
+            // Signed-in travellers are offered to save the passengers they typed in once the booking is confirmed (see the confirmation page).
+            var savable = window.AerovaAuth && window.AerovaAuth.isLoggedIn() ? window.AEROVA_BOOKING.savablePassengers(readBookingData()) : [];
+            if (savable.length) {
+                sessionStorage.setItem("aerovaSavable", JSON.stringify({ pnr: pnr, passengers: savable }));
+            } else {
+                sessionStorage.removeItem("aerovaSavable");
+            }
+        } catch (error) {
+            // The return page then shows the result without the booking link.
+        }
+    }
+
+    /* The backend opens a Stripe Checkout page for the held booking and its own total; this page only sends the customer there. */
     function handlePayClick(event) {
         event.preventDefault();
 
@@ -688,33 +498,27 @@
             return;
         }
 
-        clearFieldErrors();
         showMessage("");
 
-        var method = getSelectedPaymentMethod();
         var bookingData = readBookingData();
-
         if (!heldBooking || !bookingData || !bookingData.passengers || !bookingData.passengers.length) {
             showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
             return;
-        }
-
-        if (method === "card") {
-            var validation = validateCardDetails();
-            if (!validation.valid) {
-                if (validation.focusField) {
-                    validation.focusField.focus();
-                }
-                return;
-            }
         }
 
         var pnr = heldBooking.pnr;
         var lastName = bookingData.passengers[0].lastName;
 
         setPaying(true);
-        window.AEROVA_API.post("api/payments", buildPaymentRequest(method)).then(function () {
-            paymentSucceeded(pnr, lastName);
+        window.AEROVA_API.post("api/payments/checkout-session", { pnr: pnr, lastName: lastName }).then(function (session) {
+            if (!isStripeCheckoutUrl(session && session.checkoutUrl)) {
+                throw new Error("The payment page address is not a Stripe Checkout address.");
+            }
+
+            rememberCheckout(session, pnr, lastName);
+            window.AEROVA_BOOKING.extendHold(session.expiresAt);
+            stopHoldTimer();
+            window.location.assign(session.checkoutUrl);
         }).catch(function (error) {
             paymentFailed(error, pnr, lastName);
         });
@@ -727,24 +531,10 @@
                 return;
             }
 
-            if (target.classList.contains("payment-field-input")) {
-                clearFieldError(target);
-            }
-
             if (target.id === "promo-code-input") {
                 clearPromoError();
             }
         });
-    }
-
-    function bindPaymentMethodSelection() {
-        var methodInputs = document.querySelectorAll('input[name="payment-method"]');
-        for (var i = 0; i < methodInputs.length; i += 1) {
-            methodInputs[i].addEventListener("change", function () {
-                clearFieldErrors();
-                updateWalletMethodMessage();
-            });
-        }
     }
 
     function bindPromoActions() {
@@ -905,10 +695,8 @@
         var layout = document.querySelector(".payment-layout");
         var bookingData = readBookingData();
 
-        bindPaymentMethodSelection();
         bindClearInvalidOnInput();
         bindPromoActions();
-        updateWalletMethodMessage();
 
         if (payButton) {
             payButton.addEventListener("click", handlePayClick);
@@ -928,6 +716,6 @@
 
     document.addEventListener("DOMContentLoaded", init);
     window.addEventListener("aerova:languagechange", function () {
-        if (typeof updatePaymentSummary === 'function') { try { updatePaymentSummary(); } catch (e) {} } if (typeof updateWalletMethodMessage === 'function') { try { updateWalletMethodMessage(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
+        if (typeof updatePaymentSummary === 'function') { try { updatePaymentSummary(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
     });
 })();

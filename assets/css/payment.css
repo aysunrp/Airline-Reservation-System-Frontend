@@ -697,3 +697,88 @@
     font-weight: 400;
     line-height: 1.5;
 }
+
+/* Stripe Checkout: the card is typed on Stripe's page, never on this one. */
+.stripe-checkout-panel {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1.1rem;
+    align-items: start;
+    margin-top: 0.4rem;
+    padding: 1.3rem 1.25rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(198, 163, 106, 0.32);
+}
+
+.stripe-checkout-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #e0c48a 0%, #c6a36a 100%);
+    color: #1c150c;
+}
+
+.stripe-checkout-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.stripe-checkout-copy .card-details-title {
+    margin-bottom: 0.55rem;
+}
+
+.stripe-checkout-text {
+    margin: 0;
+    color: rgba(28, 21, 12, 0.78);
+    font-size: 0.98rem;
+    font-weight: 300;
+    line-height: 1.55;
+}
+
+.stripe-checkout-points {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: rgba(28, 21, 12, 0.66);
+    font-size: 0.88rem;
+}
+
+.stripe-checkout-points li {
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.stripe-checkout-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c6a36a;
+}
+
+.payment-redirect-note {
+    margin: 0 0 0.9rem;
+    color: rgba(28, 21, 12, 0.66);
+    font-size: 0.84rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+@media (max-width: 520px) {
+    .stripe-checkout-panel {
+        grid-template-columns: 1fr;
+    }
+}

@@ -204,7 +204,22 @@
     });
   }
 
+  /* Opening the Stripe page holds the seats longer on the server; the page then counts down to that time instead. */
+  function extendHold(expiresAt) {
+    var held = readHeld();
+    if (!held || !expiresAt) {
+      return;
+    }
+    held.expiresAt = expiresAt;
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(held));
+    } catch (error) {
+      // The countdown on the payment page is shorter than the real hold, nothing worse.
+    }
+  }
+
   window.AEROVA_BOOKING = {
+    extendHold: extendHold,
     buildRequest: buildRequest,
     savablePassengers: savablePassengers,
     quote: quote,

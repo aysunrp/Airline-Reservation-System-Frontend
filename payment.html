@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
 
-    <link rel="stylesheet" href="assets/css/payment.css">
+    <link rel="stylesheet" href="assets/css/payment.css?v=stripe1">
 
 </head>
 
@@ -123,124 +123,19 @@
 
 
 
-                            <div class="payment-method-list" role="radiogroup" aria-label="Payment method">
-
-                                <label class="payment-method-option" for="payment-method-card">
-
-                                    <input class="payment-method-input" id="payment-method-card" name="payment-method" type="radio" value="card" checked>
-
-                                    <span class="payment-method-control" aria-hidden="true"></span>
-
-                                    <span class="payment-method-copy">
-
-                                        <span class="payment-method-name" data-i18n="payment.cardLabel">Credit / Debit Card</span>
-
-                                        <span class="payment-method-note" data-i18n="ui.visaMastercardAndOtherMajorCards">Visa, Mastercard, and other major cards</span>
-
-                                    </span>
-
-                                </label>
-
-
-
-                                <label class="payment-method-option" for="payment-method-apple">
-
-                                    <input class="payment-method-input" id="payment-method-apple" name="payment-method" type="radio" value="apple">
-
-                                    <span class="payment-method-control" aria-hidden="true"></span>
-
-                                    <span class="payment-method-copy">
-
-                                        <span class="payment-method-name">Apple Pay</span>
-
-                                        <span class="payment-method-note" data-i18n="ui.payQuicklyWithApplePay">Pay quickly with Apple Pay</span>
-
-                                    </span>
-
-                                </label>
-
-
-
-                                <label class="payment-method-option" for="payment-method-google">
-
-                                    <input class="payment-method-input" id="payment-method-google" name="payment-method" type="radio" value="google">
-
-                                    <span class="payment-method-control" aria-hidden="true"></span>
-
-                                    <span class="payment-method-copy">
-
-                                        <span class="payment-method-name">Google Pay</span>
-
-                                        <span class="payment-method-note" data-i18n="ui.payQuicklyWithGooglePay">Pay quickly with Google Pay</span>
-
-                                    </span>
-
-                                </label>
-
-                            </div>
-
-
-
-                            <div class="card-details" id="card-details">
-
-                                <h3 class="card-details-title" data-i18n="payment.cardDetails">Card Details</h3>
-
-
-
-                                <div class="payment-field-grid">
-
-                                    <div class="payment-field payment-field--full">
-
-                                        <label class="payment-field-label" for="cardholder-name" data-i18n="ui.cardholderName">Cardholder Name</label>
-
-                                        <input class="payment-field-input" id="cardholder-name" name="cardholderName" type="text" autocomplete="cc-name" placeholder="Name on card">
-
-                                    </div>
-
-
-
-                                    <div class="payment-field payment-field--full">
-
-                                        <label class="payment-field-label" for="card-number" data-i18n="payment.cardNumber">Card Number</label>
-
-                                        <input class="payment-field-input payment-field-input--card" id="card-number" name="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="ACCT-000003" maxlength="19">
-
-                                    </div>
-
-
-
-                                    <div class="payment-field">
-
-                                        <label class="payment-field-label" for="card-expiry" data-i18n="ui.expiryDate">Expiry Date</label>
-
-                                        <input class="payment-field-input" id="card-expiry" name="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="12">
-
-                                    </div>
-
-
-
-                                    <div class="payment-field">
-
-                                        <label class="payment-field-label" for="card-cvv">CVV</label>
-
-                                        <input class="payment-field-input" id="card-cvv" name="cardCvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
-
-                                    </div>
-
+                            <div class="stripe-checkout-panel">
+                                <span class="stripe-checkout-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/><path d="M12 14.6v2.2"/></svg>
+                                </span>
+                                <div class="stripe-checkout-copy">
+                                    <h3 class="card-details-title" data-i18n="api.payment.stripeTitle">Secure payment by Stripe</h3>
+                                    <p class="stripe-checkout-text" data-i18n="api.payment.stripeText">You will pay on Stripe's secure page by card, Apple Pay or Google Pay. AEROVA never sees or stores your card details.</p>
+                                    <ul class="stripe-checkout-points">
+                                        <li data-i18n="api.payment.stripePointMethods">Visa, Mastercard and other major cards; Apple Pay and Google Pay where your device supports them</li>
+                                        <li data-i18n="api.payment.stripePointConfirm">Your booking is confirmed as soon as Stripe confirms the payment</li>
+                                        <li data-i18n="api.payment.stripePointReturn">You come back to AEROVA automatically afterwards</li>
+                                    </ul>
                                 </div>
-
-
-
-                                <p class="payment-security-note" data-i18n="ui.yourPaymentInformationIsSecurelyProcessed">Your payment information is securely processed.</p>
-
-                            </div>
-
-
-
-                            <div class="wallet-method-message" id="wallet-method-message">
-
-                                <p class="wallet-method-message-text" id="wallet-method-message-text" data-i18n="payment.applePay">Continue with Apple Pay to complete your payment securely.</p>
-
                             </div>
 
                         </article>
@@ -341,7 +236,7 @@
 
                             <div class="price-row" id="payment-discount-row" hidden>
 
-                                <dt>Discount <span id="payment-discount-code-label"></span></dt>
+                                <dt><span data-i18n="payment.discount">Discount</span> <span id="payment-discount-code-label"></span></dt>
 
                                 <dd id="payment-discount">−$0.00</dd>
 
@@ -399,7 +294,7 @@
 
 
 
-                        <p class="payment-demo-note" data-i18n="api.payment.demoNote">Demo payment: no real charge is made and no payment provider is connected. Card details are only checked for format and are not stored; only the last four digits are kept.</p>
+                        <p class="payment-redirect-note" data-i18n="api.payment.redirectNote">The next step opens Stripe's secure payment page. Nothing is charged until you confirm there.</p>
 
                         <button class="pay-button" id="pay-button" type="button">Pay $0.00</button>
 
@@ -591,18 +486,18 @@
 
 
 
-        <script src="assets/js/locales/en.js"></script>
-    <script src="assets/js/locales/az.js"></script>
-    <script src="assets/js/locales/ru.js"></script>
+        <script src="assets/js/locales/en.js?v=stripe1"></script>
+    <script src="assets/js/locales/az.js?v=stripe1"></script>
+    <script src="assets/js/locales/ru.js?v=stripe1"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/api-config.js?v=base1"></script>
     <script src="assets/js/api-client.js?v=mail1"></script>
     <script src="assets/js/journey.js?v=mix1"></script>
-    <script src="assets/js/booking-api.js?v=multi1"></script>
+    <script src="assets/js/booking-api.js?v=stripe1"></script>
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js?v=roles1"></script>
 
-    <script src="assets/js/payment.js?v=save1"></script>
+    <script src="assets/js/payment.js?v=stripe2"></script>
 
     <script src="assets/js/logo.js?v=thru1"></script>
 
