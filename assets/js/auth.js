@@ -73,6 +73,29 @@
     }
 
     /* The token is kept by the API client; here only the name shown in the header and the role are kept. */
+    /*
+     * The personal details of a booking in progress (names, documents, contact, the held reference, the payment page) belong to one
+     * account. Signing out forgets them, and so does signing in as another account in the same tab; signing in again as the same
+     * account (after the session ran out, say) keeps them so the booking can carry on.
+     */
+    var BOOKING_OWNER_KEY = "aerovaBookingOwner";
+    var PERSONAL_BOOKING_KEYS = ["bookingData", "aerovaBooking", "aerovaCheckout", "aerovaSavable", "aerovaPaid", "aerovaManaged", BOOKING_OWNER_KEY];
+
+    function forgetPersonalBookingData() {
+        PERSONAL_BOOKING_KEYS.forEach(function (key) {
+            try { sessionStorage.removeItem(key); } catch (error) { /* ignore */ }
+        });
+    }
+
+    function claimBookingData(userId) {
+        var owner = null;
+        try { owner = sessionStorage.getItem(BOOKING_OWNER_KEY); } catch (error) { owner = null; }
+        if (owner && owner !== String(userId)) {
+            forgetPersonalBookingData();
+        }
+        try { sessionStorage.setItem(BOOKING_OWNER_KEY, String(userId)); } catch (error) { /* ignore */ }
+    }
+
     function setLoggedInUser(authResponse) {
         var user = authResponse.user || {};
         var safeUser = {
@@ -89,6 +112,7 @@
             return null;
         }
 
+        claimBookingData(safeUser.id);
         writeJSON(sessionStorage, USER_KEY, safeUser);
         return safeUser;
     }
@@ -107,6 +131,7 @@
 
     function logout() {
         clearAuthState();
+        forgetPersonalBookingData();
         window.location.href = "login.html";
     }
 

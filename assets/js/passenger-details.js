@@ -851,6 +851,109 @@
         });
     }
 
+    /*
+     * The signed-in account's own details (GET api/profile, which answers for the token's account only) start the first adult card
+     * filled in, and its phone the contact block. Nothing is stored: the form only starts filled, every field stays editable, and the
+     * profile itself changes only on the profile page. Only empty fields are filled, so nothing typed is overwritten. The contact e-mail
+     * stays for the traveller to type, since the booking link goes to the address written there. Other passengers are never filled
+     * with these details.
+     */
+    var profileNoteState = "";
+
+    function paintProfileNote() {
+        var note = document.getElementById("profile-fill-note");
+        if (!note) {
+            return;
+        }
+
+        var texts = {
+            loading: tr("api.passengers.profileLoading", "Loading the details of your profile..."),
+            filled: tr("api.passengers.profileFilled", "We filled in your details from your profile. Check them and change anything that differs for this trip; fields your profile does not have stay empty."),
+            failed: tr("api.passengers.profileFailed", "We could not load your profile details. Please fill in the form yourself.")
+        };
+        note.hidden = !texts[profileNoteState];
+        note.setAttribute("data-state", profileNoteState);
+        note.textContent = texts[profileNoteState] || "";
+    }
+
+    function showProfileNote(state) {
+        profileNoteState = state;
+        paintProfileNote();
+    }
+
+    function fillIfEmpty(id, value) {
+        var field = document.getElementById(id);
+        if (!field || value == null || value === "" || field.value) {
+            return false;
+        }
+
+        if (field.tagName === "SELECT" && !Array.prototype.some.call(field.options, function (option) { return option.value === value; })) {
+            return false;
+        }
+
+        setCardField(id, value);
+        return true;
+    }
+
+    /* "+994508343943": the longest country code the contact list offers, and the digits after it. */
+    function splitPhone(phone) {
+        var select = document.getElementById("contact-country-code");
+        var text = String(phone || "").replace(/[^0-9+]/g, "");
+        if (!select || text.charAt(0) !== "+") {
+            return null;
+        }
+
+        var codes = Array.prototype.map.call(select.options, function (option) { return option.value; })
+            .filter(function (code) { return code && text.indexOf(code) === 0; })
+            .sort(function (a, b) { return b.length - a.length; });
+        return codes.length ? { code: codes[0], number: text.slice(codes[0].length) } : null;
+    }
+
+    function fillFromProfile(profile) {
+        // The first adult; when the search did not say who travels, simply the first passenger.
+        var cards = Array.prototype.slice.call(document.querySelectorAll(".passenger-card"));
+        var undeclared = cards.every(function (item) { return !item.getAttribute("data-declared-type"); });
+        var card = cards.filter(function (item) { return item.getAttribute("data-declared-type") === "Adult"; })[0] || (undeclared ? cards[0] : null);
+
+        if (card) {
+            var prefix = "passenger-" + card.getAttribute("data-passenger-index") + "-";
+            fillIfEmpty(prefix + "title-field", profile.title);
+            fillIfEmpty(prefix + "first-name", profile.firstName);
+            fillIfEmpty(prefix + "last-name", profile.lastName);
+            fillIfEmpty(prefix + "dob", profile.dateOfBirth);
+            // The nationality decides which documents are offered, so it is set after the rest of the card exists.
+            fillIfEmpty(prefix + "nationality", profile.nationalityCode);
+        }
+
+        var phone = splitPhone(profile.phone);
+        if (phone && !getTrimmedValue(document.getElementById("contact-phone"))) {
+            fillIfEmpty("contact-country-code", phone.code);
+            fillIfEmpty("contact-phone", phone.number);
+        }
+    }
+
+    function loadProfileDetails() {
+        var auth = window.AerovaAuth;
+        if (!auth || !auth.isLoggedIn() || !window.AEROVA_API) {
+            return;
+        }
+
+        var signedIn = auth.getCurrentUser ? auth.getCurrentUser() : null;
+        showProfileNote("loading");
+        window.AEROVA_API.get("api/profile").then(function (profile) {
+            // The answer belongs to this tab's sign-in; a profile of any other account is never put in the form.
+            if (!profile || (signedIn && signedIn.id && profile.id !== signedIn.id)) {
+                showProfileNote("failed");
+                return;
+            }
+
+            fillFromProfile(profile);
+            showProfileNote("filled");
+        }).catch(function () {
+            showProfileNote("failed");
+        });
+    }
+
     function bindDocumentControls() {
         var container = document.getElementById("passenger-cards");
         if (!container) return;
@@ -1327,6 +1430,7 @@
         bindClearInvalidOnInput();
         bindDocumentControls();
         window.addEventListener("aerova:languagechange", refreshPassengerCardText);
+        window.addEventListener("aerova:languagechange", paintProfileNote);
 
         if (!flightData) {
             showMessage(returnWithoutOutbound
@@ -1408,6 +1512,7 @@
         renderPassengerCards(cardSeats);
         bindInfantRule();
         loadSavedPassengers();
+        loadProfileDetails();
         loadPassengerRules();
     }
 
