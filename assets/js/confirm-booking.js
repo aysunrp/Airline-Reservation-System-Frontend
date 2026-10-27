@@ -64,7 +64,7 @@
     }
 
     function signedInHere() {
-        try { return !!window.sessionStorage.getItem("aerovaAccessToken"); } catch (error) { return false; }
+        try { return !!window.localStorage.getItem("aerovaAccessToken"); } catch (error) { return false; }
     }
 
     function finish(kind) {

@@ -39,7 +39,6 @@
     function purgeLegacyAccounts() {
         try { localStorage.removeItem(USERS_KEY); } catch (error) { /* ignore */ }
         try { localStorage.removeItem(LOGGED_IN_KEY); } catch (error) { /* ignore */ }
-        try { localStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
         try { sessionStorage.removeItem(LOGGED_IN_KEY); } catch (error) { /* ignore */ }
     }
 
@@ -56,9 +55,19 @@
     function getCurrentUser() {
         if (!hasSession()) {
             try { sessionStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
+            try { localStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
             return null;
         }
-        return readJSON(sessionStorage, USER_KEY);
+        // Kept next to the token (local storage) so every tab knows who is signed in; an older tab-only copy is moved over once.
+        var stored = readJSON(localStorage, USER_KEY);
+        if (!stored) {
+            stored = readJSON(sessionStorage, USER_KEY);
+            if (stored) {
+                writeJSON(localStorage, USER_KEY, stored);
+                try { sessionStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
+            }
+        }
+        return stored;
     }
 
     /* The stored role only decides what is offered (menus, which page to open); the API decides what is allowed. */
@@ -113,7 +122,7 @@
         }
 
         claimBookingData(safeUser.id);
-        writeJSON(sessionStorage, USER_KEY, safeUser);
+        writeJSON(localStorage, USER_KEY, safeUser);
         return safeUser;
     }
 
@@ -1289,12 +1298,18 @@
 
             // A mail link usually opens in a new tab with no sign-in of its own; a tab that is signed in keeps its session and its booking.
             if (isLoggedIn()) {
-                askOtherTabs(function () {});
-                setKeyedText(redirect, "api.account.verifyContinue", "Taking you back to your booking...");
-                redirect.hidden = false;
-                window.setTimeout(function () {
-                    window.location.href = booking ? "payment.html" : "profile.html";
-                }, 1500);
+                // The sign-in is shared by the tabs of this browser: a booking waiting in another tab carries on there by itself.
+                askOtherTabs(function (answered) {
+                    if (answered) {
+                        setKeyedText(message, "api.account.verifyBookingWaits", "Your booking is waiting in the other AEROVA tab and continues there by itself. You can close this tab.");
+                        return;
+                    }
+                    setKeyedText(redirect, "api.account.verifyContinue", "Taking you back to your booking...");
+                    redirect.hidden = false;
+                    window.setTimeout(function () {
+                        window.location.href = booking ? "payment.html" : "profile.html";
+                    }, 1500);
+                });
                 return;
             }
 
@@ -1374,7 +1389,7 @@
         var user = getCurrentUser();
         if (!user) return;
         user.emailVerified = true;
-        writeJSON(sessionStorage, USER_KEY, user);
+        writeJSON(localStorage, USER_KEY, user);
     }
 
     /* The profile page: a reminder with a button while the address is not confirmed. */
@@ -1549,6 +1564,15 @@
         window.addEventListener("storage", function (event) {
             if (!event.key) {
                 updateNotificationBadges();
+                return;
+            }
+
+            // Signing in or out in another tab of this browser applies here too, without a reload.
+            if (event.key === "aerovaAccessToken" || event.key === USER_KEY) {
+                updateNavigation();
+                if (!isLoggedIn()) {
+                    guardAuthenticatedPages();
+                }
             }
         });
     }
@@ -1561,7 +1585,7 @@
             if (changes && changes[key]) user[key] = changes[key];
         });
         if (changes && typeof changes.emailVerified === "boolean") user.emailVerified = changes.emailVerified;
-        writeJSON(sessionStorage, USER_KEY, user);
+        writeJSON(localStorage, USER_KEY, user);
         updateNavigation();
         try { window.dispatchEvent(new CustomEvent("aerova:userchange")); } catch (error) { /* older browsers: the next page load shows it */ }
     }

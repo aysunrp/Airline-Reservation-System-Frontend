@@ -50,9 +50,21 @@
 
   /* ---------- sign-in token ---------- */
 
+  /*
+   * The sign-in is kept in the browser's local storage, so it lasts across tabs and restarts until the person signs out (or the
+   * server's token runs out). A token an older version left in this tab's session storage is picked up once and moved.
+   */
   function readStorage(key) {
     try {
-      return window.sessionStorage.getItem(key);
+      var value = window.localStorage.getItem(key);
+      if (value === null) {
+        value = window.sessionStorage.getItem(key);
+        if (value !== null) {
+          window.localStorage.setItem(key, value);
+          window.sessionStorage.removeItem(key);
+        }
+      }
+      return value;
     } catch (error) {
       return null;
     }
@@ -60,10 +72,11 @@
 
   function writeStorage(key, value) {
     try {
+      window.sessionStorage.removeItem(key);
       if (value === null) {
-        window.sessionStorage.removeItem(key);
+        window.localStorage.removeItem(key);
       } else {
-        window.sessionStorage.setItem(key, value);
+        window.localStorage.setItem(key, value);
       }
       return true;
     } catch (error) {
