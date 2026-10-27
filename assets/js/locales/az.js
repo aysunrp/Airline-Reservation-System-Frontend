@@ -1491,6 +1491,7 @@ window.AEROVA_LOCALES.az = {
       "sendLink": "Yeni keçid göndər",
       "linkSent": "Yeni təsdiq keçidi yoldadır. Onu açın, sonra bura qayıdın.",
       "alreadyConfirmed": "E-poçtunuz artıq təsdiqlənib. Davam etmək üçün düyməni basın.",
+      "firstLinkSent": "E-poçtunuza təsdiq keçidi göndərdik. Onu açın, bu səhifə özü ödənişə davam edəcək.",
       "conflictTitle": "Yer artıq mövcud deyil",
       "conflictText": "Başqa sərnişin yerlərinizdən birini indicə tutdu. Zəhmət olmasa yerləri yenidən seçin.",
       "expiredTitle": "Yerlərin saxlanma müddəti bitdi",

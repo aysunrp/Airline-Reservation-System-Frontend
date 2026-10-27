@@ -1491,6 +1491,7 @@ window.AEROVA_LOCALES.en = {
       "sendLink": "Send a new link",
       "linkSent": "A new confirmation link is on its way. Open it, then come back here.",
       "alreadyConfirmed": "Your email is already confirmed. Press the button to continue.",
+      "firstLinkSent": "We sent a confirmation link to your email. Open it and this page continues to payment by itself.",
       "conflictTitle": "A seat is no longer available",
       "conflictText": "Another traveller has just taken one of your seats. Please choose your seats again.",
       "expiredTitle": "Your seat hold has ended",

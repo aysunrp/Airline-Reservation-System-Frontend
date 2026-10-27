@@ -731,6 +731,27 @@
         }
     }
 
+    /*
+     * The first time the booking is refused for this reason the link is sent without being asked for: the person came to pay, not to
+     * find a button. The server allows one message a minute, so a refused or failed attempt only leaves the plain explanation.
+     */
+    var firstLinkSent = false;
+
+    function sendFirstLink() {
+        if (firstLinkSent) {
+            return;
+        }
+        firstLinkSent = true;
+
+        window.AEROVA_API.post("api/auth/resend-verification", {}).then(function () {
+            setText("booking-status-text", tr("api.booking.firstLinkSent", "We sent a confirmation link to your email. Open it and this page continues to payment by itself."));
+        }).catch(function (error) {
+            if (error && error.status === 409) {
+                checkVerification(false);
+            }
+        });
+    }
+
     /* The confirmation link can be asked for again right here; a 409 means the address was confirmed in the meantime. */
     function resendVerificationLink() {
         window.AEROVA_API.post("api/auth/resend-verification", {}).then(function () {
@@ -761,6 +782,7 @@
             actions.push({ label: tr("api.booking.sendLink", "Send a new link"), onClick: resendVerificationLink });
             actions.push({ label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" });
             watchVerification(retry);
+            sendFirstLink();
         } else if (status === 409) {
             title = tr("api.booking.conflictTitle", "A seat is no longer available");
             text = tr("api.booking.conflictText", "Another traveller has just taken one of your seats. Please choose your seats again.");
