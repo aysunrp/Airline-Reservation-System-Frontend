@@ -1996,6 +1996,8 @@ window.AEROVA_LOCALES.az = {
       "noSeatsInCabin": "Bu təyyarənin bu salonda yeri yoxdur.",
       "noFlightsThatDay": "Bu gün üçün reys yoxdur.",
       "seatLocked": "Rezerv olunmuş və ya tutulmuş yeri dəyişmək olmaz.",
+      "seatBlockedMsg": "{seat} yeri indi bloklanıb.",
+      "seatUnblockedMsg": "{seat} yeri yenidən açıqdır.",
       "none": "— yoxdur —",
       "departureUtc": "Yola düşmə (UTC)",
       "arrivalUtc": "Çatma (UTC)",

@@ -507,8 +507,9 @@
 
     /* ------------------------------------------------------------------ seat inventory */
 
+    /* The map shows one difference only: a booked seat is occupied (grey), every other seat looks the same. Held and Blocked stay in the data and in the tooltip. */
     function seatState(status) {
-        return status === "Held" ? "reserved" : (status === "Booked" ? "occupied" : String(status).toLowerCase());
+        return status === "Booked" ? "occupied" : "open";
     }
 
     function renderSeatInventory() {
@@ -578,7 +579,7 @@
                         return;
                     }
                     html += '<button class="admin-seat admin-seat--' + seatState(seat.status) + '" type="button" data-seat-id="' + seat.id +
-                        '" title="' + escapeHtml(seat.label + " · " + statusText(seat.status)) + '">' + letter + "</button>";
+                        '" title="' + escapeHtml(seat.label + " · " + statusText(seat.status)) + '" aria-label="' + escapeHtml(seat.label + ", " + statusText(seat.status)) + '">' + letter + "</button>";
                 });
                 html += "</div>";
                 if (groupIndex < groups.length - 1) html += '<span class="seat-aisle" aria-hidden="true"></span>';
@@ -654,6 +655,10 @@
         api.patch("api/admin/flights/" + inventory.flightId + "/seats/" + seat.id, { blocked: seat.status === "Available" }).then(function (updated) {
             seat.status = updated.status;
             renderSeatInventory();
+            // Blocked and open seats look the same, so the change is confirmed in words.
+            showMessage(updated.status === "Blocked"
+                ? tr("api.admin.seatBlockedMsg", "Seat {seat} is now blocked.", { seat: seat.label })
+                : tr("api.admin.seatUnblockedMsg", "Seat {seat} is open again.", { seat: seat.label }));
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
             loadSeatInventory();
