@@ -516,8 +516,8 @@
                 passengers: isFinite(travellers) ? Math.min(9, Math.max(1, travellers)) : 1,
                 timeOfDay: criteria.timeOfDay ? criteria.timeOfDay.charAt(0).toUpperCase() + criteria.timeOfDay.slice(1) : null,
                 sortBy: criteria.cheapest ? "price" : "departure",
-                // One flight for "the cheapest flight": the API compares the whole period first and returns only the lowest fare.
-                limit: isSingleCheapest(criteria) ? 1 : null
+                // "The cheapest flight": the API compares the whole period first and returns every flight at the lowest fare, and no dearer one.
+                lowestOnly: isSingleCheapest(criteria)
             });
         }).then(function (result) {
             if (token !== loadToken) {
@@ -527,7 +527,8 @@
             var pageFlights = ((result && result.flights) || []).map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
             // After "view other flights" the flight that was already shown is not listed again.
             if (criteria.showAll && criteria.cheapestId) {
-                pageFlights = pageFlights.filter(function (flight) { return String(flight.id) !== criteria.cheapestId; });
+                var already = criteria.cheapestId.split(",");
+                pageFlights = pageFlights.filter(function (flight) { return already.indexOf(String(flight.id)) === -1; });
             }
 
             rangeInfo = { total: (result && result.totalFound) || pageFlights.length, shown: pageFlights.length, lowest: (result && result.lowestPriceCount) || 0 };
@@ -678,7 +679,7 @@
     function paintOthersButton(criteria) {
         var meta = document.querySelector(".results-meta");
         var button = document.getElementById("voice-others");
-        var show = isSingleCheapest(criteria) && viewState === "ready" && rangeInfo.total > 1 && baseFlights.length > 0;
+        var show = isSingleCheapest(criteria) && viewState === "ready" && rangeInfo.total > baseFlights.length && baseFlights.length > 0;
 
         if (!show) {
             if (button) {
@@ -693,7 +694,7 @@
             button.id = "voice-others";
             button.className = "select-flight-button voice-others-button";
             button.addEventListener("click", function () {
-                var shownId = baseFlights.length ? String(baseFlights[0].id) : "";
+                var shownId = baseFlights.map(function (flight) { return String(flight.id); }).join(",");
                 reloadWith(function (params) {
                     params.set("all", "1");
                     params.set("cheapestId", shownId);
@@ -724,15 +725,15 @@
                 var each = getCabinPrice(shown, getDefaultCabin(criteria));
                 var travellers = Math.max(1, parseInt(criteria.passengers, 10) || 1);
 
-                lines.push(say("voice.results.singleNote", "This is the cheapest flight found in the {days} days searched ({from} to {to}). Other dates were not searched.",
+                lines.push(say("voice.results.singleNote", "This is the lowest fare found in the {days} days searched ({from} to {to}). Other dates were not searched.",
                     { days: periodDays(criteria), from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) }));
 
                 if (travellers > 1 && typeof each === "number") {
                     lines.push(say("voice.results.singleTotal", "Fare for {count} passengers: ${total} (${each} each).", { count: travellers, total: each * travellers, each: each }));
                 }
 
-                if (rangeInfo.lowest > 1) {
-                    lines.push(say("voice.results.singleTie", "{count} other flights have the same price; this is the earliest of them.", { count: rangeInfo.lowest - 1 }));
+                if (baseFlights.length > 1) {
+                    lines.push(say("voice.results.singleTie", "{count} flights share this lowest price.", { count: baseFlights.length }));
                 }
             }
         } else if (criteria.range && criteria.cheapest) {

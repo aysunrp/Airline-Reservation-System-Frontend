@@ -1478,9 +1478,9 @@ window.AEROVA_LOCALES.az = {
       "truncated": "{total} uçuşdan ən ucuz {shown} göstərilir.",
       "singleHeading": "{from} - {to} arasında tapılan ən ucuz uçuş",
       "otherHeading": "{from} - {to} arasında digər uçuşlar, ən ucuzdan başlayaraq",
-      "singleNote": "Bu, axtarılan {days} gün ərzində ({from} - {to}) tapılan ən ucuz uçuşdur. Digər tarixlər axtarılmayıb.",
+      "singleNote": "Bu, axtarılan {days} gün ərzində ({from} - {to}) tapılan ən aşağı qiymətdir. Digər tarixlər axtarılmayıb.",
       "singleTotal": "{count} sərnişin üçün qiymət: ${total} (hər biri ${each}).",
-      "singleTie": "Eyni qiymətli daha {count} uçuş var; bu, onlardan ən erkənidir.",
+      "singleTie": "{count} uçuş bu ən aşağı qiyməti bölüşür.",
       "otherFlights": "Digər uçuşlara bax",
       "partName": {
         "morning": "səhər",

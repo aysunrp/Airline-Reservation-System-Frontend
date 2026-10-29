@@ -1478,9 +1478,9 @@ window.AEROVA_LOCALES.en = {
       "truncated": "Showing the {shown} cheapest of {total} flights.",
       "singleHeading": "Cheapest flight found between {from} and {to}",
       "otherHeading": "Other flights between {from} and {to}, cheapest first",
-      "singleNote": "This is the cheapest flight found in the {days} days searched ({from} to {to}). Other dates were not searched.",
+      "singleNote": "This is the lowest fare found in the {days} days searched ({from} to {to}). Other dates were not searched.",
       "singleTotal": "Fare for {count} passengers: ${total} (${each} each).",
-      "singleTie": "{count} other flights have the same price; this is the earliest of them.",
+      "singleTie": "{count} flights share this lowest price.",
       "otherFlights": "View other flights",
       "partName": {
         "morning": "morning",
