@@ -10,7 +10,11 @@
 .sp-card--full { margin-bottom: 1.25rem; }
 .sp-card-title { font-family: "Cormorant Garamond", "Palatino Linotype", serif; font-weight: 600; font-size: 1.55rem; color: #07111d; margin: 0 0 1rem; }
 .sp-muted { color: #5b5246; font-weight: 300; line-height: 1.55; margin: 0; }
-.sp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+/* Two fields side by side share their rows (label, input, note) through a subgrid, so the inputs line up whatever the labels or notes need. */
+.sp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; align-items: start; }
+.sp-row > .sp-field { grid-row: span 3; grid-template-rows: subgrid; gap: 0; align-content: start; }
+.sp-row > .sp-field > .sp-label { margin-bottom: .35rem; align-self: end; }
+.sp-row > .sp-field > .sp-hint, .sp-row > .sp-field > .sp-error { margin-top: .35rem; }
 .sp-form { display: grid; gap: 1rem; }
 .sp-field { display: grid; gap: .35rem; }
 .sp-label { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: #8a6d3b; font-weight: 500; }
@@ -54,7 +58,10 @@
 .sp-faq-item p { margin: .6rem 0 0; color: #4a4136; line-height: 1.6; font-weight: 300; }
 @media (max-width: 800px) {
     .sp-grid { grid-template-columns: 1fr; }
-    .sp-row { grid-template-columns: 1fr; }
+    .sp-row { grid-template-columns: 1fr; gap: 1rem; }
+    .sp-row > .sp-field { grid-row: auto; grid-template-rows: none; gap: .35rem; }
+    .sp-row > .sp-field > .sp-label { margin-bottom: 0; align-self: auto; }
+    .sp-row > .sp-field > .sp-hint, .sp-row > .sp-field > .sp-error { margin-top: 0; }
     .sp-msg { max-width: 100%; }
     .sp-ticket { grid-template-columns: 1fr; }
 }
