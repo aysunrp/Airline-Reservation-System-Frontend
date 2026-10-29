@@ -1560,6 +1560,7 @@ window.AEROVA_LOCALES.az = {
     "you": "Siz",
     "staff": "AEROVA Dəstək",
     "faqTitle": "Tez-tez verilən suallar",
+    "setupRequired": "Dəstək müraciətləri hələ əlçatan deyil: saytın verilənlər bazası qurulması bitməyib. Zəhmət olmasa bir az sonra yenidən cəhd edin; sayt administratoru son verilənlər bazası yenilənməsini tətbiq etməlidir.",
     "errors": {
       "subjectRequired": "Zəhmət olmasa mövzu başlığı yazın.",
       "subjectLong": "Mövzu başlığı ən çox 120 simvol ola bilər.",
@@ -1633,7 +1634,8 @@ window.AEROVA_LOCALES.az = {
       "statusSaved": "Status saxlanıldı.",
       "failed": "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.",
       "close": "Bağla",
-      "staff": "AEROVA Dəstək"
+      "staff": "AEROVA Dəstək",
+        "setupRequired": "Dəstək müraciətləri hələ qurulmayıb: verilənlər bazasının son miqrasiyası (AddSupportTickets) tətbiq olunmayıb."
     }
   },
   "api": {

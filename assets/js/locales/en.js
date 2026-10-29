@@ -1560,6 +1560,7 @@ window.AEROVA_LOCALES.en = {
     "you": "You",
     "staff": "AEROVA Support",
     "faqTitle": "Frequently asked questions",
+    "setupRequired": "Support requests are not available yet: the database setup of the site is not finished. Please try again later; the site administrator has to apply the latest database update.",
     "errors": {
       "subjectRequired": "Please enter a subject.",
       "subjectLong": "The subject can have at most 120 characters.",
@@ -1633,7 +1634,8 @@ window.AEROVA_LOCALES.en = {
       "statusSaved": "The status was saved.",
       "failed": "Something went wrong. Please try again.",
       "close": "Close",
-      "staff": "AEROVA Support"
+      "staff": "AEROVA Support",
+        "setupRequired": "Support requests are not set up yet: the latest database migration (AddSupportTickets) has not been applied."
     }
   },
   "api": {

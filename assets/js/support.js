@@ -62,6 +62,7 @@
     }
 
     function errorText(error, fallbackKey, fallback) {
+        if (error && error.code === "database_setup_required") return tr("support.setupRequired", "Support requests are not available yet: the database setup of the site is not finished. Please try again later; the site administrator has to apply the latest database update.");
         if (error && error.status === 429) return tr("support.busy", "Too many requests. Please wait a moment and try again.");
         if (error && error.code === "too_many_open_tickets") return tr("support.tooMany", "You have too many open requests. Please wait for some of them to be resolved.");
         if (error && error.status === 400 && error.userMessage) return error.userMessage;

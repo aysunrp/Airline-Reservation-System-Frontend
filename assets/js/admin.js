@@ -1819,6 +1819,11 @@
             state.supportPage = result;
             renderSupport();
         }).catch(function (error) {
+            if (error && error.code === "database_setup_required") {
+                byId("support-body").innerHTML = emptyRow(8, supportError(error));
+                return;
+            }
+
             failed(error, "support-body", 8, loadSupport);
         });
     }
@@ -1861,7 +1866,7 @@
                     byId("support-result").textContent = tr("support.admin.statusSaved", "The status was saved.");
                     loadSupport(state.supportPage ? state.supportPage.page : 1);
                 }, function (error) {
-                    byId("support-result").textContent = (error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.");
+                    byId("support-result").textContent = supportError(error);
                 });
             });
 
@@ -1876,12 +1881,20 @@
                     openSupportTicket(id);
                 }, function (error) {
                     button.disabled = false;
-                    byId("support-result").textContent = (error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.");
+                    byId("support-result").textContent = supportError(error);
                 });
             });
         }).catch(function (error) {
-            byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml((error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.")) + "</p>";
+            byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml(supportError(error)) + "</p>";
         });
+    }
+
+    function supportError(error) {
+        if (error && error.code === "database_setup_required") {
+            return tr("support.admin.setupRequired", "Support requests are not set up yet: the latest database migration (AddSupportTickets) has not been applied.");
+        }
+
+        return (error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.");
     }
 
     function retryRefund(id) {
