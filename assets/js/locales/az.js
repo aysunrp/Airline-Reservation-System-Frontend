@@ -1569,6 +1569,18 @@ window.AEROVA_LOCALES.az = {
       "pnrInvalid": "Rezervasiya kodu 5-10 hərf və rəqəmdən ibarətdir.",
       "replyRequired": "Zəhmət olmasa cavabınızı yazın."
     },
+    "live": {
+        "on": "Canlı yeniləmələr aktivdir: yeni cavablar burada özləri görünür.",
+        "reconnecting": "Yenidən qoşulur... bu arada yeni cavablar hər 20 saniyədən bir yoxlanılır.",
+        "polling": "Canlı bağlantı əlçatan deyil: yeni cavablar hər 20 saniyədən bir yoxlanılır.",
+        "adminOn": "Canlı yeniləmələr aktivdir.",
+        "adminPolling": "Canlı bağlantı yoxdur: hər 20 saniyədən bir yoxlanılır."
+    },
+    "toast": {
+        "reply": "{number} üzrə yeni cavab",
+        "status": "{number} indi: {status}",
+        "open": "Aç"
+    },
     "categories": {
       "Booking": "Rezervasiya",
       "Payment": "Ödəniş",
@@ -1635,6 +1647,11 @@ window.AEROVA_LOCALES.az = {
       "failed": "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.",
       "close": "Bağla",
       "staff": "AEROVA Dəstək",
+        "bellTitle": "Dəstək bildirişləri",
+        "markAllRead": "Hamısını oxunmuş et",
+        "bellEmpty": "Hələ dəstək bildirişi yoxdur.",
+        "toastNew": "Yeni dəstək müraciəti {number}",
+        "toastReply": "{number} üzrə müştəri cavabı",
         "setupRequired": "Dəstək müraciətləri hələ qurulmayıb: verilənlər bazasının son miqrasiyası (AddSupportTickets) tətbiq olunmayıb."
     }
   },

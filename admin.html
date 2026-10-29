@@ -213,7 +213,23 @@
 
 
 
-                <p class="admin-topbar-meta" data-i18n="admin.topbarMeta">AEROVA Operations Control</p>
+                <div class="admin-topbar-right">
+                    <div class="admin-bell-wrap">
+                        <button class="admin-bell" id="admin-bell" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="admin-bell-panel" aria-label="Support notifications" data-i18n-aria="support.admin.bellTitle">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5L6 17zM10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <span class="admin-bell-count" id="admin-bell-count" hidden>0</span>
+                        </button>
+                        <div class="admin-bell-panel" id="admin-bell-panel" hidden>
+                            <div class="admin-bell-head">
+                                <strong data-i18n="support.admin.bellTitle">Support notifications</strong>
+                                <button class="admin-bell-readall" id="admin-bell-readall" type="button" data-i18n="support.admin.markAllRead">Mark all as read</button>
+                            </div>
+                            <p class="admin-bell-live" id="admin-live" aria-live="polite"></p>
+                            <ul class="admin-bell-list" id="admin-bell-list"></ul>
+                        </div>
+                    </div>
+                    <p class="admin-topbar-meta" data-i18n="admin.topbarMeta">AEROVA Operations Control</p>
+                </div>
 
 
 
@@ -1443,12 +1459,19 @@
 
 
     <script src="assets/js/auth.js?v=stay1"></script>
-    <script src="assets/js/admin.js?v=sup3"></script>
+    <script src="assets/js/vendor/signalr.min.js?v=8.0.7"></script>
+    <script src="assets/js/realtime.js?v=rt1"></script>
+    <script src="assets/js/admin.js?v=rt1"></script>
 
 
 
     <script src="assets/js/logo.js?v=thru1"></script>
 
+    <div class="admin-toast" id="admin-toast" role="status" aria-live="polite" hidden>
+        <span id="admin-toast-text"></span>
+        <button class="admin-btn admin-btn--primary" id="admin-toast-open" type="button" data-i18n="support.toast.open">Open</button>
+        <button class="admin-toast-close" id="admin-toast-close" type="button" aria-label="Close" data-i18n-aria="support.admin.close">&times;</button>
+    </div>
 </body>
 
 

@@ -1569,6 +1569,18 @@ window.AEROVA_LOCALES.en = {
       "pnrInvalid": "A booking reference has 5 to 10 letters and digits.",
       "replyRequired": "Please write your reply."
     },
+    "live": {
+        "on": "Live updates are on: new replies appear here by themselves.",
+        "reconnecting": "Reconnecting... new replies are checked every 20 seconds meanwhile.",
+        "polling": "The live connection is not available: we check for new replies every 20 seconds.",
+        "adminOn": "Live updates are on.",
+        "adminPolling": "No live connection: checking every 20 seconds."
+    },
+    "toast": {
+        "reply": "New reply on {number}",
+        "status": "{number} is now: {status}",
+        "open": "Open"
+    },
     "categories": {
       "Booking": "Booking",
       "Payment": "Payment",
@@ -1635,6 +1647,11 @@ window.AEROVA_LOCALES.en = {
       "failed": "Something went wrong. Please try again.",
       "close": "Close",
       "staff": "AEROVA Support",
+        "bellTitle": "Support notifications",
+        "markAllRead": "Mark all as read",
+        "bellEmpty": "No support notifications yet.",
+        "toastNew": "New support request {number}",
+        "toastReply": "Customer reply on {number}",
         "setupRequired": "Support requests are not set up yet: the latest database migration (AddSupportTickets) has not been applied."
     }
   },

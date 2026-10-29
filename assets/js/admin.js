@@ -988,6 +988,7 @@
 
     function closeDetails() {
         byId("details-modal").hidden = true;
+        state.openSupportId = null;
     }
 
     function detailsGrid(pairs) {
@@ -1805,9 +1806,9 @@
             : "";
     }
 
-    function loadSupport(pageNumber) {
+    function loadSupport(pageNumber, quiet) {
         var pageIndex = typeof pageNumber === "number" ? pageNumber : 1;
-        loading("support-body", 8);
+        if (!quiet) loading("support-body", 8);
         var query = "page=" + pageIndex + "&pageSize=20";
         var search = byId("support-search").value.trim();
         var status = byId("support-status-filter").value;
@@ -1819,6 +1820,7 @@
             state.supportPage = result;
             renderSupport();
         }).catch(function (error) {
+            if (quiet) return;
             if (error && error.code === "database_setup_required") {
                 byId("support-body").innerHTML = emptyRow(8, supportError(error));
                 return;
@@ -1828,9 +1830,14 @@
         });
     }
 
-    function openSupportTicket(id) {
+    function openSupportTicket(id, keepDraft) {
+        // A refresh while the admin is typing keeps the draft and the chosen status.
+        var draft = keepDraft && byId("support-reply-text") ? { text: byId("support-reply-text").value, after: byId("support-after-reply").value } : null;
+        state.openSupportId = id;
         byId("details-modal-title").textContent = tr("support.admin.title", "Support");
-        byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Please wait...")) + "</p>";
+        if (!keepDraft) {
+            byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Please wait...")) + "</p>";
+        }
         byId("details-modal").hidden = false;
 
         api.get("api/admin/support/tickets/" + id).then(function (ticket) {
@@ -1861,6 +1868,11 @@
                 '<p class="admin-hint" id="support-result" role="status"></p>' +
                 '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--primary" id="support-reply-send">' + escapeHtml(tr("support.admin.send", "Send reply")) + "</button></div>";
 
+            if (draft) {
+                byId("support-reply-text").value = draft.text;
+                byId("support-after-reply").value = draft.after;
+            }
+
             byId("support-status-save").addEventListener("click", function () {
                 api.put("api/admin/support/tickets/" + id + "/status", { status: byId("support-status-select").value }).then(function () {
                     byId("support-result").textContent = tr("support.admin.statusSaved", "The status was saved.");
@@ -1887,6 +1899,125 @@
         }).catch(function (error) {
             byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml(supportError(error)) + "</p>";
         });
+    }
+
+    /* ---------- support bell and real-time updates ---------- */
+
+    var adminLive = null;
+    var bellItems = [];
+    var adminToastTimer = null;
+
+    function renderBell() {
+        var unread = bellItems.filter(function (item) { return !item.isRead; }).length;
+        var badge = byId("admin-bell-count");
+        badge.textContent = unread > 99 ? "99+" : String(unread);
+        badge.hidden = unread === 0;
+        byId("admin-bell").setAttribute("aria-label", tr("support.admin.bellTitle", "Support notifications") + (unread ? " (" + unread + ")" : ""));
+        byId("admin-bell-list").innerHTML = bellItems.length ? bellItems.slice(0, 20).map(function (item) {
+            return '<li><button type="button" class="admin-bell-item' + (item.isRead ? "" : " is-unread") + '" data-bell="' + item.id + '">' +
+                "<strong>" + escapeHtml(item.title) + "</strong><small>" + escapeHtml(item.message) + " \u00b7 " + supportDate(item.createdAt) + "</small></button></li>";
+        }).join("") : '<li class="admin-bell-empty">' + escapeHtml(tr("support.admin.bellEmpty", "No support notifications yet.")) + "</li>";
+    }
+
+    /* The persisted staff notifications (GET api/notifications): they are still there after a refresh or a new visit. */
+    function loadBell() {
+        return api.get("api/notifications").then(function (list) {
+            bellItems = list.filter(function (item) { return item.type === "SupportStaff"; });
+            renderBell();
+        }).catch(function () { /* the bell is a convenience */ });
+    }
+
+    function adminToast(text, ticketNumber) {
+        byId("admin-toast-text").textContent = text;
+        byId("admin-toast-open").setAttribute("data-number", ticketNumber);
+        byId("admin-toast").hidden = false;
+        if (adminToastTimer) clearTimeout(adminToastTimer);
+        adminToastTimer = setTimeout(function () { byId("admin-toast").hidden = true; }, 9000);
+    }
+
+    function openTicketByNumber(number) {
+        api.get("api/admin/support/tickets?pageSize=1&search=" + encodeURIComponent(number)).then(function (page) {
+            if (page.items.length) {
+                showSection("support");
+                openSupportTicket(page.items[0].id);
+            }
+        }).catch(function () { /* the list is still there */ });
+    }
+
+    function refreshSupportViews(supportEvent) {
+        if (state.section === "support") loadSupport(state.supportPage ? state.supportPage.page : 1, true);
+        if (state.openSupportId && !byId("details-modal").hidden && (!supportEvent || supportEvent.ticketId === state.openSupportId)) {
+            openSupportTicket(state.openSupportId, true);
+        }
+    }
+
+    function onSupportEvent(supportEvent) {
+        if (supportEvent.type === "ticketCreated" || supportEvent.type === "customerReplied") {
+            loadBell();
+            adminToast(supportEvent.type === "ticketCreated"
+                ? tr("support.admin.toastNew", "New support request {number}", { number: supportEvent.ticketNumber })
+                : tr("support.admin.toastReply", "Customer reply on {number}", { number: supportEvent.ticketNumber }), supportEvent.ticketNumber);
+        }
+        refreshSupportViews(supportEvent);
+    }
+
+    function paintAdminLive(liveState) {
+        var texts = {
+            connected: tr("support.live.adminOn", "Live updates are on."),
+            reconnecting: tr("support.live.reconnecting", "Reconnecting..."),
+            polling: tr("support.live.adminPolling", "No live connection: checking every 20 seconds.")
+        };
+        byId("admin-live").textContent = texts[liveState] || "";
+    }
+
+    function startSupportRealtime() {
+        loadBell();
+        byId("admin-bell").addEventListener("click", function () {
+            var panel = byId("admin-bell-panel");
+            panel.hidden = !panel.hidden;
+            byId("admin-bell").setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+            if (!panel.hidden) loadBell();
+        });
+        document.addEventListener("click", function (event) {
+            if (!event.target.closest(".admin-bell-wrap")) {
+                byId("admin-bell-panel").hidden = true;
+                byId("admin-bell").setAttribute("aria-expanded", "false");
+            }
+        });
+        byId("admin-bell-list").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-bell]");
+            if (!button) return;
+            var item = bellItems.filter(function (entry) { return String(entry.id) === button.getAttribute("data-bell"); })[0];
+            if (!item) return;
+            byId("admin-bell-panel").hidden = true;
+            var match = /SUP-[A-Z0-9]{6}/.exec(item.title);
+            if (!item.isRead) {
+                item.isRead = true;
+                renderBell();
+                api.patch("api/notifications/" + item.id + "/read").catch(function () { /* shown again on the next load */ });
+            }
+            if (match) openTicketByNumber(match[0]);
+        });
+        byId("admin-bell-readall").addEventListener("click", function () {
+            api.patch("api/notifications/read-all").then(loadBell, function () { /* unchanged */ });
+        });
+        byId("admin-toast-close").addEventListener("click", function () { byId("admin-toast").hidden = true; });
+        byId("admin-toast-open").addEventListener("click", function () {
+            byId("admin-toast").hidden = true;
+            var number = byId("admin-toast-open").getAttribute("data-number");
+            if (number) openTicketByNumber(number);
+        });
+
+        if (window.AEROVA_REALTIME) {
+            adminLive = window.AEROVA_REALTIME.create({
+                onEvent: onSupportEvent,
+                onState: paintAdminLive,
+                poll: function () { loadBell(); refreshSupportViews(null); },
+                onResync: function () { loadBell(); refreshSupportViews(null); },
+                pollMs: 20000
+            });
+            adminLive.start();
+        }
     }
 
     function supportError(error) {
@@ -2247,7 +2378,10 @@
 
         // The stored role is only a hint. Nothing of the page is shown until the server has accepted the token for the admin area.
         // A small admin request does that: the dashboard counts every seat, and the page must not wait for it before it appears.
-        api.get("api/admin/cancellation-rules").then(reveal).catch(function (error) {
+        api.get("api/admin/cancellation-rules").then(function (result) {
+            reveal(result);
+            startSupportRealtime();
+        }).catch(function (error) {
             var status = error instanceof api.ApiError ? error.status : 0;
             if (status === 401) {
                 window.location.replace("login.html?next=admin.html");
