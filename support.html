@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AEROVA | Support Center</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/i18n.css">
+    <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
+    <link rel="stylesheet" href="assets/css/chat-widget.css">
+
+    <link rel="stylesheet" href="assets/css/support.css?v=sup2">
+
+</head>
+
+<body>
+
+    <header id="site-header" class="site-header">
+
+        <div class="header-container">
+
+            <div class="logo">
+
+                <span class="logo-text">Aerova</span>
+
+            </div>
+
+
+
+            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+
+                <ul class="nav-list">
+
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+
+
+                </ul>
+
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+
+            </nav>
+
+
+
+            <div class="header-actions">
+
+
+                <a class="login-button" href="profile.html" data-i18n="nav.profile">Profile</a>
+
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+
+                    <span class="menu-toggle-bar"></span>
+
+                    <span class="menu-toggle-bar"></span>
+
+                    <span class="menu-toggle-bar"></span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <main id="support-content" class="sp-content">
+
+        <section class="sp-page" aria-label="Support Center" data-i18n-aria="support.title">
+            <div class="sp-container">
+
+                <header class="sp-intro">
+                    <h1 class="sp-title" data-i18n="support.title">Support Center</h1>
+                    <p class="sp-subtitle" data-i18n="support.subtitle">Get help with your bookings, payments and account.</p>
+                </header>
+
+                <div class="sp-grid">
+
+                    <section class="sp-card" id="contact" aria-labelledby="sp-contact-title">
+                        <h2 class="sp-card-title" id="sp-contact-title" data-i18n="support.contactTitle">Contact options</h2>
+                        <p class="sp-muted" id="sp-contact-email" hidden></p>
+                        <p class="sp-muted" id="sp-contact-none" data-i18n="support.contactNone">Write to us with the form: we answer here, in your Support page, and we email you when there is news.</p>
+                    </section>
+
+                    <section class="sp-card sp-card--wide" id="new-request" aria-labelledby="sp-form-title">
+                        <h2 class="sp-card-title" id="sp-form-title" data-i18n="support.formTitle">Contact Support</h2>
+
+                        <div id="sp-signin" class="sp-notice" hidden>
+                            <p data-i18n="support.signInPrompt">Sign in to send a request and follow the answers.</p>
+                            <a class="sp-button" id="sp-signin-link" href="login.html?next=support.html" data-i18n="support.signIn">Sign in</a>
+                        </div>
+
+                        <form id="sp-form" class="sp-form" novalidate hidden>
+                            <div class="sp-row">
+                                <label class="sp-field">
+                                    <span class="sp-label" data-i18n="support.name">Name</span>
+                                    <input class="sp-input" id="sp-name" type="text" readonly>
+                                </label>
+                                <label class="sp-field">
+                                    <span class="sp-label" data-i18n="support.email">Email</span>
+                                    <input class="sp-input" id="sp-email" type="email" readonly>
+                                    <span class="sp-hint" data-i18n="support.emailHint">Answers are sent to your account email.</span>
+                                </label>
+                            </div>
+
+                            <div class="sp-row">
+                                <label class="sp-field">
+                                    <span class="sp-label" data-i18n="support.category">Topic</span>
+                                    <select class="sp-input" id="sp-category" name="category">
+                                <option value="Booking" data-i18n="support.categories.Booking">Booking</option>
+                                <option value="Payment" data-i18n="support.categories.Payment">Payment</option>
+                                <option value="CancellationRefund" data-i18n="support.categories.CancellationRefund">CancellationRefund</option>
+                                <option value="FlightChange" data-i18n="support.categories.FlightChange">FlightChange</option>
+                                <option value="Baggage" data-i18n="support.categories.Baggage">Baggage</option>
+                                <option value="Account" data-i18n="support.categories.Account">Account</option>
+                                <option value="WebsiteProblem" data-i18n="support.categories.WebsiteProblem">WebsiteProblem</option>
+                                <option value="Other" data-i18n="support.categories.Other">Other</option>
+                                    </select>
+                                </label>
+                                <label class="sp-field">
+                                    <span class="sp-label" data-i18n="support.pnr">Booking reference (optional)</span>
+                                    <input class="sp-input" id="sp-pnr" name="bookingPnr" type="text" maxlength="10" autocomplete="off" data-i18n-placeholder="support.pnrPlaceholder" placeholder="e.g. AB12CD">
+                                    <span class="sp-error" id="sp-pnr-error" hidden></span>
+                                </label>
+                            </div>
+
+                            <label class="sp-field">
+                                <span class="sp-label" data-i18n="support.subject">Subject</span>
+                                <input class="sp-input" id="sp-subject" name="subject" type="text" maxlength="120" data-i18n-placeholder="support.subjectPlaceholder" placeholder="What is it about?">
+                                <span class="sp-error" id="sp-subject-error" hidden></span>
+                            </label>
+
+                            <label class="sp-field">
+                                <span class="sp-label" data-i18n="support.message">Message</span>
+                                <textarea class="sp-input sp-textarea" id="sp-message" name="message" rows="6" maxlength="4000" data-i18n-placeholder="support.messagePlaceholder" placeholder="Describe the problem with as much detail as you can."></textarea>
+                                <span class="sp-error" id="sp-message-error" hidden></span>
+                            </label>
+
+                            <p class="sp-feedback" id="sp-feedback" role="status" aria-live="polite" hidden></p>
+                            <button class="sp-button" id="sp-submit" type="submit" data-i18n="support.submit">Send request</button>
+                        </form>
+                    </section>
+
+                </div>
+
+                <section class="sp-card sp-card--full" id="requests" aria-labelledby="sp-requests-title">
+                    <h2 class="sp-card-title" id="sp-requests-title" data-i18n="support.myTitle">My Support Requests</h2>
+                    <p class="sp-muted" id="sp-requests-state" aria-live="polite"></p>
+                    <div id="sp-list" class="sp-list"></div>
+
+                    <div id="sp-detail" class="sp-detail" hidden>
+                        <button class="sp-link" id="sp-back" type="button" data-i18n="support.back">Back to my requests</button>
+                        <div class="sp-detail-head">
+                            <h3 class="sp-detail-title" id="sp-detail-title"></h3>
+                            <span class="sp-badge" id="sp-detail-status"></span>
+                        </div>
+                        <p class="sp-meta" id="sp-detail-meta"></p>
+                        <div id="sp-thread" class="sp-thread" aria-live="polite"></div>
+                        <form id="sp-reply-form" class="sp-form" novalidate>
+                            <label class="sp-field">
+                                <span class="sp-label" data-i18n="support.reply">Your reply</span>
+                                <textarea class="sp-input sp-textarea" id="sp-reply" rows="4" maxlength="4000" data-i18n-placeholder="support.replyPlaceholder" placeholder="Write your reply..."></textarea>
+                                <span class="sp-error" id="sp-reply-error" hidden></span>
+                            </label>
+                            <p class="sp-feedback" id="sp-reply-feedback" role="status" aria-live="polite" hidden></p>
+                            <button class="sp-button" id="sp-reply-submit" type="submit" data-i18n="support.sendReply">Send reply</button>
+                        </form>
+                        <p class="sp-notice" id="sp-resolved" data-i18n="support.resolvedNote" hidden>This request is resolved. If you still need help, send a new request.</p>
+                    </div>
+                </section>
+
+                <section class="sp-card sp-card--full" id="faq" aria-labelledby="sp-faq-title">
+                    <h2 class="sp-card-title" id="sp-faq-title" data-i18n="support.faqTitle">Frequently asked questions</h2>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q1">Question 1</summary>
+                        <p data-i18n="support.faq.a1">Answer 1</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q2">Question 2</summary>
+                        <p data-i18n="support.faq.a2">Answer 2</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q3">Question 3</summary>
+                        <p data-i18n="support.faq.a3">Answer 3</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q4">Question 4</summary>
+                        <p data-i18n="support.faq.a4">Answer 4</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q5">Question 5</summary>
+                        <p data-i18n="support.faq.a5">Answer 5</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q6">Question 6</summary>
+                        <p data-i18n="support.faq.a6">Answer 6</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q7">Question 7</summary>
+                        <p data-i18n="support.faq.a7">Answer 7</p>
+                    </details>
+                    <details class="sp-faq-item">
+                        <summary data-i18n="support.faq.q8">Question 8</summary>
+                        <p data-i18n="support.faq.a8">Answer 8</p>
+                    </details>
+                </section>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <footer id="site-footer" class="site-footer">
+
+        <div class="footer-main">
+
+            <div class="footer-container">
+
+                <div class="footer-brand">
+
+                    <div class="logo">
+
+                        <span class="logo-text">Aerova</span>
+
+                    </div>
+
+                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+
+                    <ul class="footer-links">
+
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+
+                        <li><a class="footer-link" href="profile.html" data-i18n="nav.profile">Profile</a></li>
+
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+
+                    <ul class="footer-links">
+
+                        <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
+
+                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Contact Us</a></li>
+
+                        <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Manage Booking</a></li>
+
+                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">FAQs</a></li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+
+                    <ul class="social-list">
+
+                        <li>
+
+                            <a class="social-link" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+                                    <path fill="currentColor" d="M14.2 8.4V6.9c0-.7.4-.9 1.1-.9H17V3.5h-2C12.4 3.5 11 4.8 11 7v1.4H9.1v2.6H11V20h3.2v-9h2.2l.3-2.6h-2.5z"/>
+
+                                </svg>
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a class="social-link" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+                                    <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+                                    <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+                                    <circle cx="17.1" cy="6.9" r="0.9" fill="currentColor"/>
+
+                                </svg>
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a class="social-link" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+                                    <path fill="currentColor" d="M5 4.8h3.1l3.4 4.6L15.4 4.8H19l-5.2 6.3L19.3 19.2h-3.1l-3.7-5L8 19.2H4.4l5.5-6.6L5 4.8zm2.4 1.3 7.9 11h1.4l-7.9-11H7.4z"/>
+
+                                </svg>
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a class="social-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+                                    <rect x="3" y="6.5" width="18" height="11" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+                                    <path fill="currentColor" d="M10.8 9.8v4.4l3.8-2.2-3.8-2.2z"/>
+
+                                </svg>
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a class="social-link" href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+
+                                <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+
+                                    <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+
+                                    <path fill="currentColor" d="M8 10.3h1.7V16H8v-5.7zM8.85 7.5a1 1 0 110 2 1 1 0 010-2zM12.1 10.3h1.6v.8c.35-.55 1-.95 1.85-.95 1.55 0 2.25 1 2.25 2.55V16h-1.7v-3c0-.75-.3-1.25-1-1.25-.7 0-1.15.5-1.15 1.3V16h-1.85v-5.7z"/>
+
+                                </svg>
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="footer-bottom">
+
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+
+            <ul class="footer-legal">
+
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+
+            </ul>
+
+        </div>
+
+    </footer>
+
+        <script src="assets/js/locales/en.js"></script>
+    <script src="assets/js/locales/az.js"></script>
+    <script src="assets/js/locales/ru.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/api-config.js?v=base1"></script>
+    <script src="assets/js/api-client.js?v=stay1"></script>
+    <script src="assets/js/chat-widget.js"></script>
+    <script src="assets/js/auth.js?v=stay1"></script>
+
+    <script src="assets/js/support.js?v=sup2"></script>
+
+    <script src="assets/js/logo.js?v=thru1"></script>
+
+</body>
+
+</html>
+

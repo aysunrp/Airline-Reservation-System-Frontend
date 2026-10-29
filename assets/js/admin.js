@@ -60,6 +60,7 @@
             aircraft: { title: tr("admin.aircraft", "Aircraft"), subtitle: tr("admin.aircraftSub", "Fleet configuration and seat capacity") },
             seats: { title: tr("admin.seats", "Seat Inventory"), subtitle: tr("admin.seatsSub", "Cabin availability by flight") },
             bookings: { title: tr("admin.bookings", "Bookings"), subtitle: tr("admin.bookingsSub", "Reservation management and cancellations") },
+            support: { title: tr("support.admin.title", "Support"), subtitle: tr("support.admin.sub", "Customer requests and replies") },
             refunds: { title: tr("cancellation.admin.nav", "Refunds"), subtitle: tr("cancellation.admin.sub", "Refunds of cancelled bookings and their Stripe status") },
             passengers: { title: tr("admin.passengers", "Passengers"), subtitle: tr("admin.passengersSub", "Traveler records and contact details") },
             airports: { title: tr("api.admin.airports", "Airports"), subtitle: tr("api.admin.airportsSub", "Where AEROVA flies and the time zone of each airport") },
@@ -1430,7 +1431,7 @@
             dashboard: loadDashboard, flights: resetFlightsAndLoad, routes: loadRoutes, schedules: loadSchedules,
             aircraft: loadAircraft, seats: loadSeatFlights, bookings: loadBookings, passengers: loadPassengers,
             airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules,
-            users: loadUsers, audit: loadAudit, refunds: loadRefunds
+            users: loadUsers, audit: loadAudit, refunds: loadRefunds, support: loadSupport
         };
         loaders[state.section]();
     }
@@ -1440,7 +1441,7 @@
             dashboard: renderDashboard, flights: renderFlights, routes: renderRoutes, schedules: renderSchedules,
             aircraft: renderAircraft, seats: renderSeatInventory, bookings: renderBookings, passengers: renderPassengers,
             airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules,
-            users: renderUsers, audit: renderAudit, refunds: renderRefunds
+            users: renderUsers, audit: renderAudit, refunds: renderRefunds, support: renderSupport
         };
         var meta = getSectionMeta()[state.section];
         byId("admin-page-title").textContent = meta.title;
@@ -1774,6 +1775,115 @@
         });
     }
 
+    /* ------------------------------------------------------------------ support requests (GET api/admin/support/tickets) */
+
+    var SUPPORT_STATUSES = ["Open", "InProgress", "WaitingForCustomer", "Resolved"];
+
+    function supportDate(value) {
+        return escapeHtml(String(value || "").slice(0, 16).replace("T", " ") + " UTC");
+    }
+
+    function supportStatusText(value) {
+        return tr("support.status." + value, value);
+    }
+
+    function renderSupport() {
+        var page = state.supportPage || { items: [], total: 0, page: 1, pageSize: 20 };
+        byId("support-body").innerHTML = page.items.length ? page.items.map(function (item) {
+            return "<tr><td>" + escapeHtml(item.ticketNumber) + "</td><td>" + escapeHtml(item.customerName) + "<br><small>" + escapeHtml(item.customerEmail) + "</small></td>" +
+                "<td>" + escapeHtml(item.subject) + (item.bookingPnr ? "<br><small>" + escapeHtml(item.bookingPnr) + "</small>" : "") + "</td>" +
+                "<td>" + escapeHtml(tr("support.categories." + item.category, item.category)) + "</td>" +
+                "<td>" + statusBadge(supportStatusText(item.status)) + "</td><td>" + supportDate(item.createdAt) + "</td><td>" + supportDate(item.updatedAt) + "</td>" +
+                '<td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-support-open="' + item.id + '">' + escapeHtml(tr("support.admin.open", "Open")) + "</button></div></td></tr>";
+        }).join("") : emptyRow(8, tr("support.admin.empty", "No support requests found."));
+
+        var pages = Math.max(1, Math.ceil(page.total / page.pageSize));
+        byId("support-pager").innerHTML = page.total > page.pageSize
+            ? '<button class="admin-btn admin-btn--ghost" type="button" data-support-page="' + (page.page - 1) + '"' + (page.page <= 1 ? " disabled" : "") + ">" + escapeHtml(tr("support.admin.prev", "Previous")) + "</button>" +
+              "<span>" + escapeHtml(tr("support.admin.page", "Page {page} of {pages} ({total})", { page: page.page, pages: pages, total: page.total })) + "</span>" +
+              '<button class="admin-btn admin-btn--ghost" type="button" data-support-page="' + (page.page + 1) + '"' + (page.page >= pages ? " disabled" : "") + ">" + escapeHtml(tr("support.admin.next", "Next")) + "</button>"
+            : "";
+    }
+
+    function loadSupport(pageNumber) {
+        var pageIndex = typeof pageNumber === "number" ? pageNumber : 1;
+        loading("support-body", 8);
+        var query = "page=" + pageIndex + "&pageSize=20";
+        var search = byId("support-search").value.trim();
+        var status = byId("support-status-filter").value;
+        var category = byId("support-category-filter").value;
+        if (search) query += "&search=" + encodeURIComponent(search);
+        if (status) query += "&status=" + encodeURIComponent(status);
+        if (category) query += "&category=" + encodeURIComponent(category);
+        api.get("api/admin/support/tickets?" + query).then(function (result) {
+            state.supportPage = result;
+            renderSupport();
+        }).catch(function (error) {
+            failed(error, "support-body", 8, loadSupport);
+        });
+    }
+
+    function openSupportTicket(id) {
+        byId("details-modal-title").textContent = tr("support.admin.title", "Support");
+        byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Please wait...")) + "</p>";
+        byId("details-modal").hidden = false;
+
+        api.get("api/admin/support/tickets/" + id).then(function (ticket) {
+            var thread = ticket.messages.map(function (message) {
+                var staff = message.authorType === "Staff";
+                return '<div style="margin:.5rem 0;padding:.6rem .8rem;border-radius:10px;background:' + (staff ? "#07111d" : "#f1ece0") + ";color:" + (staff ? "#f6f1e7" : "#1c150c") + '">' +
+                    "<small><strong>" + escapeHtml(staff ? tr("support.admin.staff", "AEROVA Support") : message.authorName) + "</strong> \u00b7 " + supportDate(message.createdAt) + "</small>" +
+                    '<div style="white-space:pre-wrap;word-break:break-word">' + escapeHtml(message.body) + "</div></div>";
+            }).join("");
+            var statusOptions = SUPPORT_STATUSES.map(function (value) {
+                return '<option value="' + value + '"' + (value === ticket.status ? " selected" : "") + ">" + escapeHtml(supportStatusText(value)) + "</option>";
+            }).join("");
+            var afterOptions = '<option value="">' + escapeHtml(tr("support.admin.keepWaiting", "Waiting for the customer")) + "</option>" + SUPPORT_STATUSES.map(function (value) {
+                return '<option value="' + value + '">' + escapeHtml(supportStatusText(value)) + "</option>";
+            }).join("");
+
+            byId("details-modal-body").innerHTML =
+                "<p><strong>" + escapeHtml(ticket.ticketNumber) + "</strong> \u2014 " + escapeHtml(ticket.subject) + "</p>" +
+                "<p>" + escapeHtml(tr("support.admin.customer", "Customer")) + ": " + escapeHtml(ticket.customerName) + " (" + escapeHtml(ticket.customerEmail) + ")" +
+                (ticket.bookingPnr ? " \u00b7 " + escapeHtml(tr("support.admin.booking", "Booking")) + ": " + escapeHtml(ticket.bookingPnr) : "") + "</p>" +
+                "<p>" + escapeHtml(tr("support.categories." + ticket.category, ticket.category)) + " \u00b7 " + escapeHtml(tr("support.admin.colCreated", "Created")) + ": " + supportDate(ticket.createdAt) +
+                " \u00b7 " + escapeHtml(tr("support.admin.colUpdated", "Last update")) + ": " + supportDate(ticket.updatedAt) + "</p>" +
+                '<div id="support-thread">' + thread + "</div>" +
+                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.statusLabel", "Status")) + '</span><select id="support-status-select" class="admin-input">' + statusOptions + "</select></label>" +
+                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--ghost" id="support-status-save">' + escapeHtml(tr("support.admin.saveStatus", "Save status")) + "</button></div>" +
+                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.reply", "Reply to the customer")) + '</span><textarea id="support-reply-text" class="admin-input" rows="4" maxlength="4000" placeholder="' + escapeHtml(tr("support.admin.replyPlaceholder", "Write the reply (the customer is told by e-mail)...")) + '"></textarea></label>' +
+                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.afterReply", "Status after the reply")) + '</span><select id="support-after-reply" class="admin-input">' + afterOptions + "</select></label>" +
+                '<p class="admin-hint" id="support-result" role="status"></p>' +
+                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--primary" id="support-reply-send">' + escapeHtml(tr("support.admin.send", "Send reply")) + "</button></div>";
+
+            byId("support-status-save").addEventListener("click", function () {
+                api.put("api/admin/support/tickets/" + id + "/status", { status: byId("support-status-select").value }).then(function () {
+                    byId("support-result").textContent = tr("support.admin.statusSaved", "The status was saved.");
+                    loadSupport(state.supportPage ? state.supportPage.page : 1);
+                }, function (error) {
+                    byId("support-result").textContent = (error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.");
+                });
+            });
+
+            byId("support-reply-send").addEventListener("click", function () {
+                var text = byId("support-reply-text").value.trim();
+                var button = byId("support-reply-send");
+                if (!text || button.disabled) return;
+                button.disabled = true;
+                var after = byId("support-after-reply").value;
+                api.post("api/admin/support/tickets/" + id + "/replies", { message: text, status: after || null }).then(function () {
+                    loadSupport(state.supportPage ? state.supportPage.page : 1);
+                    openSupportTicket(id);
+                }, function (error) {
+                    button.disabled = false;
+                    byId("support-result").textContent = (error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.");
+                });
+            });
+        }).catch(function (error) {
+            byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml((error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.")) + "</p>";
+        });
+    }
+
     function retryRefund(id) {
         var item = find(state.refunds, id);
         if (!item) return;
@@ -1965,6 +2075,19 @@
 
         byId("refund-status-filter").addEventListener("change", loadRefunds);
         byId("refund-refresh-btn").addEventListener("click", loadRefunds);
+        var searchSupport = debounce(function () { loadSupport(1); }, 300);
+        byId("support-search").addEventListener("input", searchSupport);
+        byId("support-status-filter").addEventListener("change", function () { loadSupport(1); });
+        byId("support-category-filter").addEventListener("change", function () { loadSupport(1); });
+        byId("support-refresh-btn").addEventListener("click", function () { loadSupport(state.supportPage ? state.supportPage.page : 1); });
+        byId("support-body").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-support-open]");
+            if (button) openSupportTicket(Number(button.getAttribute("data-support-open")));
+        });
+        byId("support-pager").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-support-page]");
+            if (button && !button.disabled) loadSupport(Number(button.getAttribute("data-support-page")));
+        });
         byId("refunds-body").addEventListener("click", function (event) {
             var button = event.target.closest("[data-retry-refund]");
             if (button && !button.disabled) retryRefund(button.getAttribute("data-retry-refund"));

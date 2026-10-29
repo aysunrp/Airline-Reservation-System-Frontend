@@ -130,6 +130,7 @@
 
                 <button class="admin-nav-link" type="button" data-section="bookings" data-i18n="admin.bookings">Bookings</button>
                 <button class="admin-nav-link" type="button" data-section="refunds" data-i18n="cancellation.admin.nav">Refunds</button>
+                <button class="admin-nav-link" type="button" data-section="support" data-i18n="support.admin.title">Support</button>
 
 
 
@@ -1129,6 +1130,41 @@
                 </div>
             </section>
 
+            <!-- SUPPORT -->
+            <section class="admin-section" id="section-support" data-section-panel="support" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <input class="admin-search" id="support-search" type="search" data-i18n-placeholder="support.admin.search" placeholder="Search ticket, email, subject or booking">
+                        <select class="admin-select" id="support-status-filter" aria-label="Status">
+                            <option value="" data-i18n="support.admin.allStatuses">All statuses</option>
+                            <option value="Open" data-i18n="support.status.Open">Open</option>
+                            <option value="InProgress" data-i18n="support.status.InProgress">In progress</option>
+                            <option value="WaitingForCustomer" data-i18n="support.status.WaitingForCustomer">Waiting for customer</option>
+                            <option value="Resolved" data-i18n="support.status.Resolved">Resolved</option>
+                        </select>
+                        <select class="admin-select" id="support-category-filter" aria-label="Topic">
+                            <option value="" data-i18n="support.admin.allCategories">All topics</option>
+                            <option value="Booking" data-i18n="support.categories.Booking">Booking</option>
+                            <option value="Payment" data-i18n="support.categories.Payment">Payment</option>
+                            <option value="CancellationRefund" data-i18n="support.categories.CancellationRefund">Cancellation and Refund</option>
+                            <option value="FlightChange" data-i18n="support.categories.FlightChange">Flight Change</option>
+                            <option value="Baggage" data-i18n="support.categories.Baggage">Baggage</option>
+                            <option value="Account" data-i18n="support.categories.Account">Account</option>
+                            <option value="WebsiteProblem" data-i18n="support.categories.WebsiteProblem">Website Problem</option>
+                            <option value="Other" data-i18n="support.categories.Other">Other</option>
+                        </select>
+                        <button class="admin-btn admin-btn--secondary" id="support-refresh-btn" type="button" data-i18n="api.admin.refresh">Refresh</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="support.admin.colNumber">Ticket</th><th data-i18n="support.admin.colCustomer">Customer</th><th data-i18n="support.admin.colSubject">Subject</th><th data-i18n="support.admin.colCategory">Topic</th><th data-i18n="support.admin.colStatus">Status</th><th data-i18n="support.admin.colCreated">Created</th><th data-i18n="support.admin.colUpdated">Last update</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <tbody id="support-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="admin-actions" id="support-pager"></div>
+                </div>
+            </section>
+
             <!-- PROMO CODES -->
             <section class="admin-section" id="section-promos" data-section-panel="promos" hidden>
                 <div class="admin-panel admin-panel--cream">
@@ -1407,7 +1443,7 @@
 
 
     <script src="assets/js/auth.js?v=stay1"></script>
-    <script src="assets/js/admin.js?v=camp1"></script>
+    <script src="assets/js/admin.js?v=sup1"></script>
 
 
 
