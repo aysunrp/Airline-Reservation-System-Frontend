@@ -808,12 +808,105 @@
                 "<td>" + escapeHtml(item.validFrom ? String(item.validFrom).slice(0, 16).replace("T", " ") + " UTC" : "\u2014") + "</td>" +
                 "<td>" + escapeHtml(item.validTo ? String(item.validTo).slice(0, 16).replace("T", " ") + " UTC" : "\u2014") + "</td>" +
                 "<td>" + item.usedCount + (item.maxUses != null ? " / " + item.maxUses : "") + "</td><td>" + activeBadge(item.isActive) + "</td>" +
-                rowButtons("promo", item.id) + "</tr>";
+                promoButtons(item) + "</tr>";
         }).join("") : emptyRow(7, tr("api.admin.noPromos", "No promo codes found."));
+    }
+
+    /* The usual edit and delete buttons, and one more to preview and send the promotion by e-mail (never sent when a promo code is saved). */
+    function promoButtons(item) {
+        return rowButtons("promo", item.id).replace('<div class="admin-actions">',
+            '<div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-campaign-promo="' + item.id + '">' +
+            escapeHtml(tr("api.admin.campaignButton", "Email campaign")) + "</button>");
+    }
+
+    var CAMPAIGN_PROBLEMS = {
+        promo_inactive: "The promo code is not active.",
+        promo_expired: "The promo code has expired.",
+        promo_exhausted: "The promo code has no uses left.",
+        no_subscribers: "There are no confirmed subscribers yet.",
+        campaign_already_sent: "A campaign for this promo code was already created."
+    };
+
+    var CAMPAIGN_STATUS = { Queued: "Waiting to start", Sending: "Sending", Completed: "Completed", CompletedWithErrors: "Completed with errors" };
+
+    function renderCampaigns() {
+        var rows = state.campaigns || [];
+        byId("campaigns-body").innerHTML = rows.length ? rows.map(function (item) {
+            return "<tr><td>" + escapeHtml(item.code) + " (" + item.discountPercent + "%)</td>" +
+                "<td>" + escapeHtml(tr("api.admin.campaignStatus" + item.status, CAMPAIGN_STATUS[item.status] || item.status)) + "</td>" +
+                "<td>" + item.sent + " / " + item.totalRecipients + "</td><td>" + item.failed + "</td><td>" + item.skipped + "</td><td>" + item.pending + "</td>" +
+                "<td>" + escapeHtml(String(item.createdAt || "").slice(0, 16).replace("T", " ") + " UTC") + "</td></tr>";
+        }).join("") : emptyRow(7, tr("api.admin.noCampaigns", "No campaigns yet."));
+    }
+
+    function loadCampaigns() {
+        api.get("api/admin/campaigns").then(function (rows) {
+            state.campaigns = rows;
+            renderCampaigns();
+        }).catch(function () {
+            byId("campaigns-body").innerHTML = emptyRow(7, tr("api.errors.generic", "Something went wrong. Please try again."));
+        });
+    }
+
+    /*
+     * Preview and confirm: the page shows the e-mail the server built from the saved promotion (in a sandboxed frame, so nothing in it can run),
+     * and sends back only the hash of that preview and the confirmation. The discount, code and dates are never sent by the page.
+     */
+    function openCampaign(id, language) {
+        var lang = language || "en";
+        byId("details-modal-title").textContent = tr("api.admin.campaignButton", "Email campaign");
+        byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Please wait...")) + "</p>";
+        byId("details-modal").hidden = false;
+
+        api.get("api/admin/promo-codes/" + id + "/campaign-preview?language=" + encodeURIComponent(lang)).then(function (preview) {
+            var problems = (preview.problems || []).map(function (code) {
+                return "<li>" + escapeHtml(tr("api.admin.campaignProblem_" + code, CAMPAIGN_PROBLEMS[code] || code)) + "</li>";
+            }).join("");
+            var options = ["en", "az", "ru"].map(function (code) {
+                return '<option value="' + code + '"' + (code === preview.language ? " selected" : "") + ">" + code.toUpperCase() + "</option>";
+            }).join("");
+
+            byId("details-modal-body").innerHTML =
+                '<p><strong>' + escapeHtml(preview.code) + "</strong> — " + preview.discountPercent + "%" +
+                (preview.validTo ? " · " + escapeHtml(tr("api.admin.validUntil", "Valid until")) + " " + escapeHtml(String(preview.validTo).slice(0, 10)) : "") + "</p>" +
+                "<p>" + escapeHtml(tr("api.admin.campaignRecipients", "Confirmed subscribers who will receive it:")) + " <strong>" + preview.recipientCount + "</strong></p>" +
+                (problems ? '<ul class="admin-error">' + problems + "</ul>" : "") +
+                '<label class="admin-field"><span>' + escapeHtml(tr("api.admin.campaignLanguage", "Preview language")) + '</span><select id="campaign-language" class="admin-input">' + options + "</select></label>" +
+                "<p><strong>" + escapeHtml(preview.subject) + "</strong></p>" +
+                '<iframe id="campaign-frame" class="admin-campaign-frame" sandbox="" style="width:100%;height:420px;border:1px solid #ddd;background:#fff"></iframe>' +
+                '<label class="admin-check"><input type="checkbox" id="campaign-confirm"' + (preview.canSend ? "" : " disabled") + "> " +
+                escapeHtml(tr("api.admin.campaignConfirm", "Send email campaign to subscribed customers")) + "</label>" +
+                '<p class="admin-hint" id="campaign-result" role="status"></p>' +
+                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--primary" id="campaign-send" disabled>' +
+                escapeHtml(tr("api.admin.campaignSend", "Send campaign")) + "</button></div>";
+
+            byId("campaign-frame").setAttribute("srcdoc", preview.html);
+            byId("campaign-language").addEventListener("change", function () { openCampaign(id, this.value); });
+
+            var box = byId("campaign-confirm");
+            var button = byId("campaign-send");
+            box.addEventListener("change", function () { button.disabled = !box.checked || !preview.canSend; });
+
+            button.addEventListener("click", function () {
+                button.disabled = true;
+                byId("campaign-result").textContent = "";
+                api.post("api/admin/promo-codes/" + id + "/campaign", { previewHash: preview.previewHash, confirm: true }).then(function () {
+                    byId("campaign-result").textContent = tr("api.admin.campaignQueued", "The campaign was confirmed and is being sent in the background. Follow it in the Email campaigns table.");
+                    box.disabled = true;
+                    loadCampaigns();
+                }, function (error) {
+                    button.disabled = false;
+                    byId("campaign-result").textContent = (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again.");
+                });
+            });
+        }).catch(function (error) {
+            byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml((error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again.")) + "</p>";
+        });
     }
 
     function loadPromos() {
         loading("promos-body", 7);
+        loadCampaigns();
         api.get("api/admin/promo-codes").then(function (rows) {
             state.promos = rows;
             renderPromos();
@@ -1839,6 +1932,12 @@
 
         byId("airport-search").addEventListener("input", renderAirports);
         byId("promo-search").addEventListener("input", renderPromos);
+        byId("promos-body").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-campaign-promo]");
+            if (button) {
+                openCampaign(Number(button.getAttribute("data-campaign-promo")));
+            }
+        });
 
         var reloadUsers = debounce(loadUsers, 300);
         byId("user-search").addEventListener("input", reloadUsers);

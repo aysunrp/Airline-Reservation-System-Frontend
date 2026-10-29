@@ -1143,6 +1143,16 @@
                         </table>
                     </div>
                 </div>
+                <div class="admin-panel admin-panel--cream" id="campaigns-panel">
+                    <h3 class="admin-subtitle" data-i18n="api.admin.campaignsTitle">Email campaigns</h3>
+                    <p class="admin-hint" data-i18n="api.admin.campaignsHint">Saving a promo code never sends an email. Use "Email campaign" on a promo code to preview and send it to confirmed subscribers.</p>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="admin.status">Status</th><th data-i18n="api.admin.campaignSent">Sent</th><th data-i18n="api.admin.campaignFailed">Failed</th><th data-i18n="api.admin.campaignSkipped">Skipped</th><th data-i18n="api.admin.campaignPending">Waiting</th><th data-i18n="api.admin.campaignCreated">Created</th></tr></thead>
+                            <tbody id="campaigns-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
 
             <!-- BAGGAGE AND MEALS -->
@@ -1397,7 +1407,7 @@
 
 
     <script src="assets/js/auth.js?v=stay1"></script>
-    <script src="assets/js/admin.js?v=refund1"></script>
+    <script src="assets/js/admin.js?v=camp1"></script>
 
 
 
