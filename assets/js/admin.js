@@ -591,10 +591,15 @@
         deck.innerHTML = html;
     }
 
-    function loadSeatInventory() {
+    var seatRequest = 0;
+
+    /* A quiet reload (the timed refresh) keeps the map on screen and only repaints it when the server has answered. */
+    function loadSeatInventory(quiet) {
+        quiet = quiet === true;
         var select = byId("seat-flight-select");
         var flightId = select.value;
         var deck = byId("aircraft-deck");
+        var request = ++seatRequest;
 
         if (!flightId) {
             state.seatInventory = null;
@@ -603,18 +608,44 @@
             return;
         }
 
-        deck.innerHTML = '<p class="admin-empty" role="status">' + escapeHtml(tr("api.admin.loading", "Loading...")) + "</p>";
+        if (!quiet) {
+            deck.innerHTML = '<p class="admin-empty" role="status">' + escapeHtml(tr("api.admin.loading", "Loading...")) + "</p>";
+        }
 
         api.get("api/admin/flights/" + encodeURIComponent(flightId) + "/seats").then(function (inventory) {
+            // An older answer never overwrites a newer one, and the answer for another flight is dropped.
+            if (request !== seatRequest || select.value !== flightId) return;
             state.seatInventory = inventory;
             renderSeatInventory();
+            paintSeatUpdated();
         }).catch(function (error) {
             if (api && error instanceof api.ApiError && error.status === 403) {
                 denyAccess();
                 return;
             }
+            if (quiet) return; // the map shown stays, the next refresh tries again
             deck.innerHTML = '<p class="admin-empty" role="alert">' + escapeHtml(apiMessage(error)) + "</p>";
         });
+    }
+
+    function paintSeatUpdated() {
+        var line = byId("seat-updated");
+        if (!line) return;
+        var now = new Date();
+        var time = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") + ":" + String(now.getSeconds()).padStart(2, "0");
+        line.textContent = tr("api.admin.seatsUpdated", "Updated {time}. The map refreshes by itself.", { time: time });
+    }
+
+    var SEAT_REFRESH_MS = 10000;
+
+    /* The map follows bookings, payments, cancellations and expiries without a page reload: it is read again every few seconds while it is open. */
+    function startSeatRefresh() {
+        function refresh() {
+            if (state.section !== "seats" || document.hidden || !byId("seat-flight-select").value) return;
+            loadSeatInventory(true);
+        }
+        window.setInterval(refresh, SEAT_REFRESH_MS);
+        document.addEventListener("visibilitychange", function () { if (!document.hidden) refresh(); });
     }
 
     function loadSeatFlights() {
@@ -2203,7 +2234,8 @@
         byId("passenger-status-filter").addEventListener("change", loadPassengers);
 
         byId("seat-date-select").addEventListener("change", loadSeatFlights);
-        byId("seat-flight-select").addEventListener("change", loadSeatInventory);
+        byId("seat-flight-select").addEventListener("change", function () { loadSeatInventory(); });
+        startSeatRefresh();
         byId("seat-cabin-select").addEventListener("change", renderSeatInventory);
 
         function addButton(id, form) {

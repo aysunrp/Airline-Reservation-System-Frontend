@@ -1996,6 +1996,7 @@ window.AEROVA_LOCALES.ru = {
       "noSeatsInCabin": "В этом салоне у самолёта нет мест.",
       "noFlightsThatDay": "В этот день рейсов нет.",
       "seatLocked": "Забронированное или занятое место изменить нельзя.",
+      "seatsUpdated": "Обновлено: {time}. Карта обновляется сама.",
       "seatBlockedMsg": "Место {seat} заблокировано.",
       "seatUnblockedMsg": "Место {seat} снова открыто.",
       "none": "— нет —",

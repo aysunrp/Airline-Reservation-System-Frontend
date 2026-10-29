@@ -1996,6 +1996,7 @@ window.AEROVA_LOCALES.en = {
       "noSeatsInCabin": "This aircraft has no seats in this cabin.",
       "noFlightsThatDay": "There are no flights on this day.",
       "seatLocked": "A reserved or occupied seat cannot be changed.",
+      "seatsUpdated": "Updated {time}. The map refreshes by itself.",
       "seatBlockedMsg": "Seat {seat} is now blocked.",
       "seatUnblockedMsg": "Seat {seat} is open again.",
       "none": "— none —",
