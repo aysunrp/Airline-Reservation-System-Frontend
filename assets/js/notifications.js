@@ -57,6 +57,7 @@
         BookingCancelled: { icon: "✕", titleKey: "notifications.cancelledTitle" },
         PaymentSuccessful: { icon: "$", titleKey: "notifications.paymentTitle" },
         FlightUpdate: { icon: "✈", titleKey: "notifications.flightUpdateTitle" },
+        SupportUpdate: { icon: "✉", titleKey: null },
         CheckInReminder: { icon: "⏱", titleKey: "notifications.checkinTitle" },
         RefundCompleted: { icon: "↩", titleKey: "api.notifications.refundCompletedTitle" }
     };
@@ -80,12 +81,31 @@
         CheckInReminder: [
             { pattern: /^Your flight (\S+) from (.+) to (.+) departs within (\d+) hours\. Booking reference (\S+)\.$/, key: "checkin", vars: ["flight", "from", "to", "hours", "pnr"] }
         ],
+        SupportUpdate: [
+            { pattern: /^We received your request "(.*)" \((\S+)\)\. We will answer in your Support page\.$/, key: "supportReceived", vars: ["subject", "number"] },
+            { pattern: /^Support replied to "(.*)" \((\S+)\): ([\s\S]*) Status: ([^:]+)\.$/, key: "supportReply", vars: ["subject", "number", "body", "status"] },
+            { pattern: /^The status of your request "(.*)" \((\S+)\) is now: (.+)\.$/, key: "supportStatus", vars: ["subject", "number", "status"] }
+        ],
         FlightUpdate: [
             { pattern: /^Flight (\S+) on (.+) has been cancelled\.$/, key: "flightCancelled", vars: ["flight", "date"] },
             { pattern: /^Flight (\S+) now departs at (.+) UTC and arrives at (.+) UTC\.$/, key: "flightTimes", vars: ["flight", "departure", "arrival"] },
             { pattern: /^The status of flight (\S+) on (.+) is now (.+)\.$/, key: "flightStatus", vars: ["flight", "date", "status"] }
         ]
     };
+
+    /* The backend writes the status of a ticket in English; the same four words are translated by the Support page's keys. */
+    var SUPPORT_STATUS = { "Open": "Open", "In progress": "InProgress", "Waiting for your reply": "WaitingForCustomer", "Resolved": "Resolved" };
+
+    function supportStatus(text) {
+        var key = SUPPORT_STATUS[text];
+        return key ? tr("support.status." + key, text) : text;
+    }
+
+    var SUPPORT_TITLES = [
+        { pattern: /^Support request (\S+) received$/, key: "supportReceivedTitle", vars: ["number"] },
+        { pattern: /^New reply on support request (\S+)$/, key: "supportReplyTitle", vars: ["number"] },
+        { pattern: /^Support request (\S+) is now (.+)$/, key: "supportStatusTitle", vars: ["number", "status"] }
+    ];
 
     function messageFor(notification) {
         var original = String(notification.message || "");
@@ -101,7 +121,7 @@
             var vars = {};
             rules[index].vars.forEach(function (name, position) {
                 var value = match[position + 1];
-                vars[name] = name === "amount" ? "$" + value : value;
+                vars[name] = name === "amount" ? "$" + value : name === "status" && notification.type === "SupportUpdate" ? supportStatus(value) : value;
             });
 
             return tr("api.notifications.msg." + rules[index].key, original, vars);
@@ -110,9 +130,41 @@
         return original;
     }
 
+    /*
+     * Where a notification leads, using the pages that already exist: a support notification opens its own conversation, a booking, payment,
+     * refund or check-in notification opens the booking (the reference is in the sentence). Anything else (a flight update names no booking)
+     * has no destination and stays a plain card.
+     */
+    var BOOKING_TYPES = { BookingConfirmed: 1, BookingCancelled: 1, PaymentSuccessful: 1, RefundPending: 1, RefundCompleted: 1, RefundFailed: 1, CheckInReminder: 1 };
+
+    function destinationFor(notification) {
+        if (notification.type === "SupportUpdate" && Number(notification.supportTicketId) > 0) {
+            return { href: "support.html?ticket=" + encodeURIComponent(notification.supportTicketId), labelKey: "notifications.openTicket", label: "Open conversation" };
+        }
+
+        if (BOOKING_TYPES[notification.type]) {
+            var match = /\b[Bb]ooking(?: reference)? ([A-Z0-9]{6})\b/.exec(String(notification.message || ""));
+            if (match) {
+                return { href: "booking-details.html?pnr=" + encodeURIComponent(match[1]), labelKey: "notifications.openBooking", label: "View booking" };
+            }
+        }
+
+        return null;
+    }
+
     function titleFor(notification) {
         var type = TYPES[notification.type];
-        return type ? tr(type.titleKey, notification.title) : notification.title;
+        if (notification.type === "SupportUpdate") {
+            for (var index = 0; index < SUPPORT_TITLES.length; index++) {
+                var match = SUPPORT_TITLES[index].pattern.exec(String(notification.title || ""));
+                if (match) {
+                    var vars = { number: match[1] };
+                    if (match[2]) vars.status = supportStatus(match[2]);
+                    return tr("api.notifications." + SUPPORT_TITLES[index].key, notification.title, vars);
+                }
+            }
+        }
+        return type && type.titleKey ? tr(type.titleKey, notification.title) : notification.title;
     }
 
     function stateLabelMarkup(isUnread) {
@@ -150,6 +202,29 @@
             var panelId = "notification-panel-" + index;
             var toggleId = "notification-toggle-" + index;
             var type = TYPES[notification.type];
+            var destination = destinationFor(notification);
+
+            if (destination) {
+                // A notification with a destination is a link: one click marks it read and opens the page it is about.
+                return (
+                    '<article class="notification-card notification-card--link' + (isUnread ? " is-unread" : "") + '" data-notification-id="' + escapeHtml(notification.id) + '">' +
+                        '<h2 class="notification-heading">' +
+                        '<a class="notification-toggle notification-link" href="' + escapeHtml(destination.href) + '">' +
+                            '<span class="notification-icon" aria-hidden="true">' + escapeHtml(type ? type.icon : "•") + "</span>" +
+                            '<span class="notification-body">' +
+                                '<span class="notification-title-row">' +
+                                    '<span class="notification-title">' + escapeHtml(titleFor(notification)) + "</span>" +
+                                    stateLabelMarkup(isUnread) +
+                                "</span>" +
+                                '<span class="notification-preview">' + escapeHtml(messageFor(notification)) + "</span>" +
+                                '<span class="notification-time">' + escapeHtml(formatDateTime(notification.createdAt)) + "</span>" +
+                            "</span>" +
+                            '<span class="notification-open">' + escapeHtml(tr(destination.labelKey, destination.label)) + "</span>" +
+                        "</a>" +
+                        "</h2>" +
+                    "</article>"
+                );
+            }
 
             return (
                 '<article class="notification-card' + (isUnread ? " is-unread" : "") + (isExpanded ? " is-expanded" : "") +
@@ -265,6 +340,38 @@
         });
     }
 
+    /*
+     * Opening a linked notification reads it first (the server decides), then goes to its page. If reading fails the page still opens and the
+     * notification stays unread, so nothing is hidden from the customer. A new-tab click only marks it read in the background.
+     */
+    function openLinked(event, link) {
+        var card = link.closest(".notification-card");
+        var id = card ? Number(card.getAttribute("data-notification-id")) : 0;
+        var notification = notifications.filter(function (item) { return item.id === id; })[0];
+        var newTab = event.ctrlKey || event.metaKey || event.shiftKey || event.button === 1;
+
+        function markRead() {
+            if (!notification || notification.isRead) return Promise.resolve();
+            return window.AEROVA_API.patch("api/notifications/" + id + "/read").then(function () {
+                notification.isRead = true;
+                markCardRead(card);
+                announceChange();
+            });
+        }
+
+        if (newTab) {
+            markRead().catch(function () { /* stays unread */ });
+            return;
+        }
+
+        event.preventDefault();
+        var href = link.getAttribute("href");
+        var finished = false;
+        function go() { if (!finished) { finished = true; window.location.href = href; } }
+        setTimeout(go, 2500);
+        markRead().then(go, go);
+    }
+
     function markAllAsRead() {
         if (!notifications.length) {
             showMessage(tr("notifications.noneToUpdate", "There are no notifications to update."));
@@ -310,6 +417,12 @@
 
         if (list) {
             list.addEventListener("click", function (event) {
+                var link = event.target.closest(".notification-link");
+                if (link) {
+                    openLinked(event, link);
+                    return;
+                }
+
                 var button = event.target.closest(".notification-toggle");
                 var card = button ? button.closest(".notification-card") : null;
                 if (card) {

@@ -852,7 +852,9 @@ window.AEROVA_LOCALES.en = {
     "allAlreadyRead": "All notifications are already read.",
     "allMarkedRead": "All notifications marked as read.",
     "noneToClear": "There are no notifications to clear.",
-    "allCleared": "All notifications have been cleared."
+    "allCleared": "All notifications have been cleared.",
+    "openTicket": "Open conversation",
+    "openBooking": "View booking"
   },
   "destinations": {
     "heroTitle": "Destinations",
@@ -1874,7 +1876,13 @@ window.AEROVA_LOCALES.en = {
       "loadingText": "Please wait a moment.",
       "errorTitle": "We could not load your notifications",
       "refundCompletedTitle": "Refund Completed",
+      "supportReceivedTitle": "Support request {number} received",
+      "supportReplyTitle": "New reply on support request {number}",
+      "supportStatusTitle": "Support request {number} is now {status}",
       "msg": {
+        "supportReceived": "We received your request \"{subject}\" ({number}). We will answer in your Support page.",
+        "supportReply": "Support replied to \"{subject}\" ({number}): {body} Status: {status}.",
+        "supportStatus": "The status of your request \"{subject}\" ({number}) is now: {status}.",
         "confirmed": "Your booking {pnr} is confirmed.",
         "payment": "We received your payment of {amount} for booking {pnr}.",
         "cancelled": "Your booking {pnr} has been cancelled.",

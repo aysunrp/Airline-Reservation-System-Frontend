@@ -852,7 +852,9 @@ window.AEROVA_LOCALES.az = {
     "allAlreadyRead": "Bütün bildirişlər artıq oxunub.",
     "allMarkedRead": "Bütün bildirişlər oxunmuş kimi işarələndi.",
     "noneToClear": "Təmizlənəcək bildiriş yoxdur.",
-    "allCleared": "Bütün bildirişlər təmizləndi."
+    "allCleared": "Bütün bildirişlər təmizləndi.",
+    "openTicket": "Yazışmanı aç",
+    "openBooking": "Rezervasiyaya bax"
   },
   "destinations": {
     "heroTitle": "İstiqamətlər",
@@ -1874,7 +1876,13 @@ window.AEROVA_LOCALES.az = {
       "loadingText": "Zəhmət olmasa bir az gözləyin.",
       "errorTitle": "Bildirişlərinizi yükləmək mümkün olmadı",
       "refundCompletedTitle": "Geri ödəniş tamamlandı",
+      "supportReceivedTitle": "{number} dəstək müraciəti qəbul edildi",
+      "supportReplyTitle": "{number} dəstək müraciətinə yeni cavab",
+      "supportStatusTitle": "{number} dəstək müraciətinin statusu: {status}",
       "msg": {
+        "supportReceived": "\"{subject}\" ({number}) müraciətinizi qəbul etdik. Cavabı Dəstək səhifənizdə verəcəyik.",
+        "supportReply": "Dəstək \"{subject}\" ({number}) müraciətinizə cavab yazdı: {body} Status: {status}.",
+        "supportStatus": "\"{subject}\" ({number}) müraciətinizin statusu: {status}.",
         "confirmed": "{pnr} nömrəli bronunuz təsdiqləndi.",
         "payment": "{pnr} nömrəli bron üçün {amount} məbləğində ödənişiniz qəbul edildi.",
         "cancelled": "{pnr} nömrəli bronunuz ləğv edildi.",

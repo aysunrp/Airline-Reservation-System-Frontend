@@ -852,7 +852,9 @@ window.AEROVA_LOCALES.ru = {
     "allAlreadyRead": "Все уведомления уже прочитаны.",
     "allMarkedRead": "Все уведомления отмечены как прочитанные.",
     "noneToClear": "Нет уведомлений для очистки.",
-    "allCleared": "Все уведомления очищены."
+    "allCleared": "Все уведомления очищены.",
+    "openTicket": "Открыть переписку",
+    "openBooking": "Открыть бронирование"
   },
   "destinations": {
     "heroTitle": "Направления",
@@ -1874,7 +1876,13 @@ window.AEROVA_LOCALES.ru = {
       "loadingText": "Пожалуйста, подождите.",
       "errorTitle": "Не удалось загрузить уведомления",
       "refundCompletedTitle": "Возврат завершён",
+      "supportReceivedTitle": "Обращение {number} получено",
+      "supportReplyTitle": "Новый ответ на обращение {number}",
+      "supportStatusTitle": "Статус обращения {number}: {status}",
       "msg": {
+        "supportReceived": "Мы получили ваше обращение «{subject}» ({number}). Ответ появится на странице поддержки.",
+        "supportReply": "Поддержка ответила на «{subject}» ({number}): {body} Статус: {status}.",
+        "supportStatus": "Статус вашего обращения «{subject}» ({number}): {status}.",
         "confirmed": "Ваше бронирование {pnr} подтверждено.",
         "payment": "Мы получили ваш платёж {amount} за бронирование {pnr}.",
         "cancelled": "Ваше бронирование {pnr} отменено.",
