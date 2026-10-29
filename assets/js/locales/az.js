@@ -1898,6 +1898,7 @@ window.AEROVA_LOCALES.az = {
       "addAirport": "Hava limanı əlavə et",
       "addPromo": "Promo kod əlavə et",
       "campaignsTitle": "E-poçt kampaniyaları",
+      "campaignSetupRequired": "E-poçt kampaniyaları hələ qurulmayıb: verilənlər bazasının son miqrasiyası (AddEmailCampaignsAndAdminAlerts) tətbiq olunmayıb.",
       "campaignsHint": "Promo kodu yadda saxlamaq heç vaxt e-poçt göndərmir. Onu təsdiqlənmiş abunəçilərə önizləmək və göndərmək üçün promo kodda \"E-poçt kampaniyası\" düyməsini istifadə edin.",
       "campaignButton": "E-poçt kampaniyası",
       "campaignSent": "Göndərilib",

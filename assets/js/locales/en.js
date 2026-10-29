@@ -1898,6 +1898,7 @@ window.AEROVA_LOCALES.en = {
       "addAirport": "Add Airport",
       "addPromo": "Add Promo Code",
       "campaignsTitle": "Email campaigns",
+      "campaignSetupRequired": "E-mail campaigns are not set up yet: the latest database migration (AddEmailCampaignsAndAdminAlerts) has not been applied.",
       "campaignsHint": "Saving a promo code never sends an email. Use \"Email campaign\" on a promo code to preview and send it to confirmed subscribers.",
       "campaignButton": "Email campaign",
       "campaignSent": "Sent",

@@ -843,9 +843,18 @@
         api.get("api/admin/campaigns").then(function (rows) {
             state.campaigns = rows;
             renderCampaigns();
-        }).catch(function () {
-            byId("campaigns-body").innerHTML = emptyRow(7, tr("api.errors.generic", "Something went wrong. Please try again."));
+        }).catch(function (error) {
+            byId("campaigns-body").innerHTML = emptyRow(7, campaignError(error));
         });
+    }
+
+    /* The reason the server names (the campaign tables are missing) is shown as it is; any other failure keeps the page's own wording. */
+    function campaignError(error) {
+        if (error && error.code === "campaign_setup_required") {
+            return tr("api.admin.campaignSetupRequired", "E-mail campaigns are not set up yet: the latest database migration (AddEmailCampaignsAndAdminAlerts) has not been applied.");
+        }
+
+        return (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again.");
     }
 
     /*
@@ -896,11 +905,11 @@
                     loadCampaigns();
                 }, function (error) {
                     button.disabled = false;
-                    byId("campaign-result").textContent = (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again.");
+                    byId("campaign-result").textContent = campaignError(error);
                 });
             });
         }).catch(function (error) {
-            byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml((error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again.")) + "</p>";
+            byId("details-modal-body").innerHTML = '<p class="admin-error">' + escapeHtml(campaignError(error)) + "</p>";
         });
     }
 

@@ -1898,6 +1898,7 @@ window.AEROVA_LOCALES.ru = {
       "addAirport": "Добавить аэропорт",
       "addPromo": "Добавить промокод",
       "campaignsTitle": "Email-кампании",
+      "campaignSetupRequired": "Email-кампании ещё не настроены: последняя миграция базы данных (AddEmailCampaignsAndAdminAlerts) не применена.",
       "campaignsHint": "Сохранение промокода никогда не отправляет письма. Используйте «Email-кампания» у промокода, чтобы просмотреть и отправить его подтверждённым подписчикам.",
       "campaignButton": "Email-кампания",
       "campaignSent": "Отправлено",
