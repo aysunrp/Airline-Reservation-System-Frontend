@@ -1,0 +1,53 @@
+/*
+ * AEROVA scrollbars: thin, muted gold on a transparent track, with a slightly brighter thumb on hover. One place for every page and
+ * every scrollable container (page, admin sidebar and tables, modals, support conversations, notification and dropdown panels).
+ * Only the scrollbars of the site are styled; layout, overflow and scrolling behaviour are not touched. The chat widget keeps its own
+ * rules, which use the same colours.
+ */
+
+:root {
+    --scrollbar-size: 6px;
+    --scrollbar-thumb: rgba(198, 163, 106, 0.42);
+    --scrollbar-thumb-hover: rgba(198, 163, 106, 0.8);
+}
+
+/* Firefox (the standard properties). */
+@supports (-moz-appearance: none) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
+}
+
+/* Chromium, Edge and Safari: no arrow buttons, a narrow rounded thumb. */
+@supports not (-moz-appearance: none) {
+    *::-webkit-scrollbar {
+        width: var(--scrollbar-size);
+        height: var(--scrollbar-size);
+    }
+
+    *::-webkit-scrollbar-track,
+    *::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        min-height: 36px;
+        min-width: 36px;
+        border-radius: 999px;
+        background-color: var(--scrollbar-thumb);
+        background-clip: padding-box;
+        border: 1px solid transparent;
+    }
+
+    *::-webkit-scrollbar-thumb:hover,
+    *::-webkit-scrollbar-thumb:active {
+        background-color: var(--scrollbar-thumb-hover);
+    }
+
+    *::-webkit-scrollbar-button {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}

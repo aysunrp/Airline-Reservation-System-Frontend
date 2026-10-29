@@ -617,6 +617,7 @@ table {
     width: min(600px, 100%);
     max-height: calc(100vh - 2.5rem);
     overflow: auto;
+    overscroll-behavior: contain;
     padding: 1.5rem 1.4rem 1.5rem;
     border-radius: 18px;
     background:
@@ -628,12 +629,72 @@ table {
 }
 
 .admin-modal-title {
-    margin-bottom: 1.15rem;
+    margin-bottom: 0;
     color: var(--color-ink);
     font-family: var(--font-serif);
     font-size: 1.55rem;
     font-weight: 500;
     line-height: 1.2;
+}
+
+/* Sticky modal header: the title and the close button stay in view while the dialog scrolls. */
+.admin-modal-head {
+    position: sticky;
+    top: -1.5rem;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: -1.5rem -1.4rem 1.15rem;
+    padding: 1.5rem 1.4rem 0.85rem;
+    background: var(--color-cream-soft);
+    border-bottom: 1px solid rgba(198, 163, 106, 0.3);
+    border-radius: 18px 18px 0 0;
+}
+
+.admin-modal-head .admin-modal-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-modal-close {
+    flex: 0 0 auto;
+    display: inline-grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin: -0.2rem -0.4rem 0 0;
+    padding: 0;
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    border-radius: 50%;
+    background: rgba(7, 17, 29, 0.04);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-modal-close:hover {
+    background: #0b1a2c;
+    border-color: #c6a36a;
+    color: #e0c48a;
+}
+
+.admin-modal-close:focus-visible {
+    outline: 2px solid #c6a36a;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-modal-close { transition: none; }
+}
+
+@media (max-width: 640px) {
+    .admin-modal-head { margin: -1.5rem -1.4rem 1rem; }
+    .admin-modal-title { font-size: 1.3rem; }
 }
 
 .admin-form-grid {
