@@ -34,7 +34,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/css/admin.css?v=seat3">
+    <link rel="stylesheet" href="assets/css/admin.css?v=seat4">
 
 
     <link rel="stylesheet" href="assets/css/i18n.css">
@@ -865,8 +865,11 @@
 
 
 
-                        <div class="seat-legend">
-                            <span class="seat-legend-item"><span class="seat-swatch seat-swatch--occupied" aria-hidden="true"></span><span data-i18n="seats.legendOccupied">Occupied</span></span>
+                        <div class="seat-legend" role="list" aria-label="Seat status legend">
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--available" aria-hidden="true"></span><span data-i18n="seats.legendAvailable">Available</span></span>
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--occupied" aria-hidden="true"></span><span data-i18n="seats.legendOccupied">Occupied</span></span>
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--reserved" aria-hidden="true"></span><span data-i18n="common.reserved">Reserved</span></span>
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--blocked" aria-hidden="true"></span><span data-i18n="common.blocked">Blocked</span></span>
                         </div>
                         <div class="aircraft-deck" id="aircraft-deck"></div>
 
@@ -1448,7 +1451,7 @@
     <script src="assets/js/auth.js?v=stay1"></script>
     <script src="assets/js/vendor/signalr.min.js?v=8.0.7"></script>
     <script src="assets/js/realtime.js?v=rt1"></script>
-    <script src="assets/js/admin.js?v=seat3"></script>
+    <script src="assets/js/admin.js?v=seat4"></script>
 
 
 

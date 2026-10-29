@@ -759,6 +759,22 @@ table {
     align-items: start;
 }
 
+/* Seat status palette: navy (available), grey (occupied), soft gold (reserved), dusty burgundy (blocked). */
+:root {
+    --seat-available-bg: #16263a;
+    --seat-available-border: rgba(198, 163, 106, 0.55);
+    --seat-available-text: #f6f1e7;
+    --seat-occupied-bg: #6f737b;
+    --seat-occupied-border: #9a9ea6;
+    --seat-occupied-text: #ffffff;
+    --seat-reserved-bg: #d2b07a;
+    --seat-reserved-border: #e0c48a;
+    --seat-reserved-text: #1c150c;
+    --seat-blocked-bg: #7a3a45;
+    --seat-blocked-border: #a35462;
+    --seat-blocked-text: #f6f1e7;
+}
+
 .seat-legend {
     display: flex;
     flex-wrap: wrap;
@@ -782,10 +798,10 @@ table {
     border: 1px solid transparent;
 }
 
-.seat-swatch--occupied {
-    background: #8a8d94;
-    border-color: #a9acb2;
-}
+.seat-swatch--available { background: var(--seat-available-bg); border-color: var(--seat-available-border); }
+.seat-swatch--occupied { background: var(--seat-occupied-bg); border-color: var(--seat-occupied-border); }
+.seat-swatch--reserved { background: var(--seat-reserved-bg); border-color: var(--seat-reserved-border); }
+.seat-swatch--blocked { background: var(--seat-blocked-bg); border-color: var(--seat-blocked-border); }
 
 .aircraft-deck {
     width: 100%;
@@ -872,25 +888,34 @@ table {
     width: var(--seat-size, 34px);
     height: var(--seat-size, 34px);
     border-radius: 8px;
-    border: 1px solid rgba(198, 163, 106, 0.45);
-    background: rgba(198, 163, 106, 0.16);
-    color: var(--color-cream);
+    border: 1px solid transparent;
     font-size: 0.62rem;
     font-weight: 500;
     transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.admin-seat--open:hover {
+/* One colour per real status; the legend above the map uses the same variables. */
+.admin-seat--available { background: var(--seat-available-bg); border-color: var(--seat-available-border); color: var(--seat-available-text); }
+.admin-seat--occupied { background: var(--seat-occupied-bg); border-color: var(--seat-occupied-border); color: var(--seat-occupied-text); }
+.admin-seat--reserved { background: var(--seat-reserved-bg); border-color: var(--seat-reserved-border); color: var(--seat-reserved-text); }
+.admin-seat--blocked { background: var(--seat-blocked-bg); border-color: var(--seat-blocked-border); color: var(--seat-blocked-text); }
+
+/* Only an available or a blocked seat can be changed; the others show it. */
+.admin-seat--available,
+.admin-seat--blocked { cursor: pointer; }
+
+.admin-seat--occupied,
+.admin-seat--reserved { cursor: not-allowed; }
+
+.admin-seat--available:hover,
+.admin-seat--blocked:hover {
     transform: translateY(-1px);
-    filter: brightness(1.15);
+    filter: brightness(1.2);
 }
 
-/* The only distinction on the map: a booked seat is grey. */
-.admin-seat--occupied {
-    background: #8a8d94;
-    border-color: #a9acb2;
-    color: #2b2e33;
-    cursor: not-allowed;
+.admin-seat:focus-visible {
+    outline: 2px solid var(--color-gold-light, #e0c48a);
+    outline-offset: 2px;
 }
 
 .aircraft-deck[data-layout="business"] {

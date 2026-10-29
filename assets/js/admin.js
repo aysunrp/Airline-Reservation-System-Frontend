@@ -507,9 +507,11 @@
 
     /* ------------------------------------------------------------------ seat inventory */
 
-    /* The map shows one difference only: a booked seat is occupied (grey), every other seat looks the same. Held and Blocked stay in the data and in the tooltip. */
+    /* The class of a seat comes from the status the server returned: Available, Booked (paid: occupied), Held (reserved while a booking is unpaid) or Blocked. */
+    var SEAT_CLASS = { Available: "available", Booked: "occupied", Held: "reserved", Blocked: "blocked" };
+
     function seatState(status) {
-        return status === "Booked" ? "occupied" : "open";
+        return SEAT_CLASS[status] || "available";
     }
 
     function renderSeatInventory() {
@@ -579,7 +581,8 @@
                         return;
                     }
                     html += '<button class="admin-seat admin-seat--' + seatState(seat.status) + '" type="button" data-seat-id="' + seat.id +
-                        '" title="' + escapeHtml(seat.label + " · " + statusText(seat.status)) + '" aria-label="' + escapeHtml(seat.label + ", " + statusText(seat.status)) + '">' + letter + "</button>";
+                        '" data-status="' + escapeHtml(seat.status) + '"' + (seat.status === "Available" || seat.status === "Blocked" ? "" : ' aria-disabled="true"') +
+                        ' title="' + escapeHtml(seat.label + " · " + statusText(seat.status)) + '" aria-label="' + escapeHtml(seat.label + ", " + statusText(seat.status)) + '">' + letter + "</button>";
                 });
                 html += "</div>";
                 if (groupIndex < groups.length - 1) html += '<span class="seat-aisle" aria-hidden="true"></span>';
