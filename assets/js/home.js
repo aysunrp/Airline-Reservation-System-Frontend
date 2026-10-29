@@ -716,41 +716,95 @@
     var form = document.getElementById("newsletter-form");
     var input = document.getElementById("newsletter-email");
     var message = document.getElementById("newsletter-message");
+    var button = form ? form.querySelector(".newsletter-button") : null;
 
-    if (!form || !input || !message) {
+    if (!form || !input || !message || !button) {
         return;
     }
 
     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    var busy = false;
 
-    function showMessage(text, isError) {
+    function say(key, fallback) {
+        if (typeof t !== "function") {
+            return fallback;
+        }
+
+        var value = t(key);
+        return value && value !== key ? value : fallback;
+    }
+
+    function showMessage(text, kind) {
         message.textContent = text;
         message.hidden = false;
-        message.classList.toggle("is-error", isError);
-        message.classList.toggle("is-success", !isError);
-        input.setAttribute("aria-invalid", isError ? "true" : "false");
+        message.classList.toggle("is-error", kind === "error");
+        message.classList.toggle("is-success", kind === "success");
+        input.setAttribute("aria-invalid", kind === "error" ? "true" : "false");
+    }
+
+    function setBusy(isBusy) {
+        busy = isBusy;
+        button.disabled = isBusy;
+        input.readOnly = isBusy;
+        form.setAttribute("aria-busy", isBusy ? "true" : "false");
+        button.textContent = isBusy ? say("home.newsletterSending", "Sending...") : say("home.newsletterButton", "Subscribe");
+    }
+
+    function languageOfPage() {
+        var i18n = window.AEROVA_I18N;
+        return i18n && typeof i18n.getLanguage === "function" ? i18n.getLanguage() : "en";
     }
 
     form.addEventListener("submit", function (event) {
         event.preventDefault();
 
+        // One request at a time: a second click or Enter while one is on its way does nothing.
+        if (busy) {
+            return;
+        }
+
         var email = input.value.trim();
         input.value = email;
 
         if (!email) {
-            showMessage(typeof t === "function" ? t("home.newsletterError") : "Please enter your email address.", true);
+            showMessage(say("home.newsletterEmailRequired", "Please enter your email address."), "error");
             input.focus();
             return;
         }
 
         if (!emailPattern.test(email)) {
-            showMessage(typeof t === "function" ? t("home.newsletterError") : "Please enter a valid email address.", true);
+            showMessage(say("home.newsletterError", "Please enter a valid email address."), "error");
             input.focus();
             return;
         }
 
-        showMessage(typeof t === "function" ? t("home.newsletterSuccess") : "You're subscribed. Welcome to AEROVA.", false);
-        input.value = "";
+        var api = window.AEROVA_API;
+        if (!api || typeof api.post !== "function") {
+            showMessage(say("home.newsletterUnreachable", "We could not reach the server. Please try again in a moment."), "error");
+            return;
+        }
+
+        setBusy(true);
+        showMessage(say("home.newsletterSending", "Sending..."), "");
+
+        api.post("api/newsletter/subscribe", { email: email, language: languageOfPage() }).then(function () {
+            setBusy(false);
+            input.value = "";
+            // The same sentence for every address: the form does not say whether it was already on the list.
+            showMessage(say("home.newsletterSuccess", "A confirmation link was sent to your email address."), "success");
+        }, function (error) {
+            setBusy(false);
+
+            if (error && error.status === 400) {
+                showMessage(say("home.newsletterError", "Please enter a valid email address."), "error");
+            } else if (error && error.status === 429) {
+                showMessage(say("home.newsletterBusy", "Too many requests. Please wait a moment and try again."), "error");
+            } else if (error && error.status) {
+                showMessage(say("home.newsletterUnavailable", "We cannot send the confirmation e-mail right now. Please try again later."), "error");
+            } else {
+                showMessage(say("home.newsletterUnreachable", "We could not reach the server. Please try again in a moment."), "error");
+            }
+        });
     });
 })();
 

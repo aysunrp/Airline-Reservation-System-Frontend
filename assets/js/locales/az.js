@@ -190,9 +190,13 @@ window.AEROVA_LOCALES.az = {
     "newsletterDesc": "AEROVA yenilikləri, istiqamət ilhamı və xüsusi təkliflər üçün abunə olun.",
     "newsletterLabel": "E-poçt ünvanı",
     "newsletterPlaceholder": "E-poçt ünvanınızı daxil edin",
+    "newsletterSending": "Göndərilir...",
+    "newsletterBusy": "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.",
+    "newsletterUnavailable": "Təsdiq məktubunu hazırda göndərə bilmirik. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
+    "newsletterUnreachable": "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
     "newsletterButton": "Abunə ol",
-    "newsletterSuccess": "Abunə olduğunuz üçün təşəkkürlər.",
-    "newsletterError": "Düzgün e-poçt ünvanı daxil edin.",
+    "newsletterSuccess": "Təsdiq linki e-poçt ünvanınıza göndərildi.",
+    "newsletterError": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin.",
     "heroAria": "Buludların üzərində uçan təyyarə",
     "voiceStart": "Səsli axtarışı başlat",
     "voiceStop": "Səsli axtarışı dayandır",
@@ -1489,6 +1493,29 @@ window.AEROVA_LOCALES.az = {
         "night": "gecə"
       }
     }
+  },
+  "newsletter": {
+    "eyebrow": "Xəbər bülleteni",
+    "confirmingTitle": "Abunəliyiniz təsdiqlənir",
+    "confirming": "Bir anlıq...",
+    "confirmedTitle": "Abunəlik təsdiqləndi",
+    "confirmed": "Abunəliyiniz təsdiqləndi. AEROVA yeniliklərini alacaqsınız.",
+    "invalidTitle": "Keçid etibarsızdır",
+    "expiredTitle": "Keçidin müddəti bitib",
+    "invalidText": "Təsdiq keçidi etibarsızdır və ya müddəti bitib. E-poçt ünvanınızı daxil edin, yeni keçid göndərək.",
+    "errorTitle": "Abunəliyi təsdiqləmək alınmadı",
+    "requestNew": "Mənə yeni keçid göndər",
+    "sentAgain": "Yeni təsdiq linki e-poçt ünvanınıza göndərildi.",
+    "unavailable": "E-poçtu hazırda göndərə bilmirik. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
+    "busy": "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.",
+    "unreachable": "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin.",
+    "unsubscribeTitle": "AEROVA yeniliklərindən çıxın",
+    "unsubscribeText": "Bu ünvana AEROVA yeniliklərinin gəlməsini dayandırmaq üçün düyməyə basın.",
+    "unsubscribeButton": "Abunəlikdən çıx",
+    "unsubscribingTitle": "Abunəlikdən çıxılır",
+    "unsubscribedTitle": "Abunəlikdən çıxdınız",
+    "unsubscribed": "Bu ünvana artıq AEROVA yenilikləri göndərilməyəcək. İstədiyiniz vaxt yenidən abunə ola bilərsiniz.",
+    "unsubscribeInvalid": "Bu abunəlikdən çıxma keçidi etibarsızdır."
   },
   "api": {
     "errors": {

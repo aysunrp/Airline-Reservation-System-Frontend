@@ -190,8 +190,12 @@ window.AEROVA_LOCALES.en = {
     "newsletterDesc": "Subscribe to receive AEROVA travel updates, destination inspiration and exclusive offers.",
     "newsletterLabel": "Email address",
     "newsletterPlaceholder": "Enter your email address",
+    "newsletterSending": "Sending...",
+    "newsletterBusy": "Too many requests. Please wait a moment and try again.",
+    "newsletterUnavailable": "We cannot send the confirmation e-mail right now. Please try again later.",
+    "newsletterUnreachable": "We could not reach the server. Please try again in a moment.",
     "newsletterButton": "Subscribe",
-    "newsletterSuccess": "Thank you for subscribing.",
+    "newsletterSuccess": "A confirmation link was sent to your email address.",
     "newsletterError": "Please enter a valid email address.",
     "heroAria": "Aircraft in flight above the clouds",
     "voiceStart": "Start voice search",
@@ -1489,6 +1493,29 @@ window.AEROVA_LOCALES.en = {
         "night": "night"
       }
     }
+  },
+  "newsletter": {
+    "eyebrow": "Newsletter",
+    "confirmingTitle": "Confirming your subscription",
+    "confirming": "One moment...",
+    "confirmedTitle": "Subscription confirmed",
+    "confirmed": "Your subscription is confirmed. You will receive AEROVA news.",
+    "invalidTitle": "This link is not valid",
+    "expiredTitle": "This link has expired",
+    "invalidText": "The confirmation link is invalid or has expired. Enter your email address and we will send a new one.",
+    "errorTitle": "We could not confirm your subscription",
+    "requestNew": "Send me a new link",
+    "sentAgain": "A new confirmation link was sent to your email address.",
+    "unavailable": "We cannot send the e-mail right now. Please try again later.",
+    "busy": "Too many requests. Please wait a moment and try again.",
+    "unreachable": "We could not reach the server. Please try again in a moment.",
+    "unsubscribeTitle": "Unsubscribe from AEROVA news",
+    "unsubscribeText": "Press the button to stop receiving AEROVA news at this address.",
+    "unsubscribeButton": "Unsubscribe",
+    "unsubscribingTitle": "Unsubscribing",
+    "unsubscribedTitle": "You are unsubscribed",
+    "unsubscribed": "You will not receive AEROVA news at this address any more. You can subscribe again at any time.",
+    "unsubscribeInvalid": "This unsubscribe link is not valid."
   },
   "api": {
     "errors": {
