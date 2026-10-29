@@ -1476,6 +1476,12 @@ window.AEROVA_LOCALES.en = {
       "expand": "Search up to 62 days",
       "showAllTimes": "Show all times of day",
       "truncated": "Showing the {shown} cheapest of {total} flights.",
+      "singleHeading": "Cheapest flight found between {from} and {to}",
+      "otherHeading": "Other flights between {from} and {to}, cheapest first",
+      "singleNote": "This is the cheapest flight found in the {days} days searched ({from} to {to}). Other dates were not searched.",
+      "singleTotal": "Fare for {count} passengers: ${total} (${each} each).",
+      "singleTie": "{count} other flights have the same price; this is the earliest of them.",
+      "otherFlights": "View other flights",
       "partName": {
         "morning": "morning",
         "afternoon": "afternoon",

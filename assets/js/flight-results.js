@@ -10,6 +10,11 @@
     var TIME_OF_DAY = { morning: [5, 12], afternoon: [12, 18], evening: [18, 24], night: [0, 5] };
     var MAX_PERIOD_DAYS = 62;
 
+    /* An explicit request for the one cheapest flight: only that flight is shown first, the others only when asked for. */
+    function isSingleCheapest(criteria) {
+        return Boolean(criteria.range && criteria.cheapest && criteria.single && !criteria.showAll);
+    }
+
     function departsIn(part, timeValue) {
         var range = TIME_OF_DAY[part];
         var hour = Math.floor(parseDepartureMinutes(timeValue) / 60);
@@ -93,6 +98,9 @@
         criteria.dateTo = params.get("dateTo") || "";
         criteria.cheapest = params.get("cheapest") === "1";
         criteria.defaultPeriod = params.get("defaultPeriod") === "1";
+        criteria.single = params.get("single") === "1";
+        criteria.showAll = params.get("all") === "1";
+        criteria.cheapestId = params.get("cheapestId") || "";
         criteria.range = !criteria.departureDate && !/multi/i.test(criteria.tripType) &&
             Boolean(parseISODate(criteria.dateFrom) && parseISODate(criteria.dateTo));
 
@@ -276,7 +284,7 @@
     }
 
     var viewState = "loading";
-    var rangeInfo = { total: 0, shown: 0 };
+    var rangeInfo = { total: 0, shown: 0, lowest: 0 };
     var statusSpec = null;
     var loadToken = 0;
 
@@ -507,7 +515,9 @@
                 cabinClass: resolveCabinName(criteria.cabinClass) || null,
                 passengers: isFinite(travellers) ? Math.min(9, Math.max(1, travellers)) : 1,
                 timeOfDay: criteria.timeOfDay ? criteria.timeOfDay.charAt(0).toUpperCase() + criteria.timeOfDay.slice(1) : null,
-                sortBy: criteria.cheapest ? "price" : "departure"
+                sortBy: criteria.cheapest ? "price" : "departure",
+                // One flight for "the cheapest flight": the API compares the whole period first and returns only the lowest fare.
+                limit: isSingleCheapest(criteria) ? 1 : null
             });
         }).then(function (result) {
             if (token !== loadToken) {
@@ -515,7 +525,12 @@
             }
 
             var pageFlights = ((result && result.flights) || []).map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
-            rangeInfo = { total: (result && result.totalFound) || pageFlights.length, shown: pageFlights.length };
+            // After "view other flights" the flight that was already shown is not listed again.
+            if (criteria.showAll && criteria.cheapestId) {
+                pageFlights = pageFlights.filter(function (flight) { return String(flight.id) !== criteria.cheapestId; });
+            }
+
+            rangeInfo = { total: (result && result.totalFound) || pageFlights.length, shown: pageFlights.length, lowest: (result && result.lowestPriceCount) || 0 };
             baseFlights = pageFlights;
 
             if (!pageFlights.length) {
@@ -624,9 +639,15 @@
         if (metaElement) {
             if (criteria.range) {
                 var span = { from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) };
-                metaElement.textContent = criteria.cheapest
-                    ? say("voice.results.cheapestHeading", "Cheapest flights between {from} and {to}", span)
-                    : say("voice.results.periodHeading", "Flights between {from} and {to}", span);
+                if (isSingleCheapest(criteria)) {
+                    metaElement.textContent = say("voice.results.singleHeading", "Cheapest flight found between {from} and {to}", span);
+                } else if (criteria.cheapest && criteria.single) {
+                    metaElement.textContent = say("voice.results.otherHeading", "Other flights between {from} and {to}, cheapest first", span);
+                } else {
+                    metaElement.textContent = criteria.cheapest
+                        ? say("voice.results.cheapestHeading", "Cheapest flights between {from} and {to}", span)
+                        : say("voice.results.periodHeading", "Flights between {from} and {to}", span);
+                }
             } else if (selectedDate) {
                 metaElement.textContent = formatDisplayDate(toISODate(selectedDate));
             } else {
@@ -649,6 +670,43 @@
 
     /* What a voice search needs to say about its results: how the period was chosen, what "cheapest" covers, and when the list is cut short. */
     function paintVoiceNote(criteria) {
+        paintVoiceNoteText(criteria);
+        paintOthersButton(criteria);
+    }
+
+    /* The action that shows the other flights of a single-cheapest search; they are not shown unless it is used. */
+    function paintOthersButton(criteria) {
+        var meta = document.querySelector(".results-meta");
+        var button = document.getElementById("voice-others");
+        var show = isSingleCheapest(criteria) && viewState === "ready" && rangeInfo.total > 1 && baseFlights.length > 0;
+
+        if (!show) {
+            if (button) {
+                button.remove();
+            }
+            return;
+        }
+
+        if (!button) {
+            button = document.createElement("button");
+            button.type = "button";
+            button.id = "voice-others";
+            button.className = "select-flight-button voice-others-button";
+            button.addEventListener("click", function () {
+                var shownId = baseFlights.length ? String(baseFlights[0].id) : "";
+                reloadWith(function (params) {
+                    params.set("all", "1");
+                    params.set("cheapestId", shownId);
+                });
+            });
+            var anchor = document.getElementById("voice-note") || meta;
+            anchor.parentNode.insertBefore(button, anchor.nextSibling);
+        }
+
+        button.textContent = say("voice.results.otherFlights", "View other flights");
+    }
+
+    function paintVoiceNoteText(criteria) {
         var meta = document.querySelector(".results-meta");
         var note = document.getElementById("voice-note");
 
@@ -658,7 +716,26 @@
 
         var lines = [];
 
-        if (criteria.range && criteria.cheapest) {
+        var single = isSingleCheapest(criteria);
+
+        if (single) {
+            if (viewState === "ready" && baseFlights.length) {
+                var shown = baseFlights[0];
+                var each = getCabinPrice(shown, getDefaultCabin(criteria));
+                var travellers = Math.max(1, parseInt(criteria.passengers, 10) || 1);
+
+                lines.push(say("voice.results.singleNote", "This is the cheapest flight found in the {days} days searched ({from} to {to}). Other dates were not searched.",
+                    { days: periodDays(criteria), from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) }));
+
+                if (travellers > 1 && typeof each === "number") {
+                    lines.push(say("voice.results.singleTotal", "Fare for {count} passengers: ${total} (${each} each).", { count: travellers, total: each * travellers, each: each }));
+                }
+
+                if (rangeInfo.lowest > 1) {
+                    lines.push(say("voice.results.singleTie", "{count} other flights have the same price; this is the earliest of them.", { count: rangeInfo.lowest - 1 }));
+                }
+            }
+        } else if (criteria.range && criteria.cheapest) {
             lines.push(say("voice.results.cheapestNote", "These are the cheapest fares found in this period. Other dates may have different fares."));
         }
 
@@ -666,7 +743,7 @@
             lines.push(say("voice.results.defaultPeriodNote", "No date was given, so departures over the next {days} days are shown.", { days: periodDays(criteria) }));
         }
 
-        if (criteria.range && viewState === "ready" && rangeInfo.total > rangeInfo.shown) {
+        if (criteria.range && !single && viewState === "ready" && rangeInfo.total > rangeInfo.shown) {
             lines.push(say("voice.results.truncated", "Showing the {shown} cheapest of {total} flights.", { shown: rangeInfo.shown, total: rangeInfo.total }));
         }
 

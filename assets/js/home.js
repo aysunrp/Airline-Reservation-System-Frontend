@@ -566,6 +566,11 @@
 
             if (result.cheapest) {
                 params.set("cheapest", "1");
+
+                // "the cheapest flight" is shown as one flight; "the cheapest flights" keeps several.
+                if (result.cheapestSingle) {
+                    params.set("single", "1");
+                }
             }
 
             if (result.defaultPeriod) {

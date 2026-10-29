@@ -1476,6 +1476,12 @@ window.AEROVA_LOCALES.ru = {
       "expand": "Искать до 62 дней",
       "showAllTimes": "Показать любое время суток",
       "truncated": "Показаны {shown} самых дешёвых из {total} рейсов.",
+      "singleHeading": "Самый дешёвый рейс, найденный с {from} по {to}",
+      "otherHeading": "Другие рейсы с {from} по {to}, сначала дешёвые",
+      "singleNote": "Это самый дешёвый рейс, найденный за {days} дн. поиска (с {from} по {to}). Другие даты не проверялись.",
+      "singleTotal": "Стоимость для пассажиров ({count}): ${total} (по ${each}).",
+      "singleTie": "Ещё рейсов с той же ценой: {count}; этот — самый ранний из них.",
+      "otherFlights": "Показать другие рейсы",
       "partName": {
         "morning": "утром",
         "afternoon": "днём",

@@ -1476,6 +1476,12 @@ window.AEROVA_LOCALES.az = {
       "expand": "62 günə qədər axtar",
       "showAllTimes": "Günün bütün saatlarını göstər",
       "truncated": "{total} uçuşdan ən ucuz {shown} göstərilir.",
+      "singleHeading": "{from} - {to} arasında tapılan ən ucuz uçuş",
+      "otherHeading": "{from} - {to} arasında digər uçuşlar, ən ucuzdan başlayaraq",
+      "singleNote": "Bu, axtarılan {days} gün ərzində ({from} - {to}) tapılan ən ucuz uçuşdur. Digər tarixlər axtarılmayıb.",
+      "singleTotal": "{count} sərnişin üçün qiymət: ${total} (hər biri ${each}).",
+      "singleTie": "Eyni qiymətli daha {count} uçuş var; bu, onlardan ən erkənidir.",
+      "otherFlights": "Digər uçuşlara bax",
       "partName": {
         "morning": "səhər",
         "afternoon": "günorta",
