@@ -272,11 +272,15 @@
         var bookings = data.recentBookings;
         byId("dashboard-bookings-body").innerHTML = bookings.length
             ? bookings.map(function (item) {
-                return "<tr><td>" + escapeHtml(item.pnr) + "</td><td>" + escapeHtml(item.leadPassenger) +
-                    "</td><td>" + escapeHtml(item.flightNumber) + "</td><td>" + escapeHtml(formatMoney(item.totalAmount)) +
-                    "</td><td>" + statusBadge(item.status) + "</td></tr>";
+                // The row opens the booking: a click or Enter shows its details.
+                var departs = String(item.departureAt || "");
+                return '<tr class="admin-row-link" tabindex="0" data-open-booking="' + escapeHtml(item.pnr) + '" title="' +
+                    escapeHtml(tr("admin.openBooking", "Open booking {pnr}", { pnr: item.pnr })) + '"><td>' + escapeHtml(item.pnr) + "</td><td>" + escapeHtml(item.leadPassenger) +
+                    "</td><td>" + escapeHtml(item.flightNumber) + "</td><td>" + escapeHtml(item.route) +
+                    "</td><td>" + escapeHtml(departs.slice(0, 10) + " · " + departs.slice(11, 16) + " UTC") +
+                    "</td><td>" + escapeHtml(formatMoney(item.totalAmount)) + "</td><td>" + statusBadge(item.status) + "</td></tr>";
             }).join("")
-            : '<tr><td colspan="5" class="admin-empty">' + escapeHtml(tr("admin.noBookings", "No bookings found.")) + "</td></tr>";
+            : '<tr><td colspan="7" class="admin-empty">' + escapeHtml(tr("admin.noBookings", "No bookings found.")) + "</td></tr>";
 
         byId("dashboard-flights-body").innerHTML = data.upcomingFlights.length
             ? data.upcomingFlights.map(function (item) {
@@ -298,7 +302,7 @@
 
     function loadDashboard() {
         clearDashboardStats();
-        loading("dashboard-bookings-body", 5);
+        loading("dashboard-bookings-body", 7);
         loading("dashboard-flights-body", 5);
 
         Promise.all([directory.load(), api.get("api/admin/dashboard")]).then(function (results) {
@@ -306,7 +310,7 @@
             state.dashboard = results[1];
             renderDashboard();
         }).catch(function (error) {
-            failed(error, "dashboard-bookings-body", 5, loadDashboard);
+            failed(error, "dashboard-bookings-body", 7, loadDashboard);
             setTableStatus("dashboard-flights-body", 5, "error", apiMessage(error), loadDashboard);
         });
     }
@@ -1382,20 +1386,37 @@
         });
     }
 
+    var deleting = {};
+
     function remove(config, id, label) {
+        var isPromo = config.path === "api/admin/promo-codes";
         confirmAction({
             title: tr("admin.delete", "Delete"),
-            text: tr("api.admin.confirmDelete", "Delete {name}? This cannot be undone.", { name: label }),
+            text: isPromo
+                ? tr("api.admin.confirmDeletePromo", "Delete {name}? If bookings already used it, it will be deactivated and kept instead.", { name: label })
+                : tr("api.admin.confirmDelete", "Delete {name}? This cannot be undone.", { name: label }),
             confirm: tr("admin.delete", "Delete"),
             danger: true
         }).then(function (confirmed) {
             if (!confirmed) return;
 
-            api.del(config.path + "/" + id).then(function () {
-                showMessage(config.title + tr("api.admin.deleted", " deleted."));
+            // One request at a time: a second click on the same row while it runs does nothing.
+            var key = config.path + "/" + id;
+            if (deleting[key]) return;
+            deleting[key] = true;
+
+            api.del(key).then(function (result) {
+                // Only now, with the server's answer, is anything said about the outcome.
+                if (result && String(result.outcome).toLowerCase() === "deactivated") {
+                    showMessage(tr("api.admin.promoDeactivated", "{name} has been used by bookings, so it was deactivated instead of deleted.", { name: label }));
+                } else {
+                    showMessage(config.title + tr("api.admin.deleted", " deleted."));
+                }
                 config.reload();
             }).catch(function (error) {
                 showMessage(apiMessage(error), true);
+            }).then(function () {
+                delete deleting[key];
             });
         });
     }
@@ -1571,9 +1592,11 @@
     }
 
     /* Deleting and creating flights from a schedule are for a SuperAdmin; an Admin is not shown them (the server refuses them too). */
+    var TRASH_ICON = '<svg class="admin-btn-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+
     function deleteButton(kind, id) {
         return isSuperAdmin()
-            ? '<button class="admin-btn admin-btn--ghost admin-btn--danger-text" type="button" data-delete-' + kind + '="' + id + '">' + escapeHtml(tr("admin.delete", "Delete")) + "</button>"
+            ? '<button class="admin-btn admin-btn--ghost admin-btn--danger-text" type="button" data-delete-' + kind + '="' + id + '">' + TRASH_ICON + escapeHtml(tr("admin.delete", "Delete")) + "</button>"
             : "";
     }
 
@@ -2293,6 +2316,13 @@
             if (editId && aircraft) openEntityForm(FORMS.aircraft, aircraft);
             if (deleteId && aircraft) remove(FORMS.aircraft, deleteId, aircraft.name);
         });
+
+        function openDashboardBooking(event) {
+            var row = event.target.closest("[data-open-booking]");
+            if (row && (event.type === "click" || event.key === "Enter")) showBookingDetails(row.getAttribute("data-open-booking"));
+        }
+        byId("dashboard-bookings-body").addEventListener("click", openDashboardBooking);
+        byId("dashboard-bookings-body").addEventListener("keydown", openDashboardBooking);
 
         byId("bookings-body").addEventListener("click", function (event) {
             var viewPnr = event.target.getAttribute("data-view-booking");

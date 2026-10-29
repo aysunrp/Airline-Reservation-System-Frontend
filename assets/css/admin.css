@@ -1269,3 +1269,23 @@ table {
 .admin-toast[hidden], .admin-bell-panel[hidden], .admin-bell-count[hidden] { display: none; }
 .admin-toast-close { margin-left: auto; border: 0; background: none; color: #f6f1e7; font-size: 1.3rem; cursor: pointer; }
 @media (max-width: 700px) { .admin-topbar-right .admin-topbar-meta { display: none; } }
+
+/* Delete button icon and clickable dashboard rows. */
+.admin-btn-icon {
+    flex: 0 0 auto;
+    margin-right: 0.35rem;
+    vertical-align: -2px;
+}
+
+.admin-row-link {
+    cursor: pointer;
+}
+
+.admin-row-link:hover td {
+    background: rgba(198, 163, 106, 0.12);
+}
+
+.admin-row-link:focus-visible {
+    outline: 2px solid #c6a36a;
+    outline-offset: -2px;
+}
