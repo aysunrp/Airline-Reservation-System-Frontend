@@ -166,6 +166,7 @@
 
                 <section class="sp-card sp-card--full" id="requests" aria-labelledby="sp-requests-title">
                     <h2 class="sp-card-title" id="sp-requests-title" data-i18n="support.myTitle">My Support Requests</h2>
+                    <p class="sp-live" id="sp-live" aria-live="polite" hidden></p>
                     <p class="sp-muted" id="sp-requests-state" aria-live="polite"></p>
                     <div id="sp-list" class="sp-list"></div>
 
@@ -230,6 +231,12 @@
         </section>
 
     </main>
+
+    <div class="sp-toast" id="sp-toast" role="status" aria-live="polite" hidden>
+        <span id="sp-toast-text"></span>
+        <button class="sp-toast-open" id="sp-toast-open" type="button" data-i18n="support.toast.open">Open</button>
+        <button class="sp-toast-close" id="sp-toast-close" type="button" aria-label="Close" data-i18n-aria="support.admin.close">&times;</button>
+    </div>
 
 
     <footer id="site-footer" class="site-footer">
@@ -413,7 +420,9 @@
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js?v=stay1"></script>
 
-    <script src="assets/js/support.js?v=sup3"></script>
+    <script src="assets/js/vendor/signalr.min.js?v=8.0.7"></script>
+    <script src="assets/js/realtime.js?v=rt1"></script>
+    <script src="assets/js/support.js?v=rt1"></script>
 
     <script src="assets/js/logo.js?v=thru1"></script>
 

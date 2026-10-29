@@ -14,6 +14,9 @@
 
     var CATEGORIES = ["Booking", "Payment", "CancellationRefund", "FlightChange", "Baggage", "Account", "WebsiteProblem", "Other"];
     var openId = null;
+    var live = null;
+    var openMessageCount = 0;
+    var toastTimer = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -142,8 +145,8 @@
 
     /* ---------- my requests ---------- */
 
-    function loadList() {
-        $("sp-requests-state").textContent = tr("support.loading", "Loading...");
+    function loadList(quiet) {
+        if (!quiet) $("sp-requests-state").textContent = tr("support.loading", "Loading...");
         return api.get("api/support/tickets").then(function (list) {
             $("sp-requests-state").textContent = list.length ? "" : tr("support.myEmpty", "You have not sent any support requests yet.");
             $("sp-list").innerHTML = list.map(function (ticket) {
@@ -155,11 +158,12 @@
                     "<span>" + escapeHtml(tr("support.updated", "Updated")) + ": " + escapeHtml(formatDate(ticket.updatedAt)) + "</span></span></button>";
             }).join("");
         }, function (error) {
-            $("sp-requests-state").textContent = errorText(error, "support.loadFailed", "We could not load your requests.");
+            if (!quiet) $("sp-requests-state").textContent = errorText(error, "support.loadFailed", "We could not load your requests.");
         });
     }
 
     function renderThread(ticket) {
+        var previous = openMessageCount;
         $("sp-detail-title").textContent = ticket.subject;
         var badge = $("sp-detail-status");
         badge.className = "sp-badge sp-badge--" + ticket.status;
@@ -173,13 +177,75 @@
                 escapeHtml(staff ? tr("support.staff", "AEROVA Support") : tr("support.you", "You")) + "</strong><span>" + escapeHtml(formatDate(message.createdAt)) +
                 '</span></div><div class="sp-msg-body">' + escapeHtml(message.body) + "</div></div>";
         }).join("");
+        // A message that arrived while the conversation was open is marked for a moment; a draft in the reply box is kept.
+        var bubbles = $("sp-thread").querySelectorAll(".sp-msg");
+        if (previous > 0) {
+            for (var i = previous; i < bubbles.length; i += 1) bubbles[i].classList.add("sp-msg--new");
+        }
+        openMessageCount = ticket.messages.length;
         show($("sp-reply-form"), ticket.canReply);
         show($("sp-resolved"), !ticket.canReply);
         setFeedback($("sp-reply-feedback"), "");
     }
 
+    /* ---------- live updates ---------- */
+
+    function showToast(text, ticketId) {
+        $("sp-toast-text").textContent = text;
+        $("sp-toast-open").setAttribute("data-ticket", String(ticketId));
+        show($("sp-toast"), true);
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { show($("sp-toast"), false); }, 9000);
+    }
+
+    function paintLive(state) {
+        var line = $("sp-live");
+        var texts = {
+            connected: tr("support.live.on", "Live updates are on: new replies appear here by themselves."),
+            reconnecting: tr("support.live.reconnecting", "Reconnecting... new replies are checked every 20 seconds meanwhile."),
+            polling: tr("support.live.polling", "The live connection is not available: we check for new replies every 20 seconds.")
+        };
+        line.className = "sp-live is-" + state;
+        line.textContent = texts[state] || "";
+        show(line, Boolean(texts[state]));
+    }
+
+    function refreshOpen() {
+        if (openId === null) return;
+        var id = openId;
+        api.get("api/support/tickets/" + encodeURIComponent(id)).then(function (ticket) {
+            if (openId === id) renderThread(ticket);
+        }, function () { /* the next event or poll tries again */ });
+    }
+
+    /* Everything on the page is read again: after a reconnect, and on every poll. */
+    function refreshAll() {
+        loadList(true);
+        refreshOpen();
+        window.dispatchEvent(new CustomEvent("aerova:notificationschange"));
+    }
+
+    function onLiveEvent(event) {
+        var number = event.ticketNumber;
+        var text = event.type === "staffReplied"
+            ? tr("support.toast.reply", "New reply on {number}", { number: number })
+            : tr("support.toast.status", "{number} is now: {status}", { number: number, status: statusText(event.status) });
+        showToast(text, event.ticketId);
+        loadList(true);
+        if (openId === event.ticketId) refreshOpen();
+        // The persisted notification is behind the badge of the account menu.
+        window.dispatchEvent(new CustomEvent("aerova:notificationschange"));
+    }
+
+    function startLive() {
+        if (live || !window.AEROVA_REALTIME) return;
+        live = window.AEROVA_REALTIME.create({ onEvent: onLiveEvent, onState: paintLive, poll: refreshAll, onResync: refreshAll, pollMs: 20000 });
+        live.start();
+    }
+
     function openTicket(id) {
         openId = id;
+        openMessageCount = 0;
         api.get("api/support/tickets/" + encodeURIComponent(id)).then(function (ticket) {
             renderThread(ticket);
             show($("sp-list"), false);
@@ -219,6 +285,7 @@
 
     function backToList() {
         openId = null;
+        openMessageCount = 0;
         show($("sp-detail"), false);
         show($("sp-list"), true);
         loadList();
@@ -252,11 +319,18 @@
                 if (section) section.scrollIntoView();
             }
         });
+        startLive();
     }
 
     $("sp-form").addEventListener("submit", submitForm);
     $("sp-reply-form").addEventListener("submit", submitReply);
     $("sp-back").addEventListener("click", backToList);
+    $("sp-toast-close").addEventListener("click", function () { show($("sp-toast"), false); });
+    $("sp-toast-open").addEventListener("click", function () {
+        show($("sp-toast"), false);
+        var id = Number($("sp-toast-open").getAttribute("data-ticket"));
+        if (id) openTicket(id);
+    });
     $("sp-list").addEventListener("click", function (event) {
         var button = event.target.closest("[data-ticket]");
         if (button) openTicket(Number(button.getAttribute("data-ticket")));
