@@ -6,6 +6,16 @@
 
     var CABIN_CLASSES = ["Economy", "Comfort", "Business"];
 
+    /* Parts of the day, by the hour a flight leaves (airport time). The same ranges are used by the API: morning 05:00-11:59, afternoon 12:00-17:59, evening 18:00-23:59, night 00:00-04:59. */
+    var TIME_OF_DAY = { morning: [5, 12], afternoon: [12, 18], evening: [18, 24], night: [0, 5] };
+    var MAX_PERIOD_DAYS = 62;
+
+    function departsIn(part, timeValue) {
+        var range = TIME_OF_DAY[part];
+        var hour = Math.floor(parseDepartureMinutes(timeValue) / 60);
+        return !range || (hour >= range[0] && hour < range[1]);
+    }
+
     /*
      * Builds the segment template of a schedule from its legs and stopovers.
      * Every time is computed in UTC minutes relative to the departure day and
@@ -75,6 +85,16 @@
             leg: Math.max(1, Math.floor(Number(params.get("leg")) || 1)),
             multi: null
         };
+
+        // Voice search: a part of the day, or a whole period (the cheapest flight, "next week", no day at all) instead of one day.
+        var part = (params.get("timeOfDay") || "").toLowerCase();
+        criteria.timeOfDay = TIME_OF_DAY[part] ? part : "";
+        criteria.dateFrom = params.get("dateFrom") || "";
+        criteria.dateTo = params.get("dateTo") || "";
+        criteria.cheapest = params.get("cheapest") === "1";
+        criteria.defaultPeriod = params.get("defaultPeriod") === "1";
+        criteria.range = !criteria.departureDate && !/multi/i.test(criteria.tripType) &&
+            Boolean(parseISODate(criteria.dateFrom) && parseISODate(criteria.dateTo));
 
         var mix = readMix(params, Math.max(1, parseInt(criteria.passengers, 10) || 1));
         criteria.adults = mix.adults;
@@ -256,6 +276,7 @@
     }
 
     var viewState = "loading";
+    var rangeInfo = { total: 0, shown: 0 };
     var statusSpec = null;
     var loadToken = 0;
 
@@ -290,7 +311,13 @@
                 '<h2 class="results-empty-title">' + escapeHtml(title) + "</h2>" +
                 '<p class="results-empty-text">' + escapeHtml(message) + "</p>" +
                 (spec.retry ? '<button type="button" class="select-flight-button results-retry">' + escapeHtml(say("api.search.retry", "Try again")) + "</button>" : "") +
+                (spec.action ? '<button type="button" class="select-flight-button results-action">' + escapeHtml(say(spec.action.key, spec.action.fallback)) + "</button>" : "") +
             "</div>";
+
+        var actionButton = container.querySelector(".results-action");
+        if (actionButton) {
+            actionButton.addEventListener("click", spec.action.run);
+        }
 
         var retryButton = container.querySelector(".results-retry");
         if (retryButton) {
@@ -333,6 +360,12 @@
             return;
         }
 
+        if (criteria.range) {
+            setStatus({ kind: "loading", titleKey: "api.search.loadingTitle", titleFallback: "Searching flights", textKey: "api.search.loadingText", textFallback: "Please wait while we look for available flights." });
+            loadRange(criteria, token);
+            return;
+        }
+
         if (!selectedDate) {
             setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.needDate", textFallback: "Select a departure date to search for flights." });
             return;
@@ -363,6 +396,14 @@
             var found = (legs && legs[0] && legs[0].flights) || [];
             var pageFlights = found.map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
 
+            // Only the part of the day that was asked for; when nothing else is left it is said, and the other flights are not shown instead.
+            var leftOutByTime = 0;
+            if (criteria.timeOfDay) {
+                var inPart = pageFlights.filter(function (flight) { return departsIn(criteria.timeOfDay, flight.departure); });
+                leftOutByTime = pageFlights.length - inPart.length;
+                pageFlights = inPart;
+            }
+
             // Flights that leave before the flight chosen earlier has landed are not offered.
             var before = previousFlight(criteria);
             hiddenBeforeArrival = 0;
@@ -378,29 +419,131 @@
             }
 
             baseFlights = sortFlightsChronologically(pageFlights);
+
+            if (!pageFlights.length && leftOutByTime > 0) {
+                setStatus({
+                    kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found",
+                    textKey: "voice.results.noneOnDate", textFallback: "There are no {part} flights on {date}.",
+                    vars: { part: say("voice.results.partName." + criteria.timeOfDay, criteria.timeOfDay), date: formatDisplayDate(criteria.departureDate) },
+                    action: { key: "voice.results.showAllTimes", fallback: "Show all times of day", run: showAllTimes }
+                });
+                return;
+            }
+
             // The note about the outbound flight also says how many flights were left out, so it is drawn again now.
             paintOutboundNote(criteria);
             viewState = "ready";
             statusSpec = null;
             refreshResults();
         }).catch(function (error) {
+            showLoadError(error, token);
+        });
+    }
+
+    function showLoadError(error, token) {
+        if (token !== loadToken) {
+            return;
+        }
+
+        baseFlights = [];
+
+        if (error && error.unknownCity) {
+            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.unknownAirport", textFallback: "We do not fly from or to \"" + error.unknownCity + "\" yet. Please choose another city.", vars: { city: error.unknownCity } });
+            return;
+        }
+
+        var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
+        if (!isApiError && window.console) {
+            window.console.error(error);
+        }
+
+        setStatus({ kind: "error", titleKey: "api.search.errorTitle", titleFallback: "We could not load flights", text: isApiError ? error.userMessage : say("api.errors.generic", "Something went wrong. Please try again."), retry: true });
+    }
+
+    function reloadWith(change) {
+        var params = new URLSearchParams(window.location.search);
+        change(params);
+        window.location.search = params.toString();
+    }
+
+    function showAllTimes() {
+        reloadWith(function (params) { params.delete("timeOfDay"); });
+    }
+
+    function expandPeriod() {
+        reloadWith(function (params) {
+            var end = parseISODate(params.get("dateFrom"));
+            end.setDate(end.getDate() + MAX_PERIOD_DAYS - 1);
+            params.set("dateTo", toISODate(end));
+        });
+    }
+
+    /*
+     * A search over a period (the cheapest flight, "next week", no day said): the API lists the real bookable flights of the whole period,
+     * cheapest or earliest first, and every card shows its own date. Nothing is searched outside the period that was asked for.
+     */
+    function loadRange(criteria, token) {
+        var directory = window.AEROVA_AIRPORTS;
+        var airports = [];
+
+        directory.load().then(function (list) {
+            airports = list;
+            var origin = directory.find(list, criteria.from);
+            var destination = directory.find(list, criteria.to);
+
+            if (!origin || !destination) {
+                var unknown = new Error("Unknown airport");
+                unknown.unknownCity = !origin ? criteria.from : criteria.to;
+                throw unknown;
+            }
+
+            var travellers = parseInt(criteria.passengers, 10);
+
+            return window.AEROVA_API.post("api/flights/search-range", {
+                originCode: origin.code,
+                destinationCode: destination.code,
+                from: criteria.dateFrom,
+                to: criteria.dateTo,
+                cabinClass: resolveCabinName(criteria.cabinClass) || null,
+                passengers: isFinite(travellers) ? Math.min(9, Math.max(1, travellers)) : 1,
+                timeOfDay: criteria.timeOfDay ? criteria.timeOfDay.charAt(0).toUpperCase() + criteria.timeOfDay.slice(1) : null,
+                sortBy: criteria.cheapest ? "price" : "departure"
+            });
+        }).then(function (result) {
             if (token !== loadToken) {
                 return;
             }
 
-            baseFlights = [];
+            var pageFlights = ((result && result.flights) || []).map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
+            rangeInfo = { total: (result && result.totalFound) || pageFlights.length, shown: pageFlights.length };
+            baseFlights = pageFlights;
 
-            if (error && error.unknownCity) {
-                setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.unknownAirport", textFallback: "We do not fly from or to \"" + error.unknownCity + "\" yet. Please choose another city.", vars: { city: error.unknownCity } });
+            if (!pageFlights.length) {
+                setStatus({
+                    kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found",
+                    textKey: criteria.timeOfDay ? "voice.results.noneInPeriodTime" : "voice.results.noneInPeriod",
+                    textFallback: "There are no flights from {origin} to {destination} between {from} and {to}.",
+                    vars: {
+                        origin: criteria.from, destination: criteria.to, from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo),
+                        part: say("voice.results.partName." + criteria.timeOfDay, criteria.timeOfDay)
+                    },
+                    action: periodDays(criteria) < MAX_PERIOD_DAYS ? { key: "voice.results.expand", fallback: "Search up to 62 days", run: expandPeriod } : null
+                });
+                paintVoiceNote(criteria);
                 return;
             }
 
-            var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
-            if (!isApiError && window.console) {
-                window.console.error(error);
+            var sortSelect = document.getElementById("sort-by-select");
+            if (sortSelect) {
+                sortSelect.value = criteria.cheapest ? "cheapest" : "earliest";
             }
 
-            setStatus({ kind: "error", titleKey: "api.search.errorTitle", titleFallback: "We could not load flights", text: isApiError ? error.userMessage : say("api.errors.generic", "Something went wrong. Please try again."), retry: true });
+            viewState = "ready";
+            statusSpec = null;
+            paintVoiceNote(criteria);
+            refreshResults();
+        }).catch(function (error) {
+            showLoadError(error, token);
         });
     }
 
@@ -479,12 +622,70 @@
         }
 
         if (metaElement) {
-            if (selectedDate) {
+            if (criteria.range) {
+                var span = { from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) };
+                metaElement.textContent = criteria.cheapest
+                    ? say("voice.results.cheapestHeading", "Cheapest flights between {from} and {to}", span)
+                    : say("voice.results.periodHeading", "Flights between {from} and {to}", span);
+            } else if (selectedDate) {
                 metaElement.textContent = formatDisplayDate(toISODate(selectedDate));
             } else {
                 metaElement.textContent = (typeof t === "function" ? t("results.availableNext30") : "Available flights in the next 30 days");
             }
+
+            if (criteria.timeOfDay) {
+                metaElement.textContent += " \u00b7 " + say("voice.results." + criteria.timeOfDay, criteria.timeOfDay);
+            }
         }
+
+        paintVoiceNote(criteria);
+    }
+
+    function periodDays(criteria) {
+        var from = parseISODate(criteria.dateFrom);
+        var to = parseISODate(criteria.dateTo);
+        return from && to ? Math.round((to - from) / 86400000) + 1 : 0;
+    }
+
+    /* What a voice search needs to say about its results: how the period was chosen, what "cheapest" covers, and when the list is cut short. */
+    function paintVoiceNote(criteria) {
+        var meta = document.querySelector(".results-meta");
+        var note = document.getElementById("voice-note");
+
+        if (!meta) {
+            return;
+        }
+
+        var lines = [];
+
+        if (criteria.range && criteria.cheapest) {
+            lines.push(say("voice.results.cheapestNote", "These are the cheapest fares found in this period. Other dates may have different fares."));
+        }
+
+        if (criteria.range && criteria.defaultPeriod) {
+            lines.push(say("voice.results.defaultPeriodNote", "No date was given, so departures over the next {days} days are shown.", { days: periodDays(criteria) }));
+        }
+
+        if (criteria.range && viewState === "ready" && rangeInfo.total > rangeInfo.shown) {
+            lines.push(say("voice.results.truncated", "Showing the {shown} cheapest of {total} flights.", { shown: rangeInfo.shown, total: rangeInfo.total }));
+        }
+
+        if (!lines.length) {
+            if (note) {
+                note.hidden = true;
+            }
+            return;
+        }
+
+        if (!note) {
+            note = document.createElement("p");
+            note.id = "voice-note";
+            note.className = "results-meta results-journey-note";
+            meta.parentNode.insertBefore(note, meta.nextSibling);
+        }
+
+        note.hidden = false;
+        note.textContent = lines.join(" ");
     }
 
     function buildCabinOptionsMarkup(flight, selectedCabin) {

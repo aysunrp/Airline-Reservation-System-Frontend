@@ -1437,6 +1437,53 @@ window.AEROVA_LOCALES.az = {
     "loadingDestination": "İstiqamət detalları yüklənir…",
     "nonstopSuffix": "Birbaşa"
   },
+  "voice": {
+    "listening": "Dinləyirəm… hara və nə vaxt uçmaq istədiyinizi deyin.",
+    "processing": "Sorğunuz oxunur…",
+    "review": "Mətni yoxlayın, lazım olsa düzəldin, sonra «Uçuşları axtar» düyməsinə basın.",
+    "heardNothing": "Heç nə eşitmədik. Yenidən cəhd edin və ya sorğunuzu yazın.",
+    "denied": "Mikrofona giriş bağlıdır. Brauzerdə bu sayt üçün mikrofona icazə verin və ya sorğunuzu yazın.",
+    "noMicrophone": "Mikrofon tapılmadı. Zəhmət olmasa sorğunuzu yazın.",
+    "network": "Səsin tanınması internet tələb edir. Bağlantını yoxlayın və ya sorğunuzu yazın.",
+    "languageNotSupported": "Bu brauzer bu dili səslə tanıya bilmir. Zəhmət olmasa sorğunuzu yazın.",
+    "unreachable": "Sorğunuzu oxumaq üçün serverə qoşula bilmədik. Yenidən cəhd edin.",
+    "issues": {
+      "missing_text": "Zəhmət olmasa hara uçmaq istədiyinizi deyin və ya yazın.",
+      "missing_origin": "Haradan uçursunuz? Zəhmət olmasa çıxış şəhərini deyin və ya yazın.",
+      "missing_destination": "Hara uçmaq istəyirsiniz? Zəhmət olmasa təyinat şəhərini deyin və ya yazın.",
+      "same_airport": "Çıxış və təyinat eynidir. Zəhmət olmasa iki fərqli şəhər seçin.",
+      "ambiguous_origin": "{value} şəhərində bir neçə hava limanı var ({options}). Zəhmət olmasa hava limanının kodunu deyin.",
+      "ambiguous_destination": "{value} şəhərində bir neçə hava limanı var ({options}). Zəhmət olmasa hava limanının kodunu deyin.",
+      "unknown_origin": "Hələ \"{value}\" şəhərindən uçuş yoxdur. Zəhmət olmasa başqa çıxış şəhəri seçin.",
+      "unknown_destination": "Hələ \"{value}\" şəhərinə uçuş yoxdur. Zəhmət olmasa başqa təyinat seçin.",
+      "past_date": "{value} keçmişdədir. Zəhmət olmasa bu gündən başlayan tarix deyin.",
+      "invalid_date": "Belə tarix mövcud deyil. Gün və ayı yoxlayın.",
+      "ambiguous_date": "Bu tarixi iki cür oxumaq olar. Zəhmət olmasa ayın adı ilə deyin, məsələn 5 noyabr.",
+      "bad_passengers": "Bir rezervasiyada 1-dən 9-a qədər sərnişin ola bilər."
+    },
+    "results": {
+      "periodHeading": "{from} - {to} arasında uçuşlar",
+      "cheapestHeading": "{from} - {to} arasında ən ucuz uçuşlar",
+      "cheapestNote": "Bunlar bu dövrdə tapılan ən ucuz qiymətlərdir. Digər tarixlərdə qiymətlər fərqli ola bilər.",
+      "defaultPeriodNote": "Tarix deyilmədiyi üçün növbəti {days} gün üzrə uçuşlar göstərilir.",
+      "morning": "Səhər uçuşları (05:00–11:59)",
+      "afternoon": "Günorta uçuşları (12:00–17:59)",
+      "evening": "Axşam uçuşları (18:00–23:59)",
+      "night": "Gecə uçuşları (00:00–04:59)",
+      "noneInPeriod": "{from} - {to} arasında {origin} - {destination} istiqamətində uçuş yoxdur.",
+      "noneInPeriodTime": "{from} - {to} arasında {origin} - {destination} istiqamətində {part} uçuş yoxdur.",
+      "noneOnDate": "{date} tarixində {part} uçuş yoxdur. Həmin günün digər saatları və digər tarixlər istəməsəniz göstərilmir.",
+      "expand": "62 günə qədər axtar",
+      "showAllTimes": "Günün bütün saatlarını göstər",
+      "truncated": "{total} uçuşdan ən ucuz {shown} göstərilir.",
+      "partName": {
+        "morning": "səhər",
+        "afternoon": "günorta",
+        "evening": "axşam",
+        "night": "gecə"
+      }
+    }
+  },
   "api": {
     "errors": {
       "network": "Serverlə əlaqə qurulmur. İnternet bağlantınızı yoxlayıb yenidən cəhd edin.",

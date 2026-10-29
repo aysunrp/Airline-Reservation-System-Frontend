@@ -327,43 +327,83 @@
         };
     }
 
+    var submitButton = document.getElementById("search-flights-button");
+    var RECOGNITION_LANGUAGES = { az: "az-AZ", en: "en-US", ru: "ru-RU" };
+    var busy = false;
+
+    function say(key, fallback, vars) {
+        if (typeof t !== "function") {
+            return fallback;
+        }
+
+        var value = t(key, vars);
+        return value && value !== key ? value : fallback;
+    }
+
+    function siteLanguage() {
+        var i18n = window.AEROVA_I18N;
+        var lang = i18n && typeof i18n.getLanguage === "function" ? i18n.getLanguage() : "en";
+        return RECOGNITION_LANGUAGES[lang] ? lang : "en";
+    }
+
     function clearMessage() {
         if (message) {
             message.hidden = true;
             message.textContent = "";
+            message.classList.remove("is-info");
         }
 
         input.classList.remove("is-invalid");
     }
 
-    function showMessage(text) {
+    /* A problem (red field) or, with isInfo, a hint that is not a problem. */
+    function showMessage(text, isInfo) {
         if (!message) {
             return;
         }
 
         message.textContent = text;
         message.hidden = !text;
-        input.classList.toggle("is-invalid", Boolean(text));
+        message.classList.toggle("is-info", Boolean(text) && Boolean(isInfo));
+        input.classList.toggle("is-invalid", Boolean(text) && !isInfo);
+    }
+
+    function showStatus(text) {
+        if (status) {
+            status.textContent = text || "";
+            status.hidden = !text;
+        }
     }
 
     function setListening(isListening) {
         micButton.classList.toggle("is-listening", isListening);
-        micButton.setAttribute("aria-label", isListening ? (typeof t === "function" ? t("home.voiceStop") : "Stop voice search") : (typeof t === "function" ? t("home.voiceStart") : "Start voice search"));
+        micButton.setAttribute("aria-pressed", isListening ? "true" : "false");
+        micButton.setAttribute("aria-label", isListening ? say("home.voiceStop", "Stop voice search") : say("home.voiceStart", "Start voice search"));
         form.classList.toggle("is-listening", isListening);
-
-        if (status) {
-            status.hidden = !isListening;
-        }
+        showStatus(isListening ? say("voice.listening", "Listening… say where and when you want to fly.") : "");
     }
 
-    function stopVoice() {
+    function setProcessing(isProcessing) {
+        busy = isProcessing;
+        form.classList.toggle("is-processing", isProcessing);
+        micButton.disabled = isProcessing;
+
+        if (submitButton) {
+            submitButton.disabled = isProcessing;
+        }
+
+        showStatus(isProcessing ? say("voice.processing", "Reading your request…") : "");
+    }
+
+    /* Stops listening and drops what was heard (used when the form is submitted). */
+    function abortVoice() {
         if (activeRecognition) {
             activeRecognition.onresult = null;
             activeRecognition.onerror = null;
             activeRecognition.onend = null;
 
             try {
-                activeRecognition.stop();
+                activeRecognition.abort();
             } catch (error) {
                 // Recognition may already be stopped.
             }
@@ -374,40 +414,80 @@
         setListening(false);
     }
 
+    function recognitionErrorMessage(code) {
+        switch (code) {
+            case "not-allowed":
+            case "service-not-allowed":
+                return say("voice.denied", "Microphone access is blocked. Allow the microphone for this site in your browser, or type your request.");
+            case "no-speech":
+                return say("voice.heardNothing", "We did not hear anything. Try again, or type your request.");
+            case "audio-capture":
+                return say("voice.noMicrophone", "No microphone was found. Please type your request.");
+            case "network":
+                return say("voice.network", "Speech recognition needs an internet connection. Check it, or type your request.");
+            case "language-not-supported":
+                return say("voice.languageNotSupported", "This browser cannot recognise this language by voice. Please type your request.");
+            case "aborted":
+                return "";
+            default:
+                return say("home.voiceCaptureFail", "Unable to capture voice input. Please try again or type your request.");
+        }
+    }
+
     function startVoice() {
+        if (busy) {
+            return;
+        }
+
         if (!SpeechRecognition) {
-            showMessage(typeof t === "function" ? t("home.voiceUnsupported") : "Voice search is not supported in this browser. Please type your request.");
+            showMessage(say("home.voiceUnsupported", "Voice search is not supported in this browser. Please type your request."));
+            input.focus();
             return;
         }
 
-        if (micButton.classList.contains("is-listening")) {
-            stopVoice();
+        // A second click ends the recording; what was heard so far is kept (see onend).
+        if (activeRecognition) {
+            try {
+                activeRecognition.stop();
+            } catch (error) {
+                abortVoice();
+            }
+
             return;
         }
 
-        stopVoice();
         clearMessage();
 
         var recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
+        var transcript = "";
+        var failed = false;
+
+        // The language of the site is the language that is recognised.
+        recognition.lang = RECOGNITION_LANGUAGES[siteLanguage()];
         recognition.interimResults = true;
+        recognition.continuous = false;
         recognition.maxAlternatives = 1;
         activeRecognition = recognition;
         setListening(true);
 
         recognition.onresult = function (event) {
-            var transcript = "";
+            var text = "";
             for (var i = 0; i < event.results.length; i += 1) {
-                transcript += event.results[i][0].transcript;
+                text += event.results[i][0].transcript;
             }
 
+            transcript = text.trim();
             if (transcript) {
-                input.value = transcript.trim();
+                input.value = transcript;
             }
         };
 
-        recognition.onerror = function () {
-            showMessage(typeof t === "function" ? t("home.voiceCaptureFail") : "Unable to capture voice input. Please try again or type your request.");
+        recognition.onerror = function (event) {
+            failed = true;
+            var text = recognitionErrorMessage(event && event.error);
+            if (text) {
+                showMessage(text);
+            }
         };
 
         recognition.onend = function () {
@@ -415,6 +495,22 @@
             if (activeRecognition === recognition) {
                 activeRecognition = null;
             }
+
+            if (failed) {
+                input.focus();
+                return;
+            }
+
+            if (!transcript) {
+                showMessage(say("voice.heardNothing", "We did not hear anything. Try again, or type your request."));
+                input.focus();
+                return;
+            }
+
+            // The text is only shown: the traveller checks it, may correct it, and presses Search.
+            input.value = transcript;
+            showMessage(say("voice.review", "Check the text, correct it if needed, then press Search Flights."), true);
+            input.focus();
         };
 
         try {
@@ -422,38 +518,98 @@
         } catch (error) {
             setListening(false);
             activeRecognition = null;
-            showMessage(typeof t === "function" ? t("home.voiceStartFail") : "Unable to start voice search. Please try again or type your request.");
+            showMessage(say("home.voiceStartFail", "Unable to start voice search. Please try again or type your request."));
         }
     }
 
     micButton.addEventListener("click", startVoice);
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        stopVoice();
-        clearMessage();
+    /* The sentence the API could not accept as it is, in the language of the site. */
+    function issueText(issue) {
+        var options = (issue.options || []).map(function (airport) {
+            return airport.name + " (" + airport.code + ")";
+        }).join(", ");
+        var value = issue.value || "";
 
-        var query = input.value.trim();
-        input.value = query;
-
-        if (!query) {
-            showMessage(typeof t === "function" ? t("home.voiceEmpty") : "Please say or type where you would like to fly.");
-            input.focus();
-            return;
+        if (/^unknown_/.test(issue.code) && value) {
+            value = value.charAt(0).toUpperCase() + value.slice(1);
         }
 
+        if (issue.code === "past_date" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+            var parts = value.split("-");
+            value = Number(parts[2]) + "." + parts[1] + "." + parts[0];
+        }
+
+        return say("voice.issues." + issue.code, say("home.voiceEmpty", "Please say or type where you would like to fly."), { value: value, options: options });
+    }
+
+    function goToResults(result, query) {
+        var params = new URLSearchParams();
+        params.set("from", result.origin.city);
+        params.set("to", result.destination.city);
+        params.set("passengers", String(result.passengers || 1));
+
+        if (result.cabinClass) {
+            params.set("cabinClass", result.cabinClass);
+        }
+
+        if (result.timeOfDay) {
+            params.set("timeOfDay", String(result.timeOfDay).toLowerCase());
+        }
+
+        if (result.date) {
+            params.set("departureDate", result.date);
+        } else {
+            // A period (the cheapest flight, "next week", or no day at all): the results page searches all of it and shows each day.
+            params.set("dateFrom", result.dateFrom);
+            params.set("dateTo", result.dateTo);
+
+            if (result.cheapest) {
+                params.set("cheapest", "1");
+            }
+
+            if (result.defaultPeriod) {
+                params.set("defaultPeriod", "1");
+            }
+        }
+
+        params.set("voice", "1");
+
+        var resultsUrl = "flight-results.html?" + params.toString();
+        var data = {
+            from: result.origin.city,
+            to: result.destination.city,
+            query: query,
+            passengers: result.passengers || 1
+        };
+
+        if (result.date) {
+            data.departureDate = result.date;
+        }
+
+        if (result.cabinClass) {
+            data.cabinClass = result.cabinClass;
+        }
+
+        window.aerovaBookingSearch = data;
+        window.aerovaBookingResultsUrl = resultsUrl;
+
+        try {
+            sessionStorage.setItem("aerovaBookingSearch", JSON.stringify(data));
+            sessionStorage.setItem("aerovaBookingResultsUrl", resultsUrl);
+        } catch (error) {
+            // Storage may be unavailable; in-memory values remain ready.
+        }
+
+        window.location.href = resultsUrl;
+    }
+
+    /* The server could not be reached: the older English-only reading in this file still gets a plain "from X to Y" through. */
+    function goToResultsOffline(query) {
         var parsed = parseVoiceQuery(query);
 
-        if (!parsed.from) {
-            showMessage(typeof t === "function" ? t("home.voiceNeedFrom") : "Please provide your origin.");
-            input.focus();
-            return;
-        }
-
-        if (!parsed.to) {
-            showMessage(typeof t === "function" ? t("home.voiceNeedTo") : "Please provide your destination.");
-            input.focus();
-            return;
+        if (!parsed.from || !parsed.to) {
+            return false;
         }
 
         var params = new URLSearchParams();
@@ -468,41 +624,71 @@
             params.set("departureDate", parsed.departureDate);
         }
 
-        if (parsed.cabinClass) {
-            params.set("cabinClass", parsed.cabinClass);
+        window.location.href = "flight-results.html?" + params.toString();
+        return true;
+    }
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (busy) {
+            return;
         }
 
-        var resultsUrl = "flight-results.html?" + params.toString();
-        var data = {
-            from: parsed.from,
-            to: parsed.to,
-            query: query
-        };
+        abortVoice();
+        clearMessage();
 
-        if (parsed.passengers && parsed.passengers >= 1 && parsed.passengers <= 9) {
-            data.passengers = parsed.passengers;
+        var query = input.value.trim();
+        input.value = query;
+
+        if (!query) {
+            showMessage(say("home.voiceEmpty", "Please say or type where you would like to fly."));
+            input.focus();
+            return;
         }
 
-        if (parsed.departureDate) {
-            data.departureDate = parsed.departureDate;
+        var api = window.AEROVA_API;
+        if (!api || typeof api.post !== "function") {
+            if (!goToResultsOffline(query)) {
+                showMessage(say("voice.unreachable", "We could not reach the server to read your request. Please try again."));
+            }
+
+            return;
         }
 
-        if (parsed.cabinClass) {
-            data.cabinClass = parsed.cabinClass;
-        }
+        setProcessing(true);
 
-        window.aerovaBookingSearch = data;
-        window.aerovaBookingResultsUrl = resultsUrl;
+        api.post("api/voice-search/interpret", { text: query, language: siteLanguage() }).then(function (result) {
+            if (!result || result.status !== "ready" || !result.origin || !result.destination) {
+                setProcessing(false);
+                var issues = (result && result.issues) || [];
+                showMessage(issues.length
+                    ? issues.map(issueText).join(" ")
+                    : say("home.voiceEmpty", "Please say or type where you would like to fly."));
+                input.focus();
+                return;
+            }
 
-        try {
-            sessionStorage.setItem("aerovaBookingSearch", JSON.stringify(data));
-            sessionStorage.setItem("aerovaBookingResultsUrl", resultsUrl);
-        } catch (error) {
-            // Storage may be unavailable; in-memory values remain ready.
-        }
+            goToResults(result, query);
+        }, function (error) {
+            setProcessing(false);
 
-        window.location.href = resultsUrl;
+            if (error && error.status && error.userMessage) {
+                showMessage(error.userMessage);
+                return;
+            }
+
+            if (!goToResultsOffline(query)) {
+                showMessage(say("voice.unreachable", "We could not reach the server to read your request. Please try again."));
+            }
+        });
     });
+
+    // The recording language follows the site language; a language change while listening ends that recording.
+    window.addEventListener("aerova:languagechange", function () {
+        abortVoice();
+    });
+
 })();
 
 (function () {

@@ -1437,6 +1437,53 @@ window.AEROVA_LOCALES.en = {
     "loadingDestination": "Loading destination details…",
     "nonstopSuffix": "Non-stop"
   },
+  "voice": {
+    "listening": "Listening… say where and when you want to fly.",
+    "processing": "Reading your request…",
+    "review": "Check the text, correct it if needed, then press Search Flights.",
+    "heardNothing": "We did not hear anything. Try again, or type your request.",
+    "denied": "Microphone access is blocked. Allow the microphone for this site in your browser, or type your request.",
+    "noMicrophone": "No microphone was found. Please type your request.",
+    "network": "Speech recognition needs an internet connection. Check it, or type your request.",
+    "languageNotSupported": "This browser cannot recognise this language by voice. Please type your request.",
+    "unreachable": "We could not reach the server to read your request. Please try again.",
+    "issues": {
+      "missing_text": "Please say or type where you would like to fly.",
+      "missing_origin": "Where are you flying from? Please say or type the departure city.",
+      "missing_destination": "Where would you like to fly to? Please say or type the destination.",
+      "same_airport": "The departure and the destination are the same. Please choose two different cities.",
+      "ambiguous_origin": "{value} has more than one airport ({options}). Please name the airport code.",
+      "ambiguous_destination": "{value} has more than one airport ({options}). Please name the airport code.",
+      "unknown_origin": "We do not fly from \"{value}\" yet. Please choose another departure city.",
+      "unknown_destination": "We do not fly to \"{value}\" yet. Please choose another destination.",
+      "past_date": "{value} is in the past. Please give a date from today onwards.",
+      "invalid_date": "That date does not exist. Please check the day and the month.",
+      "ambiguous_date": "That date could be read two ways. Please say it with the month name, for example 5 November.",
+      "bad_passengers": "A booking can have between 1 and 9 passengers."
+    },
+    "results": {
+      "periodHeading": "Flights between {from} and {to}",
+      "cheapestHeading": "Cheapest flights between {from} and {to}",
+      "cheapestNote": "These are the cheapest fares found in this period. Other dates may have different fares.",
+      "defaultPeriodNote": "No date was given, so departures over the next {days} days are shown.",
+      "morning": "Morning departures (05:00–11:59)",
+      "afternoon": "Afternoon departures (12:00–17:59)",
+      "evening": "Evening departures (18:00–23:59)",
+      "night": "Night departures (00:00–04:59)",
+      "noneInPeriod": "There are no flights from {origin} to {destination} between {from} and {to}.",
+      "noneInPeriodTime": "There are no {part} flights from {origin} to {destination} between {from} and {to}.",
+      "noneOnDate": "There are no {part} flights on {date}. Other times of that day, and other dates, are not shown unless you ask for them.",
+      "expand": "Search up to 62 days",
+      "showAllTimes": "Show all times of day",
+      "truncated": "Showing the {shown} cheapest of {total} flights.",
+      "partName": {
+        "morning": "morning",
+        "afternoon": "afternoon",
+        "evening": "evening",
+        "night": "night"
+      }
+    }
+  },
   "api": {
     "errors": {
       "network": "Cannot reach the server. Check your connection and try again.",

@@ -802,6 +802,20 @@ h1 {
     text-align: center;
 }
 
+.voice-search-message.is-info {
+    color: var(--color-cream-muted);
+}
+
+.voice-quick-search.is-processing .voice-search-input {
+    opacity: 0.7;
+}
+
+.voice-mic-button:disabled,
+.search-flights-button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
 .voice-search-actions {
     display: flex;
     justify-content: center;
