@@ -310,6 +310,8 @@
     save: saveSession,
     clear: clearSession,
     isActive: function () { return !!readSession().token; },
+    /* The current sign-in token, for the real-time connection (it is only ever sent to the API). */
+    token: function () { return readSession().token; },
     expiresAt: function () { return readSession().expires; }
   };
 
