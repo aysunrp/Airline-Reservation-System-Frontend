@@ -314,6 +314,12 @@
             }
         });
         loadList().then(function () {
+            // A notification links straight to its conversation: support.html?ticket=ID.
+            var wanted = Number(new URLSearchParams(window.location.search).get("ticket"));
+            if (wanted > 0) {
+                openTicket(wanted);
+                return;
+            }
             if (window.location.hash === "#requests") {
                 var section = $("requests");
                 if (section) section.scrollIntoView();

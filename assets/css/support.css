@@ -70,3 +70,4 @@
 .sp-msg--new { animation: sp-flash 2.4s ease-out; }
 @keyframes sp-flash { from { box-shadow: 0 0 0 3px rgba(198, 163, 106, .8); } to { box-shadow: 0 0 0 0 rgba(198, 163, 106, 0); } }
 @media (prefers-reduced-motion: reduce) { .sp-msg--new { animation: none; } }
+.sp-toast[hidden] { display: none; }
