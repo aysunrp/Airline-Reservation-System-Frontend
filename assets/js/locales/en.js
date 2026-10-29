@@ -157,7 +157,7 @@ window.AEROVA_LOCALES.en = {
     "heroDescription": "Discover new destinations, create unforgettable memories and fly beyond expectations.",
     "bookNow": "Book Now",
     "searchTitle": "Where Would You Like To Fly?",
-    "searchPlaceholder": "Try: Baku to Dubai next Friday, 2 passengers, business",
+    "searchPlaceholder": "For example: Find the cheapest flight from Baku to London...",
     "searchButton": "Search Flights",
     "voiceHint": "Speak or type your trip in one sentence.",
     "destinationsEyebrow": "Featured Destinations",

@@ -157,7 +157,7 @@ window.AEROVA_LOCALES.az = {
     "heroDescription": "Yeni istiqamətlər kəşf edin, unudulmaz xatirələr yaradın və gözləntilərinizin fövqünə uçun.",
     "bookNow": "İndi bron et",
     "searchTitle": "Haraya uçmaq istəyirsiniz?",
-    "searchPlaceholder": "Məsələn: Bakıdan Dubaya gələn cümə, 2 sərnişin, biznes",
+    "searchPlaceholder": "Məsələn: Bakıdan Londona ən ucuz uçuşu tap...",
     "searchButton": "Uçuş axtar",
     "voiceHint": "Səyahətinizi bir cümlə ilə deyin və ya yazın.",
     "destinationsEyebrow": "Seçilmiş istiqamətlər",
