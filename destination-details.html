@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
 
-    <link rel="stylesheet" href="assets/css/destination-details.css">
+    <link rel="stylesheet" href="assets/css/destination-details.css?v=2">
 
 </head>
 
@@ -87,69 +87,42 @@
 
 
     <main id="destination-details-main">
-
         <section class="page-hero destination-details-hero" id="destination-hero" aria-label="Destination hero">
             <div class="page-hero-media" id="destination-hero-media" role="img" aria-label="Destination" data-i18n-aria="common.destination"></div>
             <div class="page-hero-overlay" aria-hidden="true"></div>
             <div class="page-hero-content">
-                <p class="page-hero-kicker" data-i18n="common.destination">Destination</p>
-                <h1 class="page-hero-title" id="destination-name">—</h1>
-                <p class="page-hero-meta" id="destination-hero-meta">—</p>
-                <p class="page-hero-text" id="destination-tagline">Loading destination details…</p>
+                <p class="page-hero-kicker" id="destination-country" data-i18n="common.destination">Destination</p>
+                <h1 class="page-hero-title" id="destination-name">&nbsp;</h1>
+                <p class="page-hero-text" id="destination-tagline" role="status" data-i18n="destinations.detailsLoading">Loading the destination...</p>
             </div>
         </section>
 
-        <section class="destination-details-content" id="destination-content" aria-label="Destination details">
+        <section class="destination-details-content" id="destination-content" aria-label="Destination details" hidden>
             <div class="page-shell destination-details-layout">
                 <div class="destination-details-main-col">
                     <section class="dd-info" aria-labelledby="dd-info-title">
-                        <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinationDetails.infoTitle">Destination Information</h2>
+                        <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinations.aboutTitle">About this destination</h2>
                         <p class="dd-intro" id="destination-description"></p>
-                        <dl class="dd-info-grid">
-                            <div class="dd-info-item">
-                                <dt data-i18n="ui.mainAirport">Main Airport</dt>
-                                <dd>
-                                    <span id="destination-airport-name">—</span>
-                                    <span class="dd-info-code" id="destination-airport-code">—</span>
-                                </dd>
-                            </div>
-                            <div class="dd-info-item">
-                                <dt data-i18n="destinationDetails.durationFromBaku">Flight Duration from Baku</dt>
-                                <dd id="destination-duration">—</dd>
-                            </div>
-                            <div class="dd-info-item">
-                                <dt data-i18n="ui.airportLocation">Airport Location</dt>
-                                <dd id="destination-airport-location">—</dd>
-                            </div>
-                        </dl>
                     </section>
-
-                    <section class="dd-baggage" aria-labelledby="baggage-title">
-                        <h2 class="dd-section-title" id="baggage-title" data-i18n="destinationDetails.baggageTitle">Baggage Information</h2>
-                        <ul class="destination-baggage-list" id="destination-baggage"></ul>
+                    <section class="dd-cities" aria-labelledby="dd-cities-title">
+                        <h2 class="dd-section-title" id="dd-cities-title" data-i18n="destinations.citiesTitle">Cities and airports</h2>
+                        <ul class="dd-city-list" id="destination-cities"></ul>
                     </section>
                 </div>
-
                 <aside class="destination-aside" aria-label="Book this destination">
                     <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Ready to Fly?</p>
-                    <h2 class="destination-aside-title" id="destination-aside-route">Baku → —</h2>
-                    <p class="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Choose your travel date and find available flights.</p>
-                    <dl class="destination-aside-meta">
-                        <div>
-                            <dt data-i18n="admin.route">Route</dt>
-                            <dd id="destination-aside-route-meta">Baku → —</dd>
-                        </div>
-                        <div>
-                            <dt data-i18n="destinationDetails.approxDuration">Approximate Duration</dt>
-                            <dd id="destination-aside-duration">—</dd>
-                        </div>
-                    </dl>
-                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="booking.html" data-i18n="trips.bookFlight">Book a Flight</a>
-                    <a class="destination-back-link" href="destinations.html" data-i18n="ui.allDestinations">← All Destinations</a>
+                    <h2 class="destination-aside-title" id="destination-aside-route">&nbsp;</h2>
+                    <p class="destination-aside-text" id="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Choose your travel date and find available flights.</p>
+                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="booking.html" data-i18n="destinations.bookTicket">Book Ticket</a>
+                    <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Back to Destinations</a>
                 </aside>
             </div>
         </section>
 
+        <section class="destination-details-status page-shell" id="destination-status" hidden>
+            <p id="destination-status-text" role="alert"></p>
+            <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Back to Destinations</a>
+        </section>
     </main>
 
 
@@ -339,7 +312,8 @@
 
     <script src="assets/js/home.js"></script>
 
-    <script src="assets/js/destination-details.js"></script>
+    <script src="assets/js/destination-catalog.js?v=3"></script>
+    <script src="assets/js/destination-details.js?v=2"></script>
 
     <script src="assets/js/logo.js?v=thru1"></script>
 

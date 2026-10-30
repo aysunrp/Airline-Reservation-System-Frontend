@@ -358,3 +358,90 @@
         padding: 2.5rem 0 4rem;
     }
 }
+
+/* Cities and airports of a destination (data-driven details page). */
+.dd-city-list {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dd-city {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid rgba(198, 163, 106, 0.35);
+    border-radius: 16px;
+    background: rgba(255, 253, 248, 0.04);
+}
+
+.dd-city-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 1rem;
+}
+
+.dd-city-name {
+    margin: 0;
+    font-family: var(--font-serif, serif);
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.dd-airports {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.92rem;
+    font-weight: 300;
+}
+
+.dd-airport-code {
+    margin-right: 0.5rem;
+    color: var(--color-gold-light, #e0c48a);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+.dd-city-flights {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-gold-light, #e0c48a);
+}
+
+.dd-city-book,
+.destination-aside-cta[aria-disabled="true"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0.45rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.dd-city-book {
+    background: linear-gradient(180deg, var(--color-gold-light, #e0c48a) 0%, var(--color-gold, #c6a36a) 100%);
+    color: var(--color-ink, #1c150c);
+}
+
+.dd-city-book[aria-disabled="true"],
+.destination-aside-cta[aria-disabled="true"] {
+    background: rgba(246, 241, 231, 0.12);
+    color: rgba(246, 241, 231, 0.55);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.destination-details-status {
+    padding: 4rem 0;
+    text-align: center;
+}
