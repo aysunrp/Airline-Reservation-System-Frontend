@@ -2,7 +2,7 @@
 
 .destinations-body {
     background:
-        radial-gradient(ellipse at 12% 18%, rgba(198, 163, 106, 0.07), transparent 42%),
+        radial-gradient(ellipse at 12% 18%, rgba(180, 103, 58, 0.07), transparent 42%),
         var(--color-navy);
     color: var(--color-cream);
     overflow-x: hidden;
@@ -43,8 +43,8 @@
 
 .dest-hero__veil {
     background:
-        linear-gradient(180deg, rgba(5, 12, 22, 0.25) 0%, rgba(5, 12, 22, 0.55) 45%, rgba(5, 12, 22, 0.92) 100%),
-        linear-gradient(90deg, rgba(5, 12, 22, 0.5), transparent 55%);
+        linear-gradient(180deg, rgba(16, 16, 17, 0.25) 0%, rgba(16, 16, 17, 0.55) 45%, rgba(16, 16, 17, 0.92) 100%),
+        linear-gradient(90deg, rgba(16, 16, 17, 0.5), transparent 55%);
 }
 
 .dest-hero__content {
@@ -89,8 +89,8 @@
     display: inline-flex;
     margin-top: 1.75rem;
     padding: 0.85rem 1.6rem;
-    border: 1px solid rgba(198, 163, 106, 0.65);
-    background: rgba(198, 163, 106, 0.12);
+    border: 1px solid rgba(180, 103, 58, 0.65);
+    background: rgba(180, 103, 58, 0.12);
     color: var(--color-cream);
     font-family: var(--font-sans);
     font-size: 0.82rem;
@@ -103,7 +103,7 @@
 
 .dest-hero__cta:hover,
 .dest-hero__cta:focus-visible {
-    background: rgba(198, 163, 106, 0.28);
+    background: rgba(180, 103, 58, 0.28);
     border-color: var(--color-gold-light);
 }
 
@@ -145,9 +145,9 @@
     margin: 3.5rem 0 0;
     padding: 4.5rem 0 5rem;
     background:
-        linear-gradient(180deg, transparent, rgba(198, 163, 106, 0.06)),
+        linear-gradient(180deg, transparent, rgba(180, 103, 58, 0.06)),
         var(--color-navy-deep);
-    border-top: 1px solid rgba(198, 163, 106, 0.2);
+    border-top: 1px solid rgba(180, 103, 58, 0.2);
 }
 
 .dest-next__inner {

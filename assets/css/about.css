@@ -3,9 +3,9 @@
 .about-body {
     --ab-ivory: #f6f1e7;
     --ab-ivory-deep: #efe6d6;
-    --ab-ink: #0b1726;
-    --ab-ink-soft: rgba(11, 23, 38, 0.72);
-    --ab-gold-deep: #9a7b45;
+    --ab-ink: #1a1b1d;
+    --ab-ink-soft: rgba(26, 27, 29, 0.72);
+    --ab-gold-deep: #8f4f27;
     background: var(--color-navy);
     color: var(--color-cream);
     overflow-x: hidden;
@@ -40,7 +40,7 @@ html {
     display: block;
     width: 64px;
     height: 1px;
-    background: linear-gradient(90deg, var(--color-gold), rgba(198, 163, 106, 0));
+    background: linear-gradient(90deg, var(--color-gold), rgba(180, 103, 58, 0));
 }
 
 .ab-heading {
@@ -130,7 +130,7 @@ html {
     content: "";
     position: absolute;
     inset: 0;
-    box-shadow: inset 0 0 0 1px rgba(198, 163, 106, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(180, 103, 58, 0.18);
     pointer-events: none;
 }
 
@@ -176,7 +176,7 @@ html {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, var(--ab-gold-deep), rgba(154, 123, 69, 0.15));
+    background: linear-gradient(90deg, var(--ab-gold-deep), rgba(143, 79, 39, 0.15));
 }
 
 .ab-timeline__item {
@@ -248,7 +248,7 @@ html {
 }
 
 .ab-principle + .ab-principle {
-    border-left: 1px solid rgba(198, 163, 106, 0.35);
+    border-left: 1px solid rgba(180, 103, 58, 0.35);
 }
 
 .ab-principle h3 {
@@ -328,7 +328,7 @@ html {
 }
 
 .ab-purpose__col + .ab-purpose__col {
-    border-left: 1px solid rgba(154, 123, 69, 0.4);
+    border-left: 1px solid rgba(143, 79, 39, 0.4);
 }
 
 .ab-purpose .ab-eyebrow {
@@ -422,7 +422,7 @@ html {
         right: auto;
         width: 1px;
         height: auto;
-        background: linear-gradient(180deg, var(--ab-gold-deep), rgba(154, 123, 69, 0.15));
+        background: linear-gradient(180deg, var(--ab-gold-deep), rgba(143, 79, 39, 0.15));
     }
 
     .ab-timeline__item {
@@ -454,7 +454,7 @@ html {
 
     .ab-principle + .ab-principle {
         border-left: 0;
-        border-top: 1px solid rgba(198, 163, 106, 0.35);
+        border-top: 1px solid rgba(180, 103, 58, 0.35);
     }
 
     .ab-purpose__col,
@@ -464,7 +464,7 @@ html {
 
     .ab-purpose__col + .ab-purpose__col {
         border-left: 0;
-        border-top: 1px solid rgba(154, 123, 69, 0.4);
+        border-top: 1px solid rgba(143, 79, 39, 0.4);
         margin-top: 2.5rem;
         padding-top: 2.5rem;
     }

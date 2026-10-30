@@ -2,7 +2,7 @@
 
 .destination-details-body {
     background:
-        radial-gradient(ellipse at 80% 0%, rgba(198, 163, 106, 0.06), transparent 42%),
+        radial-gradient(ellipse at 80% 0%, rgba(180, 103, 58, 0.06), transparent 42%),
         var(--color-navy);
 }
 
@@ -36,8 +36,8 @@
 
 .page-hero-overlay {
     background:
-        linear-gradient(180deg, rgba(5, 12, 22, 0.38) 0%, rgba(5, 12, 22, 0.72) 52%, rgba(5, 12, 22, 0.96) 100%),
-        linear-gradient(90deg, rgba(5, 12, 22, 0.55), transparent 62%);
+        linear-gradient(180deg, rgba(16, 16, 17, 0.38) 0%, rgba(16, 16, 17, 0.72) 52%, rgba(16, 16, 17, 0.96) 100%),
+        linear-gradient(90deg, rgba(16, 16, 17, 0.55), transparent 62%);
 }
 
 .page-hero-content {
@@ -233,10 +233,10 @@
     position: sticky;
     top: calc(var(--header-height) + 1rem);
     padding: 1.65rem 1.45rem 1.55rem;
-    border: 1px solid rgba(198, 163, 106, 0.28);
+    border: 1px solid rgba(180, 103, 58, 0.28);
     border-radius: 4px;
     background:
-        linear-gradient(180deg, rgba(16, 30, 48, 0.95) 0%, rgba(7, 17, 29, 0.98) 100%);
+        linear-gradient(180deg, rgba(33, 34, 37, 0.95) 0%, rgba(20, 20, 22, 0.98) 100%);
 }
 
 .destination-aside-eyebrow {
@@ -372,7 +372,7 @@
     display: grid;
     gap: 0.6rem;
     padding: 1.1rem 1.2rem;
-    border: 1px solid rgba(198, 163, 106, 0.35);
+    border: 1px solid rgba(180, 103, 58, 0.35);
     border-radius: 16px;
     background: rgba(255, 253, 248, 0.04);
 }
@@ -404,7 +404,7 @@
 
 .dd-airport-code {
     margin-right: 0.5rem;
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
     font-weight: 500;
     letter-spacing: 0.08em;
 }
@@ -412,7 +412,7 @@
 .dd-city-flights {
     margin: 0;
     font-size: 0.85rem;
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
 }
 
 .dd-city-book,
@@ -429,8 +429,8 @@
 }
 
 .dd-city-book {
-    background: linear-gradient(180deg, var(--color-gold-light, #e0c48a) 0%, var(--color-gold, #c6a36a) 100%);
-    color: var(--color-ink, #1c150c);
+    background: linear-gradient(180deg, var(--color-gold-light, #d38a5b) 0%, var(--color-gold, #b4673a) 100%);
+    color: var(--color-ink, #161618);
 }
 
 .dd-city-book[aria-disabled="true"],
@@ -460,7 +460,7 @@
     display: grid;
     gap: 0.4rem;
     padding: 1.1rem 1.2rem;
-    border: 1px solid rgba(198, 163, 106, 0.35);
+    border: 1px solid rgba(180, 103, 58, 0.35);
     border-radius: 16px;
     background: rgba(255, 253, 248, 0.04);
 }
@@ -491,7 +491,7 @@
     align-items: center;
     gap: 0.4rem 1rem;
     padding: 0.9rem 1.1rem;
-    border: 1px solid rgba(198, 163, 106, 0.3);
+    border: 1px solid rgba(180, 103, 58, 0.3);
     border-radius: 14px;
     background: rgba(255, 253, 248, 0.04);
 }
@@ -502,7 +502,7 @@
 }
 
 .dd-flight-number {
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
     font-weight: 500;
     letter-spacing: 0.06em;
 }
@@ -519,7 +519,7 @@
 }
 
 .dd-flight-price {
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
     font-size: 0.88rem;
     white-space: nowrap;
 }
@@ -528,14 +528,14 @@
     color: var(--color-cream, #f6f1e7);
     font-size: 0.85rem;
     text-decoration: underline;
-    text-decoration-color: rgba(224, 196, 138, 0.7);
+    text-decoration-color: rgba(211, 138, 91, 0.7);
 }
 
 .dd-flights-empty {
     padding: 1rem 1.1rem;
-    border: 1px dashed rgba(198, 163, 106, 0.45);
+    border: 1px dashed rgba(180, 103, 58, 0.45);
     border-radius: 14px;
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
 }
 
 /* The other cities of the same country, as a collection of cards on a cream band. */
@@ -543,11 +543,11 @@
     margin-top: 3rem;
     padding: 3.5rem 0 3rem;
     background: #f6f1e7;
-    color: #07111d;
+    color: #141416;
 }
 
 .dd-others .dd-section-title {
-    color: #07111d;
+    color: #141416;
 }
 
 @media (max-width: 800px) {
@@ -575,9 +575,9 @@
 .destination-airport-pick select {
     width: 100%;
     padding: 0.65rem 0.8rem;
-    border: 1px solid rgba(198, 163, 106, 0.6);
+    border: 1px solid rgba(180, 103, 58, 0.6);
     border-radius: 10px;
-    background: rgba(7, 17, 29, 0.6);
+    background: rgba(20, 20, 22, 0.6);
     color: inherit;
     font: inherit;
 }

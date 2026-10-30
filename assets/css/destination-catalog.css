@@ -15,8 +15,8 @@
     min-height: 280px;
     overflow: hidden;
     border-radius: 20px;
-    background: var(--color-navy, #07111d);
-    box-shadow: 0 16px 40px rgba(7, 17, 29, 0.08);
+    background: var(--color-navy, #141416);
+    box-shadow: 0 16px 40px rgba(20, 20, 22, 0.08);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -33,7 +33,7 @@
 .destination-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(7, 17, 29, 0.05) 30%, rgba(7, 17, 29, 0.86) 100%);
+    background: linear-gradient(180deg, rgba(20, 20, 22, 0.05) 30%, rgba(20, 20, 22, 0.86) 100%);
     transition: background 0.4s ease;
 }
 
@@ -51,7 +51,7 @@
 
 .destination-location {
     margin: 0 0 0.3rem;
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -82,9 +82,9 @@
 .destination-note {
     margin: 0.55rem 0 0;
     padding: 0.2rem 0.6rem;
-    border: 1px solid rgba(224, 196, 138, 0.45);
+    border: 1px solid rgba(211, 138, 91, 0.45);
     border-radius: 999px;
-    color: var(--color-gold-light, #e0c48a);
+    color: var(--color-gold-light, #d38a5b);
     font-size: 0.72rem;
     letter-spacing: 0.04em;
 }
@@ -97,8 +97,8 @@
     margin-top: 0.85rem;
     padding: 0.5rem 1.1rem;
     border-radius: 10px;
-    background: linear-gradient(180deg, var(--color-gold-light, #e0c48a) 0%, var(--color-gold, #c6a36a) 100%);
-    color: var(--color-ink, #1c150c);
+    background: linear-gradient(180deg, var(--color-gold-light, #d38a5b) 0%, var(--color-gold, #b4673a) 100%);
+    color: var(--color-ink, #161618);
     font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.04em;
@@ -111,13 +111,13 @@
 }
 
 .destination-book:focus-visible {
-    outline: 2px solid var(--color-gold-light, #e0c48a);
+    outline: 2px solid var(--color-gold-light, #d38a5b);
     outline-offset: 2px;
 }
 
 .destination-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 24px 50px rgba(7, 17, 29, 0.16);
+    box-shadow: 0 24px 50px rgba(20, 20, 22, 0.16);
 }
 
 .destination-card:hover .destination-image {
@@ -128,7 +128,7 @@
     grid-column: 1 / -1;
     margin: 0;
     padding: 2rem 0;
-    color: rgba(7, 17, 29, 0.68);
+    color: rgba(20, 20, 22, 0.68);
     text-align: center;
 }
 
@@ -136,10 +136,10 @@
 .destination-toggle {
     min-height: 44px;
     padding: 0.6rem 1.4rem;
-    border: 1px solid rgba(198, 163, 106, 0.7);
+    border: 1px solid rgba(180, 103, 58, 0.7);
     border-radius: 999px;
     background: transparent;
-    color: #07111d;
+    color: #141416;
     font: inherit;
     font-weight: 500;
     cursor: pointer;
@@ -147,7 +147,7 @@
 
 .destination-retry:hover,
 .destination-toggle:hover {
-    background: rgba(198, 163, 106, 0.16);
+    background: rgba(180, 103, 58, 0.16);
 }
 
 .destination-more {
@@ -195,21 +195,21 @@
 }
 
 .destination-all-link a {
-    color: #8a6a2f;
+    color: #8f4f27;
     font-weight: 500;
     text-decoration: none;
-    border-bottom: 1px solid rgba(198, 163, 106, 0.6);
+    border-bottom: 1px solid rgba(180, 103, 58, 0.6);
 }
 
 .destination-all-link a:hover {
-    color: #6b5222;
+    color: #56321d;
 }
 
 /* On the destinations page the grid sits in a cream band. */
 .dest-catalog {
     padding: 4rem 0 3rem;
     background: #f6f1e7;
-    color: #07111d;
+    color: #141416;
 }
 
 .destination-card {
@@ -229,15 +229,15 @@
     min-width: min(100%, 17rem);
     min-height: 44px;
     padding: 0.55rem 1rem;
-    border: 1px solid rgba(7, 17, 29, 0.2);
+    border: 1px solid rgba(20, 20, 22, 0.2);
     border-radius: 999px;
     background: #fffdf8;
-    color: #07111d;
+    color: #141416;
     font: inherit;
 }
 
 .destination-search input:focus-visible {
-    outline: 2px solid #c6a36a;
+    outline: 2px solid #b4673a;
     outline-offset: 2px;
 }
 
@@ -250,10 +250,10 @@
 .destination-chip {
     min-height: 44px;
     padding: 0.45rem 1.1rem;
-    border: 1px solid rgba(198, 163, 106, 0.7);
+    border: 1px solid rgba(180, 103, 58, 0.7);
     border-radius: 999px;
     background: transparent;
-    color: #07111d;
+    color: #141416;
     font: inherit;
     font-size: 0.9rem;
     cursor: pointer;
@@ -261,18 +261,18 @@
 }
 
 .destination-chip:hover {
-    background: rgba(198, 163, 106, 0.16);
+    background: rgba(180, 103, 58, 0.16);
 }
 
 .destination-chip:focus-visible {
-    outline: 2px solid #c6a36a;
+    outline: 2px solid #b4673a;
     outline-offset: 2px;
 }
 
 .destination-chip.is-active {
-    background: #07111d;
-    border-color: #07111d;
-    color: #e0c48a;
+    background: #141416;
+    border-color: #141416;
+    color: #d38a5b;
 }
 
 .destination-chip-count {
@@ -295,15 +295,15 @@
 
 /* The heading block sits on the cream band of the destinations page: dark text, gold eyebrow. */
 .dest-catalog .dest-magazine__eyebrow {
-    color: #8a6a2f;
+    color: #8f4f27;
 }
 
 .dest-catalog .dest-magazine__heading {
-    color: #07111d;
+    color: #141416;
 }
 
 .dest-catalog .dest-magazine__copy {
-    color: rgba(7, 17, 29, 0.68);
+    color: rgba(20, 20, 22, 0.68);
 }
 
 .dest-catalog .dest-magazine__intro {
@@ -322,15 +322,15 @@
     gap: 0.6rem;
     margin: 0 0 1rem;
     padding-bottom: 0.6rem;
-    border-bottom: 1px solid rgba(198, 163, 106, 0.45);
-    color: #07111d;
+    border-bottom: 1px solid rgba(180, 103, 58, 0.45);
+    color: #141416;
     font-family: var(--font-serif, serif);
     font-size: clamp(1.5rem, 2.4vw, 2rem);
     font-weight: 500;
 }
 
 .destination-group-count {
-    color: #8a6a2f;
+    color: #8f4f27;
     font-family: var(--font-sans, sans-serif);
     font-size: 0.85rem;
     letter-spacing: 0.08em;
@@ -350,7 +350,7 @@
 
 .destination-book--ghost {
     background: transparent;
-    border: 1px solid rgba(224, 196, 138, 0.7);
+    border: 1px solid rgba(211, 138, 91, 0.7);
     color: #f6f1e7;
 }
 

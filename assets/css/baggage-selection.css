@@ -91,7 +91,7 @@
     min-height: 92px;
     padding: 1rem 1.05rem;
     text-align: left;
-    background: rgba(5, 12, 22, 0.55);
+    background: rgba(16, 16, 17, 0.55);
     border: 1px solid rgba(246, 241, 231, 0.14);
     border-radius: 14px;
     color: var(--color-cream);
@@ -99,16 +99,16 @@
 }
 
 .baggage-option:hover {
-    border-color: rgba(198, 163, 106, 0.55);
+    border-color: rgba(180, 103, 58, 0.55);
     transform: translateY(-1px);
 }
 
 .baggage-option.is-selected {
     background:
-        radial-gradient(ellipse at 0% 0%, rgba(224, 196, 138, 0.18), transparent 55%),
-        rgba(5, 12, 22, 0.72);
-    border-color: rgba(198, 163, 106, 0.85);
-    box-shadow: 0 0 0 1px rgba(198, 163, 106, 0.25);
+        radial-gradient(ellipse at 0% 0%, rgba(211, 138, 91, 0.18), transparent 55%),
+        rgba(16, 16, 17, 0.72);
+    border-color: rgba(180, 103, 58, 0.85);
+    box-shadow: 0 0 0 1px rgba(180, 103, 58, 0.25);
 }
 
 .baggage-option-label {
@@ -140,9 +140,9 @@
     top: calc(var(--header-height) + 1.25rem);
     padding: 1.5rem 1.45rem 1.55rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.34);
+        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.14), transparent 42%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.34);
     border-radius: 20px;
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
 }
@@ -230,9 +230,9 @@
 .options-status {
     margin: 0 0 1.5rem;
     padding: 2.5rem 1.5rem;
-    border: 1px solid rgba(198, 163, 106, 0.28);
+    border: 1px solid rgba(180, 103, 58, 0.28);
     border-radius: 18px;
-    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    background: linear-gradient(180deg, #212225 0%, #141416 100%);
     text-align: center;
 }
 

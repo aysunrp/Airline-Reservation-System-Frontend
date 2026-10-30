@@ -1,11 +1,11 @@
 :root {
-    --color-navy: #07111d;
-    --color-navy-deep: #050c16;
-    --color-ink: #1c150c;
+    --color-navy: #141416;
+    --color-navy-deep: #101011;
+    --color-ink: #161618;
     --color-cream: #f6f1e7;
     --color-cream-muted: rgba(246, 241, 231, 0.82);
-    --color-gold: #c6a36a;
-    --color-gold-light: #e0c48a;
+    --color-gold: #b4673a;
+    --color-gold-light: #d38a5b;
     --color-line: rgba(246, 241, 231, 0.14);
     --font-display: "Cinzel", "Times New Roman", serif;
     --font-serif: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
@@ -70,7 +70,7 @@ h2 {
 }
 
 ::selection {
-    background: rgba(198, 163, 106, 0.35);
+    background: rgba(180, 103, 58, 0.35);
     color: var(--color-cream);
 }
 
@@ -192,7 +192,7 @@ h2 {
     justify-content: center;
     min-height: 40px;
     padding: 0.55rem 1.3rem;
-    border: 1px solid rgba(198, 163, 106, 0.9);
+    border: 1px solid rgba(180, 103, 58, 0.9);
     border-radius: 999px;
     color: var(--color-cream);
     font-size: 0.72rem;
@@ -282,11 +282,11 @@ h2 {
 .booking-card {
     padding: 1.45rem 1.5rem 1.4rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.16), transparent 42%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.38);
+        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.16), transparent 42%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.38);
     border-radius: 24px;
-    box-shadow: 0 28px 60px rgba(7, 17, 29, 0.22);
+    box-shadow: 0 28px 60px rgba(20, 20, 22, 0.22);
 }
 
 .booking-tabs {
@@ -354,8 +354,8 @@ h2 {
     margin: 0;
     padding: 0.35rem 0;
     list-style: none;
-    background: linear-gradient(180deg, rgba(18, 32, 50, 0.98) 0%, rgba(8, 16, 28, 0.99) 100%);
-    border: 1px solid rgba(198, 163, 106, 0.42);
+    background: linear-gradient(180deg, rgba(35, 36, 39, 0.98) 0%, rgba(20, 20, 22, 0.99) 100%);
+    border: 1px solid rgba(180, 103, 58, 0.42);
     border-radius: 12px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
     max-height: 14rem;
@@ -383,7 +383,7 @@ h2 {
 
 .city-suggestion:hover,
 .city-suggestion.is-active {
-    background: rgba(198, 163, 106, 0.14);
+    background: rgba(180, 103, 58, 0.14);
     color: var(--color-gold-light);
 }
 
@@ -391,7 +391,7 @@ h2 {
     width: 100%;
     min-height: 48px;
     padding: 0.7rem 0.9rem;
-    background: rgba(5, 12, 22, 0.62);
+    background: rgba(16, 16, 17, 0.62);
     border: 1px solid rgba(246, 241, 231, 0.14);
     border-radius: 12px;
     color: var(--color-cream);
@@ -410,7 +410,7 @@ h2 {
 }
 
 .field-input:hover {
-    border-color: rgba(198, 163, 106, 0.45);
+    border-color: rgba(180, 103, 58, 0.45);
 }
 
 .field-input:focus {
@@ -419,13 +419,13 @@ h2 {
 }
 
 .field-input.is-invalid {
-    border-color: #e0a070;
+    border-color: #d38a5b;
 }
 
 select.field-input {
     appearance: none;
     padding-right: 2.2rem;
-    background-color: rgba(5, 12, 22, 0.62);
+    background-color: rgba(16, 16, 17, 0.62);
     background-image:
         linear-gradient(45deg, transparent 50%, var(--color-gold) 50%),
         linear-gradient(135deg, var(--color-gold) 50%, transparent 50%);
@@ -450,27 +450,27 @@ select.field-input {
 
 .mic-button:hover {
     color: var(--color-gold-light);
-    background: rgba(198, 163, 106, 0.12);
+    background: rgba(180, 103, 58, 0.12);
 }
 
 .mic-button.is-listening {
     color: var(--color-ink);
     background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
-    box-shadow: 0 0 0 0 rgba(198, 163, 106, 0.4);
+    box-shadow: 0 0 0 0 rgba(180, 103, 58, 0.4);
     animation: booking-mic-pulse 1.4s ease-out infinite;
 }
 
 @keyframes booking-mic-pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(198, 163, 106, 0.4);
+        box-shadow: 0 0 0 0 rgba(180, 103, 58, 0.4);
     }
 
     70% {
-        box-shadow: 0 0 0 10px rgba(198, 163, 106, 0);
+        box-shadow: 0 0 0 10px rgba(180, 103, 58, 0);
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(198, 163, 106, 0);
+        box-shadow: 0 0 0 0 rgba(180, 103, 58, 0);
     }
 }
 
@@ -486,10 +486,10 @@ select.field-input {
     width: 42px;
     height: 42px;
     margin-bottom: 3px;
-    border: 1px solid rgba(198, 163, 106, 0.7);
+    border: 1px solid rgba(180, 103, 58, 0.7);
     border-radius: 50%;
     color: var(--color-gold-light);
-    background: rgba(7, 17, 29, 0.85);
+    background: rgba(20, 20, 22, 0.85);
     transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
@@ -581,7 +581,7 @@ select.field-input {
 
 .booking-message {
     margin-top: 1rem;
-    color: #f0c9a0;
+    color: #d38a5b;
     font-size: 0.9rem;
     font-weight: 300;
 }
@@ -662,10 +662,10 @@ select.field-input {
     margin-top: 1.5rem;
     border-radius: 24px;
     background:
-        radial-gradient(ellipse at 0% 0%, rgba(198, 163, 106, 0.12), transparent 42%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.34);
-    box-shadow: 0 24px 52px rgba(7, 17, 29, 0.2);
+        radial-gradient(ellipse at 0% 0%, rgba(180, 103, 58, 0.12), transparent 42%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.34);
+    box-shadow: 0 24px 52px rgba(20, 20, 22, 0.2);
     overflow: hidden;
 }
 
@@ -747,7 +747,7 @@ select.field-input {
     margin: 0 0 1.1rem;
     padding: 0.28rem;
     border-radius: 999px;
-    background: rgba(5, 12, 22, 0.55);
+    background: rgba(16, 16, 17, 0.55);
     border: 1px solid rgba(246, 241, 231, 0.14);
 }
 
@@ -772,9 +772,9 @@ select.field-input {
 }
 
 .price-calendar-mode-button.is-active {
-    background: linear-gradient(180deg, rgba(224, 196, 138, 0.22) 0%, rgba(198, 163, 106, 0.18) 100%);
+    background: linear-gradient(180deg, rgba(211, 138, 91, 0.22) 0%, rgba(180, 103, 58, 0.18) 100%);
     color: var(--color-gold-light);
-    box-shadow: inset 0 0 0 1px rgba(198, 163, 106, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(180, 103, 58, 0.45);
 }
 
 .price-calendar-controls {
@@ -799,7 +799,7 @@ select.field-input {
     min-height: 48px;
     padding: 0.35rem 0.45rem;
     border-radius: 12px;
-    background: rgba(5, 12, 22, 0.55);
+    background: rgba(16, 16, 17, 0.55);
     border: 1px solid rgba(246, 241, 231, 0.14);
 }
 
@@ -817,7 +817,7 @@ select.field-input {
 }
 
 .price-calendar-nav-button:hover {
-    background: rgba(198, 163, 106, 0.12);
+    background: rgba(180, 103, 58, 0.12);
     color: var(--color-gold);
 }
 
@@ -834,8 +834,8 @@ select.field-input {
     height: fit-content;
     padding: 1rem 1rem 1.05rem;
     border-radius: 14px;
-    background: rgba(5, 12, 22, 0.55);
-    border: 1px solid rgba(198, 163, 106, 0.22);
+    background: rgba(16, 16, 17, 0.55);
+    border: 1px solid rgba(180, 103, 58, 0.22);
 }
 
 .price-calendar-weekdays {
@@ -878,8 +878,8 @@ select.field-input {
 }
 
 .price-calendar-day:not(:disabled):hover {
-    border-color: rgba(198, 163, 106, 0.45);
-    background: rgba(198, 163, 106, 0.08);
+    border-color: rgba(180, 103, 58, 0.45);
+    background: rgba(180, 103, 58, 0.08);
 }
 
 .price-calendar-day.is-outside {
@@ -892,28 +892,28 @@ select.field-input {
 
 .price-calendar-day.is-unavailable {
     opacity: 0.38;
-    background: rgba(5, 12, 22, 0.35);
+    background: rgba(16, 16, 17, 0.35);
     border-color: rgba(246, 241, 231, 0.06);
     color: rgba(246, 241, 231, 0.42);
     cursor: default;
 }
 
 .price-calendar-day.is-in-range {
-    background: rgba(198, 163, 106, 0.07);
-    border-color: rgba(198, 163, 106, 0.2);
+    background: rgba(180, 103, 58, 0.07);
+    border-color: rgba(180, 103, 58, 0.2);
     color: var(--color-cream);
 }
 
 .price-calendar-day.is-in-range .price-calendar-day-price {
-    color: rgba(224, 196, 138, 0.75);
+    color: rgba(211, 138, 91, 0.75);
 }
 
 .price-calendar-day.is-selected,
 .price-calendar-day.is-range-start,
 .price-calendar-day.is-range-end {
-    background: rgba(198, 163, 106, 0.14);
+    background: rgba(180, 103, 58, 0.14);
     border-color: var(--color-gold);
-    box-shadow: inset 0 0 0 1px rgba(198, 163, 106, 0.35);
+    box-shadow: inset 0 0 0 1px rgba(180, 103, 58, 0.35);
     color: var(--color-cream);
     opacity: 1;
 }
@@ -952,8 +952,8 @@ select.field-input {
     height: fit-content;
     padding: 1.15rem 1.1rem;
     border-radius: 14px;
-    background: rgba(5, 12, 22, 0.55);
-    border: 1px solid rgba(198, 163, 106, 0.28);
+    background: rgba(16, 16, 17, 0.55);
+    border: 1px solid rgba(180, 103, 58, 0.28);
 }
 
 .price-calendar-summary-eyebrow {
@@ -1177,14 +1177,14 @@ select.field-input {
     justify-content: center;
     width: 42px;
     height: 42px;
-    border: 1px solid rgba(198, 163, 106, 0.45);
+    border: 1px solid rgba(180, 103, 58, 0.45);
     border-radius: 50%;
     color: var(--color-cream);
     transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .social-link:hover {
-    background: rgba(198, 163, 106, 0.1);
+    background: rgba(180, 103, 58, 0.1);
     border-color: var(--color-gold);
     color: var(--color-gold-light);
 }
@@ -1412,8 +1412,8 @@ select.field-input {
     min-width: 100%;
     max-width: calc(100vw - 2rem);
     padding: 0.7rem 1rem 1rem;
-    background: linear-gradient(180deg, rgba(18, 32, 50, 0.98) 0%, rgba(8, 16, 28, 0.99) 100%);
-    border: 1px solid rgba(198, 163, 106, 0.42);
+    background: linear-gradient(180deg, rgba(35, 36, 39, 0.98) 0%, rgba(20, 20, 22, 0.99) 100%);
+    border: 1px solid rgba(180, 103, 58, 0.42);
     border-radius: 14px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
 }
@@ -1453,7 +1453,7 @@ select.field-input {
 .passenger-step {
     width: 2.2rem;
     height: 2.2rem;
-    border: 1px solid rgba(198, 163, 106, 0.6);
+    border: 1px solid rgba(180, 103, 58, 0.6);
     border-radius: 50%;
     background: transparent;
     color: var(--color-gold);
@@ -1464,7 +1464,7 @@ select.field-input {
 }
 
 .passenger-step:hover:not(:disabled) {
-    background: rgba(198, 163, 106, 0.16);
+    background: rgba(180, 103, 58, 0.16);
 }
 
 .passenger-step:disabled {

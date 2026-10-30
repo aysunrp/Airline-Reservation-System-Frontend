@@ -43,7 +43,7 @@
 
 .details-message {
     margin: 0 0 1.25rem;
-    color: #f0c9a0;
+    color: #d38a5b;
     font-size: 0.95rem;
     font-weight: 300;
 }
@@ -87,8 +87,8 @@
     min-height: 32px;
     padding: 0.35rem 0.8rem;
     border-radius: 999px;
-    background: rgba(198, 163, 106, 0.16);
-    border: 1px solid rgba(198, 163, 106, 0.55);
+    background: rgba(180, 103, 58, 0.16);
+    border: 1px solid rgba(180, 103, 58, 0.55);
     color: var(--color-gold-light);
     font-size: 0.68rem;
     font-weight: 500;
@@ -156,7 +156,7 @@
     gap: 0.35rem;
     margin: 0.8rem 0 0;
     padding: 0.75rem 0.9rem;
-    border: 1px solid rgba(198, 163, 106, 0.22);
+    border: 1px solid rgba(180, 103, 58, 0.22);
     border-radius: 12px;
 }
 
@@ -191,8 +191,8 @@
     min-height: 28px;
     padding: 0.25rem 0.7rem;
     border-radius: 999px;
-    border: 1px solid rgba(198, 163, 106, 0.55);
-    background: rgba(198, 163, 106, 0.14);
+    border: 1px solid rgba(180, 103, 58, 0.55);
+    background: rgba(180, 103, 58, 0.14);
     color: var(--color-gold-light);
     font-size: 0.64rem;
     font-weight: 500;
@@ -227,7 +227,7 @@
 .details-refund-refresh {
     margin-top: 0.7rem;
     padding: 0.45rem 0.9rem;
-    border: 1px solid rgba(198, 163, 106, 0.55);
+    border: 1px solid rgba(180, 103, 58, 0.55);
     border-radius: 999px;
     background: transparent;
     color: var(--color-gold-light);
@@ -239,7 +239,7 @@
 }
 
 .details-refund-refresh:hover:not(:disabled) {
-    background: rgba(198, 163, 106, 0.14);
+    background: rgba(180, 103, 58, 0.14);
 }
 
 .details-refund-refresh:disabled {
@@ -291,7 +291,7 @@ body.has-open-modal {
 .booking-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(5, 12, 22, 0.72);
+    background: rgba(16, 16, 17, 0.72);
 }
 
 .booking-modal-dialog {
@@ -301,9 +301,9 @@ body.has-open-modal {
     padding: 1.6rem 1.45rem 1.5rem;
     border-radius: 18px;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 45%),
-        linear-gradient(180deg, #122033 0%, #0b1624 100%);
-    border: 1px solid rgba(198, 163, 106, 0.35);
+        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.14), transparent 45%),
+        linear-gradient(180deg, #232428 0%, #191a1c 100%);
+    border: 1px solid rgba(180, 103, 58, 0.35);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 
@@ -349,8 +349,8 @@ body.has-open-modal {
     margin: 0 0 1rem;
     padding: 1rem 1.1rem;
     border-radius: 14px;
-    background: rgba(5, 12, 22, 0.45);
-    border: 1px solid rgba(198, 163, 106, 0.28);
+    background: rgba(16, 16, 17, 0.45);
+    border: 1px solid rgba(180, 103, 58, 0.28);
 }
 
 .cancel-summary-row {
@@ -526,9 +526,9 @@ body.has-open-modal {
     top: calc(var(--header-height) + 1.25rem);
     padding: 1.5rem 1.45rem 1.55rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.34);
+        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.14), transparent 42%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.34);
     border-radius: 20px;
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
 }
@@ -580,7 +580,7 @@ body.has-open-modal {
 
 .booking-action-button--secondary {
     background: transparent;
-    border: 1px solid rgba(198, 163, 106, 0.75);
+    border: 1px solid rgba(180, 103, 58, 0.75);
     color: var(--color-cream);
 }
 
@@ -608,7 +608,7 @@ body.has-open-modal {
 
     body {
         background: #fff;
-        color: #1c150c;
+        color: #161618;
     }
 
     .booking-details-page {
@@ -625,8 +625,8 @@ body.has-open-modal {
         break-inside: avoid;
         box-shadow: none;
         background: #fff;
-        border: 1px solid #d7c4a4;
-        color: #1c150c;
+        border: 1px solid #d38a5b;
+        color: #161618;
     }
 
     .details-title,
@@ -635,7 +635,7 @@ body.has-open-modal {
     .info-item dd,
     .detail-list-primary,
     .summary-total-value {
-        color: #1c150c;
+        color: #161618;
     }
 }
 

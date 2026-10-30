@@ -1,11 +1,11 @@
 :root {
-    --color-navy: #07111d;
-    --color-navy-deep: #050c16;
-    --color-ink: #1c150c;
+    --color-navy: #141416;
+    --color-navy-deep: #101011;
+    --color-ink: #161618;
     --color-cream: #f6f1e7;
     --color-cream-muted: rgba(246, 241, 231, 0.82);
-    --color-gold: #c6a36a;
-    --color-gold-light: #e0c48a;
+    --color-gold: #b4673a;
+    --color-gold-light: #d38a5b;
     --color-line: rgba(246, 241, 231, 0.14);
     --font-display: "Cinzel", "Times New Roman", serif;
     --font-serif: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
@@ -70,7 +70,7 @@ h2 {
 }
 
 ::selection {
-    background: rgba(198, 163, 106, 0.35);
+    background: rgba(180, 103, 58, 0.35);
     color: var(--color-cream);
 }
 
@@ -193,7 +193,7 @@ h2 {
     justify-content: center;
     min-height: 40px;
     padding: 0.55rem 1.3rem;
-    border: 1px solid rgba(198, 163, 106, 0.9);
+    border: 1px solid rgba(180, 103, 58, 0.9);
     border-radius: 999px;
     color: var(--color-cream);
     font-size: 0.72rem;
@@ -310,9 +310,9 @@ h2 {
     top: calc(var(--header-height) + 1rem);
     border-radius: 18px;
     background:
-        radial-gradient(ellipse at 0% 0%, rgba(198, 163, 106, 0.12), transparent 45%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.3);
+        radial-gradient(ellipse at 0% 0%, rgba(180, 103, 58, 0.12), transparent 45%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.3);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
     overflow: hidden;
 }
@@ -372,7 +372,7 @@ h2 {
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
+    border-bottom: 1px solid rgba(211, 138, 91, 0.35);
     transition: color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -430,7 +430,7 @@ h2 {
     min-height: 44px;
     padding: 0.6rem 0.85rem;
     border-radius: 10px;
-    background: rgba(5, 12, 22, 0.55);
+    background: rgba(16, 16, 17, 0.55);
     border: 1px solid rgba(246, 241, 231, 0.14);
     color: var(--color-cream);
     font: inherit;
@@ -467,9 +467,9 @@ h2 {
     align-items: center;
     padding: 1.45rem 1.5rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.12), transparent 42%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.34);
+        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.12), transparent 42%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.34);
     border-radius: 20px;
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
 }
@@ -591,7 +591,7 @@ h2 {
     padding: 0.45rem 0.85rem;
     border: 1px solid rgba(246, 241, 231, 0.22);
     border-radius: 999px;
-    background: rgba(7, 17, 29, 0.35);
+    background: rgba(20, 20, 22, 0.35);
     color: rgba(246, 241, 231, 0.82);
     font-size: 0.72rem;
     font-weight: 500;
@@ -604,15 +604,15 @@ h2 {
 }
 
 .cabin-option:hover:not(:disabled) {
-    border-color: rgba(198, 163, 106, 0.7);
+    border-color: rgba(180, 103, 58, 0.7);
     color: var(--color-gold-light);
 }
 
 .cabin-option.is-selected {
-    background: linear-gradient(180deg, rgba(224, 196, 138, 0.22) 0%, rgba(198, 163, 106, 0.18) 100%);
+    background: linear-gradient(180deg, rgba(211, 138, 91, 0.22) 0%, rgba(180, 103, 58, 0.18) 100%);
     border-color: var(--color-gold);
     color: var(--color-gold-light);
-    box-shadow: inset 0 0 0 1px rgba(198, 163, 106, 0.25);
+    box-shadow: inset 0 0 0 1px rgba(180, 103, 58, 0.25);
 }
 
 .cabin-option:disabled {
@@ -667,7 +667,7 @@ h2 {
 
 .view-details-button {
     background: transparent;
-    border: 1px solid rgba(198, 163, 106, 0.75);
+    border: 1px solid rgba(180, 103, 58, 0.75);
     color: var(--color-cream);
 }
 
@@ -687,9 +687,9 @@ h2 {
 
 .results-empty {
     padding: 2.5rem 1.5rem;
-    border: 1px solid rgba(198, 163, 106, 0.28);
+    border: 1px solid rgba(180, 103, 58, 0.28);
     border-radius: 18px;
-    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    background: linear-gradient(180deg, #212225 0%, #141416 100%);
     text-align: center;
 }
 
@@ -890,14 +890,14 @@ h2 {
     justify-content: center;
     width: 42px;
     height: 42px;
-    border: 1px solid rgba(198, 163, 106, 0.45);
+    border: 1px solid rgba(180, 103, 58, 0.45);
     border-radius: 50%;
     color: var(--color-cream);
     transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .social-link:hover {
-    background: rgba(198, 163, 106, 0.1);
+    background: rgba(180, 103, 58, 0.1);
     border-color: var(--color-gold);
     color: var(--color-gold-light);
 }

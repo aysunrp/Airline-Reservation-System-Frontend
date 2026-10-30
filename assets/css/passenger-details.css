@@ -1,11 +1,11 @@
 :root {
-    --color-navy: #07111d;
-    --color-navy-deep: #050c16;
-    --color-ink: #1c150c;
+    --color-navy: #141416;
+    --color-navy-deep: #101011;
+    --color-ink: #161618;
     --color-cream: #f6f1e7;
     --color-cream-muted: rgba(246, 241, 231, 0.82);
-    --color-gold: #c6a36a;
-    --color-gold-light: #e0c48a;
+    --color-gold: #b4673a;
+    --color-gold-light: #d38a5b;
     --color-line: rgba(246, 241, 231, 0.14);
     --font-display: "Cinzel", "Times New Roman", serif;
     --font-serif: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
@@ -70,7 +70,7 @@ h2 {
 }
 
 ::selection {
-    background: rgba(198, 163, 106, 0.35);
+    background: rgba(180, 103, 58, 0.35);
     color: var(--color-cream);
 }
 
@@ -193,7 +193,7 @@ h2 {
     justify-content: center;
     min-height: 40px;
     padding: 0.55rem 1.3rem;
-    border: 1px solid rgba(198, 163, 106, 0.9);
+    border: 1px solid rgba(180, 103, 58, 0.9);
     border-radius: 999px;
     color: var(--color-cream);
     font-size: 0.72rem;
@@ -286,7 +286,7 @@ h2 {
 
 .passenger-details-message {
     margin: 0 0 1.25rem;
-    color: #f0c9a0;
+    color: #d38a5b;
     font-size: 0.95rem;
     font-weight: 300;
 }
@@ -295,10 +295,10 @@ h2 {
 .profile-fill-note {
     margin: 0;
     padding: 0.85rem 1.1rem;
-    border: 1px solid rgba(198, 163, 106, 0.38);
+    border: 1px solid rgba(180, 103, 58, 0.38);
     border-radius: 14px;
-    background: rgba(198, 163, 106, 0.08);
-    color: var(--color-cream-muted, #d8cbb6);
+    background: rgba(180, 103, 58, 0.08);
+    color: var(--color-cream-muted, #d38a5b);
     font-size: 0.92rem;
     font-weight: 300;
     line-height: 1.5;
@@ -311,7 +311,7 @@ h2 {
 .profile-fill-note[data-state="failed"] {
     border-color: rgba(240, 160, 140, 0.5);
     background: rgba(240, 160, 140, 0.08);
-    color: #f0c9a0;
+    color: #d38a5b;
 }
 
 .profile-fill-note[hidden] {
@@ -343,9 +343,9 @@ h2 {
 .booking-summary {
     padding: 1.5rem 1.45rem 1.55rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
-        linear-gradient(180deg, #101e30 0%, #07111d 100%);
-    border: 1px solid rgba(198, 163, 106, 0.34);
+        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.14), transparent 42%),
+        linear-gradient(180deg, #212225 0%, #141416 100%);
+    border: 1px solid rgba(180, 103, 58, 0.34);
     border-radius: 20px;
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
 }
@@ -421,7 +421,7 @@ h2 {
     width: 100%;
     min-height: 48px;
     padding: 0.7rem 0.9rem;
-    background: rgba(5, 12, 22, 0.62);
+    background: rgba(16, 16, 17, 0.62);
     border: 1px solid rgba(246, 241, 231, 0.14);
     border-radius: 12px;
     color: var(--color-cream);
@@ -436,7 +436,7 @@ h2 {
 }
 
 .field-input:hover {
-    border-color: rgba(198, 163, 106, 0.45);
+    border-color: rgba(180, 103, 58, 0.45);
 }
 
 .field-input:focus {
@@ -462,7 +462,7 @@ h2 {
 select.field-input {
     appearance: none;
     padding-right: 2.2rem;
-    background-color: rgba(5, 12, 22, 0.62);
+    background-color: rgba(16, 16, 17, 0.62);
     background-image:
         linear-gradient(45deg, transparent 50%, var(--color-gold) 50%),
         linear-gradient(135deg, var(--color-gold) 50%, transparent 50%);
@@ -505,10 +505,10 @@ select.field-input.is-invalid {
 
 .travel-docs-notice {
     padding: 1.1rem 1.3rem;
-    border: 1px solid rgba(198, 163, 106, 0.4);
+    border: 1px solid rgba(180, 103, 58, 0.4);
     border-left: 3px solid var(--color-gold);
     border-radius: 16px;
-    background: rgba(198, 163, 106, 0.07);
+    background: rgba(180, 103, 58, 0.07);
 }
 
 .travel-docs-title {
@@ -769,14 +769,14 @@ select.field-input.is-invalid {
     justify-content: center;
     width: 42px;
     height: 42px;
-    border: 1px solid rgba(198, 163, 106, 0.45);
+    border: 1px solid rgba(180, 103, 58, 0.45);
     border-radius: 50%;
     color: var(--color-cream);
     transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .social-link:hover {
-    background: rgba(198, 163, 106, 0.1);
+    background: rgba(180, 103, 58, 0.1);
     border-color: var(--color-gold);
     color: var(--color-gold-light);
 }
