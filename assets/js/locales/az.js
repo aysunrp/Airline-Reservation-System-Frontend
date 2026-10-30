@@ -16,7 +16,8 @@ window.AEROVA_LOCALES.az = {
     "closeMenu": "Menyunu bağla",
     "primary": "Əsas",
     "homeAria": "AEROVA Ana səhifə",
-    "accountMenu": "Hesab menyusu"
+    "accountMenu": "Hesab menyusu",
+    "manageBooking": "Bronu idarə et"
   },
   "footer": {
     "description": "Gözləntilərinizin fövqünə uçun.",
@@ -1080,9 +1081,9 @@ window.AEROVA_LOCALES.az = {
     "introTitle": "AEROVA ilə üç uçuş üsulu",
     "introText": "Economy, Comfort və Business ayrı salonlar kimi düşünülüb — hər birinin öz oturacağı, xidməti və ritmi var. Nəyin daxil olduğunu görmək üçün sinfi seçin.",
     "classesLabel": "Salon sinifləri",
-    "economyName": "Economy Class",
-    "comfortName": "Comfort Class",
-    "businessName": "Business Class",
+    "economyName": "Ekonom sinif",
+    "comfortName": "Komfort sinif",
+    "businessName": "Biznes sinif",
     "economyLead": "Gündəlik və uzaq uçuşlar üçün sakit, tam təchiz olunmuş salon.",
     "comfortLead": "Daha çox yer, prioritet qayğı və yerləşmək üçün daha sakit məkan.",
     "businessLead": "Məxfilik, tam uzanan yataq və vaxtınıza uyğun xidmət.",
@@ -1248,7 +1249,8 @@ window.AEROVA_LOCALES.az = {
     "view": "Bax",
     "save": "Yadda saxla",
     "search": "Axtar",
-    "filter": "Filter",
+    "filter": "Filtr",
+    "viewDetails": "Ətraflı bax",
     "available": "Mövcud",
     "occupied": "Məşğul",
     "reserved": "Rezerv",
