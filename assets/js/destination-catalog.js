@@ -88,7 +88,10 @@
 
     /* The search form with the destination chosen. It is only a prefill: the traveller still picks dates and passengers and presses search. */
     function bookingUrl(city) {
-        return "booking.html?to=" + encodeURIComponent(city.name);
+        // The airport with a route first (a city may have several): the search form selects exactly that airport.
+        var airports = city.airports || [];
+        var airport = airports.filter(function (item) { return item.hasRoutes; })[0] || airports[0];
+        return "booking.html?to=" + encodeURIComponent(city.name) + (airport ? "&toCode=" + encodeURIComponent(airport.code) : "");
     }
 
     function detailsUrl(country) {

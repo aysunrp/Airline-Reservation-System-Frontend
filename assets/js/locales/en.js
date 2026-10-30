@@ -856,6 +856,16 @@ window.AEROVA_LOCALES.en = {
     "allCleared": "All notifications have been cleared.",
     "openTicket": "Open conversation",
     "openBooking": "View booking"
+  },
+  "picker": {
+
+    "loading": "Loading destinations...",
+    "loadError": "We could not load the destinations. Please try again.",
+    "noMatches": "No destination matches your search.",
+    "noFlightsYet": "No scheduled flights yet",
+    "allDestinations": "All destinations",
+    "chooseFromList": "Please choose the airport from the list.",
+    "noRoute": "There are no scheduled flights between {from} and {to} yet."
   },
   "destinations": {
     "heroTitle": "Destinations",

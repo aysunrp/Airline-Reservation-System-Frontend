@@ -37,6 +37,12 @@
     if (!wanted) {
       return null;
     }
+
+    // "London, United Kingdom (LHR)": the airport the picker chose, named by its code.
+    var coded = /\(([a-z]{3})\)\s*$/.exec(wanted);
+    if (coded) {
+      wanted = coded[1];
+    }
     for (var i = 0; i < airports.length; i += 1) {
       if (normalize(airports[i].city) === wanted || normalize(airports[i].code) === wanted) {
         return airports[i];

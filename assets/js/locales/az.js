@@ -856,6 +856,16 @@ window.AEROVA_LOCALES.az = {
     "allCleared": "Bütün bildirişlər təmizləndi.",
     "openTicket": "Yazışmanı aç",
     "openBooking": "Rezervasiyaya bax"
+  },
+  "picker": {
+
+    "loading": "İstiqamətlər yüklənir...",
+    "loadError": "İstiqamətləri yükləmək mümkün olmadı. Yenidən cəhd edin.",
+    "noMatches": "Axtarışınıza uyğun istiqamət tapılmadı.",
+    "noFlightsYet": "Hələlik planlaşdırılmış reys yoxdur",
+    "allDestinations": "Bütün istiqamətlər",
+    "chooseFromList": "Zəhmət olmasa hava limanını siyahıdan seçin.",
+    "noRoute": "{from} və {to} arasında hələlik planlaşdırılmış reys yoxdur."
   },
   "destinations": {
     "heroTitle": "İstiqamətlər",

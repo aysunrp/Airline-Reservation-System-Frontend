@@ -188,9 +188,8 @@ function tr(key, fallback, vars) {
             return;
         }
 
-        var fromValue = fromField.value;
-        fromField.value = toField.value;
-        toField.value = fromValue;
+        // The chosen airports swap with their country and code, not just the text.
+        window.AEROVA_PICKER.swap(fromField, toField);
     }
 
     function stopVoice() {
@@ -248,6 +247,9 @@ function tr(key, fallback, vars) {
             if (transcript) {
                 input.value = transcript.trim();
                 input.classList.remove("is-invalid");
+                if (window.AEROVA_PICKER && (input.classList.contains("from-input") || input.classList.contains("to-input"))) {
+                    window.AEROVA_PICKER.set(input, input.value);
+                }
             }
         };
 
@@ -446,9 +448,15 @@ function tr(key, fallback, vars) {
 
     function collectMultiCitySegments() {
         return Array.prototype.map.call(getSegments(), function (segment) {
+            var from = window.AEROVA_PICKER.selection(segment.querySelector(".from-input"));
+            var to = window.AEROVA_PICKER.selection(segment.querySelector(".to-input"));
             return {
-                from: segment.querySelector(".from-input").value.trim(),
-                to: segment.querySelector(".to-input").value.trim(),
+                from: from ? from.airport.city : segment.querySelector(".from-input").value.trim(),
+                to: to ? to.airport.city : segment.querySelector(".to-input").value.trim(),
+                fromCode: from ? from.airport.code : "",
+                toCode: to ? to.airport.code : "",
+                fromAirportId: from ? from.airport.id : null,
+                toAirportId: to ? to.airport.id : null,
                 departureDate: segment.querySelector(".segment-date").value.trim()
             };
         });
@@ -489,6 +497,18 @@ function tr(key, fallback, vars) {
                 if (!firstInvalid) {
                     firstInvalid = date;
                 }
+            }
+
+            var fromChoice = window.AEROVA_PICKER.selection(from);
+            var toChoice = window.AEROVA_PICKER.selection(to);
+            if (fromValue && !fromChoice) { markInvalid(from); firstInvalid = firstInvalid || from; }
+            if (toValue && !toChoice) { markInvalid(to); firstInvalid = firstInvalid || to; }
+            if (fromChoice && toChoice && fromChoice.airport.code === toChoice.airport.code) {
+                markInvalid(to);
+                firstInvalid = firstInvalid || to;
+                showMessage(tr("booking.sameCity", "The departure and the destination are the same. Please choose two different cities."));
+                to.focus();
+                return null;
             }
         }
 
@@ -532,15 +552,6 @@ function tr(key, fallback, vars) {
         }));
     }
 
-    /* The same city or airport twice (by name or code, as the airport list knows it). */
-    function isSameCity(first, second) {
-        function key(value) {
-            var airport = window.AEROVA_AIRPORTS ? window.AEROVA_AIRPORTS.find(airportDirectory, value) : null;
-            return String(airport ? airport.city : value).trim().toLowerCase();
-        }
-        return key(first) === key(second);
-    }
-
     function validateSimpleTrip() {
         var fromValue = fromInput.value.trim();
         var toValue = toInput.value.trim();
@@ -564,7 +575,25 @@ function tr(key, fallback, vars) {
             return null;
         }
 
-        if (isSameCity(fromValue, toValue)) {
+        // Each side must be an airport of the catalog (picked from the list, or text that is exactly one): its country and code come from there.
+        var fromChoice = window.AEROVA_PICKER.selection(fromInput);
+        var toChoice = window.AEROVA_PICKER.selection(toInput);
+
+        if (!fromChoice) {
+            markInvalid(fromInput);
+            showMessage(tr("picker.chooseFromList", "Please choose the departure from the list."));
+            fromInput.focus();
+            return null;
+        }
+
+        if (!toChoice) {
+            markInvalid(toInput);
+            showMessage(tr("picker.chooseFromList", "Please choose the destination from the list."));
+            toInput.focus();
+            return null;
+        }
+
+        if (fromChoice.airport.code === toChoice.airport.code) {
             markInvalid(toInput);
             showMessage(tr("booking.sameCity", "The departure and the destination are the same. Please choose two different cities."));
             toInput.focus();
@@ -598,8 +627,12 @@ function tr(key, fallback, vars) {
 
         var data = {
             tripType: TRIP_PARAM[tripType],
-            from: fromValue,
-            to: toValue,
+            from: fromChoice.airport.city,
+            to: toChoice.airport.city,
+            fromCode: fromChoice.airport.code,
+            toCode: toChoice.airport.code,
+            fromAirportId: fromChoice.airport.id,
+            toAirportId: toChoice.airport.id,
             departureDate: departureValue,
             passengers: passengersInput.value,
             adults: String(passengerMix.adults),
@@ -642,6 +675,8 @@ function tr(key, fallback, vars) {
                 var number = index + 1;
                 params.set("from" + number, segment.from);
                 params.set("to" + number, segment.to);
+                if (segment.fromCode) params.set("fromCode" + number, segment.fromCode);
+                if (segment.toCode) params.set("toCode" + number, segment.toCode);
                 params.set("departureDate" + number, segment.departureDate);
             });
 
@@ -649,6 +684,11 @@ function tr(key, fallback, vars) {
         } else {
             params.set("from", data.from);
             params.set("to", data.to);
+            // The airports themselves: the results search by these codes (and keep the database ids), not by the text.
+            if (data.fromCode) params.set("fromCode", data.fromCode);
+            if (data.toCode) params.set("toCode", data.toCode);
+            if (data.fromAirportId) params.set("fromAirportId", String(data.fromAirportId));
+            if (data.toAirportId) params.set("toAirportId", String(data.toAirportId));
             params.set("departureDate", data.departureDate);
 
             if (data.returnDate) {
@@ -681,138 +721,14 @@ function tr(key, fallback, vars) {
         });
     });
 
-    /* Airports from the backend; the suggestions below are built from them. */
-    var airportDirectory = [];
+    /* The departure and destination fields are the airport picker (assets/js/airport-picker.js): every choice is an airport of the backend catalog. */
+    window.AEROVA_PICKER.bind(form);
 
-    if (window.AEROVA_AIRPORTS) {
-        window.AEROVA_AIRPORTS.load().then(function (airports) {
-            airportDirectory = airports;
-        }, function () {
-            // No suggestions without the airport list; the traveller can still type a city and the results page reports the problem.
-            airportDirectory = [];
-        });
+    function hideCitySuggestions() {
+        window.AEROVA_PICKER.close();
     }
-
-    var activeSuggestionInput = null;
-
-    function isCityInput(element) {
-        return element &&
-            (element.classList.contains("from-input") || element.classList.contains("to-input"));
-    }
-
-    function getSuggestionsList(input) {
-        var control = input.closest(".field-control");
-        if (!control) {
-            return null;
-        }
-
-        var list = control.querySelector(".city-suggestions");
-        if (!list) {
-            list = document.createElement("ul");
-            list.className = "city-suggestions";
-            list.hidden = true;
-            list.setAttribute("role", "listbox");
-            control.appendChild(list);
-        }
-
-        return list;
-    }
-
-    function hideCitySuggestions(input) {
-        if (input) {
-            var list = input.closest(".field-control");
-            list = list ? list.querySelector(".city-suggestions") : null;
-            if (list) {
-                list.hidden = true;
-                list.innerHTML = "";
-            }
-
-            if (activeSuggestionInput === input) {
-                activeSuggestionInput = null;
-            }
-
-            return;
-        }
-
-        form.querySelectorAll(".city-suggestions").forEach(function (suggestions) {
-            suggestions.hidden = true;
-            suggestions.innerHTML = "";
-        });
-        activeSuggestionInput = null;
-    }
-
-    function filterCities(query) {
-        var normalized = String(query || "").trim().toLowerCase();
-        if (!normalized) {
-            return [];
-        }
-
-        return window.AEROVA_AIRPORTS ? window.AEROVA_AIRPORTS.suggest(airportDirectory, normalized) : [];
-    }
-
-    function renderCitySuggestions(input, cities) {
-        var list = getSuggestionsList(input);
-        if (!list) {
-            return;
-        }
-
-        list.innerHTML = "";
-
-        if (!cities.length) {
-            list.hidden = true;
-            activeSuggestionInput = null;
-            return;
-        }
-
-        cities.forEach(function (city) {
-            var item = document.createElement("li");
-            var button = document.createElement("button");
-            button.type = "button";
-            button.className = "city-suggestion";
-            button.setAttribute("role", "option");
-            button.textContent = city;
-            item.appendChild(button);
-            list.appendChild(item);
-        });
-
-        list.hidden = false;
-        activeSuggestionInput = input;
-    }
-
-    function showCitySuggestions(input) {
-        if (!isCityInput(input)) {
-            return;
-        }
-
-        hideCitySuggestions();
-        renderCitySuggestions(input, filterCities(input.value));
-    }
-
-    function selectCitySuggestion(input, city) {
-        input.value = city;
-        input.classList.remove("is-invalid");
-        hideCitySuggestions(input);
-        input.focus();
-    }
-
-    form.addEventListener("mousedown", function (event) {
-        var suggestion = event.target.closest(".city-suggestion");
-        if (suggestion && form.contains(suggestion)) {
-            event.preventDefault();
-        }
-    });
 
     form.addEventListener("click", function (event) {
-        var suggestion = event.target.closest(".city-suggestion");
-        if (suggestion && form.contains(suggestion)) {
-            var suggestionInput = suggestion.closest(".field-control");
-            suggestionInput = suggestionInput ? suggestionInput.querySelector(".from-input, .to-input") : null;
-            if (suggestionInput) {
-                selectCitySuggestion(suggestionInput, suggestion.textContent);
-            }
-            return;
-        }
-
         var swap = event.target.closest(".swap-button");
         if (swap && form.contains(swap) && tripType !== "multi-city") {
             hideCitySuggestions();
@@ -835,30 +751,6 @@ function tr(key, fallback, vars) {
         }
     });
 
-    form.addEventListener("input", function (event) {
-        if (isCityInput(event.target)) {
-            showCitySuggestions(event.target);
-        }
-    });
-
-    form.addEventListener("focusin", function (event) {
-        if (isCityInput(event.target) && event.target.value.trim()) {
-            showCitySuggestions(event.target);
-        }
-    });
-
-    document.addEventListener("click", function (event) {
-        if (!event.target.closest(".field-control")) {
-            hideCitySuggestions();
-        }
-    });
-
-    form.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            hideCitySuggestions();
-        }
-    });
-
     addSegmentButton.addEventListener("click", function () {
         if (getSegments().length >= maxSegments) {
             return;
@@ -871,8 +763,8 @@ function tr(key, fallback, vars) {
             input.value = "";
             input.classList.remove("is-invalid");
         });
-        clone.querySelectorAll(".city-suggestions").forEach(function (list) {
-            list.remove();
+        clone.querySelectorAll(".airport-meta").forEach(function (meta) {
+            meta.remove();
         });
         segmentList.appendChild(clone);
         refreshSegments();
@@ -887,40 +779,47 @@ function tr(key, fallback, vars) {
             return;
         }
 
-        navigateToResults(data);
+        if (data.tripType === "multicity" || !data.fromCode || !data.toCode) {
+            navigateToResults(data);
+            return;
+        }
+
+        // A route must exist between the two airports before a booking is started; if it cannot be checked the results page says what is there.
+        window.AEROVA_PICKER.checkRoute(data.fromCode, data.toCode).then(function (exists) {
+            if (exists === false) {
+                markInvalid(toInput);
+                showMessage(tr("picker.noRoute", "There are no scheduled flights between {from} and {to} yet.", { from: data.from, to: data.to }));
+                return;
+            }
+            navigateToResults(data);
+        });
     });
 
-    function applyDestinationFromQuery() {
+    /* A link may name the destination (and the departure): booking.html?to=London&toCode=LHR. The airport comes from the catalog; the departure
+       starts as AEROVA's home base (Baku, GYD) unless the link or the traveller chose another. Nothing is searched until the traveller presses search. */
+    function applyPrefill() {
         var params = new URLSearchParams(window.location.search);
-        var destination = params.get("to");
+        var picker = window.AEROVA_PICKER;
+        var wantedFrom = params.get("fromCode") || params.get("from");
+        var wantedTo = params.get("toCode") || params.get("to");
 
-        if (!destination) {
-            return;
-        }
-
-        toInput.value = destination.trim();
-        toInput.classList.remove("is-invalid");
-    }
-
-    /* The departure starts as AEROVA's home base (the hub of the destination catalog) unless the traveller already chose one. */
-    function applyDefaultOrigin() {
-        var params = new URLSearchParams(window.location.search);
-        if (params.get("from") || !window.AEROVA_DESTINATIONS) {
-            if (params.get("from")) fromInput.value = params.get("from").trim();
-            return;
-        }
-
-        window.AEROVA_DESTINATIONS.hubCityName().then(function (name) {
-            if (name && !fromInput.value.trim()) {
-                fromInput.value = name;
+        picker.load().then(function () {
+            if (wantedTo) {
+                return picker.set(toInput, wantedTo.trim());
+            }
+        }).then(function () {
+            if (wantedFrom) {
+                return picker.set(fromInput, wantedFrom.trim());
+            }
+            if (!fromInput.value.trim()) {
+                return picker.hub().then(function (hub) { if (hub) return picker.set(fromInput, hub); });
             }
         });
     }
 
     refreshSegments();
     setTrip("round-trip");
-    applyDestinationFromQuery();
-    applyDefaultOrigin();
+    applyPrefill();
 })();
 
 (function () {
