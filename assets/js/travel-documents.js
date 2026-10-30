@@ -77,8 +77,6 @@
         international: {
             default: { documents: ["passport"], minValidityDays: 0 },
             TR: {
-                /* Mock, configurable: AZ ID card accepted for AZ citizens on direct AZ-TR travel. */
-                AZ: ["passport", "az_id_card"],
                 default: ["passport"]
             },
             AE: {
@@ -92,11 +90,34 @@
         return String(value || "").trim().toLowerCase();
     }
 
+    /* Filled from the backend (GET api/airports): IATA code -> country code, and city -> country code. */
+    var directoryByCode = {};
+    var directoryByCity = {};
+
+    function setAirports(airports) {
+        directoryByCode = {};
+        directoryByCity = {};
+        (airports || []).forEach(function (airport) {
+            if (!airport || !airport.countryCode) return;
+            directoryByCode[String(airport.code || "").toUpperCase()] = String(airport.countryCode).toUpperCase();
+            directoryByCity[normalize(airport.city)] = String(airport.countryCode).toUpperCase();
+        });
+    }
+
+    function countryForCode(code) {
+        var key = String(code || "").toUpperCase();
+        return directoryByCode[key] || AIRPORT_COUNTRIES[key] || "";
+    }
+
+    function countryForCity(city) {
+        var key = normalize(city);
+        return directoryByCity[key] || CITY_COUNTRIES[key] || "";
+    }
+
     function countryForPoint(point) {
         if (!point) return "";
         if (point.country) return point.country;
-        if (point.code && AIRPORT_COUNTRIES[point.code]) return AIRPORT_COUNTRIES[point.code];
-        return CITY_COUNTRIES[normalize(point.city)] || "";
+        return countryForCode(point.code) || countryForCity(point.city);
     }
 
     /* Country codes along the route, origin first. */
@@ -108,8 +129,8 @@
                 list.push(countryForPoint(segment.to));
             });
         } else if (flight) {
-            list.push(CITY_COUNTRIES[normalize(flight.from)] || "");
-            list.push(CITY_COUNTRIES[normalize(flight.to)] || "");
+            list.push(countryForCode(flight.fromCode) || countryForCity(flight.from));
+            list.push(countryForCode(flight.toCode) || countryForCity(flight.to));
         }
         return list;
     }
@@ -162,6 +183,28 @@
         };
     }
 
+    /* A trip of several flights (round trip, multi-city): the documents every flight accepts, the strictest validity, international if any flight is. */
+    function documentOptionsForLegs(legs, nationality) {
+        var list = (legs || []).filter(Boolean);
+        if (!list.length) return documentOptions(null, nationality);
+        var combined = null;
+        list.forEach(function (flight) {
+            var options = documentOptions(flight, nationality);
+            if (!combined) {
+                combined = options;
+                return;
+            }
+            combined = {
+                routeType: combined.routeType === "international" || options.routeType === "international" ? "international" : "domestic",
+                countries: combined.countries.concat(options.countries),
+                documents: intersect(combined.documents, options.documents),
+                minValidityDays: Math.max(combined.minValidityDays, options.minValidityDays)
+            };
+        });
+        if (!combined.documents.length) combined.documents = ["passport"];
+        return combined;
+    }
+
     function countryName(code) {
         for (var i = 0; i < COUNTRIES.length; i += 1) {
             if (COUNTRIES[i].code === code) return COUNTRIES[i].name;
@@ -186,6 +229,8 @@
         routeCountries: routeCountries,
         routeType: routeType,
         documentOptions: documentOptions,
+        documentOptionsForLegs: documentOptionsForLegs,
+        setAirports: setAirports,
         countryName: countryName,
         countryCodeFromName: countryCodeFromName
     };

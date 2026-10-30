@@ -678,7 +678,7 @@
         if (!DOCS) {
             return { routeType: "international", countries: [], documents: ["passport"], minValidityDays: 0 };
         }
-        return DOCS.documentOptions(activeFlightData, nationality);
+        return DOCS.documentOptionsForLegs(activeLegs.length ? activeLegs : [activeFlightData], nationality);
     }
 
     function documentTypeDefinition(code) {
@@ -749,7 +749,7 @@
         var countries = DOCS.routeCountries(activeFlightData);
         var names = countries.map(function (code) { return tr("travelDocs.countries." + code, DOCS.countryName(code) || "—"); });
         var unique = names.filter(function (value, index) { return names.indexOf(value) === index; });
-        var domestic = DOCS.routeType(activeFlightData) === "domestic";
+        var domestic = DOCS.documentOptionsForLegs(activeLegs.length ? activeLegs : [activeFlightData], "").routeType === "domestic";
         setText("travel-docs-route", domestic
             ? tr("travelDocs.routeDomestic", "{country} daxilində daxili uçuş", { country: names[0] })
             : tr("travelDocs.routeInternational", "Beynəlxalq uçuş: {countries}", { countries: unique.join(" → ") }));
@@ -1443,6 +1443,16 @@
         });
     }
 
+    /* The country of every airport comes from the backend; once it is known the document choices of every passenger are worked out again. */
+    function loadAirportCountries() {
+        if (!DOCS || !window.AEROVA_AIRPORTS) return;
+        window.AEROVA_AIRPORTS.load().then(function (airports) {
+            DOCS.setAirports(airports);
+            document.querySelectorAll("#passenger-cards .passenger-card").forEach(updateDocumentFields);
+            updateRouteNotice();
+        }).catch(function () { /* the built-in country list stays in use; the server checks the documents anyway */ });
+    }
+
     function init() {
         var chosen = readSelectedFlight();
         activeLegs = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.legs(chosen) : (chosen ? [chosen] : []);
@@ -1543,6 +1553,7 @@
             cardSeats.push("");
         }
         renderPassengerCards(cardSeats);
+        loadAirportCountries();
         bindInfantRule();
         loadSavedPassengers();
         loadProfileDetails();
