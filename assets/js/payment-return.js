@@ -207,7 +207,7 @@
             show({
                 state: "error",
                 title: ["api.payment.paidNotConfirmedTitle", "Ödənişi aldıq, amma rezervasiyanı təsdiqləyə bilmədik"],
-                text: ["api.payment.paidNotConfirmedText", "Ödəniş gələndə oturacaqlar artıq tutulmurdu. Rezervasiya kodunuzla AEROVA dəstəyinə müraciət edin, ödəniş geri qaytarılacaq."],
+                text: ["api.payment.paidNotConfirmedText", "Seçdiyiniz oturacaq ödənişiniz təsdiqlənənə qədər başqa sərnişin tərəfindən alınıb. Rezervasiya yaradılmadı və ödənişiniz avtomatik geri qaytarılır. Zəhmət olmasa başqa oturacaq seçərək yenidən rezerv edin."],
                 actions: ["return-trips", "return-home"],
                 summary: [{ key: "api.payment.labelReference", fallback: "Rezervasiya kodu", value: status.pnr, pnr: true }]
             });

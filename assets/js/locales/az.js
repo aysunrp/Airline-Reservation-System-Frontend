@@ -1875,7 +1875,7 @@ window.AEROVA_LOCALES.az = {
       "successTitle": "Ödəniş təsdiqləndi",
       "successText": "Təşəkkür edirik! Rezervasiyanız təsdiqləndi.",
       "paidNotConfirmedTitle": "Ödənişi aldıq, amma rezervasiyanı təsdiqləyə bilmədik",
-      "paidNotConfirmedText": "Ödəniş gələndə oturacaqlar artıq tutulmurdu. Rezervasiya kodunuzla AEROVA dəstəyinə müraciət edin, ödəniş geri qaytarılacaq.",
+      "paidNotConfirmedText": "Seçdiyiniz oturacaq ödənişiniz təsdiqlənənə qədər başqa sərnişin tərəfindən alınıb. Rezervasiya yaradılmadı və ödənişiniz avtomatik geri qaytarılır. Zəhmət olmasa başqa oturacaq seçərək yenidən rezerv edin.",
       "failedTitle": "Ödəniş alınmadı",
       "failedText": "Stripe ödənişi qəbul edə bilmədi. Heç bir məbləğ tutulmayıb. Yenidən cəhd edə bilərsiniz.",
       "notFoundTitle": "Bu ödənişi tapa bilmədik",

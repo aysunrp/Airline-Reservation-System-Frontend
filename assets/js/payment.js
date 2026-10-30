@@ -985,10 +985,36 @@
         });
     }
 
+    /* The confirmation tab (opened from the e-mail) has no booking of its own: it asks this tab, which holds it, and takes it (same browser only). */
+    function answerHandoffRequests() {
+        if (!window.BroadcastChannel) {
+            return;
+        }
+        try {
+            var channel = new window.BroadcastChannel("aerova-email");
+            channel.onmessage = function (event) {
+                if (event && event.data && event.data.type === "handoff-request" && window.sessionStorage.getItem("bookingData")) {
+                    channel.postMessage({
+                        type: "handoff",
+                        bookingData: window.sessionStorage.getItem("bookingData"),
+                        held: window.sessionStorage.getItem("aerovaBooking"),
+                        owner: window.sessionStorage.getItem("aerovaBookingOwner")
+                    });
+                }
+            };
+        } catch (error) {
+            // The confirmation tab then opens payment without the booking.
+        }
+    }
+
     function init() {
         var payButton = document.getElementById("pay-button");
         var layout = document.querySelector(".payment-layout");
         var bookingData = readBookingData();
+
+        if (bookingData) {
+            answerHandoffRequests();
+        }
 
         bindClearInvalidOnInput();
         bindPromoActions();

@@ -80,6 +80,48 @@
         }
     }
 
+    /* The booking lives in the tab where it was made. When this tab (opened from the e-mail) has none, it asks that tab for it, then opens payment. */
+    function hasBookingHere() {
+        try { return !!window.sessionStorage.getItem("bookingData"); } catch (error) { return false; }
+    }
+
+    function goToPayment(event) {
+        if (event) event.preventDefault();
+        if (hasBookingHere() || !window.BroadcastChannel) {
+            window.location.href = "payment.html";
+            return;
+        }
+
+        var channel;
+        var finished = false;
+        function done(received) {
+            if (finished) return;
+            finished = true;
+            try { channel.close(); } catch (error) { /* already closed */ }
+            if (received && received.bookingData) {
+                try {
+                    window.sessionStorage.setItem("bookingData", received.bookingData);
+                    if (received.held) window.sessionStorage.setItem("aerovaBooking", received.held);
+                    if (received.owner) window.sessionStorage.setItem("aerovaBookingOwner", received.owner);
+                } catch (error) { /* payment shows its own message */ }
+            }
+            window.location.href = "payment.html";
+        }
+
+        try {
+            channel = new window.BroadcastChannel("aerova-email");
+            channel.onmessage = function (message) {
+                if (message && message.data && message.data.type === "handoff") done(message.data);
+            };
+            channel.postMessage({ type: "handoff-request" });
+            window.setTimeout(function () { done(null); }, 2000);
+        } catch (error) {
+            window.location.href = "payment.html";
+        }
+    }
+
+    if (next) next.addEventListener("click", goToPayment);
+
     paint();
 
     var token = takeToken();
