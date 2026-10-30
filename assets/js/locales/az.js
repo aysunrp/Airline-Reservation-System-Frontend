@@ -1,5 +1,9 @@
 window.AEROVA_LOCALES = window.AEROVA_LOCALES || {};
 window.AEROVA_LOCALES.az = {
+  "theme": {
+    "toDark": "Tünd rejimə keç",
+    "toLight": "Açıq rejimə keç"
+  },
   "nav": {
     "adminPanel": "Admin paneli",
     "home": "Ana səhifə",

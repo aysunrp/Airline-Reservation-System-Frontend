@@ -266,15 +266,15 @@
             ".account-menu-caret{display:inline-block;font-size:0.8em;line-height:1;transition:transform 0.2s ease;}" +
             "[aria-expanded=\"true\"]>.account-menu-caret{transform:rotate(180deg);}" +
             ".account-menu{position:absolute;top:calc(100% + 0.65rem);right:0;z-index:1000;min-width:14rem;margin:0;padding:0.4rem;list-style:none;" +
-            "background:#0b1a2c;border:1px solid rgba(198,163,106,0.45);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,0.45);}" +
+            "background:var(--color-surface,#0b1a2c);border:1px solid rgba(198,163,106,0.45);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,0.45);}" +
             ".account-menu[hidden],.account-drawer-list[hidden]{display:none;}" +
-            ".account-menu-sep{margin-top:0.3rem;padding-top:0.3rem;border-top:1px solid rgba(246,241,231,0.12);}" +
+            ".account-menu-sep{margin-top:0.3rem;padding-top:0.3rem;border-top:1px solid var(--color-border,rgba(246,241,231,0.12));}" +
             ".account-menu-item{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;width:100%;padding:0.72rem 0.9rem;" +
-            "border:0;border-radius:9px;background:transparent;color:#f6f1e7;font:inherit;font-size:0.74rem;font-weight:400;letter-spacing:0.14em;" +
+            "border:0;border-radius:9px;background:transparent;color:var(--color-text,#f6f1e7);font:inherit;font-size:0.74rem;font-weight:400;letter-spacing:0.14em;" +
             "line-height:1.3;text-align:left;text-decoration:none;text-transform:uppercase;white-space:nowrap;cursor:pointer;}" +
-            ".account-menu-item:hover,.account-menu-item:focus-visible{background:rgba(198,163,106,0.16);color:#e3c78f;}" +
+            ".account-menu-item:hover,.account-menu-item:focus-visible{background:rgba(198,163,106,0.16);color:var(--color-accent-strong,#e3c78f);}" +
             ".account-menu-item:focus-visible{outline:2px solid #c6a36a;outline-offset:-2px;}" +
-            ".account-menu-item[aria-current=\"page\"]{color:#e3c78f;}" +
+            ".account-menu-item[aria-current=\"page\"]{color:var(--color-accent-strong,#e3c78f);}" +
             ".account-menu-item .aerova-notif-badge{margin-left:0;}" +
             ".account-drawer-list{display:flex;flex-direction:column;width:100%;margin:0.75rem 0 0;padding:0 0 0 0.9rem;list-style:none;" +
             "border-left:1px solid rgba(198,163,106,0.45);}" +
