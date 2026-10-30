@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/passenger-details.css">
+    <link rel="stylesheet" href="assets/css/destination-catalog.css">
     <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
@@ -50,6 +51,17 @@
                 <h1 class="dest-hero__title" data-i18n="destinations.discoverTitle">Discover the World with AEROVA</h1>
                 <p class="dest-hero__text" data-i18n="destinations.discoverText">An editorial guide to cities and shores chosen for atmosphere, culture, and the journey between them.</p>
                 <a class="dest-hero__cta" href="#magazine" data-i18n="destinations.browseGuide">Browse the Guide</a>
+            </div>
+        </section>
+
+        <section id="all-destinations" class="dest-catalog" aria-labelledby="all-destinations-title">
+            <div class="dest-shell">
+                <header class="dest-magazine__intro">
+                    <p class="dest-magazine__eyebrow" data-i18n="destinations.guideEyebrow">Destination Guide</p>
+                    <h2 class="dest-magazine__heading" id="all-destinations-title" data-i18n="destinations.allDestinationsTitle">All Destinations</h2>
+                    <p class="dest-magazine__copy" data-i18n="destinations.allDestinationsText">Every country AEROVA can take you to, with the city to start from.</p>
+                </header>
+                <div data-destination-catalog></div>
             </div>
         </section>
 
@@ -224,6 +236,7 @@
     <script src="assets/js/api-client.js?v=stay1"></script>
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/destination-catalog.js"></script>
     <script src="assets/js/home.js"></script>
     <script src="assets/js/destinations.js"></script>
 
