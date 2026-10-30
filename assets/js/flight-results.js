@@ -81,6 +81,9 @@
             tripType: params.get("tripType") || "",
             from: (params.get("from") || "").trim(),
             to: (params.get("to") || "").trim(),
+            // The airports the search form chose (IATA codes): used before the city names, which can name several airports.
+            fromCode: (params.get("fromCode") || "").trim(),
+            toCode: (params.get("toCode") || "").trim(),
             departureDate: params.get("departureDate") || "",
             returnDate: params.get("returnDate") || "",
             passengers: params.get("passengers") || "1",
@@ -117,6 +120,8 @@
                 var segment = segments[criteria.leg - 1];
                 criteria.from = segment.from.trim();
                 criteria.to = segment.to.trim();
+                criteria.fromCode = String(segment.fromCode || "").trim();
+                criteria.toCode = String(segment.toCode || "").trim();
                 criteria.departureDate = segment.departureDate;
                 criteria.multi = { count: segments.length, segments: segments };
             }
@@ -386,8 +391,8 @@
 
         directory.load().then(function (list) {
             airports = list;
-            var origin = directory.find(list, criteria.from);
-            var destination = directory.find(list, criteria.to);
+            var origin = (criteria.fromCode && directory.find(list, criteria.fromCode)) || directory.find(list, criteria.from);
+            var destination = (criteria.toCode && directory.find(list, criteria.toCode)) || directory.find(list, criteria.to);
 
             if (!origin || !destination) {
                 var unknown = new Error("Unknown airport");
@@ -496,8 +501,8 @@
 
         directory.load().then(function (list) {
             airports = list;
-            var origin = directory.find(list, criteria.from);
-            var destination = directory.find(list, criteria.to);
+            var origin = (criteria.fromCode && directory.find(list, criteria.fromCode)) || directory.find(list, criteria.from);
+            var destination = (criteria.toCode && directory.find(list, criteria.toCode)) || directory.find(list, criteria.to);
 
             if (!origin || !destination) {
                 var unknown = new Error("Unknown airport");
@@ -1112,6 +1117,8 @@
             flightNumber: flight.flightNumber,
             from: flight.from,
             to: flight.to,
+            fromCode: flight.fromCode,
+            toCode: flight.toCode,
             departure: flight.departure,
             arrival: flight.arrival,
             duration: flight.duration,

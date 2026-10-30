@@ -77,6 +77,8 @@
     return resultsUrl(new URLSearchParams({
       from: outbound.to,
       to: outbound.from,
+      fromCode: outbound.toCode || "",
+      toCode: outbound.fromCode || "",
       departureDate: outbound.returnDate,
       returnDate: outbound.returnDate,
       passengers: String(outbound.passengers || "1"),
