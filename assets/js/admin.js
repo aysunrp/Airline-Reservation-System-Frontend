@@ -831,7 +831,75 @@
         }).join("") : emptyRow(7, tr("api.admin.noAirports", "No airports found."));
     }
 
+    /* ---- destination catalog: countries and cities are switched on and off here, never deleted ---- */
+
+    function loadDestinations() {
+        loading("destinations-body", 6);
+        api.get("api/admin/destinations").then(function (rows) {
+            state.destinations = rows;
+            renderDestinations();
+        }).catch(function (error) {
+            failed(error, "destinations-body", 6, loadDestinations);
+        });
+    }
+
+    function destinationName(item) {
+        var lang = window.AEROVA_I18N && window.AEROVA_I18N.getLanguage ? window.AEROVA_I18N.getLanguage() : "en";
+        return (lang === "az" ? item.nameAz : lang === "ru" ? item.nameRu : item.name) || item.name;
+    }
+
+    function destinationToggle(kind, item) {
+        var label = item.isActive ? tr("api.admin.destDeactivate", "Deactivate") : tr("api.admin.destActivate", "Activate");
+        return '<button class="admin-btn admin-btn--ghost' + (item.isActive ? " admin-btn--danger-text" : "") + '" type="button" data-destination-toggle="' + kind +
+            '" data-destination-id="' + item.id + '">' + escapeHtml(label) + "</button>";
+    }
+
+    function renderDestinations() {
+        var rows = state.destinations || [];
+        byId("destinations-body").innerHTML = rows.length ? rows.map(function (country) {
+            var html = '<tr class="admin-row-group"><td><strong>' + escapeHtml(destinationName(country)) + "</strong> " + escapeHtml(country.code) +
+                "</td><td></td><td></td><td></td><td>" + activeBadge(country.isActive) + '</td><td><div class="admin-actions">' + destinationToggle("country", country) + "</div></td></tr>";
+            country.cities.forEach(function (city) {
+                var codes = city.airports.map(function (airport) { return airport.code; }).join(", ");
+                var flights = city.airports.some(function (airport) { return airport.hasRoutes; });
+                html += "<tr><td></td><td>" + escapeHtml(destinationName(city)) + "</td><td>" + escapeHtml(codes) + "</td><td>" +
+                    escapeHtml(flights ? tr("api.admin.destYes", "Yes") : tr("api.admin.destNo", "None yet")) + "</td><td>" + activeBadge(city.isActive) +
+                    '</td><td><div class="admin-actions">' + destinationToggle("city", city) + "</div></td></tr>";
+            });
+            return html;
+        }).join("") : emptyRow(6, tr("api.admin.destEmpty", "The destination catalog is empty."));
+    }
+
+    function toggleDestination(kind, id) {
+        var found = null;
+        (state.destinations || []).forEach(function (country) {
+            if (kind === "country" && String(country.id) === String(id)) found = country;
+            country.cities.forEach(function (city) { if (kind === "city" && String(city.id) === String(id)) found = city; });
+        });
+        if (!found) return;
+
+        var turnOn = !found.isActive;
+        var name = destinationName(found);
+        var ask = turnOn ? Promise.resolve(true) : confirmAction({
+            title: tr("api.admin.destDeactivate", "Deactivate"),
+            text: tr("api.admin.destDeactivateConfirm", "Deactivate {name}?", { name: name }),
+            confirm: tr("api.admin.destDeactivate", "Deactivate"),
+            danger: true
+        });
+
+        ask.then(function (confirmed) {
+            if (!confirmed) return;
+            api.put("api/admin/destinations/" + (kind === "country" ? "countries/" : "cities/") + id + "/active", { isActive: turnOn }).then(function () {
+                showMessage(tr("api.admin.destUpdated", "{name} is now {state}.", { name: name, state: turnOn ? tr("api.admin.destActive", "active") : tr("api.admin.destInactive", "inactive") }));
+                loadDestinations();
+            }).catch(function (error) {
+                showMessage(apiMessage(error), true);
+            });
+        });
+    }
+
     function loadAirports() {
+        loadDestinations();
         loading("airports-body", 7);
         api.get("api/admin/airports").then(function (rows) {
             state.adminAirports = rows;
@@ -2319,6 +2387,11 @@
                 if (editId && item) openEntityForm(FORMS[table.kind], item);
                 if (deleteId && item) remove(FORMS[table.kind], deleteId, table.label(item));
             });
+        });
+
+        byId("destinations-body").addEventListener("click", function (event) {
+            var button = event.target.closest("[data-destination-toggle]");
+            if (button) toggleDestination(button.getAttribute("data-destination-toggle"), button.getAttribute("data-destination-id"));
         });
 
         byId("flights-body").addEventListener("click", function (event) {

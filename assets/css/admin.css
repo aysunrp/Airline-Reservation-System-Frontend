@@ -1290,3 +1290,8 @@ table {
     outline: 2px solid #c6a36a;
     outline-offset: -2px;
 }
+
+/* Destination catalog: a country row groups its city rows. */
+.admin-row-group td {
+    background: rgba(198, 163, 106, 0.1);
+}
