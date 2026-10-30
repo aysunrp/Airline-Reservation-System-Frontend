@@ -11,14 +11,14 @@ CC BY-SA photographs stay under CC BY-SA, which applies to the photograph itself
 | Local file | Original (Wikimedia Commons) | Author | Licence |
 |---|---|---|---|
 | `azerbaijan-baku.jpg` (+ `azerbaijan-baku-sm.jpg`) | [BAKU AT NIGHT .RED TOWERS.באקו בלילה מגדלים באדום.jpg](https://commons.wikimedia.org/wiki/File:BAKU_AT_NIGHT_.RED_TOWERS.%D7%91%D7%90%D7%A7%D7%95_%D7%91%D7%9C%D7%99%D7%9C%D7%94_%D7%9E%D7%92%D7%93%D7%9C%D7%99%D7%9D_%D7%91%D7%90%D7%93%D7%95%D7%9D.jpg) | Avisadehh | CC0 |
-| `turkey-istanbul.jpg` (+ `turkey-istanbul-sm.jpg`) | [Hagia Sophia and Sultan Ahmed I Mosque from the Bosphorus 2014.jpg](https://commons.wikimedia.org/wiki/File:Hagia_Sophia_and_Sultan_Ahmed_I_Mosque_from_the_Bosphorus_2014.jpg) | Radosław Botev | CC BY 3.0 pl |
-| `uae-dubai.jpg` (+ `uae-dubai-sm.jpg`) | [Burj Khalifa Night View 01.jpg](https://commons.wikimedia.org/wiki/File:Burj_Khalifa_Night_View_01.jpg) | Sergei Gussev | CC BY 2.0 |
+| `turkey-istanbul.jpg` (+ `turkey-istanbul-sm.jpg`) | [Galata tower view.jpg](https://commons.wikimedia.org/wiki/File:Galata_tower_view.jpg) | xxoktayxx | CC0 |
+| `uae-dubai.jpg` (+ `uae-dubai-sm.jpg`) | [Burj Al-Arab (13996844503).jpg](https://commons.wikimedia.org/wiki/File:Burj_Al-Arab_(13996844503).jpg) | Marco Becerra | CC BY 2.0 |
 | `uk-london.jpg` (+ `uk-london-sm.jpg`) | [Big Ben at sunset - 2014-10-27 17-30.jpg](https://commons.wikimedia.org/wiki/File:Big_Ben_at_sunset_-_2014-10-27_17-30.jpg) | Colin | CC BY-SA 4.0 |
 | `france-paris.jpg` (+ `france-paris-sm.jpg`) | [Eiffel Tower and Pont Alexandre III at night.jpg](https://commons.wikimedia.org/wiki/File:Eiffel_Tower_and_Pont_Alexandre_III_at_night.jpg) | Getfunky Paris | CC BY 2.0 |
 | `germany-berlin.jpg` (+ `germany-berlin-sm.jpg`) | [Brandenburger Tor morgens.jpg](https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_morgens.jpg) | Thomas Wolf, www.foto-tw.de | CC BY-SA 3.0 |
 | `italy-rome.jpg` (+ `italy-rome-sm.jpg`) | [Rom (IT), Kolosseum -- 2024 -- 0610.jpg](https://commons.wikimedia.org/wiki/File:Rom_(IT),_Kolosseum_--_2024_--_0610.jpg) | Anil Öztas | CC BY 4.0 |
 | `spain-barcelona.jpg` (+ `spain-barcelona-sm.jpg`) | [Sagrada Família 2010.JPG](https://commons.wikimedia.org/wiki/File:Sagrada_Fam%C3%ADlia_2010.JPG) | Jopparn | CC BY-SA 3.0 |
-| `georgia-tbilisi.jpg` (+ `georgia-tbilisi-sm.jpg`) | [Old Tbilisi town in Tbilisi, Georgia.jpg](https://commons.wikimedia.org/wiki/File:Old_Tbilisi_town_in_Tbilisi,_Georgia.jpg) | GeoO | CC BY-SA 4.0 |
+| `georgia-tbilisi.jpg` (+ `georgia-tbilisi-sm.jpg`) | [2014 Tbilisi, Widok z Mostu Pokoju na rzekę Kura i jej okolice (02).jpg](https://commons.wikimedia.org/wiki/File:2014_Tbilisi,_Widok_z_Mostu_Pokoju_na_rzek%C4%99_Kura_i_jej_okolice_(02).jpg) | Marcin Konsek | CC BY-SA 4.0 |
 | `qatar-doha.jpg` (+ `qatar-doha-sm.jpg`) | [Doha - West Bay Skyline 04.jpg](https://commons.wikimedia.org/wiki/File:Doha_-_West_Bay_Skyline_04.jpg) | P. Hughes | CC BY 4.0 |
 | `saudi-arabia-riyadh.jpg` (+ `saudi-arabia-riyadh-sm.jpg`) | [Riyadh Skyline.jpg](https://commons.wikimedia.org/wiki/File:Riyadh_Skyline.jpg) | B.alotaby | CC BY-SA 4.0 |
 | `switzerland-zurich.jpg` (+ `switzerland-zurich-sm.jpg`) | [Zürich view Quaibrücke 20200702.jpg](https://commons.wikimedia.org/wiki/File:Z%C3%BCrich_view_Quaibr%C3%BCcke_20200702.jpg) | Daniel Kraft | CC BY-SA 3.0 |
@@ -41,7 +41,7 @@ CC BY-SA photographs stay under CC BY-SA, which applies to the photograph itself
 | `spain-madrid.jpg` (+ `spain-madrid-sm.jpg`) | [Puerta de Alcalá 2024 2.jpg](https://commons.wikimedia.org/wiki/File:Puerta_de_Alcal%C3%A1_2024_2.jpg) | kallerna | CC BY-SA 4.0 |
 | `georgia-batumi.jpg` (+ `georgia-batumi-sm.jpg`) | [Batumi sunset.jpg](https://commons.wikimedia.org/wiki/File:Batumi_sunset.jpg) | Dmitry A. Mottl | CC BY-SA 4.0 |
 | `saudi-arabia-jeddah.jpg` (+ `saudi-arabia-jeddah-sm.jpg`) | [Old Jeddah - 55362181118.jpg](https://commons.wikimedia.org/wiki/File:Old_Jeddah_-_55362181118.jpg) | xiquinhosilva | CC BY 4.0 |
-| `switzerland-geneva.jpg` (+ `switzerland-geneva-sm.jpg`) | [Jet d'eau, Lake Geneva (Ank Kumar) 08.jpg](https://commons.wikimedia.org/wiki/File:Jet_d%27eau,_Lake_Geneva_(Ank_Kumar)_08.jpg) | Ank Kumar | CC BY-SA 4.0 |
+| `switzerland-geneva.jpg` (+ `switzerland-geneva-sm.jpg`) | [Arc-en-ciel sur le jet d'eau de Genève - GT 2025.jpg](https://commons.wikimedia.org/wiki/File:Arc-en-ciel_sur_le_jet_d%27eau_de_Gen%C3%A8ve_-_GT_2025.jpg) | Terragio67 | CC BY-SA 4.0 |
 | `usa-los-angeles.jpg` (+ `usa-los-angeles-sm.jpg`) | [Skyline of Los Angeles, Downtown Los Angeles, California 13.jpg](https://commons.wikimedia.org/wiki/File:Skyline_of_Los_Angeles,_Downtown_Los_Angeles,_California_13.jpg) | Levi Clancy | CC BY-SA 4.0 |
 | `canada-montreal.jpg` (+ `canada-montreal-sm.jpg`) | [Montreal - QC - Skyline.jpg](https://commons.wikimedia.org/wiki/File:Montreal_-_QC_-_Skyline.jpg) | Taxiarchos228 | CC BY 3.0 |
 | `japan-osaka.jpg` (+ `japan-osaka-sm.jpg`) | [Osaka Castle 02bs3200.jpg](https://commons.wikimedia.org/wiki/File:Osaka_Castle_02bs3200.jpg) | 663highland | CC BY 2.5 |
