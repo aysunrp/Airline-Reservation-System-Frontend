@@ -445,3 +445,117 @@
     padding: 4rem 0;
     text-align: center;
 }
+
+/* Airports of the city and the real flights from Baku (city page). */
+.dd-airport-list,
+.dd-flight-list {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dd-airport-card {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid rgba(198, 163, 106, 0.35);
+    border-radius: 16px;
+    background: rgba(255, 253, 248, 0.04);
+}
+
+.dd-airport-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0.8rem;
+}
+
+.dd-airport-name {
+    font-family: var(--font-serif, serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+}
+
+.dd-airport-zone {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 300;
+    opacity: 0.8;
+}
+
+.dd-flight {
+    display: grid;
+    grid-template-columns: minmax(8rem, 1fr) minmax(0, 1.6fr) auto auto;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid rgba(198, 163, 106, 0.3);
+    border-radius: 14px;
+    background: rgba(255, 253, 248, 0.04);
+}
+
+.dd-flight-main {
+    display: grid;
+    gap: 0.1rem;
+}
+
+.dd-flight-number {
+    color: var(--color-gold-light, #e0c48a);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+}
+
+.dd-flight-route {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.dd-flight-times {
+    display: grid;
+    gap: 0.1rem;
+    font-size: 0.88rem;
+}
+
+.dd-flight-price {
+    color: var(--color-gold-light, #e0c48a);
+    font-size: 0.88rem;
+    white-space: nowrap;
+}
+
+.dd-flight-link {
+    color: var(--color-cream, #f6f1e7);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    text-decoration-color: rgba(224, 196, 138, 0.7);
+}
+
+.dd-flights-empty {
+    padding: 1rem 1.1rem;
+    border: 1px dashed rgba(198, 163, 106, 0.45);
+    border-radius: 14px;
+    color: var(--color-gold-light, #e0c48a);
+}
+
+/* The other cities of the same country, as a collection of cards on a cream band. */
+.dd-others {
+    margin-top: 3rem;
+    padding: 3.5rem 0 3rem;
+    background: #f6f1e7;
+    color: #07111d;
+}
+
+.dd-others .dd-section-title {
+    color: #07111d;
+}
+
+@media (max-width: 800px) {
+    .dd-flight {
+        grid-template-columns: 1fr auto;
+    }
+
+    .dd-flight-times {
+        grid-column: 1 / -1;
+    }
+}

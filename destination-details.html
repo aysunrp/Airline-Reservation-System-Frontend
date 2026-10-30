@@ -22,7 +22,8 @@
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
 
-    <link rel="stylesheet" href="assets/css/destination-details.css?v=2">
+    <link rel="stylesheet" href="assets/css/destination-catalog.css?v=5">
+    <link rel="stylesheet" href="assets/css/destination-details.css?v=3">
 
 </head>
 
@@ -104,19 +105,29 @@
                         <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinations.aboutTitle">About this destination</h2>
                         <p class="dd-intro" id="destination-description"></p>
                     </section>
-                    <section class="dd-cities" aria-labelledby="dd-cities-title">
-                        <h2 class="dd-section-title" id="dd-cities-title" data-i18n="destinations.citiesTitle">Cities and airports</h2>
-                        <ul class="dd-city-list" id="destination-cities"></ul>
+                    <section class="dd-airports-section" aria-labelledby="destination-airports-title">
+                        <h2 class="dd-section-title" id="destination-airports-title">Airports</h2>
+                        <ul class="dd-airport-list" id="destination-airports"></ul>
+                    </section>
+                    <section class="dd-flights-section" aria-labelledby="destination-flights-title">
+                        <h2 class="dd-section-title" id="destination-flights-title">Flights</h2>
+                        <ul class="dd-flight-list" id="destination-flights"></ul>
                     </section>
                 </div>
                 <aside class="destination-aside" aria-label="Book this destination">
                     <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Ready to Fly?</p>
                     <h2 class="destination-aside-title" id="destination-aside-route">&nbsp;</h2>
                     <p class="destination-aside-text" id="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Choose your travel date and find available flights.</p>
-                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="booking.html" data-i18n="destinations.bookTicket">Book Ticket</a>
+                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="#" data-i18n="destinations.bookTicket">Book Ticket</a>
                     <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Back to Destinations</a>
                 </aside>
             </div>
+            <section class="dd-others dest-catalog" id="destination-others" aria-labelledby="destination-others-title" hidden>
+                <div class="page-shell">
+                    <h2 class="dd-section-title" id="destination-others-title">Explore other cities</h2>
+                    <div class="destination-grid" id="destination-others-grid"></div>
+                </div>
+            </section>
         </section>
 
         <section class="destination-details-status page-shell" id="destination-status" hidden>
@@ -312,8 +323,9 @@
 
     <script src="assets/js/home.js"></script>
 
-    <script src="assets/js/destination-catalog.js?v=3"></script>
-    <script src="assets/js/destination-details.js?v=2"></script>
+    <script src="assets/js/airports.js?v=2"></script>
+    <script src="assets/js/destination-catalog.js?v=5"></script>
+    <script src="assets/js/destination-details.js?v=3"></script>
 
     <script src="assets/js/logo.js?v=thru1"></script>
 
