@@ -1209,14 +1209,17 @@
                 return [
                     { key: "nameAz", label: tr("api.admin.destNameAz", "Name (Azerbaijani)") },
                     { key: "nameRu", label: tr("api.admin.destNameRu", "Name (Russian)") },
+                    { key: "description", label: tr("api.admin.destDescEn", "Description (English)"), full: true },
+                    { key: "descriptionAz", label: tr("api.admin.destDescAz", "Description (Azerbaijani)"), full: true },
+                    { key: "descriptionRu", label: tr("api.admin.destDescRu", "Description (Russian)"), full: true },
                     { key: "aliases", label: tr("api.admin.destAliases", "Other spellings (separated by ;)"), full: true, required: false }
                 ];
             },
             toForm: function (item) {
-                return { nameAz: item.nameAz, nameRu: item.nameRu, aliases: (item.aliases || []).join("; ") };
+                return { nameAz: item.nameAz, nameRu: item.nameRu, description: item.description, descriptionAz: item.descriptionAz, descriptionRu: item.descriptionRu, aliases: (item.aliases || []).join("; ") };
             },
             toRequest: function (data) {
-                return { nameAz: data.nameAz, nameRu: data.nameRu, aliases: data.aliases };
+                return { nameAz: data.nameAz, nameRu: data.nameRu, description: data.description, descriptionAz: data.descriptionAz, descriptionRu: data.descriptionRu, aliases: data.aliases };
             },
             reload: loadDestinations
         },
