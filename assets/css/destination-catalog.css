@@ -209,3 +209,101 @@
     background: #f6f1e7;
     color: #07111d;
 }
+
+.destination-card {
+    cursor: pointer;
+}
+
+/* Search box and availability filters above the gallery of the destinations page. */
+.destination-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1.6rem;
+}
+
+.destination-search input {
+    min-width: min(100%, 17rem);
+    min-height: 44px;
+    padding: 0.55rem 1rem;
+    border: 1px solid rgba(7, 17, 29, 0.2);
+    border-radius: 999px;
+    background: #fffdf8;
+    color: #07111d;
+    font: inherit;
+}
+
+.destination-search input:focus-visible {
+    outline: 2px solid #c6a36a;
+    outline-offset: 2px;
+}
+
+.destination-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.destination-chip {
+    min-height: 44px;
+    padding: 0.45rem 1.1rem;
+    border: 1px solid rgba(198, 163, 106, 0.7);
+    border-radius: 999px;
+    background: transparent;
+    color: #07111d;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.destination-chip:hover {
+    background: rgba(198, 163, 106, 0.16);
+}
+
+.destination-chip:focus-visible {
+    outline: 2px solid #c6a36a;
+    outline-offset: 2px;
+}
+
+.destination-chip.is-active {
+    background: #07111d;
+    border-color: #07111d;
+    color: #e0c48a;
+}
+
+.destination-chip-count {
+    margin-left: 0.25rem;
+    opacity: 0.7;
+    font-size: 0.8em;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* The heading block sits on the cream band of the destinations page: dark text, gold eyebrow. */
+.dest-catalog .dest-magazine__eyebrow {
+    color: #8a6a2f;
+}
+
+.dest-catalog .dest-magazine__heading {
+    color: #07111d;
+}
+
+.dest-catalog .dest-magazine__copy {
+    color: rgba(7, 17, 29, 0.68);
+}
+
+.dest-catalog .dest-magazine__intro {
+    margin-bottom: 1.6rem;
+}

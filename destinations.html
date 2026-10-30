@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/passenger-details.css">
-    <link rel="stylesheet" href="assets/css/destination-catalog.css">
+    <link rel="stylesheet" href="assets/css/destination-catalog.css?v=4">
     <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
@@ -50,7 +50,7 @@
                 <p class="dest-hero__kicker">AEROVA</p>
                 <h1 class="dest-hero__title" data-i18n="destinations.discoverTitle">Discover the World with AEROVA</h1>
                 <p class="dest-hero__text" data-i18n="destinations.discoverText">An editorial guide to cities and shores chosen for atmosphere, culture, and the journey between them.</p>
-                <a class="dest-hero__cta" href="#magazine" data-i18n="destinations.browseGuide">Browse the Guide</a>
+                <a class="dest-hero__cta" href="#all-destinations" data-i18n="destinations.browseGuide">Browse the Guide</a>
             </div>
         </section>
 
@@ -61,111 +61,7 @@
                     <h2 class="dest-magazine__heading" id="all-destinations-title" data-i18n="destinations.allDestinationsTitle">All Destinations</h2>
                     <p class="dest-magazine__copy" data-i18n="destinations.allDestinationsText">Every country AEROVA can take you to, with the city to start from.</p>
                 </header>
-                <div data-destination-catalog></div>
-            </div>
-        </section>
-
-        <div class="dest-filter">
-            <div class="dest-shell dest-filter__inner" role="group" aria-label="Destination filter" data-i18n-aria="destinations.filterLabel">
-                <span class="dest-filter__label" data-i18n="destinations.filterLabel">Explore</span>
-                <button class="dest-filter__chip is-active" type="button" data-filter="all" data-i18n="destinations.filterAll">All</button>
-                <button class="dest-filter__chip" type="button" data-filter="london" data-i18n="destinationDetails.places.london.name">London</button>
-                <button class="dest-filter__chip" type="button" data-filter="dubai" data-i18n="destinationDetails.places.dubai.name">Dubai</button>
-                <button class="dest-filter__chip" type="button" data-filter="paris" data-i18n="destinationDetails.places.paris.name">Paris</button>
-                <button class="dest-filter__chip" type="button" data-filter="istanbul" data-i18n="destinationDetails.places.istanbul.name">Istanbul</button>
-                <button class="dest-filter__chip" type="button" data-filter="maldives" data-i18n="destinationDetails.places.maldives.name">Maldives</button>
-            </div>
-        </div>
-
-        <section id="magazine" class="dest-magazine" aria-label="Destination collection">
-            <div class="dest-shell">
-                <header class="dest-magazine__intro">
-                    <p class="dest-magazine__eyebrow" data-i18n="destinations.guideEyebrow">Destination Guide</p>
-                    <h2 class="dest-magazine__heading" data-i18n="ui.whereWillYouFlyNext">Where Will You Fly Next?</h2>
-                    <p class="dest-magazine__copy" data-i18n="destinations.catalogDesc">Five signature destinations, each with its own atmosphere — begin the journey when you are ready to book.</p>
-                </header>
-
-                <div class="dest-editorial">
-                    <article class="dest-feature" data-destination="maldives">
-                        <img class="dest-feature__img" src="assets/images/maldives.jpg" alt="Maldives lagoon and overwater villas">
-                        <div class="dest-feature__veil" aria-hidden="true"></div>
-                        <div class="dest-feature__body">
-                            <p class="dest-country" data-i18n="destinations.countryMaldives">Indian Ocean</p>
-                            <h3 class="dest-city">Maldives</h3>
-                            <p class="dest-desc" data-i18n="ui.stillLagoonsPause">Still lagoons, private shores, and horizons reserved for pause.</p>
-                            <div class="dest-actions">
-                                <a class="dest-btn dest-btn--primary" href="destination-details.html?id=maldives" data-i18n="destinations.explore">Explore</a>
-                                <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
-                            </div>
-                        </div>
-                    </article>
-
-                    <div class="dest-pair">
-                        <article class="dest-tile dest-tile--tall" data-destination="london">
-                            <img class="dest-tile__img" src="assets/images/london.jpg" alt="London along the River Thames">
-                            <div class="dest-tile__veil" aria-hidden="true"></div>
-                            <div class="dest-tile__body">
-                                <p class="dest-country" data-i18n="destinations.countryUk">United Kingdom</p>
-                                <h3 class="dest-city">London</h3>
-                                <p class="dest-desc" data-i18n="ui.royalAvenuesEnduring">Royal avenues, river mist, and a capital of quiet, enduring grandeur.</p>
-                                <div class="dest-actions">
-                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=london" data-i18n="destinations.explore">Explore</a>
-                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="dest-tile" data-destination="dubai">
-                            <img class="dest-tile__img" src="assets/images/dubai.jpg" alt="Dubai skyline at dusk">
-                            <div class="dest-tile__veil" aria-hidden="true"></div>
-                            <div class="dest-tile__body">
-                                <p class="dest-country" data-i18n="destinations.countryUae">United Arab Emirates</p>
-                                <h3 class="dest-city">Dubai</h3>
-                                <p class="dest-desc" data-i18n="ui.skylineBrilliance">Skyline brilliance, desert calm, and evenings composed for arrival.</p>
-                                <div class="dest-actions">
-                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=dubai" data-i18n="destinations.explore">Explore</a>
-                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-
-                    <article class="dest-wide" data-destination="paris">
-                        <img class="dest-wide__img" src="assets/images/paris.jpg" alt="Paris in the evening">
-                        <div class="dest-wide__veil" aria-hidden="true"></div>
-                        <div class="dest-wide__body">
-                            <div>
-                                <p class="dest-country" data-i18n="destinations.countryFrance">France</p>
-                                <h3 class="dest-city">Paris</h3>
-                                <p class="dest-desc" data-i18n="ui.coutureCafesSoft">Couture, cafés, and the soft gold of the Seine as night gathers.</p>
-                                <div class="dest-actions">
-                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=paris" data-i18n="destinations.explore">Explore</a>
-                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
-                                </div>
-                            </div>
-                            <aside class="dest-wide__aside">
-                                <p data-i18n="destinations.parisNote">Arrive with time to spare — galleries at dawn, quiet side streets, and the river’s evening light.</p>
-                            </aside>
-                        </div>
-                    </article>
-
-                    <div class="dest-strip">
-                      
-                        <article class="dest-tile dest-tile--tall" data-destination="istanbul">
-                            <img class="dest-tile__img" src="assets/images/istanbul.jpg" alt="Istanbul and the Bosphorus">
-                            <div class="dest-tile__veil" aria-hidden="true"></div>
-                            <div class="dest-tile__body">
-                                <p class="dest-country">Türkiye</p>
-                                <h3 class="dest-city">Istanbul</h3>
-                                <p class="dest-desc" data-i18n="ui.domesBazaarsWaters">Domes, bazaars, and waters that join two continents in one evening.</p>
-                                <p class="dest-fare"><span data-i18n="common.from">From</span> <span>$260</span></p>
-                                <div class="dest-actions">
-                                    <a class="dest-btn dest-btn--primary" href="destination-details.html?id=istanbul" data-i18n="destinations.explore">Explore</a>
-                                    <a class="dest-btn dest-btn--ghost" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
+                <div data-destination-catalog data-filters></div>
             </div>
         </section>
 
@@ -175,7 +71,7 @@
                     <h2 class="dest-next__title" data-i18n="destinations.nextTitle">Where will you go next?</h2>
                     <p class="dest-next__text" data-i18n="destinations.nextText">Choose a horizon, set your departure, and begin a journey composed with calm precision.</p>
                 </div>
-                <a class="dest-btn dest-btn--primary" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
+                <a class="destination-book" href="booking.html" data-i18n="destinations.bookFlight">Book a Flight</a>
             </div>
         </section>
     </main>
@@ -236,9 +132,8 @@
     <script src="assets/js/api-client.js?v=stay1"></script>
     <script src="assets/js/chat-widget.js"></script>
     <script src="assets/js/auth.js?v=stay1"></script>
-    <script src="assets/js/destination-catalog.js?v=2"></script>
+    <script src="assets/js/destination-catalog.js?v=3"></script>
     <script src="assets/js/home.js"></script>
-    <script src="assets/js/destinations.js"></script>
 
     <script src="assets/js/logo.js?v=thru1"></script>
 
