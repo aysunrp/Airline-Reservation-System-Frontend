@@ -170,8 +170,8 @@
         }
 
         return '<article class="destination-card" data-city="' + escapeHtml(city.id) + '" data-country="' + escapeHtml(country.code) + '"' + (flights ? "" : ' data-no-flights="true"') + ">" +
-            '<img class="destination-image" data-photo src="' + escapeHtml(base) + '-sm.jpg" srcset="' + escapeHtml(base) + "-sm.jpg 800w, " + escapeHtml(base) +
-            '.jpg 1600w" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 25vw" width="800" height="533" loading="lazy" decoding="async" alt="' + escapeHtml(photoAlt(city, country)) + '">' +
+            '<img class="destination-image" data-photo src="' + escapeHtml(base) + '-sm.webp" srcset="' + escapeHtml(base) + "-sm.webp 800w, " + escapeHtml(base) +
+            '.webp 1600w" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 25vw" width="800" height="533" loading="lazy" decoding="async" alt="' + escapeHtml(photoAlt(city, country)) + '">' +
             '<div class="destination-overlay" aria-hidden="true"></div>' +
             '<div class="destination-content">' +
             '<p class="destination-location">' + escapeHtml(localized(country, "name")) + "</p>" +

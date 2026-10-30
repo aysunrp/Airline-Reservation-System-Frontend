@@ -155,7 +155,7 @@
         setText("destination-airports-title", tr("destinations.airportsIn", "{city} hava limanları", { city: cityName }));
         setText("destination-flights-title", tr("destinations.flightsFrom", "{origin} şəhərindən reyslər", { origin: hubName || "Baku" }));
         byId("destination-hero-media").setAttribute("aria-label", catalog.photoAlt(city, country));
-        byId("destination-hero-media").style.backgroundImage = "url('" + base + ".jpg'), url('assets/images/airport-premium.jpg')";
+        byId("destination-hero-media").style.backgroundImage = "url('" + base + ".webp'), url('assets/images/airport-premium.jpg')";
         setText("destination-aside-route", hubName ? tr("destinations.routeTitle", "{from} → {to}", { from: hubName, to: cityName }) : cityName);
         setText("destination-back-country", tr("destinations.backToDestinations", "Təyinatlara qayıt"));
 

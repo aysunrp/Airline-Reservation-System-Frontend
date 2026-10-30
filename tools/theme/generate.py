@@ -6,7 +6,7 @@ import re, os, glob, colorsys, json, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 CSS_DIR = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "css"))
 OUT = os.path.join(CSS_DIR, "theme.css")
-SKIP_FILES = {"theme.css"}
+SKIP_FILES = {"theme.css", "design.css"}
 CFG = json.load(open(os.path.join(HERE, "config.json"), encoding="utf-8"))
 SKIP_SEL = re.compile(CFG["skip_selectors"], re.I) if CFG["skip_selectors"] else None
 KEEP_FILES = set(CFG.get("keep_files", []))
@@ -186,7 +186,7 @@ def family(c):
 
 
 # Light palette (anchors)
-L = dict(bg=(246, 241, 231), surface=(255, 253, 248), alt=(243, 235, 224), sunken=(239, 230, 214), text=(28, 21, 12), gold_text=(125, 95, 39))
+L = dict(bg=(247, 243, 234), surface=(255, 254, 250), alt=(242, 236, 224), sunken=(235, 227, 211), text=(14, 26, 44), gold_text=(133, 104, 50))
 # Dark palette (anchors)
 D = dict(bg=(7, 17, 29), surface=(16, 30, 48), alt=(11, 22, 36), sunken=(5, 12, 22), text=(246, 241, 231))
 
@@ -239,13 +239,13 @@ def map_color(c, cls, target):
             if cls in ("border",):
                 return None
             if cls == "shadow":
-                return to_css((60, 40, 10), min(a * 0.38, 0.3))
+                return to_css((40, 30, 12), min(a * 0.32, 0.26))
             return None
         if fam == "cream":
             if cls in ("text", "fill"):
                 return to_css(L["text"], min(1.0, a if a >= 0.995 else a * 1.12 + 0.05))
             if cls == "border":
-                return to_css((70, 52, 22), min(0.4, a * 1.5 + 0.04))
+                return to_css((60, 48, 28), min(0.4, a * 1.5 + 0.04))
             if cls == "shadow":
                 return to_css((255, 255, 255), a)
             return None
@@ -357,7 +357,7 @@ def text_kind(decls):
 
 
 ANCH = {
-    "light": {"#f6f1e7": "var(--color-background)", "#fffdf8": "var(--color-surface)", "#f3ebe0": "var(--color-surface-alt)", "#efe6d6": "var(--color-surface-sunken)", "#1c150c": "var(--color-text)", "#7d5f27": "var(--color-accent-strong)"},
+    "light": {"#f7f3ea": "var(--color-background)", "#fffefa": "var(--color-surface)", "#f2ece0": "var(--color-surface-alt)", "#ebe3d3": "var(--color-surface-sunken)", "#0e1a2c": "var(--color-text)", "#856832": "var(--color-accent-strong)"},
     "dark": {"#07111d": "var(--color-background)", "#101e30": "var(--color-surface)", "#0b1624": "var(--color-surface-alt)", "#050c16": "var(--color-surface-sunken)", "#f6f1e7": "var(--color-text)"},
 }
 

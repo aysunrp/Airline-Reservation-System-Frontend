@@ -1,4 +1,7 @@
 {
-  "skip_selectors": "veil|overlay|scrim|backdrop|media|chat-launcher|__launcher|theme-toggle|(^|[ .>+~])hero([-_ .:,>+~]|$)|exp-hero|dest-hero|page-hero",
-  "keep_files": ["scrollbars.css", "logo.css"]
+  "skip_selectors": "veil|overlay|scrim|backdrop|media|chat-launcher|__launcher|theme-toggle|(^|[ .>+~])hero([-_ .:,>+~]|$)|exp-hero|dest-hero|page-hero|destination-(location|name|description|note|content)",
+  "keep_files": [
+    "scrollbars.css",
+    "logo.css"
+  ]
 }

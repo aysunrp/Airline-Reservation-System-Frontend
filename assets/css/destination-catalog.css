@@ -164,13 +164,15 @@
 
 @media (max-width: 640px) {
     .destination-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 1rem;
     }
 
+    /* a card is as wide as its column; the height comes from min-height, not from an aspect ratio that would push the width out */
     .destination-card {
-        aspect-ratio: 3 / 2;
-        min-height: 260px;
+        aspect-ratio: auto;
+        min-width: 0;
+        min-height: 300px;
     }
 }
 
