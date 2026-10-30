@@ -559,3 +559,25 @@
         grid-column: 1 / -1;
     }
 }
+
+/* The airport chosen for the main booking button, when the city has more than one. */
+.destination-airport-pick {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+}
+
+.destination-airport-pick[hidden] {
+    display: none;
+}
+
+.destination-airport-pick select {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(198, 163, 106, 0.6);
+    border-radius: 10px;
+    background: rgba(7, 17, 29, 0.6);
+    color: inherit;
+    font: inherit;
+}

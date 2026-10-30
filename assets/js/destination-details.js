@@ -51,11 +51,10 @@
         return text.slice(0, 10) + " · " + text.slice(11, 16) + " UTC";
     }
 
+    /* Every airport has its own working button: Baku to exactly this airport. Without a flight the results page says so. */
     function bookButton(city, airport, className) {
-        return airport.hasRoutes
-            ? '<a class="' + className + '" href="' + esc(catalog.resultsUrl(city, airport)) + '">' + esc(tr("destinations.bookTicket", "Book Ticket")) + "</a>"
-            : '<span class="' + className + ' is-disabled" aria-disabled="true" title="' + esc(tr("destinations.bookDisabled", "No flights to book yet")) + '">' +
-              esc(tr("destinations.bookTicket", "Book Ticket")) + "</span>";
+        return '<a class="' + className + '" data-airport="' + esc(airport.code) + '" href="' + esc(catalog.resultsUrl(city, airport, state.page.country)) + '">' +
+            esc(tr("destinations.bookTicket", "Book Ticket")) + " · " + esc(airport.code) + "</a>";
     }
 
     function renderAirports(hubName) {
@@ -113,6 +112,31 @@
         catalog.watchImages(byId("destination-others-grid"));
     }
 
+    /* The main button books the airport chosen in the card: the one with flights first, and a city with several airports lets the customer pick. */
+    function renderAsideBooking(city, preferred) {
+        var cta = byId("destination-book-aside");
+        var picker = byId("destination-airport-pick");
+        var airports = city.airports || [];
+        var chosen = state.chosen && airports.some(function (a) { return a.code === state.chosen; }) ? state.chosen : (preferred ? preferred.code : "");
+
+        function apply(code) {
+            var target = airports.filter(function (a) { return a.code === code; })[0] || preferred;
+            state.chosen = target ? target.code : "";
+            cta.setAttribute("href", target ? catalog.resultsUrl(city, target, state.page.country) : "#");
+            setText("destination-aside-text", target && !target.hasRoutes
+                ? tr("destinations.noFlightsDetail", "No scheduled flights yet. The results page shows what is available.")
+                : tr("destinationDetails.chooseDateText", "Choose your travel date and find available flights."));
+        }
+
+        picker.hidden = airports.length < 2;
+        if (airports.length >= 2) {
+            byId("destination-airport-select").innerHTML = airports.map(function (a) {
+                return '<option value="' + esc(a.code) + '"' + (a.code === chosen ? " selected" : "") + ">" + esc(a.code + " · " + a.name) + "</option>";
+            }).join("");
+        }
+        apply(chosen);
+    }
+
     function render() {
         var page = state.page;
         var city = page.city;
@@ -135,20 +159,7 @@
         setText("destination-aside-route", hubName ? tr("destinations.routeTitle", "{from} → {to}", { from: hubName, to: cityName }) : cityName);
         setText("destination-back-country", tr("destinations.backToDestinations", "Back to Destinations"));
 
-        var cta = byId("destination-book-aside");
-        if (airport && airport.hasRoutes) {
-            cta.setAttribute("href", catalog.resultsUrl(city, airport));
-            cta.classList.remove("is-disabled");
-            cta.removeAttribute("aria-disabled");
-            cta.removeAttribute("tabindex");
-            setText("destination-aside-text", tr("destinationDetails.chooseDateText", "Choose your travel date and find available flights."));
-        } else {
-            cta.setAttribute("href", "#");
-            cta.classList.add("is-disabled");
-            cta.setAttribute("aria-disabled", "true");
-            cta.setAttribute("tabindex", "-1");
-            setText("destination-aside-text", tr("destinations.noFlightsDetail", "No scheduled flights yet. Booking opens when a flight is scheduled."));
-        }
+        renderAsideBooking(city, airport);
 
         renderAirports(hubName);
         renderFlights();
@@ -176,6 +187,12 @@
             showStatus(messageFor(error));
         });
     }
+
+    document.addEventListener("change", function (event) {
+        if (!state || !event.target || event.target.id !== "destination-airport-select") return;
+        state.chosen = event.target.value;
+        renderAsideBooking(state.page.city, catalog.bookableAirport(state.page.city));
+    });
 
     window.addEventListener("aerova:languagechange", function () { if (state) render(); });
 
