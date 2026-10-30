@@ -532,6 +532,15 @@ function tr(key, fallback, vars) {
         }));
     }
 
+    /* The same city or airport twice (by name or code, as the airport list knows it). */
+    function isSameCity(first, second) {
+        function key(value) {
+            var airport = window.AEROVA_AIRPORTS ? window.AEROVA_AIRPORTS.find(airportDirectory, value) : null;
+            return String(airport ? airport.city : value).trim().toLowerCase();
+        }
+        return key(first) === key(second);
+    }
+
     function validateSimpleTrip() {
         var fromValue = fromInput.value.trim();
         var toValue = toInput.value.trim();
@@ -551,6 +560,13 @@ function tr(key, fallback, vars) {
         if (!toValue) {
             markInvalid(toInput);
             showMessage(tr("booking.needTo", "Please enter a destination city or airport."));
+            toInput.focus();
+            return null;
+        }
+
+        if (isSameCity(fromValue, toValue)) {
+            markInvalid(toInput);
+            showMessage(tr("booking.sameCity", "The departure and the destination are the same. Please choose two different cities."));
             toInput.focus();
             return null;
         }
