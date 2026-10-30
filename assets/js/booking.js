@@ -902,9 +902,25 @@ function tr(key, fallback, vars) {
         toInput.classList.remove("is-invalid");
     }
 
+    /* The departure starts as AEROVA's home base (the hub of the destination catalog) unless the traveller already chose one. */
+    function applyDefaultOrigin() {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get("from") || !window.AEROVA_DESTINATIONS) {
+            if (params.get("from")) fromInput.value = params.get("from").trim();
+            return;
+        }
+
+        window.AEROVA_DESTINATIONS.hubCityName().then(function (name) {
+            if (name && !fromInput.value.trim()) {
+                fromInput.value = name;
+            }
+        });
+    }
+
     refreshSegments();
     setTrip("round-trip");
     applyDestinationFromQuery();
+    applyDefaultOrigin();
 })();
 
 (function () {

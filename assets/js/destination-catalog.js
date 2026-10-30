@@ -55,6 +55,22 @@
         return (country.cities || []).filter(function (city) { return city.isActive !== false; })[0] || null;
     }
 
+    /* AEROVA's home base (Baku): a place to fly from, so it is not offered as a destination card. The catalog marks it (city.isHub). */
+    function isHubCountry(country) {
+        return (country.cities || []).some(function (city) { return city.isHub; });
+    }
+
+    /* The hub city's English name (the search form's default departure), or null when the catalog has none. */
+    function hubCityName() {
+        return load().then(function (countries) {
+            for (var i = 0; i < countries.length; i += 1) {
+                var hub = (countries[i].cities || []).filter(function (city) { return city.isHub && city.isActive !== false; })[0];
+                if (hub) return hub.name;
+            }
+            return null;
+        }, function () { return null; });
+    }
+
     function hasFlights(city) {
         return (city.airports || []).some(function (airport) { return airport.hasRoutes; });
     }
@@ -113,7 +129,8 @@
         var more = container.querySelector(".destination-more");
 
         function paint() {
-            var cards = countries.map(function (country) { return { country: country, city: featuredCity(country) }; })
+            var cards = countries.filter(function (country) { return !isHubCountry(country); })
+                .map(function (country) { return { country: country, city: featuredCity(country) }; })
                 .filter(function (entry) { return entry.city; });
 
             // The catalog answered but holds nothing to show: say so instead of leaving an empty area.
@@ -159,7 +176,7 @@
         document.querySelectorAll("[data-destination-catalog]").forEach(mount);
     }
 
-    window.AEROVA_DESTINATIONS = { load: load, localized: localized };
+    window.AEROVA_DESTINATIONS = { load: load, localized: localized, hubCityName: hubCityName };
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", init);
