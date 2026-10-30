@@ -115,6 +115,13 @@
         function paint() {
             var cards = countries.map(function (country) { return { country: country, city: featuredCity(country) }; })
                 .filter(function (entry) { return entry.city; });
+
+            // The catalog answered but holds nothing to show: say so instead of leaving an empty area.
+            if (!cards.length) {
+                grid.innerHTML = statusMarkup(tr("destinations.emptyCatalog", "No destinations are available yet. Please check back soon."), false);
+                more.innerHTML = "";
+                return;
+            }
             var shown = limit && !expanded ? cards.slice(0, limit) : cards;
 
             grid.innerHTML = shown.map(function (entry) { return cardMarkup(entry.country, entry.city); }).join("");

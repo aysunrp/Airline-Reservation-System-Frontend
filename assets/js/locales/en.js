@@ -868,6 +868,7 @@ window.AEROVA_LOCALES.en = {
     "loadingCatalog": "Loading destinations...",
     "catalogError": "We could not load the destinations. Please try again.",
     "catalogRetry": "Try again",
+    "emptyCatalog": "No destinations are available yet. Please check back soon.",
     "showAllDestinations": "Show all {count} destinations",
     "showFewerDestinations": "Show fewer",
     "noFlightsYet": "No scheduled flights yet",

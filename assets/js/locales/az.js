@@ -868,6 +868,7 @@ window.AEROVA_LOCALES.az = {
     "loadingCatalog": "Təyinatlar yüklənir...",
     "catalogError": "Təyinatları yükləmək mümkün olmadı. Yenidən cəhd edin.",
     "catalogRetry": "Yenidən cəhd et",
+    "emptyCatalog": "Hələlik təyinat yoxdur. Zəhmət olmasa bir az sonra yenidən baxın.",
     "showAllDestinations": "Bütün {count} təyinatı göstər",
     "showFewerDestinations": "Daha az göstər",
     "noFlightsYet": "Hələlik planlaşdırılmış reys yoxdur",

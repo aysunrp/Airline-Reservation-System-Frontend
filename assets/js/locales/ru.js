@@ -868,6 +868,7 @@ window.AEROVA_LOCALES.ru = {
     "loadingCatalog": "Загрузка направлений...",
     "catalogError": "Не удалось загрузить направления. Попробуйте снова.",
     "catalogRetry": "Повторить",
+    "emptyCatalog": "Направления пока недоступны. Загляните позже.",
     "showAllDestinations": "Показать все направления: {count}",
     "showFewerDestinations": "Показать меньше",
     "noFlightsYet": "Регулярных рейсов пока нет",
