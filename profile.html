@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="az">
 
 <head>
 
@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AEROVA | My Profile</title>
+    <title>AEROVA | Profilim</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/passenger-details.css">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -40,24 +39,24 @@
 
 
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+            <nav id="primary-navigation" class="main-navigation" aria-label="Əsas" data-i18n-aria="nav.primary">
 
                 <ul class="nav-list">
 
-                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Ana səhifə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Bron</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">İstiqamətlər</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Təcrübə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">Haqqımızda</a></li>
 
 
                 </ul>
 
-                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Giriş</a>
 
             </nav>
 
@@ -66,9 +65,9 @@
             <div class="header-actions">
 
 
-                <a class="login-button" href="profile.html" aria-current="page" data-i18n="nav.profile">Profile</a>
+                <a class="login-button" href="profile.html" aria-current="page" data-i18n="nav.profile">Profil</a>
 
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Menyunu aç" data-i18n-aria="nav.openMenu">
 
                     <span class="menu-toggle-bar"></span>
 
@@ -88,7 +87,7 @@
 
     <main id="profile-content" class="profile-content">
 
-        <section class="profile-page" aria-label="My profile">
+        <section class="profile-page" aria-label="Profilim">
 
             <div class="page-container">
 
@@ -96,21 +95,21 @@
 
                     <div class="profile-intro-top">
 
-                        <h1 class="profile-title" data-i18n="profile.title">My Profile</h1>
+                        <h1 class="profile-title" data-i18n="profile.title">Profilim</h1>
 
                         <div class="profile-intro-actions">
 
-                            <a class="profile-secondary-button" href="notifications.html" data-i18n="nav.notifications">Notifications</a>
+                            <a class="profile-secondary-button" href="notifications.html" data-i18n="nav.notifications">Bildirişlər</a>
 
-                            <a class="profile-secondary-button" href="my-trips.html" data-i18n="nav.myTrips">My Trips</a>
+                            <a class="profile-secondary-button" href="my-trips.html" data-i18n="nav.myTrips">Səyahətlərim</a>
 
-                            <button class="profile-secondary-button" type="button" data-auth-logout data-i18n="nav.logout">Logout</button>
+                            <button class="profile-secondary-button" type="button" data-auth-logout data-i18n="nav.logout">Çıxış</button>
 
                         </div>
 
                     </div>
 
-                    <p class="profile-subtitle" data-i18n="ui.keepYourDetailsAndTravelPreferences">Keep your details up to date for faster bookings.</p>
+                    <p class="profile-subtitle" data-i18n="ui.keepYourDetailsAndTravelPreferences">Daha sürətli bron üçün məlumatlarınızı yeniləyin.</p>
 
                 </header>
 
@@ -125,30 +124,30 @@
                 <div class="profile-status" id="profile-status" role="status" aria-live="polite">
                     <h2 class="profile-status-title" id="profile-status-title"></h2>
                     <p class="profile-status-text" id="profile-status-text"></p>
-                    <button class="booking-action-button booking-action-button--primary" id="profile-status-retry" type="button" hidden>Try again</button>
+                    <button class="booking-action-button booking-action-button--primary" id="profile-status-retry" type="button" hidden>Yenidən cəhd et</button>
                 </div>
 
                 <form id="profile-form" hidden class="profile-form" novalidate>
 
                     <article class="details-card" aria-labelledby="personal-info-title">
 
-                        <h2 class="details-card-title" id="personal-info-title" data-i18n="profile.personal">Personal Information</h2>
+                        <h2 class="details-card-title" id="personal-info-title" data-i18n="profile.personal">Şəxsi məlumat</h2>
 
                         <div class="field-grid">
 
                             <div class="field">
 
-                                <label class="field-label" for="profile-title">Title <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-title">Müraciət <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <select class="field-input" id="profile-title" name="title" required>
 
-                                    <option value="" selected disabled data-i18n="ui.selectTitle">Select title</option>
+                                    <option value="" selected disabled data-i18n="ui.selectTitle">Ünvan seçin</option>
 
-                                    <option value="Mr" data-i18n="ui.mr">Mr</option>
+                                    <option value="Mr" data-i18n="ui.mr">Cənab</option>
 
-                                    <option value="Ms" data-i18n="ui.ms">Ms</option>
+                                    <option value="Ms" data-i18n="ui.ms">Xanım</option>
 
-                                    <option value="Mrs" data-i18n="ui.mrs">Mrs</option>
+                                    <option value="Mrs" data-i18n="ui.mrs">Xanım</option>
 
                                     <option value="Mx" data-i18n="ui.mx">Mx</option>
 
@@ -158,7 +157,7 @@
 
                             <div class="field">
 
-                                <label class="field-label" for="profile-first-name">First Name <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-first-name">Ad <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <input class="field-input" id="profile-first-name" name="firstName" type="text" autocomplete="given-name" required>
 
@@ -166,7 +165,7 @@
 
                             <div class="field">
 
-                                <label class="field-label" for="profile-last-name">Last Name <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-last-name">Soyad <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <input class="field-input" id="profile-last-name" name="lastName" type="text" autocomplete="family-name" required>
 
@@ -174,7 +173,7 @@
 
                             <div class="field">
 
-                                <label class="field-label" for="profile-dob">Date of Birth <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-dob">Doğum tarixi <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <input class="field-input" id="profile-dob" name="dateOfBirth" type="date" required>
 
@@ -182,7 +181,7 @@
 
                             <div class="field field--full">
 
-                                <label class="field-label" for="profile-nationality">Nationality <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-nationality">Vətəndaşlıq <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <select class="field-input" id="profile-nationality" name="nationality" autocomplete="country" required></select>
 
@@ -196,13 +195,13 @@
 
                     <article class="details-card" aria-labelledby="contact-info-title">
 
-                        <h2 class="details-card-title" id="contact-info-title" data-i18n="common.contactInfo">Contact Information</h2>
+                        <h2 class="details-card-title" id="contact-info-title" data-i18n="common.contactInfo">Əlaqə məlumatı</h2>
 
                         <div class="field-grid">
 
                             <div class="field field--full">
 
-                                <label class="field-label" for="profile-email">Email <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-email">E-poçt <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <input class="field-input" id="profile-email" name="email" type="email" autocomplete="email" required>
 
@@ -210,11 +209,11 @@
 
                             <div class="field">
 
-                                <label class="field-label" for="profile-country-code">Country Code <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-country-code">Ölkə kodu <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <select class="field-input" id="profile-country-code" name="countryCode" required>
 
-                                    <option value="" selected disabled data-i18n="ui.selectCode">Select code</option>
+                                    <option value="" selected disabled data-i18n="ui.selectCode">Kod seçin</option>
 
                                     <option value="+994">+994</option>
 
@@ -232,7 +231,7 @@
 
                             <div class="field">
 
-                                <label class="field-label" for="profile-phone">Mobile Phone <span class="required-mark" aria-hidden="true">*</span></label>
+                                <label class="field-label" for="profile-phone">Mobil telefon <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <input class="field-input" id="profile-phone" name="mobilePhone" type="tel" autocomplete="tel-national" required>
 
@@ -248,9 +247,9 @@
 
                         <div class="section-header">
 
-                            <h2 class="details-card-title" id="saved-passengers-title" data-i18n="ui.savedPassengerProfiles">Saved Passenger Profiles</h2>
+                            <h2 class="details-card-title" id="saved-passengers-title" data-i18n="ui.savedPassengerProfiles">Yadda saxlanılmış sərnişinlər</h2>
 
-                            <button class="profile-secondary-button" id="add-passenger-button" type="button" data-i18n="profile.addPassenger">Add Passenger</button>
+                            <button class="profile-secondary-button" id="add-passenger-button" type="button" data-i18n="profile.addPassenger">Sərnişin əlavə et</button>
 
                         </div>
 
@@ -262,7 +261,7 @@
 
                     <div class="profile-form-actions">
 
-                        <button class="continue-button" id="save-profile-button" type="submit" data-i18n="profile.saveChanges">Save Changes</button>
+                        <button class="continue-button" id="save-profile-button" type="submit" data-i18n="profile.saveChanges">Dəyişiklikləri yadda saxla</button>
 
                     </div>
 
@@ -282,7 +281,7 @@
 
         <div class="profile-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="passenger-modal-title">
 
-            <h2 class="details-card-title" id="passenger-modal-title" data-i18n="profile.addPassenger">Add Passenger</h2>
+            <h2 class="details-card-title" id="passenger-modal-title" data-i18n="profile.addPassenger">Sərnişin əlavə et</h2>
 
             <form id="passenger-modal-form" class="passenger-modal-form" novalidate>
 
@@ -292,7 +291,7 @@
 
                     <div class="field">
 
-                        <label class="field-label" for="passenger-first-name">First Name <span class="required-mark" aria-hidden="true">*</span></label>
+                        <label class="field-label" for="passenger-first-name">Ad <span class="required-mark" aria-hidden="true">*</span></label>
 
                         <input class="field-input" id="passenger-first-name" type="text" required>
 
@@ -300,7 +299,7 @@
 
                     <div class="field">
 
-                        <label class="field-label" for="passenger-last-name">Last Name <span class="required-mark" aria-hidden="true">*</span></label>
+                        <label class="field-label" for="passenger-last-name">Soyad <span class="required-mark" aria-hidden="true">*</span></label>
 
                         <input class="field-input" id="passenger-last-name" type="text" required>
 
@@ -308,48 +307,48 @@
 
                     <div class="field field--full">
 
-                        <label class="field-label" for="passenger-relationship" data-i18n="ui.relationship">Relationship</label>
+                        <label class="field-label" for="passenger-relationship" data-i18n="ui.relationship">Əlaqə</label>
 
-                        <input class="field-input" id="passenger-relationship" type="text" placeholder="e.g. Spouse, Child">
+                        <input class="field-input" id="passenger-relationship" type="text" placeholder="məsələn, həyat yoldaşı, uşaq">
 
                     </div>
-                    <p class="profile-modal-hint field--full" data-i18n="api.profile.savedHint">Optional: with these details a saved passenger fills the booking form for you.</p>
+                    <p class="profile-modal-hint field--full" data-i18n="api.profile.savedHint">İxtiyari: bu məlumatlarla saxlanmış sərnişin rezervasiya formunu sizin üçün doldurur.</p>
                     <div class="field">
-                        <label class="field-label" for="passenger-dob" data-i18n="travelDocs.dob">Date of Birth</label>
+                        <label class="field-label" for="passenger-dob" data-i18n="travelDocs.dob">Doğum tarixi</label>
                         <input class="field-input" id="passenger-dob" type="date">
                     </div>
                     <div class="field">
-                        <label class="field-label" for="passenger-gender" data-i18n="travelDocs.gender">Gender</label>
+                        <label class="field-label" for="passenger-gender" data-i18n="travelDocs.gender">Cins</label>
                         <select class="field-input" id="passenger-gender">
-                            <option value="" data-i18n="travelDocs.selectGender">Select gender</option>
-                            <option value="Female" data-i18n="travelDocs.female">Female</option>
-                            <option value="Male" data-i18n="travelDocs.male">Male</option>
-                            <option value="Other" data-i18n="travelDocs.other">Other</option>
-                            <option value="PreferNotToSay" data-i18n="travelDocs.preferNot">Prefer not to say</option>
+                            <option value="" data-i18n="travelDocs.selectGender">Cinsi seçin</option>
+                            <option value="Female" data-i18n="travelDocs.female">Qadın</option>
+                            <option value="Male" data-i18n="travelDocs.male">Kişi</option>
+                            <option value="Other" data-i18n="travelDocs.other">Digər</option>
+                            <option value="PreferNotToSay" data-i18n="travelDocs.preferNot">Göstərmək istəmirəm</option>
                         </select>
                     </div>
                     <div class="field field--full">
-                        <label class="field-label" for="passenger-nationality" data-i18n="travelDocs.nationality">Nationality</label>
+                        <label class="field-label" for="passenger-nationality" data-i18n="travelDocs.nationality">Vətəndaşlıq</label>
                         <select class="field-input" id="passenger-nationality"></select>
                     </div>
                     <div class="field">
-                        <label class="field-label" for="passenger-document-type" data-i18n="travelDocs.documentType">Document Type</label>
+                        <label class="field-label" for="passenger-document-type" data-i18n="travelDocs.documentType">Sənəd növü</label>
                         <select class="field-input" id="passenger-document-type">
-                            <option value="" data-i18n="api.profile.noDocument">No document</option>
-                            <option value="Passport" data-i18n="travelDocs.docTypes.passport">Passport</option>
-                            <option value="NationalIdCard" data-i18n="travelDocs.docTypes.az_id_card">National ID card</option>
+                            <option value="" data-i18n="api.profile.noDocument">Sənəd yoxdur</option>
+                            <option value="Passport" data-i18n="travelDocs.docTypes.passport">Pasport</option>
+                            <option value="NationalIdCard" data-i18n="travelDocs.docTypes.az_id_card">Azərbaycan şəxsiyyət vəsiqəsi</option>
                         </select>
                     </div>
                     <div class="field">
-                        <label class="field-label" for="passenger-document-number" data-i18n="travelDocs.documentNumber">Document Number</label>
+                        <label class="field-label" for="passenger-document-number" data-i18n="travelDocs.documentNumber">Sənəd nömrəsi</label>
                         <input class="field-input" id="passenger-document-number" type="text" maxlength="30" autocomplete="off">
                     </div>
                     <div class="field">
-                        <label class="field-label" for="passenger-issuing-country" data-i18n="travelDocs.issuingCountry">Issuing Country</label>
+                        <label class="field-label" for="passenger-issuing-country" data-i18n="travelDocs.issuingCountry">Verən ölkə</label>
                         <select class="field-input" id="passenger-issuing-country"></select>
                     </div>
                     <div class="field">
-                        <label class="field-label" for="passenger-document-expiry" data-i18n="travelDocs.expiry">Document Expiry Date</label>
+                        <label class="field-label" for="passenger-document-expiry" data-i18n="travelDocs.expiry">Sənədin etibarlılıq müddəti</label>
                         <input class="field-input" id="passenger-document-expiry" type="date">
                     </div>
 
@@ -357,9 +356,9 @@
 
                 <div class="profile-modal-actions">
 
-                    <button class="booking-action-button booking-action-button--secondary" type="button" data-close-modal data-i18n="common.cancel">Cancel</button>
+                    <button class="booking-action-button booking-action-button--secondary" type="button" data-close-modal data-i18n="common.cancel">Ləğv et</button>
 
-                    <button class="booking-action-button booking-action-button--primary" type="submit" data-i18n="ui.savePassenger">Save Passenger</button>
+                    <button class="booking-action-button booking-action-button--primary" type="submit" data-i18n="ui.savePassenger">Sərnişini yadda saxla</button>
 
                 </div>
 
@@ -385,7 +384,7 @@
 
                     </div>
 
-                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+                    <p class="footer-description" data-i18n="footer.description">Gözləntilərinizin fövqünə uçun.</p>
 
                 </div>
 
@@ -393,19 +392,19 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Sürətli keçidlər</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Ana səhifə</a></li>
 
-                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Uçuşlar</a></li>
 
-                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">İstiqamətlər</a></li>
 
-                        <li><a class="footer-link" href="profile.html" data-i18n="nav.profile">Profile</a></li>
+                        <li><a class="footer-link" href="profile.html" data-i18n="nav.profile">Profil</a></li>
 
-                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">Səyahətlərim</a></li>
 
                     </ul>
 
@@ -415,17 +414,17 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+                    <h2 class="footer-heading" data-i18n="footer.support">Dəstək</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
+                        <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Bildirişlər</a></li>
 
-                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Contact Us</a></li>
+                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Əlaqə</a></li>
 
-                        <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Manage Booking</a></li>
+                        <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Bronu idarə et</a></li>
 
-                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">FAQs</a></li>
+                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">Suallar</a></li>
 
                     </ul>
 
@@ -435,7 +434,7 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Bizi izləyin</h2>
 
                     <ul class="social-list">
 
@@ -529,13 +528,13 @@
 
         <div class="footer-bottom">
 
-            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. Bütün hüquqlar qorunur.</p>
 
             <ul class="footer-legal">
 
-                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Məxfilik siyasəti</a></li>
 
-                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Şərtlər və qaydalar</a></li>
 
             </ul>
 
@@ -545,19 +544,17 @@
 
 
 
-        <script src="assets/js/locales/en.js?v=authcode2"></script>
-    <script src="assets/js/locales/az.js?v=authcode2"></script>
-    <script src="assets/js/locales/ru.js?v=authcode2"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
 
-    <script src="assets/js/travel-documents.js"></script>
-    <script src="assets/js/profile.js?v=saved3"></script>
+    <script src="assets/js/travel-documents.js?v=az1"></script>
+    <script src="assets/js/profile.js?v=az1"></script>
 
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
 </body>
 

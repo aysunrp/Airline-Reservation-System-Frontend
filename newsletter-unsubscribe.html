@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="robots" content="noindex">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEROVA | Unsubscribe</title>
+    <title>AEROVA | Abunəlikdən çıxın</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/auth.css?v=code1">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -20,11 +19,11 @@
         <div class="auth-logo">
             <span class="auth-logo-text">Aerova</span>
         </div>
-        <a class="auth-header-link" href="index.html" data-i18n="auth.backHome">Back to Home</a>
+        <a class="auth-header-link" href="index.html" data-i18n="auth.backHome">Ana səhifəyə qayıt</a>
     </header>
 
     <main class="auth-main">
-        <section class="auth-card auth-card--status" aria-label="Unsubscribe">
+        <section class="auth-card auth-card--status" aria-label="Abunəlikdən çıx">
             <div class="auth-status" id="news-status" data-state="mail" aria-live="polite" aria-busy="false">
                 <div class="auth-status-icon" aria-hidden="true">
                     <span class="auth-spinner auth-status-glyph auth-status-glyph--loading"></span>
@@ -33,38 +32,36 @@
                     <svg class="auth-status-glyph auth-status-glyph--error" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
                 </div>
 
-                <p class="auth-eyebrow" data-i18n="newsletter.eyebrow">Newsletter</p>
-                <h1 class="auth-title" id="news-title">Unsubscribe</h1>
+                <p class="auth-eyebrow" data-i18n="newsletter.eyebrow">Xəbər bülleteni</p>
+                <h1 class="auth-title" id="news-title">Abunəlikdən çıx</h1>
                 <p class="auth-status-text" id="news-message"></p>
 
                 <form id="news-again" class="auth-form" novalidate hidden>
                     <div class="auth-field">
-                        <label class="auth-label" for="news-email" data-i18n="auth.email">Email</label>
+                        <label class="auth-label" for="news-email" data-i18n="auth.email">E-poçt</label>
                         <div class="auth-control">
-                            <input class="auth-input" id="news-email" name="email" type="email" autocomplete="email" data-i18n-placeholder="auth.emailPlaceholder" placeholder="you@email.com">
+                            <input class="auth-input" id="news-email" name="email" type="email" autocomplete="email" data-i18n-placeholder="auth.emailPlaceholder" placeholder="siz@email.com">
                             <p class="auth-error" id="news-email-error" hidden></p>
                         </div>
                     </div>
-                    <button class="auth-submit" id="news-again-button" type="submit" data-i18n="newsletter.requestNew">Send me a new link</button>
+                    <button class="auth-submit" id="news-again-button" type="submit" data-i18n="newsletter.requestNew">Mənə yeni keçid göndər</button>
                 </form>
 
                 <p class="auth-notice" id="news-feedback" role="status" hidden></p>
 
                 <div class="auth-actions">
-                    <button type="button" class="auth-submit" id="news-confirm-unsubscribe" data-i18n="newsletter.unsubscribeButton" hidden>Unsubscribe</button>
-                    <a class="auth-link-button" id="news-home" href="index.html" data-i18n="auth.backHome" hidden>Back to Home</a>
+                    <button type="button" class="auth-submit" id="news-confirm-unsubscribe" data-i18n="newsletter.unsubscribeButton" hidden>Abunəlikdən çıx</button>
+                    <a class="auth-link-button" id="news-home" href="index.html" data-i18n="auth.backHome" hidden>Ana səhifəyə qayıt</a>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="assets/js/locales/en.js?v=news1"></script>
-    <script src="assets/js/locales/az.js?v=news1"></script>
-    <script src="assets/js/locales/ru.js?v=news1"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/newsletter-pages.js?v=news1"></script>
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/newsletter-pages.js?v=az1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 </body>
 </html>

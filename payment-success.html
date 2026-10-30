@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="az">
 
 <head>
 
@@ -10,7 +10,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AEROVA | Payment</title>
+    <title>AEROVA | Ödəniş</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -19,7 +19,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/auth.css?v=ui1">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -37,7 +36,7 @@
 
         </div>
 
-        <a class="auth-header-link" href="index.html" data-i18n="auth.backHome">Back to Home</a>
+        <a class="auth-header-link" href="index.html" data-i18n="auth.backHome">Ana səhifəyə qayıt</a>
 
     </header>
 
@@ -45,7 +44,7 @@
 
     <main class="auth-main">
 
-        <section class="auth-card auth-card--status" aria-label="Payment">
+        <section class="auth-card auth-card--status" aria-label="Ödəniş">
 
             <div class="auth-status" id="return-status" data-state="loading" aria-live="polite" aria-busy="true">
 
@@ -56,7 +55,7 @@
                     <svg class="auth-status-glyph auth-status-glyph--cancel" viewBox="0 0 24 24"><path d="M9 7 4.5 11.5 9 16"/><path d="M5 11.5h9.5a4.5 4.5 0 0 1 0 9H12"/></svg>
                 </div>
 
-                <p class="auth-eyebrow" data-i18n="api.payment.returnEyebrow">Payment</p>
+                <p class="auth-eyebrow" data-i18n="api.payment.returnEyebrow">Ödəniş</p>
 
                 <h1 class="auth-title" id="return-title"></h1>
 
@@ -65,11 +64,11 @@
                 <dl class="payment-return-summary" id="return-summary" hidden></dl>
 
                 <div class="auth-actions" id="return-actions">
-                    <a class="auth-submit" id="return-primary" href="confirmation.html" data-i18n="api.payment.viewBooking" hidden>View my booking</a>
-                    <a class="auth-link-button" id="return-trips" href="my-trips.html" data-i18n="api.payment.myTrips" hidden>My trips</a>
-                    <button type="button" class="auth-submit" id="return-again" data-i18n="api.payment.checkAgain" hidden>Check again</button>
-                    <a class="auth-submit" id="return-retry" href="payment.html" data-i18n="api.payment.tryAgain" hidden>Try the payment again</a>
-                    <a class="auth-link-button" id="return-home" href="index.html" data-i18n="auth.backHome" hidden>Back to Home</a>
+                    <a class="auth-submit" id="return-primary" href="confirmation.html" data-i18n="api.payment.viewBooking" hidden>Rezervasiyama bax</a>
+                    <a class="auth-link-button" id="return-trips" href="my-trips.html" data-i18n="api.payment.myTrips" hidden>Səfərlərim</a>
+                    <button type="button" class="auth-submit" id="return-again" data-i18n="api.payment.checkAgain" hidden>Yenidən yoxla</button>
+                    <a class="auth-submit" id="return-retry" href="payment.html" data-i18n="api.payment.tryAgain" hidden>Ödənişi yenidən sına</a>
+                    <a class="auth-link-button" id="return-home" href="index.html" data-i18n="auth.backHome" hidden>Ana səhifəyə qayıt</a>
                 </div>
 
             </div>
@@ -79,20 +78,18 @@
 
 
 
-        <script src="assets/js/locales/en.js?v=stripe1"></script>
-    <script src="assets/js/locales/az.js?v=stripe1"></script>
-    <script src="assets/js/locales/ru.js?v=stripe1"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/airports.js"></script>
-    <script src="assets/js/booking-api.js?v=stripe1"></script>
-    <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/airports.js?v=az1"></script>
+    <script src="assets/js/booking-api.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
 
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
-    <script src="assets/js/payment-return.js?v=stripe1"></script>
+    <script src="assets/js/payment-return.js?v=az1"></script>
 
 </body>
 

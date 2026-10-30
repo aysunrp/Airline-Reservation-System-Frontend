@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="az">
 
 <head>
 
@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AEROVA | Payment</title>
+    <title>AEROVA | Ödəniş</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/passenger-details.css">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -40,24 +39,24 @@
 
 
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+            <nav id="primary-navigation" class="main-navigation" aria-label="Əsas" data-i18n-aria="nav.primary">
 
                 <ul class="nav-list">
 
-                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Ana səhifə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Bron</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">İstiqamətlər</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Təcrübə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">Haqqımızda</a></li>
 
 
                 </ul>
 
-                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Giriş</a>
 
             </nav>
 
@@ -66,9 +65,9 @@
             <div class="header-actions">
 
 
-                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button" href="login.html" data-i18n="nav.login">Giriş</a>
 
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Menyunu aç" data-i18n-aria="nav.openMenu">
 
                     <span class="menu-toggle-bar"></span>
 
@@ -88,15 +87,15 @@
 
     <main id="payment-content" class="payment-content">
 
-        <section class="payment-page" aria-label="Payment" data-i18n-aria="payment.title">
+        <section class="payment-page" aria-label="Ödəniş" data-i18n-aria="payment.title">
 
             <div class="payment-page-container">
 
                 <header class="payment-intro">
 
-                    <h1 class="payment-title" data-i18n="payment.title">Payment</h1>
+                    <h1 class="payment-title" data-i18n="payment.title">Ödəniş</h1>
 
-                    <p class="payment-subtitle" data-i18n="ui.completeYourPaymentSecurelyToConfirm">Complete your payment securely to confirm your reservation.</p>
+                    <p class="payment-subtitle" data-i18n="ui.completeYourPaymentSecurelyToConfirm">Rezervasiyanı təsdiqləmək üçün ödənişi təhlükəsiz tamamlayın.</p>
 
                 </header>
 
@@ -120,7 +119,7 @@
 
                         <article class="payment-card" aria-labelledby="payment-method-title">
 
-                            <h2 class="payment-card-title" id="payment-method-title" data-i18n="ui.paymentMethod">Payment Method</h2>
+                            <h2 class="payment-card-title" id="payment-method-title" data-i18n="ui.paymentMethod">Ödəniş üsulu</h2>
 
 
 
@@ -129,26 +128,26 @@
                                     <svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/><path d="M12 14.6v2.2"/></svg>
                                 </span>
                                 <div class="stripe-checkout-copy">
-                                    <h3 class="card-details-title" data-i18n="api.payment.stripeTitle">Secure payment by Stripe</h3>
-                                    <p class="stripe-checkout-text" data-i18n="api.payment.stripeText">You will pay on Stripe's secure page by card, Apple Pay or Google Pay. AEROVA never sees or stores your card details.</p>
+                                    <h3 class="card-details-title" data-i18n="api.payment.stripeTitle">Stripe ilə təhlükəsiz ödəniş</h3>
+                                    <p class="stripe-checkout-text" data-i18n="api.payment.stripeText">Ödənişi Stripe-ın təhlükəsiz səhifəsində kart, Apple Pay və ya Google Pay ilə edəcəksiniz. AEROVA kart məlumatlarınızı nə görür, nə də saxlayır.</p>
                                 </div>
                             </div>
 
                         <div class="promo-code-section" id="promo-code-section">
 
-                            <p class="promo-code-title" data-i18n="payment.promo">Promo Code</p>
+                            <p class="promo-code-title" data-i18n="payment.promo">Promo kod</p>
 
                             <div class="promo-code-row">
 
                                 <div class="promo-code-control" id="promo-code-control">
 
-                                    <input class="promo-code-input" id="promo-code-input" type="text" name="promoCode" data-i18n-placeholder="payment.promoPlaceholder" placeholder="Enter promo code"" autocomplete="off" maxlength="24">
+                                    <input class="promo-code-input" id="promo-code-input" type="text" name="promoCode" data-i18n-placeholder="payment.promoPlaceholder" placeholder="Promo kodu daxil edin"" autocomplete="off" maxlength="24">
 
                                     <p class="promo-code-error" id="promo-code-error" hidden></p>
 
                                 </div>
 
-                                <button class="promo-code-button" id="promo-apply-button" type="button" data-i18n="payment.applyPromo">Apply</button>
+                                <button class="promo-code-button" id="promo-apply-button" type="button" data-i18n="payment.applyPromo">Tətbiq et</button>
 
                             </div>
 
@@ -156,7 +155,7 @@
 
                                 <p class="promo-code-success" id="promo-code-success"></p>
 
-                                <button class="promo-code-remove" id="promo-remove-button" type="button" data-i18n="booking.remove">Remove</button>
+                                <button class="promo-code-remove" id="promo-remove-button" type="button" data-i18n="booking.remove">Sil</button>
 
                             </div>
 
@@ -165,15 +164,15 @@
                             <ol class="payment-steps">
                                 <li class="payment-step">
                                     <span class="payment-step-number" aria-hidden="true">1</span>
-                                    <span class="payment-step-text" data-i18n="api.payment.stripePointMethods">Visa, Mastercard and other major cards; Apple Pay and Google Pay where your device supports them</span>
+                                    <span class="payment-step-text" data-i18n="api.payment.stripePointMethods">Visa, Mastercard və digər əsas kartlar; cihazınız dəstəkləyirsə Apple Pay və Google Pay</span>
                                 </li>
                                 <li class="payment-step">
                                     <span class="payment-step-number" aria-hidden="true">2</span>
-                                    <span class="payment-step-text" data-i18n="api.payment.stripePointConfirm">Your booking is confirmed as soon as Stripe confirms the payment</span>
+                                    <span class="payment-step-text" data-i18n="api.payment.stripePointConfirm">Stripe ödənişi təsdiqlədiyi andan rezervasiyanız təsdiqlənir</span>
                                 </li>
                                 <li class="payment-step">
                                     <span class="payment-step-number" aria-hidden="true">3</span>
-                                    <span class="payment-step-text" data-i18n="api.payment.stripePointReturn">You come back to AEROVA automatically afterwards</span>
+                                    <span class="payment-step-text" data-i18n="api.payment.stripePointReturn">Ödənişdən sonra avtomatik AEROVA-ya qayıdırsınız</span>
                                 </li>
                             </ol>
 
@@ -185,7 +184,7 @@
 
                     <aside class="payment-summary" aria-labelledby="payment-summary-title">
 
-                        <h2 class="payment-card-title" id="payment-summary-title" data-i18n="payment.summaryTitle">Payment Summary</h2>
+                        <h2 class="payment-card-title" id="payment-summary-title" data-i18n="payment.summaryTitle">Ödəniş xülasəsi</h2>
 
 
 
@@ -209,7 +208,7 @@
 
                             <div class="summary-row">
 
-                                <dt data-i18n="flightDetails.aircraft">Aircraft</dt>
+                                <dt data-i18n="flightDetails.aircraft">Təyyarə</dt>
 
                                 <dd id="payment-summary-aircraft">—</dd>
 
@@ -217,7 +216,7 @@
 
                             <div class="summary-row">
 
-                                <dt data-i18n="booking.cabinClass">Cabin Class</dt>
+                                <dt data-i18n="booking.cabinClass">Salon sinfi</dt>
 
                                 <dd id="payment-summary-cabin">—</dd>
 
@@ -225,7 +224,7 @@
 
                             <div class="summary-row">
 
-                                <dt data-i18n="trips.passengerCount">Passenger Count</dt>
+                                <dt data-i18n="trips.passengerCount">Sərnişin sayı</dt>
 
                                 <dd id="payment-summary-passengers">—</dd>
 
@@ -233,7 +232,7 @@
 
                             <div class="summary-row">
 
-                                <dt data-i18n="seats.selectedSeats">Selected Seats</dt>
+                                <dt data-i18n="seats.selectedSeats">Seçilmiş oturacaqlar</dt>
 
                                 <dd id="payment-summary-seats">—</dd>
 
@@ -251,7 +250,7 @@
 
                             <div class="price-row">
 
-                                <dt data-i18n="ui.baseFare">Base Fare</dt>
+                                <dt data-i18n="ui.baseFare">Baza tarif</dt>
 
                                 <dd id="payment-base-fare">$0.00</dd>
 
@@ -259,7 +258,7 @@
 
                             <div class="price-row">
 
-                                <dt data-i18n="flightDetails.baggage">Baggage</dt>
+                                <dt data-i18n="flightDetails.baggage">Baqaj</dt>
 
                                 <dd id="payment-baggage">$0.00</dd>
 
@@ -267,7 +266,7 @@
 
                             <div class="price-row">
 
-                                <dt data-i18n="payment.meals">Meals</dt>
+                                <dt data-i18n="payment.meals">Yeməklər</dt>
 
                                 <dd id="payment-meals">$0.00</dd>
 
@@ -275,7 +274,7 @@
 
                             <div class="price-row" id="payment-discount-row" hidden>
 
-                                <dt><span data-i18n="payment.discount">Discount</span> <span id="payment-discount-code-label"></span></dt>
+                                <dt><span data-i18n="payment.discount">Endirim</span> <span id="payment-discount-code-label"></span></dt>
 
                                 <dd id="payment-discount">−$0.00</dd>
 
@@ -283,7 +282,7 @@
 
                             <div class="price-row">
 
-                                <dt data-i18n="ui.taxesFees">Taxes &amp; Fees</dt>
+                                <dt data-i18n="ui.taxesFees">Vergilər və rüsumlar</dt>
 
                                 <dd id="payment-taxes">$0.00</dd>
 
@@ -295,7 +294,7 @@
 
                         <div class="price-row price-row--total payment-grand-total">
 
-                            <p class="payment-grand-total-label" data-i18n="ui.grandTotal">Grand Total</p>
+                            <p class="payment-grand-total-label" data-i18n="ui.grandTotal">Ümumi cəm</p>
 
                             <p class="payment-grand-total-value" id="payment-total">$0.00</p>
 
@@ -303,11 +302,11 @@
 
 
 
-                        <p class="payment-redirect-note" data-i18n="api.payment.redirectNote">The next step opens Stripe's secure payment page. Nothing is charged until you confirm there.</p>
+                        <p class="payment-redirect-note" data-i18n="api.payment.redirectNote">Növbəti addım Stripe-ın təhlükəsiz ödəniş səhifəsini açır. Orada təsdiq etməyincə heç nə tutulmur.</p>
 
-                        <button class="pay-button" id="pay-button" type="button">Pay $0.00</button>
+                        <button class="pay-button" id="pay-button" type="button">Ödə $0.00</button>
 
-                        <p class="pay-terms" data-i18n="ui.byClickingPayYouAgreeTo">By clicking Pay, you agree to the terms and conditions.</p>
+                        <p class="pay-terms" data-i18n="ui.byClickingPayYouAgreeTo">Ödənişə klikləməklə şərtləri qəbul edirsiniz.</p>
 
                     </aside>
 
@@ -335,7 +334,7 @@
 
                     </div>
 
-                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+                    <p class="footer-description" data-i18n="footer.description">Gözləntilərinizin fövqünə uçun.</p>
 
                 </div>
 
@@ -343,19 +342,19 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Sürətli keçidlər</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Ana səhifə</a></li>
 
-                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Uçuşlar</a></li>
 
-                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">İstiqamətlər</a></li>
 
-                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">Haqqımızda</a></li>
 
-                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">Səyahətlərim</a></li>
 
                     </ul>
 
@@ -365,17 +364,17 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+                    <h2 class="footer-heading" data-i18n="footer.support">Dəstək</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="support.html" data-i18n="footer.help">Help Center</a></li>
+                        <li><a class="footer-link" href="support.html" data-i18n="footer.help">Kömək mərkəzi</a></li>
 
-                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Contact Us</a></li>
+                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Əlaqə</a></li>
 
-                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Travel Information</a></li>
+                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Səyahət məlumatı</a></li>
 
-                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">FAQs</a></li>
+                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">Suallar</a></li>
 
                     </ul>
 
@@ -385,7 +384,7 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Bizi izləyin</h2>
 
                     <ul class="social-list">
 
@@ -479,13 +478,13 @@
 
         <div class="footer-bottom">
 
-            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. Bütün hüquqlar qorunur.</p>
 
             <ul class="footer-legal">
 
-                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Məxfilik siyasəti</a></li>
 
-                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Şərtlər və qaydalar</a></li>
 
             </ul>
 
@@ -495,20 +494,18 @@
 
 
 
-        <script src="assets/js/locales/en.js?v=booklink1"></script>
-    <script src="assets/js/locales/az.js?v=booklink1"></script>
-    <script src="assets/js/locales/ru.js?v=booklink1"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/journey.js?v=mix1"></script>
-    <script src="assets/js/booking-api.js?v=booklink1"></script>
-    <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/journey.js?v=az1"></script>
+    <script src="assets/js/booking-api.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
 
-    <script src="assets/js/payment.js?v=booklink1"></script>
+    <script src="assets/js/payment.js?v=az1"></script>
 
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
 </body>
 

@@ -2,7 +2,7 @@
 
 
 
-<html lang="en">
+<html lang="az">
 
 
 
@@ -18,7 +18,7 @@
 
 
 
-    <title>AEROVA | Admin</title>
+    <title>AEROVA | Admin paneli</title>
 
 
 
@@ -37,7 +37,6 @@
     <link rel="stylesheet" href="assets/css/admin.css?v=dest1">
 
 
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -54,7 +53,7 @@
 
     <main class="admin-access" id="admin-access" role="status" aria-live="polite">
         <span class="admin-spinner" aria-hidden="true"></span>
-        <p class="admin-access-text" data-i18n="api.admin.checkingAccess">Checking your access...</p>
+        <p class="admin-access-text" data-i18n="api.admin.checkingAccess">Girişiniz yoxlanılır...</p>
     </main>
 
     <div class="admin-shell" id="admin-shell" hidden>
@@ -69,7 +68,7 @@
 
 
 
-        <aside class="admin-sidebar" aria-label="Admin navigation">
+        <aside class="admin-sidebar" aria-label="Admin naviqasiyası">
 
 
 
@@ -105,44 +104,44 @@
 
 
 
-                <button class="admin-nav-link is-active" type="button" data-section="dashboard" data-i18n="admin.dashboard">Dashboard</button>
+                <button class="admin-nav-link is-active" type="button" data-section="dashboard" data-i18n="admin.dashboard">Panel</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="flights" data-i18n="admin.flights">Flights</button>
+                <button class="admin-nav-link" type="button" data-section="flights" data-i18n="admin.flights">Uçuşlar</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="routes" data-i18n="admin.routes">Routes</button>
+                <button class="admin-nav-link" type="button" data-section="routes" data-i18n="admin.routes">Marşrutlar</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="schedules" data-i18n="admin.schedules">Schedules</button>
+                <button class="admin-nav-link" type="button" data-section="schedules" data-i18n="admin.schedules">Cədvəllər</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="aircraft" data-i18n="admin.aircraft">Aircraft</button>
+                <button class="admin-nav-link" type="button" data-section="aircraft" data-i18n="admin.aircraft">Təyyarə</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="seats" data-i18n="admin.seats">Seat Inventory</button>
+                <button class="admin-nav-link" type="button" data-section="seats" data-i18n="admin.seats">Oturacaq ehtiyatı</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="bookings" data-i18n="admin.bookings">Bookings</button>
-                <button class="admin-nav-link" type="button" data-section="refunds" data-i18n="cancellation.admin.nav">Refunds</button>
-                <button class="admin-nav-link" type="button" data-section="support" data-i18n="support.admin.title">Support</button>
+                <button class="admin-nav-link" type="button" data-section="bookings" data-i18n="admin.bookings">Bronlar</button>
+                <button class="admin-nav-link" type="button" data-section="refunds" data-i18n="cancellation.admin.nav">Geri ödənişlər</button>
+                <button class="admin-nav-link" type="button" data-section="support" data-i18n="support.admin.title">Dəstək</button>
 
 
 
-                <button class="admin-nav-link" type="button" data-section="passengers" data-i18n="admin.passengers">Passengers</button>
-                <button class="admin-nav-link" type="button" data-section="airports" data-i18n="api.admin.airports">Airports</button>
-                <button class="admin-nav-link" type="button" data-section="promos" data-i18n="api.admin.promos">Promo Codes</button>
-                <button class="admin-nav-link" type="button" data-section="options" data-i18n="api.admin.options">Baggage &amp; Meals</button>
-                <button class="admin-nav-link" type="button" data-section="rules" data-i18n="api.admin.rules">Cancellation Rules</button>
+                <button class="admin-nav-link" type="button" data-section="passengers" data-i18n="admin.passengers">Sərnişinlər</button>
+                <button class="admin-nav-link" type="button" data-section="airports" data-i18n="api.admin.airports">Hava limanları</button>
+                <button class="admin-nav-link" type="button" data-section="promos" data-i18n="api.admin.promos">Promo kodlar</button>
+                <button class="admin-nav-link" type="button" data-section="options" data-i18n="api.admin.options">Baqaj və yemək</button>
+                <button class="admin-nav-link" type="button" data-section="rules" data-i18n="api.admin.rules">Ləğv qaydaları</button>
                 <p class="admin-nav-group" data-super-only hidden data-i18n="api.admin.superAdminGroup">SuperAdmin</p>
-                <button class="admin-nav-link" type="button" data-section="users" data-super-only hidden data-i18n="api.admin.users">Users</button>
-                <button class="admin-nav-link" type="button" data-section="audit" data-super-only hidden data-i18n="api.admin.audit">Audit Log</button>
+                <button class="admin-nav-link" type="button" data-section="users" data-super-only hidden data-i18n="api.admin.users">İstifadəçilər</button>
+                <button class="admin-nav-link" type="button" data-section="audit" data-super-only hidden data-i18n="api.admin.audit">Audit jurnalı</button>
 
 
 
@@ -162,7 +161,7 @@
 
 
 
-                <button class="admin-nav-link" id="admin-logout-btn" type="button" data-i18n="admin.logout">Logout</button>
+                <button class="admin-nav-link" id="admin-logout-btn" type="button" data-i18n="admin.logout">Çıxış</button>
 
 
 
@@ -190,7 +189,7 @@
 
 
 
-                    <button class="admin-menu-toggle" id="admin-menu-toggle" type="button" aria-expanded="false" aria-label="Open menu" data-i18n-aria="nav.openMenu"><span></span></button>
+                    <button class="admin-menu-toggle" id="admin-menu-toggle" type="button" aria-expanded="false" aria-label="Menyunu aç" data-i18n-aria="nav.openMenu"><span></span></button>
 
 
 
@@ -198,11 +197,11 @@
 
 
 
-                        <h1 class="admin-page-title" id="admin-page-title" data-i18n="admin.dashboard">Dashboard</h1>
+                        <h1 class="admin-page-title" id="admin-page-title" data-i18n="admin.dashboard">Panel</h1>
 
 
 
-                        <p class="admin-page-subtitle" id="admin-page-subtitle" data-i18n="admin.dashboardSub">Airline operations overview</p>
+                        <p class="admin-page-subtitle" id="admin-page-subtitle" data-i18n="admin.dashboardSub">Aviaşirkət əməliyyatlarına baxış</p>
 
 
 
@@ -216,20 +215,20 @@
 
                 <div class="admin-topbar-right">
                     <div class="admin-bell-wrap">
-                        <button class="admin-bell" id="admin-bell" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="admin-bell-panel" aria-label="Support notifications" data-i18n-aria="support.admin.bellTitle">
+                        <button class="admin-bell" id="admin-bell" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="admin-bell-panel" aria-label="Dəstək bildirişləri" data-i18n-aria="support.admin.bellTitle">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5L6 17zM10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             <span class="admin-bell-count" id="admin-bell-count" hidden>0</span>
                         </button>
                         <div class="admin-bell-panel" id="admin-bell-panel" hidden>
                             <div class="admin-bell-head">
-                                <strong data-i18n="support.admin.bellTitle">Support notifications</strong>
-                                <button class="admin-bell-readall" id="admin-bell-readall" type="button" data-i18n="support.admin.markAllRead">Mark all as read</button>
+                                <strong data-i18n="support.admin.bellTitle">Dəstək bildirişləri</strong>
+                                <button class="admin-bell-readall" id="admin-bell-readall" type="button" data-i18n="support.admin.markAllRead">Hamısını oxunmuş et</button>
                             </div>
                             <p class="admin-bell-live" id="admin-live" aria-live="polite"></p>
                             <ul class="admin-bell-list" id="admin-bell-list"></ul>
                         </div>
                     </div>
-                    <p class="admin-topbar-meta" data-i18n="admin.topbarMeta">AEROVA Operations Control</p>
+                    <p class="admin-topbar-meta" data-i18n="admin.topbarMeta">AEROVA Əməliyyat İdarəsi</p>
                 </div>
 
 
@@ -262,27 +261,27 @@
 
 
 
-                    <article class="admin-stat-card" data-i18n-title="admin.statHelpFlights"><p class="admin-stat-label" data-i18n="admin.totalFlights">Total Flights</p><p class="admin-stat-value">—</p></article>
+                    <article class="admin-stat-card" data-i18n-title="admin.statHelpFlights" title="Bütün reys qeydləri, keçmiş və ləğv edilmişlər də daxil olmaqla."><p class="admin-stat-label" data-i18n="admin.totalFlights">Ümumi uçuşlar</p><p class="admin-stat-value">—</p></article>
 
 
 
-                    <article class="admin-stat-card" data-i18n-title="admin.statHelpRoutes"><p class="admin-stat-label" data-i18n="admin.activeRoutes">Active Routes</p><p class="admin-stat-value">—</p></article>
+                    <article class="admin-stat-card" data-i18n-title="admin.statHelpRoutes" title="Aktiv marşrutlar (hər marşrut bir dəfə sayılır)."><p class="admin-stat-label" data-i18n="admin.activeRoutes">Aktiv marşrutlar</p><p class="admin-stat-value">—</p></article>
 
 
 
-                    <article class="admin-stat-card" data-i18n-title="admin.statHelpAircraft"><p class="admin-stat-label" data-i18n="flightDetails.aircraft">Aircraft</p><p class="admin-stat-value">—</p></article>
+                    <article class="admin-stat-card" data-i18n-title="admin.statHelpAircraft" title="Donanmadakı təyyarə qeydləri."><p class="admin-stat-label" data-i18n="flightDetails.aircraft">Təyyarə</p><p class="admin-stat-value">—</p></article>
 
 
 
-                    <article class="admin-stat-card" data-i18n-title="admin.statHelpBookings"><p class="admin-stat-label" data-i18n="admin.totalBookings">Total Bookings</p><p class="admin-stat-value">—</p></article>
+                    <article class="admin-stat-card" data-i18n-title="admin.statHelpBookings" title="Ödənilmiş bronlar: təsdiqlənmiş və tamamlanmış (gözləyən, ləğv edilmiş və vaxtı bitmiş deyil)."><p class="admin-stat-label" data-i18n="admin.totalBookings">Ödənilmiş bronlar</p><p class="admin-stat-value">—</p></article>
 
 
 
-                    <article class="admin-stat-card" data-i18n-title="admin.statHelpSeats"><p class="admin-stat-label" data-i18n="admin.availableSeats">Available Seats</p><p class="admin-stat-value">—</p></article>
+                    <article class="admin-stat-card" data-i18n-title="admin.statHelpSeats" title="Gələcək, ləğv edilməmiş reyslərdə boş yerlər (vaxtı bitmiş saxlamalar boş sayılır)."><p class="admin-stat-label" data-i18n="admin.availableSeats">Mövcud oturacaqlar</p><p class="admin-stat-value">—</p></article>
 
 
 
-                    <article class="admin-stat-card" data-i18n-title="admin.statHelpPassengers"><p class="admin-stat-label" data-i18n="booking.passengers">Passengers</p><p class="admin-stat-value">—</p></article>
+                    <article class="admin-stat-card" data-i18n-title="admin.statHelpPassengers" title="Sənəd nömrəsinə görə bir dəfə sayılan fərqli sərnişinlər."><p class="admin-stat-label" data-i18n="booking.passengers">Sərnişinlər</p><p class="admin-stat-value">—</p></article>
 
 
 
@@ -302,7 +301,7 @@
 
 
 
-                        <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="admin.recentBookings">Recent Bookings</h2></div>
+                        <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="admin.recentBookings">Son bronlar</h2></div>
 
 
 
@@ -318,7 +317,7 @@
 
 
 
-                                    <tr><th>PNR</th><th data-i18n="manage.passenger">Passenger</th><th data-i18n="manage.flight">Flight</th><th data-i18n="admin.route">Route</th><th data-i18n="admin.departure">Departure</th><th data-i18n="payment.grandTotal">Total</th><th data-i18n="admin.status">Status</th></tr>
+                                    <tr><th>PNR</th><th data-i18n="manage.passenger">Sərnişin</th><th data-i18n="manage.flight">Uçuş</th><th data-i18n="admin.route">Marşrut</th><th data-i18n="admin.departure">Gediş</th><th data-i18n="payment.grandTotal">Cəmi</th><th data-i18n="admin.status">Status</th></tr>
 
 
 
@@ -346,7 +345,7 @@
 
 
 
-                        <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="admin.upcomingFlights">Upcoming Flights</h2></div>
+                        <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="admin.upcomingFlights">Yaxınlaşan uçuşlar</h2></div>
 
 
 
@@ -362,7 +361,7 @@
 
 
 
-                                    <tr><th data-i18n="manage.flight">Flight</th><th data-i18n="admin.route">Route</th><th data-i18n="admin.departure">Departure</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="admin.status">Status</th></tr>
+                                    <tr><th data-i18n="manage.flight">Uçuş</th><th data-i18n="admin.route">Marşrut</th><th data-i18n="admin.departure">Gediş</th><th data-i18n="flightDetails.aircraft">Təyyarə</th><th data-i18n="admin.status">Status</th></tr>
 
 
 
@@ -414,32 +413,32 @@
 
 
 
-                        <input class="admin-search" id="flight-search" type="search" data-i18n-placeholder="admin.searchFlights" placeholder="Search flight, origin, destination"">
+                        <input class="admin-search" id="flight-search" type="search" data-i18n-placeholder="admin.searchFlights" placeholder="Uçuş, haradan, haraya axtar"">
 
 
 
-                        <input class="admin-select" id="flight-date-filter" type="date" aria-label="Departure day (UTC)">
+                        <input class="admin-select" id="flight-date-filter" type="date" aria-label="Uçuş günü (UTC)">
                         <select class="admin-select" id="flight-status-filter">
 
 
 
-                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
 
 
 
-                            <option data-i18n="common.statusScheduled">Scheduled</option>
+                            <option data-i18n="common.statusScheduled">Planlaşdırılıb</option>
 
 
 
-                            <option data-i18n="admin.onTime">On Time</option>
+                            <option data-i18n="admin.onTime">Vaxtında</option>
 
 
 
-                            <option data-i18n="admin.delayed">Delayed</option>
+                            <option data-i18n="admin.delayed">Gecikir</option>
 
 
 
-                            <option data-i18n="trips.cancelled">Cancelled</option>
+                            <option data-i18n="trips.cancelled">Ləğv edilib</option>
 
 
 
@@ -447,7 +446,7 @@
 
 
 
-                        <button class="admin-btn admin-btn--primary" id="add-flight-btn" type="button" data-i18n="booking.addFlight">Add Flight</button>
+                        <button class="admin-btn admin-btn--primary" id="add-flight-btn" type="button" data-i18n="booking.addFlight">Uçuş əlavə et</button>
 
 
 
@@ -471,11 +470,11 @@
 
 
 
-                                    <th data-i18n="admin.flightNumber">Flight Number</th><th data-i18n="common.origin">Origin</th><th data-i18n="common.destination">Destination</th><th data-i18n="common.date">Date</th>
+                                    <th data-i18n="admin.flightNumber">Uçuş nömrəsi</th><th data-i18n="common.origin">Mənşə</th><th data-i18n="common.destination">Təyinat</th><th data-i18n="common.date">Tarix</th>
 
 
 
-                                    <th data-i18n="admin.departure">Departure</th><th data-i18n="trips.arrival">Arrival</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+                                    <th data-i18n="admin.departure">Gediş</th><th data-i18n="trips.arrival">Gəliş</th><th data-i18n="flightDetails.aircraft">Təyyarə</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
 
 
 
@@ -532,11 +531,11 @@
 
 
 
-                        <input class="admin-search" id="route-search" type="search" placeholder="Search route, origin, destination">
+                        <input class="admin-search" id="route-search" type="search" placeholder="Marşrut, çıxış və təyinat üzrə axtarış">
 
 
 
-                        <button class="admin-btn admin-btn--primary" id="add-route-btn" type="button" data-i18n="admin.addRoute">Add Route</button>
+                        <button class="admin-btn admin-btn--primary" id="add-route-btn" type="button" data-i18n="admin.addRoute">Marşrut əlavə et</button>
 
 
 
@@ -560,11 +559,11 @@
 
 
 
-                                    <th data-i18n="admin.routeId">Route ID</th><th data-i18n="common.origin">Origin</th><th data-i18n="common.destination">Destination</th><th data-i18n="admin.distance">Distance</th>
+                                    <th data-i18n="admin.routeId">Marşrut ID</th><th data-i18n="common.origin">Mənşə</th><th data-i18n="common.destination">Təyinat</th><th data-i18n="admin.distance">Məsafə</th>
 
 
 
-                                    <th data-i18n="results.duration">Duration</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+                                    <th data-i18n="results.duration">Müddət</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
 
 
 
@@ -624,23 +623,23 @@
 
 
 
-                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
 
 
 
-                            <option data-i18n="common.statusScheduled">Scheduled</option>
+                            <option data-i18n="common.statusScheduled">Planlaşdırılıb</option>
 
 
 
-                            <option data-i18n="admin.onTime">On Time</option>
+                            <option data-i18n="admin.onTime">Vaxtında</option>
 
 
 
-                            <option data-i18n="admin.delayed">Delayed</option>
+                            <option data-i18n="admin.delayed">Gecikir</option>
 
 
 
-                            <option data-i18n="trips.cancelled">Cancelled</option>
+                            <option data-i18n="trips.cancelled">Ləğv edilib</option>
 
 
 
@@ -648,7 +647,7 @@
 
 
 
-                        <button class="admin-btn admin-btn--primary" id="add-schedule-btn" type="button" data-i18n="admin.addSchedule">Add Schedule</button>
+                        <button class="admin-btn admin-btn--primary" id="add-schedule-btn" type="button" data-i18n="admin.addSchedule">Cədvəl əlavə et</button>
 
 
 
@@ -672,11 +671,11 @@
 
 
 
-                                    <th data-i18n="admin.flightNumber">Flight Number</th><th data-i18n="admin.route">Route</th><th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="api.admin.days">Days of the week</th>
+                                    <th data-i18n="admin.flightNumber">Uçuş nömrəsi</th><th data-i18n="admin.route">Marşrut</th><th data-i18n="flightDetails.aircraft">Təyyarə</th><th data-i18n="api.admin.days">Həftənin günləri</th>
 
 
 
-                                    <th data-i18n="admin.departure">Departure</th><th data-i18n="trips.arrival">Arrival</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+                                    <th data-i18n="admin.departure">Gediş</th><th data-i18n="trips.arrival">Gəliş</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
 
 
 
@@ -728,11 +727,11 @@
 
 
 
-                        <input class="admin-search" id="aircraft-search" type="search" placeholder="Search aircraft, model, registration">
+                        <input class="admin-search" id="aircraft-search" type="search" placeholder="Təyyarə, model, qeydiyyat üzrə axtarış">
 
 
 
-                        <button class="admin-btn admin-btn--primary" id="add-aircraft-btn" type="button" data-i18n="admin.addAircraft">Add Aircraft</button>
+                        <button class="admin-btn admin-btn--primary" id="add-aircraft-btn" type="button" data-i18n="admin.addAircraft">Təyyarə əlavə et</button>
 
 
 
@@ -756,11 +755,11 @@
 
 
 
-                                    <th data-i18n="flightDetails.aircraft">Aircraft</th><th data-i18n="admin.model">Model</th><th data-i18n="ui.registrationNumber">Registration Number</th><th data-i18n="ui.totalSeats">Total Seats</th>
+                                    <th data-i18n="flightDetails.aircraft">Təyyarə</th><th data-i18n="admin.model">Model</th><th data-i18n="ui.registrationNumber">Qeydiyyat nömrəsi</th><th data-i18n="ui.totalSeats">Ümumi oturacaqlar</th>
 
 
 
-                                    <th data-i18n="ui.businessSeats">Business Seats</th><th data-i18n="ui.comfortSeats">Comfort Seats</th><th data-i18n="ui.economySeats">Economy Seats</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+                                    <th data-i18n="ui.businessSeats">Biznes oturacaqları</th><th data-i18n="ui.comfortSeats">Komfort oturacaqları</th><th data-i18n="ui.economySeats">Ekonom oturacaqları</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
 
 
 
@@ -812,24 +811,24 @@
 
 
 
-                        <input class="admin-select" id="seat-date-select" type="date" aria-label="Departure day (UTC)">
-                        <select class="admin-select" id="seat-flight-select" aria-label="Select flight"></select>
+                        <input class="admin-select" id="seat-date-select" type="date" aria-label="Uçuş günü (UTC)">
+                        <select class="admin-select" id="seat-flight-select" aria-label="Uçuşu seçin"></select>
 
 
 
-                        <select class="admin-select" id="seat-cabin-select" aria-label="Select cabin">
+                        <select class="admin-select" id="seat-cabin-select" aria-label="Salonu seçin">
 
 
 
-                            <option value="Business" data-i18n="common.business">Business</option>
+                            <option value="Business" data-i18n="common.business">Biznes</option>
 
 
 
-                            <option value="Comfort" data-i18n="common.comfort">Comfort</option>
+                            <option value="Comfort" data-i18n="common.comfort">Komfort</option>
 
 
 
-                            <option value="Economy" selected data-i18n="common.economy">Economy</option>
+                            <option value="Economy" selected data-i18n="common.economy">Ekonom</option>
 
 
 
@@ -857,7 +856,7 @@
 
 
 
-                            <h2 class="admin-panel-title" id="seat-map-title" data-i18n="ui.seatMap">Seat Map</h2>
+                            <h2 class="admin-panel-title" id="seat-map-title" data-i18n="ui.seatMap">Oturacaq xəritəsi</h2>
 
 
 
@@ -865,17 +864,17 @@
 
 
 
-                        <div class="seat-legend" role="list" aria-label="Seat status legend">
-                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--available" aria-hidden="true"></span><span data-i18n="seats.legendAvailable">Available</span></span>
-                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--occupied" aria-hidden="true"></span><span data-i18n="seats.legendOccupied">Occupied</span></span>
-                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--reserved" aria-hidden="true"></span><span data-i18n="common.reserved">Reserved</span></span>
-                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--blocked" aria-hidden="true"></span><span data-i18n="common.blocked">Blocked</span></span>
+                        <div class="seat-legend" role="list" aria-label="Oturacaq statusları">
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--available" aria-hidden="true"></span><span data-i18n="seats.legendAvailable">Mövcud</span></span>
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--occupied" aria-hidden="true"></span><span data-i18n="seats.legendOccupied">Məşğul</span></span>
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--reserved" aria-hidden="true"></span><span data-i18n="common.reserved">Rezerv</span></span>
+                            <span class="seat-legend-item" role="listitem"><span class="seat-swatch seat-swatch--blocked" aria-hidden="true"></span><span data-i18n="common.blocked">Bloklanıb</span></span>
                         </div>
                         <div class="aircraft-deck" id="aircraft-deck"></div>
 
 
 
-                        <p class="seat-hint" data-i18n="ui.clickAnAvailableSeatToCycle">Click an available seat to cycle its state.</p>
+                        <p class="seat-hint" data-i18n="ui.clickAnAvailableSeatToCycle">Statusunu dəyişmək üçün mövcud oturacağa klikləyin.</p>
                         <p class="seat-hint" id="seat-updated" role="status"></p>
 
 
@@ -888,7 +887,7 @@
 
 
 
-                        <h2 class="admin-panel-title" data-i18n="ui.availability">Availability</h2>
+                        <h2 class="admin-panel-title" data-i18n="ui.availability">Mövcudluq</h2>
 
 
 
@@ -928,11 +927,11 @@
 
 
 
-                        <input class="admin-search" id="booking-pnr-search" type="search" placeholder="Search by PNR">
+                        <input class="admin-search" id="booking-pnr-search" type="search" placeholder="Bron kodu ilə axtarış">
 
 
 
-                        <input class="admin-search" id="booking-passenger-search" type="search" placeholder="Search by passenger">
+                        <input class="admin-search" id="booking-passenger-search" type="search" placeholder="Sərnişin üzrə axtarış">
 
 
 
@@ -940,19 +939,19 @@
 
 
 
-                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
 
 
 
-                            <option data-i18n="trips.statusConfirmed">Confirmed</option>
+                            <option data-i18n="trips.statusConfirmed">Təsdiqlənib</option>
 
 
 
-                            <option data-i18n="common.statusPending">Pending</option>
+                            <option data-i18n="common.statusPending">Gözləmədə</option>
 
 
 
-                            <option data-i18n="trips.cancelled">Cancelled</option>
+                            <option data-i18n="trips.cancelled">Ləğv edilib</option>
 
 
 
@@ -980,11 +979,11 @@
 
 
 
-                                    <th>PNR</th><th data-i18n="manage.passenger">Passenger</th><th data-i18n="manage.flight">Flight</th><th data-i18n="admin.route">Route</th><th data-i18n="common.date">Date</th>
+                                    <th>PNR</th><th data-i18n="manage.passenger">Sərnişin</th><th data-i18n="manage.flight">Uçuş</th><th data-i18n="admin.route">Marşrut</th><th data-i18n="common.date">Tarix</th>
 
 
 
-                                    <th data-i18n="admin.cabin">Cabin</th><th data-i18n="payment.seats">Seats</th><th data-i18n="payment.grandTotal">Total</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+                                    <th data-i18n="admin.cabin">Salon</th><th data-i18n="payment.seats">Oturacaqlar</th><th data-i18n="payment.grandTotal">Cəmi</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
 
 
 
@@ -1036,7 +1035,7 @@
 
 
 
-                        <input class="admin-search" id="passenger-search" type="search" placeholder="Search name, email, document">
+                        <input class="admin-search" id="passenger-search" type="search" placeholder="Ad, e-poçt, sənəd üzrə axtarış">
 
 
 
@@ -1044,15 +1043,15 @@
 
 
 
-                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
+                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
 
 
 
-                            <option data-i18n="common.statusActive">Active</option>
+                            <option data-i18n="common.statusActive">Aktiv</option>
 
 
 
-                            <option data-i18n="common.statusInactive">Inactive</option>
+                            <option data-i18n="common.statusInactive">Qeyri-aktiv</option>
 
 
 
@@ -1080,11 +1079,11 @@
 
 
 
-                                    <th data-i18n="ui.passengerName">Passenger Name</th><th data-i18n="auth.email">Email</th><th data-i18n="passengers.phone">Phone</th><th data-i18n="passengers.nationality">Nationality</th>
+                                    <th data-i18n="ui.passengerName">Sərnişin adı</th><th data-i18n="auth.email">E-poçt</th><th data-i18n="passengers.phone">Telefon</th><th data-i18n="passengers.nationality">Vətəndaşlıq</th>
 
 
 
-                                    <th data-i18n="admin.documentType">Document Type</th><th data-i18n="admin.documentNumber">Document Number</th><th data-i18n="ui.totalTrips">Total Trips</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th>
+                                    <th data-i18n="admin.documentType">Sənəd növü</th><th data-i18n="admin.documentNumber">Sənəd nömrəsi</th><th data-i18n="ui.totalTrips">Ümumi səyahətlər</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
 
 
 
@@ -1118,21 +1117,21 @@
             <section class="admin-section" id="section-airports" data-section-panel="airports" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <input class="admin-search" id="airport-search" type="search" placeholder="Search code, city, name">
-                        <button class="admin-btn admin-btn--primary" id="add-airport-btn" type="button" data-i18n="api.admin.addAirport">Add Airport</button>
+                        <input class="admin-search" id="airport-search" type="search" placeholder="Kod, şəhər, ad üzrə axtarış">
+                        <button class="admin-btn admin-btn--primary" id="add-airport-btn" type="button" data-i18n="api.admin.addAirport">Hava limanı əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.city">City</th><th data-i18n="api.admin.country">Country</th><th data-i18n="api.admin.timeZone">Time zone</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.code">Kod</th><th data-i18n="api.admin.name">Ad</th><th data-i18n="api.admin.city">Şəhər</th><th data-i18n="api.admin.country">Ölkə</th><th data-i18n="api.admin.timeZone">Saat qurşağı</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="airports-body"></tbody>
                         </table>
                     </div>
                 </div>
                 <div class="admin-panel admin-panel--cream" id="destinations-panel">
-                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.destCatalogTitle">Destination catalog</h2></div>
+                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.destCatalogTitle">Təyinat kataloqu</h2></div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.destCountry">Country</th><th data-i18n="api.admin.destCity">City</th><th data-i18n="api.admin.destAirports">Airports</th><th data-i18n="api.admin.destFlights">Scheduled flights</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.destCountry">Ölkə</th><th data-i18n="api.admin.destCity">Şəhər</th><th data-i18n="api.admin.destAirports">Hava limanları</th><th data-i18n="api.admin.destFlights">Planlaşdırılmış reyslər</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="destinations-body"></tbody>
                         </table>
                     </div>
@@ -1143,30 +1142,30 @@
             <section class="admin-section" id="section-support" data-section-panel="support" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <input class="admin-search" id="support-search" type="search" data-i18n-placeholder="support.admin.search" placeholder="Search ticket, email, subject or booking">
+                        <input class="admin-search" id="support-search" type="search" data-i18n-placeholder="support.admin.search" placeholder="Bilet nömrəsi, e-poçt, mövzu və ya rezervasiya axtar">
                         <select class="admin-select" id="support-status-filter" aria-label="Status">
-                            <option value="" data-i18n="support.admin.allStatuses">All statuses</option>
-                            <option value="Open" data-i18n="support.status.Open">Open</option>
-                            <option value="InProgress" data-i18n="support.status.InProgress">In progress</option>
-                            <option value="WaitingForCustomer" data-i18n="support.status.WaitingForCustomer">Waiting for customer</option>
-                            <option value="Resolved" data-i18n="support.status.Resolved">Resolved</option>
+                            <option value="" data-i18n="support.admin.allStatuses">Bütün statuslar</option>
+                            <option value="Open" data-i18n="support.status.Open">Açıq</option>
+                            <option value="InProgress" data-i18n="support.status.InProgress">İcradadır</option>
+                            <option value="WaitingForCustomer" data-i18n="support.status.WaitingForCustomer">Cavabınız gözlənilir</option>
+                            <option value="Resolved" data-i18n="support.status.Resolved">Həll olunub</option>
                         </select>
-                        <select class="admin-select" id="support-category-filter" aria-label="Topic">
-                            <option value="" data-i18n="support.admin.allCategories">All topics</option>
-                            <option value="Booking" data-i18n="support.categories.Booking">Booking</option>
-                            <option value="Payment" data-i18n="support.categories.Payment">Payment</option>
-                            <option value="CancellationRefund" data-i18n="support.categories.CancellationRefund">Cancellation and Refund</option>
-                            <option value="FlightChange" data-i18n="support.categories.FlightChange">Flight Change</option>
-                            <option value="Baggage" data-i18n="support.categories.Baggage">Baggage</option>
-                            <option value="Account" data-i18n="support.categories.Account">Account</option>
-                            <option value="WebsiteProblem" data-i18n="support.categories.WebsiteProblem">Website Problem</option>
-                            <option value="Other" data-i18n="support.categories.Other">Other</option>
+                        <select class="admin-select" id="support-category-filter" aria-label="Mövzu">
+                            <option value="" data-i18n="support.admin.allCategories">Bütün mövzular</option>
+                            <option value="Booking" data-i18n="support.categories.Booking">Rezervasiya</option>
+                            <option value="Payment" data-i18n="support.categories.Payment">Ödəniş</option>
+                            <option value="CancellationRefund" data-i18n="support.categories.CancellationRefund">Ləğv və geri ödəniş</option>
+                            <option value="FlightChange" data-i18n="support.categories.FlightChange">Uçuş dəyişikliyi</option>
+                            <option value="Baggage" data-i18n="support.categories.Baggage">Baqaj</option>
+                            <option value="Account" data-i18n="support.categories.Account">Hesab</option>
+                            <option value="WebsiteProblem" data-i18n="support.categories.WebsiteProblem">Sayt problemi</option>
+                            <option value="Other" data-i18n="support.categories.Other">Digər</option>
                         </select>
-                        <button class="admin-btn admin-btn--secondary" id="support-refresh-btn" type="button" data-i18n="api.admin.refresh">Refresh</button>
+                        <button class="admin-btn admin-btn--secondary" id="support-refresh-btn" type="button" data-i18n="api.admin.refresh">Yenilə</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="support.admin.colNumber">Ticket</th><th data-i18n="support.admin.colCustomer">Customer</th><th data-i18n="support.admin.colSubject">Subject</th><th data-i18n="support.admin.colCategory">Topic</th><th data-i18n="support.admin.colStatus">Status</th><th data-i18n="support.admin.colCreated">Created</th><th data-i18n="support.admin.colUpdated">Last update</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="support.admin.colNumber">Bilet</th><th data-i18n="support.admin.colCustomer">Müştəri</th><th data-i18n="support.admin.colSubject">Mövzu başlığı</th><th data-i18n="support.admin.colCategory">Mövzu</th><th data-i18n="support.admin.colStatus">Status</th><th data-i18n="support.admin.colCreated">Yaradılıb</th><th data-i18n="support.admin.colUpdated">Son yenilənmə</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="support-body"></tbody>
                         </table>
                     </div>
@@ -1178,22 +1177,22 @@
             <section class="admin-section" id="section-promos" data-section-panel="promos" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <input class="admin-search" id="promo-search" type="search" placeholder="Search code">
-                        <button class="admin-btn admin-btn--primary" id="add-promo-btn" type="button" data-i18n="api.admin.addPromo">Add Promo Code</button>
+                        <input class="admin-search" id="promo-search" type="search" placeholder="Kod üzrə axtarış">
+                        <button class="admin-btn admin-btn--primary" id="add-promo-btn" type="button" data-i18n="api.admin.addPromo">Promo kod əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.discount">Discount</th><th data-i18n="api.admin.validFrom">Valid from</th><th data-i18n="api.admin.validUntil">Valid until</th><th data-i18n="api.admin.uses">Uses</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.code">Kod</th><th data-i18n="api.admin.discount">Endirim</th><th data-i18n="api.admin.validFrom">Başlama tarixi</th><th data-i18n="api.admin.validUntil">Bitmə tarixi</th><th data-i18n="api.admin.uses">İstifadə</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="promos-body"></tbody>
                         </table>
                     </div>
                 </div>
                 <div class="admin-panel admin-panel--cream" id="campaigns-panel">
-                    <h3 class="admin-subtitle" data-i18n="api.admin.campaignsTitle">Email campaigns</h3>
-                    <p class="admin-hint" data-i18n="api.admin.campaignsHint">Saving a promo code never sends an email. Use "Email campaign" on a promo code to preview and send it to confirmed subscribers.</p>
+                    <h3 class="admin-subtitle" data-i18n="api.admin.campaignsTitle">E-poçt kampaniyaları</h3>
+                    <p class="admin-hint" data-i18n="api.admin.campaignsHint">Promo kodu yadda saxlamaq heç vaxt e-poçt göndərmir. Onu təsdiqlənmiş abunəçilərə önizləmək və göndərmək üçün promo kodda "E-poçt kampaniyası" düyməsini istifadə edin.</p>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="admin.status">Status</th><th data-i18n="api.admin.campaignSent">Sent</th><th data-i18n="api.admin.campaignFailed">Failed</th><th data-i18n="api.admin.campaignSkipped">Skipped</th><th data-i18n="api.admin.campaignPending">Waiting</th><th data-i18n="api.admin.campaignCreated">Created</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.code">Kod</th><th data-i18n="admin.status">Status</th><th data-i18n="api.admin.campaignSent">Göndərilib</th><th data-i18n="api.admin.campaignFailed">Uğursuz</th><th data-i18n="api.admin.campaignSkipped">Keçilib</th><th data-i18n="api.admin.campaignPending">Gözləyir</th><th data-i18n="api.admin.campaignCreated">Yaradılıb</th></tr></thead>
                             <tbody id="campaigns-body"></tbody>
                         </table>
                     </div>
@@ -1203,25 +1202,25 @@
             <!-- BAGGAGE AND MEALS -->
             <section class="admin-section" id="section-options" data-section-panel="options" hidden>
                 <div class="admin-panel admin-panel--cream">
-                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.baggage">Extra baggage</h2></div>
+                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.baggage">Əlavə baqaj</h2></div>
                     <div class="admin-toolbar">
-                        <button class="admin-btn admin-btn--primary" id="add-baggage-btn" type="button" data-i18n="api.admin.addBaggage">Add Baggage Option</button>
+                        <button class="admin-btn admin-btn--primary" id="add-baggage-btn" type="button" data-i18n="api.admin.addBaggage">Baqaj seçimi əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.weightKg">Weight (kg)</th><th data-i18n="api.admin.price">Price</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.code">Kod</th><th data-i18n="api.admin.name">Ad</th><th data-i18n="api.admin.weightKg">Çəki (kq)</th><th data-i18n="api.admin.price">Qiymət</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="baggage-body"></tbody>
                         </table>
                     </div>
                 </div>
                 <div class="admin-panel admin-panel--cream">
-                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.meals">Meals</h2></div>
+                    <div class="admin-panel-header"><h2 class="admin-panel-title" data-i18n="api.admin.meals">Yeməklər</h2></div>
                     <div class="admin-toolbar">
-                        <button class="admin-btn admin-btn--primary" id="add-meal-btn" type="button" data-i18n="api.admin.addMeal">Add Meal</button>
+                        <button class="admin-btn admin-btn--primary" id="add-meal-btn" type="button" data-i18n="api.admin.addMeal">Yemək əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.code">Code</th><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.description">Description</th><th data-i18n="api.admin.price">Price</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.code">Kod</th><th data-i18n="api.admin.name">Ad</th><th data-i18n="api.admin.description">Təsvir</th><th data-i18n="api.admin.price">Qiymət</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="meals-body"></tbody>
                         </table>
                     </div>
@@ -1232,11 +1231,11 @@
             <section class="admin-section" id="section-rules" data-section-panel="rules" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <button class="admin-btn admin-btn--primary" id="add-rule-btn" type="button" data-super-only hidden data-i18n="api.admin.addRule">Add Rule</button>
+                        <button class="admin-btn admin-btn--primary" id="add-rule-btn" type="button" data-super-only hidden data-i18n="api.admin.addRule">Qayda əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="admin.cabin">Cabin</th><th data-i18n="api.admin.minDays">Cancelled at least (days before departure)</th><th data-i18n="api.admin.feePercent">Fee</th><th data-i18n="api.admin.refund">Refund</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="admin.cabin">Salon</th><th data-i18n="api.admin.minDays">Ən azı neçə gün qalmış ləğv (uçuşa)</th><th data-i18n="api.admin.feePercent">Komissiya</th><th data-i18n="api.admin.refund">Geri ödəniş</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="rules-body"></tbody>
                         </table>
                     </div>
@@ -1250,23 +1249,23 @@
             <section class="admin-section" id="section-users" data-section-panel="users" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <input class="admin-search" id="user-search" type="search" data-i18n-placeholder="api.admin.searchUsers" placeholder="Search name or email">
-                        <select class="admin-select" id="user-role-filter" aria-label="Role">
-                            <option value="" data-i18n="api.admin.allRoles">All roles</option>
-                            <option value="User" data-i18n="api.admin.roleUser">User</option>
+                        <input class="admin-search" id="user-search" type="search" data-i18n-placeholder="api.admin.searchUsers" placeholder="Ad və ya e-poçt axtarın">
+                        <select class="admin-select" id="user-role-filter" aria-label="Rol">
+                            <option value="" data-i18n="api.admin.allRoles">Bütün rollar</option>
+                            <option value="User" data-i18n="api.admin.roleUser">İstifadəçi</option>
                             <option value="Admin" data-i18n="api.admin.roleAdmin">Admin</option>
                             <option value="SuperAdmin" data-i18n="api.admin.roleSuperAdmin">SuperAdmin</option>
                         </select>
                         <select class="admin-select" id="user-status-filter" aria-label="Status">
-                            <option value="" data-i18n="admin.allStatuses">All statuses</option>
-                            <option value="true" data-i18n="common.statusActive">Active</option>
-                            <option value="false" data-i18n="common.statusInactive">Inactive</option>
+                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
+                            <option value="true" data-i18n="common.statusActive">Aktiv</option>
+                            <option value="false" data-i18n="common.statusInactive">Qeyri-aktiv</option>
                         </select>
-                        <button class="admin-btn admin-btn--primary" id="add-user-btn" type="button" data-i18n="api.admin.addAdmin">Add Admin</button>
+                        <button class="admin-btn admin-btn--primary" id="add-user-btn" type="button" data-i18n="api.admin.addAdmin">Admin əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.name">Name</th><th data-i18n="api.admin.colEmail">Email</th><th data-i18n="api.admin.colRole">Role</th><th data-i18n="admin.status">Status</th><th data-i18n="api.admin.colConfirmed">Email confirmed</th><th data-i18n="api.admin.colCreated">Created</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.name">Ad</th><th data-i18n="api.admin.colEmail">E-poçt</th><th data-i18n="api.admin.colRole">Rol</th><th data-i18n="admin.status">Status</th><th data-i18n="api.admin.colConfirmed">E-poçt təsdiqi</th><th data-i18n="api.admin.colCreated">Yaradılıb</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="users-body"></tbody>
                         </table>
                     </div>
@@ -1278,19 +1277,19 @@
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
                         <select class="admin-select" id="refund-status-filter" aria-label="Status">
-                            <option value="" data-i18n="cancellation.admin.allStatuses">All statuses</option>
-                            <option value="Pending" data-i18n="cancellation.status.pending">Pending</option>
-                            <option value="Processing" data-i18n="cancellation.status.processing">Processing</option>
-                            <option value="Completed" data-i18n="cancellation.status.completed">Completed</option>
-                            <option value="Failed" data-i18n="cancellation.status.failed">Failed</option>
-                            <option value="Cancelled" data-i18n="cancellation.status.cancelled">Cancelled</option>
-                            <option value="NotEligible" data-i18n="cancellation.status.notEligible">Not Eligible</option>
+                            <option value="" data-i18n="cancellation.admin.allStatuses">Bütün statuslar</option>
+                            <option value="Pending" data-i18n="cancellation.status.pending">Gözləmədə</option>
+                            <option value="Processing" data-i18n="cancellation.status.processing">İcra olunur</option>
+                            <option value="Completed" data-i18n="cancellation.status.completed">Tamamlandı</option>
+                            <option value="Failed" data-i18n="cancellation.status.failed">Uğursuz</option>
+                            <option value="Cancelled" data-i18n="cancellation.status.cancelled">Ləğv edildi</option>
+                            <option value="NotEligible" data-i18n="cancellation.status.notEligible">Uyğun deyil</option>
                         </select>
-                        <button class="admin-btn admin-btn--secondary" id="refund-refresh-btn" type="button" data-i18n="api.admin.refresh">Refresh</button>
+                        <button class="admin-btn admin-btn--secondary" id="refund-refresh-btn" type="button" data-i18n="api.admin.refresh">Yenilə</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="cancellation.admin.colBooking">Booking</th><th data-i18n="cancellation.admin.colAmount">Amount</th><th data-i18n="admin.status">Status</th><th data-i18n="cancellation.admin.colStripe">Stripe refund</th><th data-i18n="cancellation.admin.colReason">Reason</th><th data-i18n="cancellation.admin.colBy">Started by</th><th data-i18n="cancellation.admin.colCreated">Requested (UTC)</th><th data-i18n="cancellation.admin.colUpdated">Updated (UTC)</th><th data-i18n="admin.actions">Actions</th></tr></thead>
+                            <thead><tr><th data-i18n="cancellation.admin.colBooking">Rezervasiya</th><th data-i18n="cancellation.admin.colAmount">Məbləğ</th><th data-i18n="admin.status">Status</th><th data-i18n="cancellation.admin.colStripe">Stripe geri ödənişi</th><th data-i18n="cancellation.admin.colReason">Səbəb</th><th data-i18n="cancellation.admin.colBy">Başladan</th><th data-i18n="cancellation.admin.colCreated">Tələb (UTC)</th><th data-i18n="cancellation.admin.colUpdated">Yenilənib (UTC)</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="refunds-body"></tbody>
                         </table>
                     </div>
@@ -1300,12 +1299,12 @@
             <section class="admin-section" id="section-audit" data-section-panel="audit" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-                        <select class="admin-select" id="audit-action-filter" aria-label="Action"></select>
-                        <button class="admin-btn admin-btn--secondary" id="audit-refresh-btn" type="button" data-i18n="api.admin.refresh">Refresh</button>
+                        <select class="admin-select" id="audit-action-filter" aria-label="Əməliyyat"></select>
+                        <button class="admin-btn admin-btn--secondary" id="audit-refresh-btn" type="button" data-i18n="api.admin.refresh">Yenilə</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
-                            <thead><tr><th data-i18n="api.admin.colWhen">When (UTC)</th><th data-i18n="api.admin.colWho">Who</th><th data-i18n="api.admin.colAction">Action</th><th data-i18n="api.admin.colTarget">Target</th><th data-i18n="api.admin.colDetails">Details</th></tr></thead>
+                            <thead><tr><th data-i18n="api.admin.colWhen">Vaxt (UTC)</th><th data-i18n="api.admin.colWho">Kim</th><th data-i18n="api.admin.colAction">Əməliyyat</th><th data-i18n="api.admin.colTarget">Obyekt</th><th data-i18n="api.admin.colDetails">Təfərrüat</th></tr></thead>
                             <tbody id="audit-body"></tbody>
                         </table>
                     </div>
@@ -1336,8 +1335,8 @@
 
 
             <div class="admin-modal-head">
-                <h2 class="admin-modal-title" id="entity-modal-title" data-i18n="ui.form">Form</h2>
-                <button class="admin-modal-close" type="button" data-close-modal data-i18n-aria="common.close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="admin-modal-title" id="entity-modal-title" data-i18n="ui.form">Forma</h2>
+                <button class="admin-modal-close" type="button" data-close-modal data-i18n-aria="common.close" aria-label="Bağla"><span aria-hidden="true">&times;</span></button>
             </div>
 
 
@@ -1354,11 +1353,11 @@
 
 
 
-                    <button class="admin-btn admin-btn--secondary" type="button" data-close-modal data-i18n="common.cancel">Cancel</button>
+                    <button class="admin-btn admin-btn--secondary" type="button" data-close-modal data-i18n="common.cancel">Ləğv et</button>
 
 
 
-                    <button class="admin-btn admin-btn--primary" type="submit" data-i18n="common.save">Save</button>
+                    <button class="admin-btn admin-btn--primary" type="submit" data-i18n="common.save">Yadda saxla</button>
 
 
 
@@ -1388,7 +1387,7 @@
             <h2 class="admin-modal-title" id="confirm-modal-title"></h2>
             <p class="admin-confirm-text" id="confirm-modal-text"></p>
             <div class="admin-modal-actions">
-                <button class="admin-btn admin-btn--secondary" type="button" id="confirm-cancel" data-i18n="common.cancel">Cancel</button>
+                <button class="admin-btn admin-btn--secondary" type="button" id="confirm-cancel" data-i18n="common.cancel">Ləğv et</button>
                 <button class="admin-btn admin-btn--primary" type="button" id="confirm-accept">OK</button>
             </div>
         </div>
@@ -1407,8 +1406,8 @@
 
 
             <div class="admin-modal-head">
-                <h2 class="admin-modal-title" id="details-modal-title" data-i18n="common.details">Details</h2>
-                <button class="admin-modal-close" type="button" data-close-details data-i18n-aria="common.close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="admin-modal-title" id="details-modal-title" data-i18n="common.details">Ətraflı</h2>
+                <button class="admin-modal-close" type="button" data-close-details data-i18n-aria="common.close" aria-label="Bağla"><span aria-hidden="true">&times;</span></button>
             </div>
 
 
@@ -1421,7 +1420,7 @@
 
 
 
-                <button class="admin-btn admin-btn--secondary" type="button" data-close-details data-i18n="common.close">Close</button>
+                <button class="admin-btn admin-btn--secondary" type="button" data-close-details data-i18n="common.close">Bağla</button>
 
 
 
@@ -1441,35 +1440,33 @@
 
 
 
-        <script src="assets/js/locales/en.js?v=refund1"></script>
 
 
-    <script src="assets/js/locales/az.js?v=refund1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
 
 
-    <script src="assets/js/locales/ru.js?v=refund1"></script>
 
 
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/airports.js"></script>
-    <script src="assets/js/chat-widget.js"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/airports.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
 
 
-    <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
     <script src="assets/js/vendor/signalr.min.js?v=8.0.7"></script>
-    <script src="assets/js/realtime.js?v=rt1"></script>
-    <script src="assets/js/admin.js?v=dest4"></script>
+    <script src="assets/js/realtime.js?v=az1"></script>
+    <script src="assets/js/admin.js?v=az1"></script>
 
 
 
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
     <div class="admin-toast" id="admin-toast" role="status" aria-live="polite" hidden>
         <span id="admin-toast-text"></span>
-        <button class="admin-btn admin-btn--primary" id="admin-toast-open" type="button" data-i18n="support.toast.open">Open</button>
-        <button class="admin-toast-close" id="admin-toast-close" type="button" aria-label="Close" data-i18n-aria="support.admin.close">&times;</button>
+        <button class="admin-btn admin-btn--primary" id="admin-toast-open" type="button" data-i18n="support.toast.open">Aç</button>
+        <button class="admin-toast-close" id="admin-toast-close" type="button" aria-label="Bağla" data-i18n-aria="support.admin.close">&times;</button>
     </div>
 </body>
 

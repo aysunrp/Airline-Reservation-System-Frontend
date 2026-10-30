@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEROVA | Seat Layouts</title>
+    <title>AEROVA | Oturacaq sxemləri</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/seat-selection.css">
     <link rel="stylesheet" href="assets/css/seat-preview.css">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -21,20 +20,20 @@
                 <span class="logo-text">Aerova</span>
             </div>
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+            <nav id="primary-navigation" class="main-navigation" aria-label="Əsas" data-i18n-aria="nav.primary">
                 <ul class="nav-list">
-                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
-                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
-                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Ana səhifə</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Bron</a></li>
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">İstiqamətlər</a></li>
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Təcrübə</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">Haqqımızda</a></li>
                 </ul>
-                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Giriş</a>
             </nav>
 
             <div class="header-actions">
-                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+                <a class="login-button" href="login.html" data-i18n="nav.login">Giriş</a>
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Menyunu aç" data-i18n-aria="nav.openMenu">
                     <span class="menu-toggle-bar"></span>
                     <span class="menu-toggle-bar"></span>
                     <span class="menu-toggle-bar"></span>
@@ -46,24 +45,24 @@
     <main id="seat-preview-content" class="seat-selection-content seat-preview-content">
         <section class="seat-selection-page" aria-labelledby="seat-preview-title">
             <div class="page-container">
-                <a class="seat-preview-back" href="index.html"><span aria-hidden="true">&larr;</span> <span data-i18n="seatPreview.backHome">Back to Home</span></a>
+                <a class="seat-preview-back" href="index.html"><span aria-hidden="true">&larr;</span> <span data-i18n="seatPreview.backHome">Ana səhifəyə qayıt</span></a>
                 <header class="seat-intro">
-                    <h1 class="seat-title" id="seat-preview-title" data-i18n="seatPreview.title">Explore Our Seat Layouts</h1>
-                    <p class="seat-subtitle" data-i18n="seatPreview.subtitle">Preview each cabin before you travel. Seats are chosen during booking.</p>
+                    <h1 class="seat-title" id="seat-preview-title" data-i18n="seatPreview.title">Oturacaq sxemlərimizlə tanış olun</h1>
+                    <p class="seat-subtitle" data-i18n="seatPreview.subtitle">Səyahətdən əvvəl hər salona baxın. Oturacaqlar sifariş zamanı seçilir.</p>
                 </header>
 
                 <div class="seat-preview-panel">
-                    <div class="seat-preview-tabs" role="tablist" aria-label="Cabin classes" data-i18n-aria="seatPreview.tabsLabel">
-                        <button class="seat-preview-tab" type="button" role="tab" id="seat-preview-tab-economy" data-cabin="Economy" aria-controls="seat-preview-tabpanel" aria-selected="true" tabindex="0" data-i18n="seatPreview.economy">Economy Class</button>
-                        <button class="seat-preview-tab" type="button" role="tab" id="seat-preview-tab-comfort" data-cabin="Comfort" aria-controls="seat-preview-tabpanel" aria-selected="false" tabindex="-1" data-i18n="seatPreview.comfort">Comfort Class</button>
-                        <button class="seat-preview-tab" type="button" role="tab" id="seat-preview-tab-business" data-cabin="Business" aria-controls="seat-preview-tabpanel" aria-selected="false" tabindex="-1" data-i18n="seatPreview.business">Business Class</button>
+                    <div class="seat-preview-tabs" role="tablist" aria-label="Salon sinifləri" data-i18n-aria="seatPreview.tabsLabel">
+                        <button class="seat-preview-tab" type="button" role="tab" id="seat-preview-tab-economy" data-cabin="Economy" aria-controls="seat-preview-tabpanel" aria-selected="true" tabindex="0" data-i18n="seatPreview.economy">Ekonom sinif</button>
+                        <button class="seat-preview-tab" type="button" role="tab" id="seat-preview-tab-comfort" data-cabin="Comfort" aria-controls="seat-preview-tabpanel" aria-selected="false" tabindex="-1" data-i18n="seatPreview.comfort">Komfort sinif</button>
+                        <button class="seat-preview-tab" type="button" role="tab" id="seat-preview-tab-business" data-cabin="Business" aria-controls="seat-preview-tabpanel" aria-selected="false" tabindex="-1" data-i18n="seatPreview.business">Biznes sinif</button>
                     </div>
 
                     <div class="seat-preview-tabpanel" id="seat-preview-tabpanel" role="tabpanel" aria-labelledby="seat-preview-tab-economy" tabindex="0">
                         <p class="seat-preview-summary" id="seat-preview-summary"></p>
 
                         <div class="airplane" id="aircraft-cabin" data-layout="economy">
-                            <p class="airplane-front-label" data-i18n="seatPreview.front">Front</p>
+                            <p class="airplane-front-label" data-i18n="seatPreview.front">Ön</p>
 
                             <div class="airplane-body">
                                 <div class="airplane-nose" aria-hidden="true">
@@ -76,19 +75,19 @@
 
                                 <div class="cabin-deck" aria-hidden="true">
                                     <div class="cabin-amenity cabin-amenity--forward">
-                                        <span class="amenity-block" data-i18n="ui.galley">Galley</span>
+                                        <span class="amenity-block" data-i18n="ui.galley">Mətbəx</span>
                                         <span class="amenity-block">WC</span>
                                     </div>
 
                                     <div class="cabin-section">
-                                        <p class="cabin-section-label" id="cabin-section-label" data-i18n="seatPreview.economy">Economy Class</p>
+                                        <p class="cabin-section-label" id="cabin-section-label" data-i18n="seatPreview.economy">Ekonom sinif</p>
                                         <div class="seat-columns" id="seat-columns"></div>
                                         <div class="seat-map" id="seat-map"></div>
                                     </div>
 
                                     <div class="cabin-amenity cabin-amenity--aft">
                                         <span class="amenity-block">WC</span>
-                                        <span class="amenity-block" data-i18n="ui.galley">Galley</span>
+                                        <span class="amenity-block" data-i18n="ui.galley">Mətbəx</span>
                                     </div>
                                 </div>
 
@@ -96,7 +95,7 @@
                             </div>
                         </div>
 
-                        <p class="seat-preview-note" data-i18n="seatPreview.note">Preview only. Seat availability and selection are shown when you book a flight.</p>
+                        <p class="seat-preview-note" data-i18n="seatPreview.note">Yalnız baxış üçündür. Oturacaqların mövcudluğu və seçimi uçuş sifarişi zamanı göstərilir.</p>
                     </div>
                 </div>
             </div>
@@ -110,32 +109,32 @@
                     <div class="logo">
                         <span class="logo-text">Aerova</span>
                     </div>
-                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+                    <p class="footer-description" data-i18n="footer.description">Gözləntilərinizin fövqünə uçun.</p>
                 </div>
 
                 <div class="footer-column">
-                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Sürətli keçidlər</h2>
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
-                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
-                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
-                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
-                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Ana səhifə</a></li>
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Uçuşlar</a></li>
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">İstiqamətlər</a></li>
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">Haqqımızda</a></li>
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">Səyahətlərim</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column">
-                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+                    <h2 class="footer-heading" data-i18n="footer.support">Dəstək</h2>
                     <ul class="footer-links">
-                        <li><a class="footer-link" href="support.html" data-i18n="footer.help">Help Center</a></li>
-                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Contact Us</a></li>
-                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Travel Information</a></li>
-                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">FAQs</a></li>
+                        <li><a class="footer-link" href="support.html" data-i18n="footer.help">Kömək mərkəzi</a></li>
+                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Əlaqə</a></li>
+                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Səyahət məlumatı</a></li>
+                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">Suallar</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column">
-                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Bizi izləyin</h2>
                     <ul class="social-list">
                         <li>
                             <a class="social-link" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -182,25 +181,23 @@
         </div>
 
         <div class="footer-bottom">
-            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. Bütün hüquqlar qorunur.</p>
             <ul class="footer-legal">
-                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
-                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Məxfilik siyasəti</a></li>
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Şərtlər və qaydalar</a></li>
             </ul>
         </div>
     </footer>
 
-        <script src="assets/js/locales/en.js"></script>
-    <script src="assets/js/locales/az.js"></script>
-    <script src="assets/js/locales/ru.js"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=stay1"></script>
-    <script src="assets/js/seat-layouts.js"></script>
-    <script src="assets/js/seat-preview.js"></script>
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
+    <script src="assets/js/seat-layouts.js?v=az1"></script>
+    <script src="assets/js/seat-preview.js?v=az1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
 </body>
 </html>

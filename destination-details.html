@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="az">
 
 <head>
 
@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AEROVA | Destination</title>
+    <title>AEROVA | İstiqamət</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/passenger-details.css">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -41,24 +40,24 @@
 
 
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+            <nav id="primary-navigation" class="main-navigation" aria-label="Əsas" data-i18n-aria="nav.primary">
 
                 <ul class="nav-list">
 
-                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Ana səhifə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Bron</a></li>
 
-                    <li class="nav-item"><a class="nav-link is-current" href="destinations.html" aria-current="page" data-i18n="nav.destinations">Destinations</a></li>
+                    <li class="nav-item"><a class="nav-link is-current" href="destinations.html" aria-current="page" data-i18n="nav.destinations">İstiqamətlər</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Təcrübə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">Haqqımızda</a></li>
 
 
                 </ul>
 
-                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Giriş</a>
 
             </nav>
 
@@ -67,9 +66,9 @@
             <div class="header-actions">
 
 
-                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button" href="login.html" data-i18n="nav.login">Giriş</a>
 
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Menyunu aç" data-i18n-aria="nav.openMenu">
 
                     <span class="menu-toggle-bar"></span>
 
@@ -88,47 +87,47 @@
 
 
     <main id="destination-details-main">
-        <section class="page-hero destination-details-hero" id="destination-hero" aria-label="Destination hero">
-            <div class="page-hero-media" id="destination-hero-media" role="img" aria-label="Destination" data-i18n-aria="common.destination"></div>
+        <section class="page-hero destination-details-hero" id="destination-hero" aria-label="İstiqamət başlığı">
+            <div class="page-hero-media" id="destination-hero-media" role="img" aria-label="Təyinat" data-i18n-aria="common.destination"></div>
             <div class="page-hero-overlay" aria-hidden="true"></div>
             <div class="page-hero-content">
-                <p class="page-hero-kicker" id="destination-country" data-i18n="common.destination">Destination</p>
+                <p class="page-hero-kicker" id="destination-country" data-i18n="common.destination">Təyinat</p>
                 <h1 class="page-hero-title" id="destination-name">&nbsp;</h1>
-                <p class="page-hero-text" id="destination-tagline" role="status" data-i18n="destinations.detailsLoading">Loading the destination...</p>
+                <p class="page-hero-text" id="destination-tagline" role="status" data-i18n="destinations.detailsLoading">Təyinat yüklənir...</p>
             </div>
         </section>
 
-        <section class="destination-details-content" id="destination-content" aria-label="Destination details" hidden>
+        <section class="destination-details-content" id="destination-content" aria-label="İstiqamət məlumatları" hidden>
             <div class="page-shell destination-details-layout">
                 <div class="destination-details-main-col">
                     <section class="dd-info" aria-labelledby="dd-info-title">
-                        <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinations.aboutTitle">About this destination</h2>
+                        <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinations.aboutTitle">Təyinat haqqında</h2>
                         <p class="dd-intro" id="destination-description"></p>
                     </section>
                     <section class="dd-airports-section" aria-labelledby="destination-airports-title">
-                        <h2 class="dd-section-title" id="destination-airports-title">Airports</h2>
+                        <h2 class="dd-section-title" id="destination-airports-title">Hava limanları</h2>
                         <ul class="dd-airport-list" id="destination-airports"></ul>
                     </section>
                     <section class="dd-flights-section" aria-labelledby="destination-flights-title">
-                        <h2 class="dd-section-title" id="destination-flights-title">Flights</h2>
+                        <h2 class="dd-section-title" id="destination-flights-title">Uçuşlar</h2>
                         <ul class="dd-flight-list" id="destination-flights"></ul>
                     </section>
                 </div>
-                <aside class="destination-aside" aria-label="Book this destination">
-                    <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Ready to Fly?</p>
+                <aside class="destination-aside" aria-label="Bu istiqamətə bilet bron edin">
+                    <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Uçmağa hazırsınız?</p>
                     <h2 class="destination-aside-title" id="destination-aside-route">&nbsp;</h2>
-                    <p class="destination-aside-text" id="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Choose your travel date and find available flights.</p>
+                    <p class="destination-aside-text" id="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Səyahət tarixinizi seçin və mövcud uçuşları tapın.</p>
                     <label class="destination-airport-pick" id="destination-airport-pick" for="destination-airport-select" hidden>
-                        <span data-i18n="destinations.chooseAirport">Arrival airport</span>
+                        <span data-i18n="destinations.chooseAirport">Gəliş hava limanı</span>
                         <select id="destination-airport-select"></select>
                     </label>
-                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="#" data-i18n="destinations.bookTicket">Book Ticket</a>
-                    <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Back to Destinations</a>
+                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="#" data-i18n="destinations.bookTicket">Bilet bron et</a>
+                    <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Təyinatlara qayıt</a>
                 </aside>
             </div>
             <section class="dd-others dest-catalog" id="destination-others" aria-labelledby="destination-others-title" hidden>
                 <div class="page-shell">
-                    <h2 class="dd-section-title" id="destination-others-title">Explore other cities</h2>
+                    <h2 class="dd-section-title" id="destination-others-title">Digər şəhərləri kəşf edin</h2>
                     <div class="destination-grid" id="destination-others-grid"></div>
                 </div>
             </section>
@@ -136,7 +135,7 @@
 
         <section class="destination-details-status page-shell" id="destination-status" hidden>
             <p id="destination-status-text" role="alert"></p>
-            <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Back to Destinations</a>
+            <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Təyinatlara qayıt</a>
         </section>
     </main>
 
@@ -156,7 +155,7 @@
 
                     </div>
 
-                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+                    <p class="footer-description" data-i18n="footer.description">Gözləntilərinizin fövqünə uçun.</p>
 
                 </div>
 
@@ -164,19 +163,19 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Sürətli keçidlər</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Ana səhifə</a></li>
 
-                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Uçuşlar</a></li>
 
-                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">İstiqamətlər</a></li>
 
-                        <li><a class="footer-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+                        <li><a class="footer-link" href="experience.html" data-i18n="nav.experience">Təcrübə</a></li>
 
-                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">Haqqımızda</a></li>
 
                     </ul>
 
@@ -186,17 +185,17 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+                    <h2 class="footer-heading" data-i18n="footer.support">Dəstək</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Manage Booking</a></li>
+                        <li><a class="footer-link" href="manage-booking.html" data-i18n="footer.manageBooking">Bronu idarə et</a></li>
 
-                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">Səyahətlərim</a></li>
 
-                        <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
+                        <li><a class="footer-link" href="notifications.html" data-i18n="nav.notifications">Bildirişlər</a></li>
 
-                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">FAQs</a></li>
+                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">Suallar</a></li>
 
                     </ul>
 
@@ -206,7 +205,7 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Bizi izləyin</h2>
 
                     <ul class="social-list">
 
@@ -300,13 +299,13 @@
 
         <div class="footer-bottom">
 
-            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. Bütün hüquqlar qorunur.</p>
 
             <ul class="footer-legal">
 
-                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Məxfilik siyasəti</a></li>
 
-                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Şərtlər və qaydalar</a></li>
 
             </ul>
 
@@ -316,22 +315,20 @@
 
 
 
-    <script src="assets/js/locales/en.js"></script>
-    <script src="assets/js/locales/az.js"></script>
-    <script src="assets/js/locales/ru.js"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
 
-    <script src="assets/js/home.js"></script>
+    <script src="assets/js/home.js?v=az1"></script>
 
-    <script src="assets/js/airports.js?v=2"></script>
-    <script src="assets/js/destination-catalog.js?v=7"></script>
-    <script src="assets/js/destination-details.js?v=4"></script>
+    <script src="assets/js/airports.js?v=az1"></script>
+    <script src="assets/js/destination-catalog.js?v=az1"></script>
+    <script src="assets/js/destination-details.js?v=az1"></script>
 
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
 </body>
 

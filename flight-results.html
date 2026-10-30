@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="az">
 
 <head>
 
@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AEROVA | Available Flights</title>
+    <title>AEROVA | Mövcud uçuşlar</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/flight-results.css">
-    <link rel="stylesheet" href="assets/css/i18n.css">
     <link rel="stylesheet" href="assets/css/scrollbars.css">
     <link rel="stylesheet" href="assets/css/logo.css?v=thru8">
     <link rel="stylesheet" href="assets/css/chat-widget.css">
@@ -38,24 +37,24 @@
 
 
 
-            <nav id="primary-navigation" class="main-navigation" aria-label="Primary" data-i18n-aria="nav.primary">
+            <nav id="primary-navigation" class="main-navigation" aria-label="Əsas" data-i18n-aria="nav.primary">
 
                 <ul class="nav-list">
 
-                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav.home">Ana səhifə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html" data-i18n="nav.booking">Bron</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">Destinations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="destinations.html" data-i18n="nav.destinations">İstiqamətlər</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="experience.html" data-i18n="nav.experience">Təcrübə</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html" data-i18n="nav.about">Haqqımızda</a></li>
 
 
                 </ul>
 
-                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button login-button--drawer" href="login.html" data-i18n="nav.login">Giriş</a>
 
             </nav>
 
@@ -64,9 +63,9 @@
             <div class="header-actions">
 
 
-                <a class="login-button" href="login.html" data-i18n="nav.login">Login</a>
+                <a class="login-button" href="login.html" data-i18n="nav.login">Giriş</a>
 
-                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+                <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Menyunu aç" data-i18n-aria="nav.openMenu">
 
                     <span class="menu-toggle-bar"></span>
 
@@ -86,19 +85,19 @@
 
     <main id="flight-results-content" class="flight-results-content">
 
-        <section class="flight-results-page" aria-label="Available flights">
+        <section class="flight-results-page" aria-label="Mövcud uçuşlar">
 
             <div class="page-container">
 
                 <header class="results-intro">
 
-                    <p class="results-eyebrow" data-i18n="results.eyebrow">Available Flights</p>
+                    <p class="results-eyebrow" data-i18n="results.eyebrow">Mövcud uçuşlar</p>
 
                     <h1 class="results-route"></h1>
 
                     <p class="results-meta"></p>
 
-                    <a class="results-back-link" href="booking.html" data-i18n="results.modifySearch">← Modify search</a>
+                    <a class="results-back-link" href="booking.html" data-i18n="results.modifySearch">← Axtarışı dəyiş</a>
 
                 </header>
 
@@ -106,11 +105,11 @@
 
                 <div class="results-layout">
 
-                    <aside class="filters-panel" aria-label="Flight filters and sorting" data-i18n-aria="results.filtersAria">
+                    <aside class="filters-panel" aria-label="Uçuş filtrləri və çeşidləmə" data-i18n-aria="results.filtersAria">
 
                         <button class="filters-toggle" id="filters-toggle" type="button" aria-expanded="false" aria-controls="filters-panel-body">
 
-                            <span data-i18n="results.filtersSort">Filters &amp; Sort</span>
+                            <span data-i18n="results.filtersSort">Filtrlər və çeşidləmə</span>
 
                             <span class="filters-toggle-icon" aria-hidden="true"></span>
 
@@ -122,9 +121,9 @@
 
                             <div class="filters-panel-header">
 
-                                <h2 class="filters-panel-title" data-i18n="results.filtersSort">Filters &amp; Sort</h2>
+                                <h2 class="filters-panel-title" data-i18n="results.filtersSort">Filtrlər və çeşidləmə</h2>
 
-                                <button class="filters-clear-button" id="clear-filters-button" type="button" data-i18n="results.clearFilters">Clear Filters</button>
+                                <button class="filters-clear-button" id="clear-filters-button" type="button" data-i18n="results.clearFilters">Filtrləri təmizlə</button>
 
                             </div>
 
@@ -132,19 +131,19 @@
 
                             <div class="filter-group">
 
-                                <h3 class="filter-group-title" data-i18n="results.sortBy">Sort By</h3>
+                                <h3 class="filter-group-title" data-i18n="results.sortBy">Çeşidlə</h3>
 
                                 <label class="filter-select-label" for="sort-by-select">
 
                                     <select class="filter-select" id="sort-by-select">
 
-                                        <option value="recommended" data-i18n="results.recommended">Recommended</option>
+                                        <option value="recommended" data-i18n="results.recommended">Tövsiyə olunan</option>
 
-                                        <option value="cheapest" data-i18n="results.cheapest">Cheapest</option>
+                                        <option value="cheapest" data-i18n="results.cheapest">Ən ucuz</option>
 
-                                        <option value="fastest" data-i18n="results.fastest">Fastest</option>
+                                        <option value="fastest" data-i18n="results.fastest">Ən sürətli</option>
 
-                                        <option value="earliest" data-i18n="results.earliest">Earliest Departure</option>
+                                        <option value="earliest" data-i18n="results.earliest">Ən erkən gediş</option>
 
                                     </select>
 
@@ -156,13 +155,13 @@
 
                             <div class="filter-group">
 
-                                <h3 class="filter-group-title" data-i18n="results.price">Price</h3>
+                                <h3 class="filter-group-title" data-i18n="results.price">Qiymət</h3>
 
                                 <label class="filter-check">
 
                                     <input type="radio" name="filter-price" value="asc">
 
-                                    <span data-i18n="results.lowestHighest">Lowest to Highest</span>
+                                    <span data-i18n="results.lowestHighest">Artan qiymət</span>
 
                                 </label>
 
@@ -170,7 +169,7 @@
 
                                     <input type="radio" name="filter-price" value="desc">
 
-                                    <span data-i18n="results.highestLowest">Highest to Lowest</span>
+                                    <span data-i18n="results.highestLowest">Azalan qiymət</span>
 
                                 </label>
 
@@ -180,13 +179,13 @@
 
                             <div class="filter-group">
 
-                                <h3 class="filter-group-title" data-i18n="results.duration">Duration</h3>
+                                <h3 class="filter-group-title" data-i18n="results.duration">Müddət</h3>
 
                                 <label class="filter-check">
 
                                     <input type="radio" name="filter-duration" value="asc">
 
-                                    <span data-i18n="results.shortest">Shortest</span>
+                                    <span data-i18n="results.shortest">Ən qısa</span>
 
                                 </label>
 
@@ -194,7 +193,7 @@
 
                                     <input type="radio" name="filter-duration" value="desc">
 
-                                    <span data-i18n="results.longest">Longest</span>
+                                    <span data-i18n="results.longest">Ən uzun</span>
 
                                 </label>
 
@@ -204,13 +203,13 @@
 
                             <div class="filter-group">
 
-                                <h3 class="filter-group-title" data-i18n="results.stops">Stops</h3>
+                                <h3 class="filter-group-title" data-i18n="results.stops">Dayanacaqlar</h3>
 
                                 <label class="filter-check">
 
                                     <input type="checkbox" name="filter-stops" value="Non-stop">
 
-                                    <span data-i18n="results.nonstop">Non-stop</span>
+                                    <span data-i18n="results.nonstop">Birbaşa</span>
 
                                 </label>
 
@@ -218,7 +217,7 @@
 
                                     <input type="checkbox" name="filter-stops" value="1 Stop">
 
-                                    <span data-i18n="results.oneStop">1 Stop</span>
+                                    <span data-i18n="results.oneStop">1 dayanacaq</span>
 
                                 </label>
 
@@ -226,7 +225,7 @@
 
                                     <input type="checkbox" name="filter-stops" value="2+">
 
-                                    <span data-i18n="common.twoPlusStops">2+ Stops</span>
+                                    <span data-i18n="common.twoPlusStops">2+ dayanacaq</span>
 
                                 </label>
 
@@ -236,13 +235,13 @@
 
                             <div class="filter-group">
 
-                                <h3 class="filter-group-title" data-i18n="results.cabinClass">Cabin Class</h3>
+                                <h3 class="filter-group-title" data-i18n="results.cabinClass">Salon sinfi</h3>
 
                                 <label class="filter-check">
 
                                     <input type="radio" name="filter-cabin" value="Economy">
 
-                                    <span data-i18n="results.economy">Economy</span>
+                                    <span data-i18n="results.economy">Ekonom</span>
 
                                 </label>
 
@@ -250,7 +249,7 @@
 
                                     <input type="radio" name="filter-cabin" value="Comfort">
 
-                                    <span data-i18n="results.comfort">Comfort</span>
+                                    <span data-i18n="results.comfort">Komfort</span>
 
                                 </label>
 
@@ -258,7 +257,7 @@
 
                                     <input type="radio" name="filter-cabin" value="Business">
 
-                                    <span data-i18n="results.business">Business</span>
+                                    <span data-i18n="results.business">Biznes</span>
 
                                 </label>
 
@@ -274,7 +273,7 @@
 
                         <p class="results-count" id="results-count" aria-live="polite"></p>
 
-                        <div class="flight-list" aria-label="Flight options" data-i18n-aria="results.optionsAria"></div>
+                        <div class="flight-list" aria-label="Uçuş seçimləri" data-i18n-aria="results.optionsAria"></div>
 
                     </div>
 
@@ -302,7 +301,7 @@
 
                     </div>
 
-                    <p class="footer-description" data-i18n="footer.description">Fly beyond expectations.</p>
+                    <p class="footer-description" data-i18n="footer.description">Gözləntilərinizin fövqünə uçun.</p>
 
                 </div>
 
@@ -310,19 +309,19 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Quick Links</h2>
+                    <h2 class="footer-heading" data-i18n="footer.quickLinks">Sürətli keçidlər</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Home</a></li>
+                        <li><a class="footer-link" href="index.html" data-i18n="footer.home">Ana səhifə</a></li>
 
-                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Flights</a></li>
+                        <li><a class="footer-link" href="booking.html" data-i18n="footer.flights">Uçuşlar</a></li>
 
-                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">Destinations</a></li>
+                        <li><a class="footer-link" href="destinations.html" data-i18n="footer.destinations">İstiqamətlər</a></li>
 
-                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">About</a></li>
+                        <li><a class="footer-link" href="about.html" data-i18n="footer.about">Haqqımızda</a></li>
 
-                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">My Trips</a></li>
+                        <li><a class="footer-link" href="my-trips.html" data-i18n="footer.myTrips">Səyahətlərim</a></li>
 
                     </ul>
 
@@ -332,17 +331,17 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.support">Support</h2>
+                    <h2 class="footer-heading" data-i18n="footer.support">Dəstək</h2>
 
                     <ul class="footer-links">
 
-                        <li><a class="footer-link" href="support.html" data-i18n="footer.help">Help Center</a></li>
+                        <li><a class="footer-link" href="support.html" data-i18n="footer.help">Kömək mərkəzi</a></li>
 
-                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Contact Us</a></li>
+                        <li><a class="footer-link" href="support.html#contact" data-i18n="footer.contact">Əlaqə</a></li>
 
-                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Travel Information</a></li>
+                        <li><a class="footer-link" href="index.html#travel-info" data-i18n="footer.travelInfo">Səyahət məlumatı</a></li>
 
-                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">FAQs</a></li>
+                        <li><a class="footer-link" href="support.html#faq" data-i18n="footer.faqs">Suallar</a></li>
 
                     </ul>
 
@@ -352,7 +351,7 @@
 
                 <div class="footer-column">
 
-                    <h2 class="footer-heading" data-i18n="footer.followUs">Follow Us</h2>
+                    <h2 class="footer-heading" data-i18n="footer.followUs">Bizi izləyin</h2>
 
                     <ul class="social-list">
 
@@ -446,13 +445,13 @@
 
         <div class="footer-bottom">
 
-            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. All rights reserved.</p>
+            <p class="footer-copyright" data-i18n="footer.copyright">© 2026 AEROVA. Bütün hüquqlar qorunur.</p>
 
             <ul class="footer-legal">
 
-                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Privacy Policy</a></li>
+                <li><a class="footer-legal-link" href="index.html#privacy" data-i18n="footer.privacy">Məxfilik siyasəti</a></li>
 
-                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Terms &amp; Conditions</a></li>
+                <li><a class="footer-legal-link" href="index.html#terms" data-i18n="footer.terms">Şərtlər və qaydalar</a></li>
 
             </ul>
 
@@ -462,21 +461,19 @@
 
 
 
-        <script src="assets/js/locales/en.js"></script>
-    <script src="assets/js/locales/az.js"></script>
-    <script src="assets/js/locales/ru.js"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/api-config.js?v=base1"></script>
-    <script src="assets/js/api-client.js?v=stay1"></script>
-    <script src="assets/js/airports.js"></script>
-    <script src="assets/js/flights-api.js?v=multi1"></script>
-    <script src="assets/js/chat-widget.js"></script>
-    <script src="assets/js/auth.js?v=stay1"></script>
+    <script src="assets/js/locales/az.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=az1"></script>
+    <script src="assets/js/api-config.js?v=az1"></script>
+    <script src="assets/js/api-client.js?v=az1"></script>
+    <script src="assets/js/airports.js?v=az1"></script>
+    <script src="assets/js/flights-api.js?v=az1"></script>
+    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/auth.js?v=az1"></script>
 
-    <script src="assets/js/journey.js?v=mix1"></script>
-    <script src="assets/js/flight-results.js?v=voice3"></script>
+    <script src="assets/js/journey.js?v=az1"></script>
+    <script src="assets/js/flight-results.js?v=az1"></script>
 
-    <script src="assets/js/logo.js?v=thru1"></script>
+    <script src="assets/js/logo.js?v=az1"></script>
 
 </body>
 
