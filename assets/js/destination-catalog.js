@@ -114,18 +114,28 @@
     }
 
     /*
-     * The flight results from the home base to an airport of the city: every real flight of the next three months, nothing else. The airports are
+     * The flight results from the home base to an airport of the city: every real flight of the next 61 days (the search allows at most 62), nothing else. The airports are
      * named by their IATA codes, so a city with several airports shows the one that was chosen.
      */
-    function resultsUrl(city, airport) {
+    function resultsUrl(city, airport, country) {
         var target = airport || bookableAirport(city);
         var from = new Date();
-        var to = new Date(from.getTime() + 90 * 24 * 3600 * 1000);
+        var to = new Date(from.getTime() + 60 * 24 * 3600 * 1000);
+        var here = new URLSearchParams(window.location.search);
         var params = new URLSearchParams({
             tripType: "oneway", passengers: "1", adults: "1", children: "0", infants: "0",
             from: hub ? hub.city.name : "Baku", to: city.name,
             fromCode: hub ? hub.airport.code : "GYD", toCode: target ? target.code : "",
             dateFrom: isoDay(from), dateTo: isoDay(to), defaultPeriod: "1"
+        });
+        // The airports are named by id as well as by code, like the search form does; the city and country are kept for the way back.
+        if (hub && hub.airport.id) params.set("fromAirportId", String(hub.airport.id));
+        if (target && target.id) params.set("toAirportId", String(target.id));
+        if (city.id) params.set("cityId", String(city.id));
+        if (country && country.code) params.set("countryCode", country.code);
+        // A search that was already made keeps its travellers and cabin; nothing is invented when there was none.
+        ["passengers", "adults", "children", "infants", "cabinClass"].forEach(function (key) {
+            if (here.get(key)) params.set(key, here.get(key));
         });
         return "flight-results.html?" + params.toString();
     }
@@ -151,7 +161,7 @@
         return tr("destinations.photoAlt", "{city}, {country}", { city: localized(city, "name"), country: localized(country, "name") });
     }
 
-    /* The card, the one component of every gallery. options.booking adds a Book Ticket action (switched off when the city has no flights). */
+    /* The card, the one component of every gallery. options.booking adds a Book Ticket action; a city without flights opens the results with their empty state. */
     function cardMarkup(country, city, options) {
         options = options || {};
         var base = imageBase(city, country);
@@ -163,9 +173,7 @@
         var book = "";
 
         if (options.booking) {
-            book = flights
-                ? '<a class="destination-book destination-book--ghost" href="' + escapeHtml(resultsUrl(city)) + '">' + escapeHtml(tr("destinations.bookTicket", "Book Ticket")) + "</a>"
-                : '<span class="destination-book destination-book--ghost is-disabled" aria-disabled="true">' + escapeHtml(tr("destinations.bookTicket", "Book Ticket")) + "</span>";
+            book = '<a class="destination-book destination-book--ghost" href="' + escapeHtml(resultsUrl(city, null, country)) + '">' + escapeHtml(tr("destinations.bookTicket", "Book Ticket")) + "</a>";
         }
 
         return '<article class="destination-card" data-city="' + escapeHtml(city.id) + '" data-country="' + escapeHtml(country.code) + '"' + (flights ? "" : ' data-no-flights="true"') + ">" +
