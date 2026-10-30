@@ -984,6 +984,13 @@ function tr(key, fallback, vars) {
     }
 
     function cityCode(city) {
+        var inputs = [bookingFrom, bookingTo];
+        for (var i = 0; i < inputs.length; i += 1) {
+            var picked = window.AEROVA_PICKER && window.AEROVA_PICKER.selection(inputs[i]);
+            if (picked && picked.airport.city === city) {
+                return picked.airport.code;
+            }
+        }
         var airport = window.AEROVA_AIRPORTS.find(calendarAirports, city);
         return airport ? airport.code : "";
     }
@@ -1088,12 +1095,24 @@ function tr(key, fallback, vars) {
         calendarTo.innerHTML = options;
     }
 
+    /* The city of the airport an input holds: what the picker chose ("Paris, France (CDG)"), or the plain city name typed into it. */
+    function chosenCity(input) {
+        var picked = window.AEROVA_PICKER && window.AEROVA_PICKER.selection(input);
+        return picked ? picked.airport.city : findCityMatch(input.value);
+    }
+
+    /* The home base is the calendar's starting departure; with no destination chosen yet the calendar only shows a route, it never fills one in. */
+    function homeBaseCity() {
+        var hub = calendarAirports.filter(function (airport) { return airport.isHub; })[0];
+        return hub ? hub.city : (CALENDAR_CITIES[0] || "");
+    }
+
     function syncSelectsFromBooking() {
-        var fromMatch = findCityMatch(bookingFrom.value) || "Baku";
-        var toMatch = findCityMatch(bookingTo.value) || "London";
+        var fromMatch = chosenCity(bookingFrom) || homeBaseCity();
+        var toMatch = chosenCity(bookingTo) || firstOtherCity(fromMatch);
 
         if (fromMatch === toMatch) {
-            toMatch = fromMatch === "London" ? "Paris" : "London";
+            toMatch = firstOtherCity(fromMatch);
         }
 
         syncing = true;
@@ -1102,21 +1121,30 @@ function tr(key, fallback, vars) {
         syncing = false;
     }
 
+    function airportCodeOfCity(city, input) {
+        var picked = window.AEROVA_PICKER && window.AEROVA_PICKER.selection(input);
+        if (picked && picked.airport.city === city) {
+            return picked.airport.code;
+        }
+        var airport = window.AEROVA_AIRPORTS.find(calendarAirports, city);
+        return airport ? airport.code : "";
+    }
+
     function syncBookingFromCalendar() {
         if (syncing) {
             return;
         }
 
+        var pairs = [[calendarFrom, bookingFrom], [calendarTo, bookingTo]];
         syncing = true;
-        if (calendarFrom.value) {
-            bookingFrom.value = calendarFrom.value;
-            bookingFrom.classList.remove("is-invalid");
-        }
-        if (calendarTo.value) {
-            bookingTo.value = calendarTo.value;
-            bookingTo.classList.remove("is-invalid");
-        }
-        syncing = false;
+        Promise.all(pairs.map(function (pair) {
+            var city = pair[0].value;
+            if (!city || chosenCity(pair[1]) === city) {
+                return null;
+            }
+            var code = airportCodeOfCity(city, pair[1]);
+            return code && window.AEROVA_PICKER ? window.AEROVA_PICKER.set(pair[1], code).then(function () { pair[1].classList.remove("is-invalid"); }) : null;
+        })).then(function () { syncing = false; }, function () { syncing = false; });
     }
 
     function persistSelection() {
@@ -1486,7 +1514,6 @@ function tr(key, fallback, vars) {
         bookingDeparture.value = isoDate;
         bookingDeparture.classList.remove("is-invalid");
         syncing = false;
-        syncBookingFromCalendar();
         ensureReturnStillValid();
         refreshReturnPrice();
 
@@ -1524,7 +1551,6 @@ function tr(key, fallback, vars) {
         bookingReturn.value = isoDate;
         bookingReturn.classList.remove("is-invalid");
         syncing = false;
-        syncBookingFromCalendar();
         persistSelection();
         renderCalendar();
     }
@@ -1551,8 +1577,10 @@ function tr(key, fallback, vars) {
         return "";
     }
 
-    function handleRouteChange() {
-        syncBookingFromCalendar();
+    function handleRouteChange(fromCalendarLists) {
+        if (fromCalendarLists) {
+            syncBookingFromCalendar();
+        }
         refreshDeparturePrice();
         ensureReturnStillValid();
         refreshReturnPrice();
@@ -1597,14 +1625,14 @@ function tr(key, fallback, vars) {
             if (calendarFrom.value === calendarTo.value) {
                 calendarTo.value = firstOtherCity(calendarFrom.value);
             }
-            handleRouteChange();
+            handleRouteChange(true);
         });
 
         calendarTo.addEventListener("change", function () {
             if (calendarTo.value === calendarFrom.value) {
                 calendarFrom.value = firstOtherCity(calendarTo.value);
             }
-            handleRouteChange();
+            handleRouteChange(true);
         });
 
         prevMonthButton.addEventListener("click", function () {
@@ -1637,6 +1665,9 @@ function tr(key, fallback, vars) {
 
         bookingFrom.addEventListener("change", onBookingCityEdit);
         bookingTo.addEventListener("change", onBookingCityEdit);
+        // The picker announces the airport the traveller chose; the calendar then shows that route.
+        bookingFrom.addEventListener("aerova:airportchange", onBookingCityEdit);
+        bookingTo.addEventListener("aerova:airportchange", onBookingCityEdit);
         bookingFrom.addEventListener("blur", onBookingCityEdit);
         bookingTo.addEventListener("blur", onBookingCityEdit);
 
@@ -1706,13 +1737,6 @@ function tr(key, fallback, vars) {
         }
 
         syncSelectsFromBooking();
-
-        if (!bookingFrom.value) {
-            bookingFrom.value = calendarFrom.value;
-        }
-        if (!bookingTo.value) {
-            bookingTo.value = calendarTo.value;
-        }
 
         refreshDeparturePrice();
         ensureReturnStillValid();
