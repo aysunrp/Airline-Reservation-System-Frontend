@@ -191,7 +191,7 @@
         code = problem.code;
       }
       // Booking before the address is confirmed: shown in the page language.
-      if (/confirm your email address before booking/i.test(detail)) {
+      if (/confirm your email address before booking|e-poçt ünvanınızı təsdiqləyin/i.test(detail)) {
         code = "emailNotVerified";
         message = tr("emailNotVerified");
       }
