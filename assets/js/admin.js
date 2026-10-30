@@ -848,6 +848,11 @@
         return (lang === "az" ? item.nameAz : lang === "ru" ? item.nameRu : item.name) || item.name;
     }
 
+    function destinationEdit(kind, item) {
+        return '<button class="admin-btn admin-btn--ghost" type="button" data-destination-edit="' + kind + '" data-destination-id="' + item.id + '">' +
+            escapeHtml(tr("admin.edit", "Edit")) + "</button>";
+    }
+
     function destinationToggle(kind, item) {
         var label = item.isActive ? tr("api.admin.destDeactivate", "Deactivate") : tr("api.admin.destActivate", "Activate");
         return '<button class="admin-btn admin-btn--ghost' + (item.isActive ? " admin-btn--danger-text" : "") + '" type="button" data-destination-toggle="' + kind +
@@ -858,13 +863,13 @@
         var rows = state.destinations || [];
         byId("destinations-body").innerHTML = rows.length ? rows.map(function (country) {
             var html = '<tr class="admin-row-group"><td><strong>' + escapeHtml(destinationName(country)) + "</strong> " + escapeHtml(country.code) +
-                "</td><td></td><td></td><td></td><td>" + activeBadge(country.isActive) + '</td><td><div class="admin-actions">' + destinationToggle("country", country) + "</div></td></tr>";
+                "</td><td></td><td></td><td></td><td>" + activeBadge(country.isActive) + '</td><td><div class="admin-actions">' + destinationEdit("country", country) + destinationToggle("country", country) + "</div></td></tr>";
             country.cities.forEach(function (city) {
                 var codes = city.airports.map(function (airport) { return airport.code; }).join(", ");
                 var flights = city.airports.some(function (airport) { return airport.hasRoutes; });
                 html += "<tr><td></td><td>" + escapeHtml(destinationName(city)) + "</td><td>" + escapeHtml(codes) + "</td><td>" +
                     escapeHtml(flights ? tr("api.admin.destYes", "Yes") : tr("api.admin.destNo", "None yet")) + "</td><td>" + activeBadge(city.isActive) +
-                    '</td><td><div class="admin-actions">' + destinationToggle("city", city) + "</div></td></tr>";
+                    '</td><td><div class="admin-actions">' + destinationEdit("city", city) + destinationToggle("city", city) + "</div></td></tr>";
             });
             return html;
         }).join("") : emptyRow(6, tr("api.admin.destEmpty", "The destination catalog is empty."));
@@ -1176,6 +1181,45 @@
     }
 
     var FORMS = {
+        destCountry: {
+            title: tr("api.admin.destCountry", "Country"),
+            path: "api/admin/destinations/countries",
+            fields: function () {
+                return [
+                    { key: "name", label: tr("api.admin.destNameEn", "Name (English)") },
+                    { key: "nameAz", label: tr("api.admin.destNameAz", "Name (Azerbaijani)") },
+                    { key: "nameRu", label: tr("api.admin.destNameRu", "Name (Russian)") },
+                    { key: "description", label: tr("api.admin.destDescEn", "Description (English)"), full: true },
+                    { key: "descriptionAz", label: tr("api.admin.destDescAz", "Description (Azerbaijani)"), full: true },
+                    { key: "descriptionRu", label: tr("api.admin.destDescRu", "Description (Russian)"), full: true }
+                ];
+            },
+            toForm: function (item) {
+                return { name: item.name, nameAz: item.nameAz, nameRu: item.nameRu, description: item.description, descriptionAz: item.descriptionAz, descriptionRu: item.descriptionRu };
+            },
+            toRequest: function (data) {
+                return { name: data.name, nameAz: data.nameAz, nameRu: data.nameRu, description: data.description, descriptionAz: data.descriptionAz, descriptionRu: data.descriptionRu };
+            },
+            reload: loadDestinations
+        },
+        destCity: {
+            title: tr("api.admin.destCity", "City"),
+            path: "api/admin/destinations/cities",
+            fields: function () {
+                return [
+                    { key: "nameAz", label: tr("api.admin.destNameAz", "Name (Azerbaijani)") },
+                    { key: "nameRu", label: tr("api.admin.destNameRu", "Name (Russian)") },
+                    { key: "aliases", label: tr("api.admin.destAliases", "Other spellings (separated by ;)"), full: true, required: false }
+                ];
+            },
+            toForm: function (item) {
+                return { nameAz: item.nameAz, nameRu: item.nameRu, aliases: (item.aliases || []).join("; ") };
+            },
+            toRequest: function (data) {
+                return { nameAz: data.nameAz, nameRu: data.nameRu, aliases: data.aliases };
+            },
+            reload: loadDestinations
+        },
         admin: {
             title: tr("api.admin.adminAccount", "Admin account"),
             path: "api/admin/users",
@@ -2390,6 +2434,18 @@
         });
 
         byId("destinations-body").addEventListener("click", function (event) {
+            var edit = event.target.closest("[data-destination-edit]");
+            if (edit) {
+                var kind = edit.getAttribute("data-destination-edit");
+                var item = null;
+                (state.destinations || []).forEach(function (country) {
+                    if (kind === "country" && String(country.id) === edit.getAttribute("data-destination-id")) item = country;
+                    country.cities.forEach(function (city) { if (kind === "city" && String(city.id) === edit.getAttribute("data-destination-id")) item = city; });
+                });
+                if (item) openEntityForm(kind === "country" ? FORMS.destCountry : FORMS.destCity, item);
+                return;
+            }
+
             var button = event.target.closest("[data-destination-toggle]");
             if (button) toggleDestination(button.getAttribute("data-destination-toggle"), button.getAttribute("data-destination-id"));
         });
