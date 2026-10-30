@@ -172,9 +172,9 @@ def family(c):
     h, l, s = hls(c)
     if c[3] == 0:
         return "none"
-    if 28 <= h <= 52 and s > 0.38 and 0.3 < l < 0.82 and not (l > 0.8):
+    if 14 <= h <= 52 and s > 0.3 and 0.28 < l < 0.82:
         return "gold"
-    if l < 0.2 and (190 <= h <= 260 or s < 0.15):
+    if l < 0.2 and (190 <= h <= 260 or s < 0.2):
         return "navy"
     if l < 0.2 and s < 0.5:
         return "navy"
@@ -186,9 +186,9 @@ def family(c):
 
 
 # Light palette (anchors)
-L = dict(bg=(247, 243, 234), surface=(255, 254, 250), alt=(242, 236, 224), sunken=(235, 227, 211), text=(14, 26, 44), gold_text=(133, 104, 50))
+L = dict(bg=(245, 241, 234), surface=(255, 253, 250), alt=(238, 232, 221), sunken=(232, 225, 211), text=(22, 22, 24), gold_text=(143, 79, 39))
 # Dark palette (anchors)
-D = dict(bg=(7, 17, 29), surface=(16, 30, 48), alt=(11, 22, 36), sunken=(5, 12, 22), text=(246, 241, 231))
+D = dict(bg=(20, 20, 22), surface=(33, 34, 37), alt=(25, 26, 28), sunken=(16, 16, 17), text=(246, 241, 231))
 
 
 def navy_to_light(c):
@@ -287,7 +287,7 @@ def map_color(c, cls, target):
             return None
         if fam == "gold":
             if cls in ("text", "fill") and l < 0.5:
-                return to_css((224, 196, 138), a)
+                return to_css((211, 138, 91), a)
             return None
         if fam == "chroma":
             if cls in ("text", "fill") and l < 0.5:
@@ -357,8 +357,8 @@ def text_kind(decls):
 
 
 ANCH = {
-    "light": {"#f7f3ea": "var(--color-background)", "#fffefa": "var(--color-surface)", "#f2ece0": "var(--color-surface-alt)", "#ebe3d3": "var(--color-surface-sunken)", "#0e1a2c": "var(--color-text)", "#856832": "var(--color-accent-strong)"},
-    "dark": {"#07111d": "var(--color-background)", "#101e30": "var(--color-surface)", "#0b1624": "var(--color-surface-alt)", "#050c16": "var(--color-surface-sunken)", "#f6f1e7": "var(--color-text)"},
+    "light": {"#f5f1ea": "var(--color-background)", "#fffdfa": "var(--color-surface)", "#eee8dd": "var(--color-surface-alt)", "#e8e1d3": "var(--color-surface-sunken)", "#161618": "var(--color-text)", "#8f4f27": "var(--color-accent-strong)"},
+    "dark": {"#141416": "var(--color-background)", "#212225": "var(--color-surface)", "#191a1c": "var(--color-surface-alt)", "#101011": "var(--color-surface-sunken)", "#f6f1e7": "var(--color-text)"},
 }
 
 
@@ -457,15 +457,15 @@ def flip_rule(selector, decls, target, force=False):
         nv, ch = rewrite_value(p, v, cls, target)
         if ch:
             new.append((p, nv))
-    return new or None
+    return new or gold_text_only(selector, decls, target)
 
 
 def gold_text_only(selector, decls, target):
-    """light theme: the pale gold of a plain text rule is too faint on cream"""
-    if target != "light" or (SKIP_SEL and SKIP_SEL.search(selector)):
+    """the accent used as plain text: deeper copper on ivory, lighter copper on charcoal"""
+    if SKIP_SEL and SKIP_SEL.search(selector):
         return None
     for p, v in decls:
-        if p.lower().startswith("background") and any(c and family(c) == "gold" for _, c in decl_colors(p, v)):
+        if p.lower().startswith("background") and any(c and family(c) == "gold" and c[3] >= 0.5 for _, c in decl_colors(p, v)):
             return None
         if p.lower().startswith("background") and "url(" in v:
             return None
@@ -473,9 +473,17 @@ def gold_text_only(selector, decls, target):
     for p, v in decls:
         if p.lower() == "color":
             for tok, c in decl_colors(p, v):
-                if c and family(c) == "gold" and hls(c)[1] > 0.45:
-                    res.append((p, ANCH["light"].get(to_css(L["gold_text"], c[3]), to_css(L["gold_text"], c[3]))))
-                    break
+                if not c or family(c) != "gold":
+                    continue
+                l = hls(c)[1]
+                if target == "light" and l > 0.45:
+                    out = to_css(L["gold_text"], c[3])
+                elif target == "dark" and l < 0.5:
+                    out = to_css((211, 138, 91), c[3])
+                else:
+                    continue
+                res.append((p, ANCH[target].get(out, out)))
+                break
     return res or None
 
 
