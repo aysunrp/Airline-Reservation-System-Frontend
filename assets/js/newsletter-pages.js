@@ -28,11 +28,6 @@
         return value && value !== key ? value : fallback;
     }
 
-    function language() {
-        var i18n = window.AEROVA_I18N;
-        return i18n && typeof i18n.getLanguage === "function" ? i18n.getLanguage() : "en";
-    }
-
     var token = new URLSearchParams(window.location.search).get("token") || "";
     // The link is spent from the address bar at once, so it is not left in the history or shown over a shoulder.
     try {
@@ -69,19 +64,19 @@
         var unreachable = !error || !error.status;
 
         if (unreachable) {
-            setState("error", "newsletter.errorTitle", "We could not confirm your subscription", "newsletter.unreachable", "We could not reach the server. Please try again in a moment.");
+            setState("error", "newsletter.errorTitle", "Abunəliyi təsdiqləmək alınmadı", "newsletter.unreachable", "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin.");
             home.hidden = false;
             return;
         }
 
         if (error.status === 429) {
-            setState("error", "newsletter.errorTitle", "We could not confirm your subscription", "newsletter.busy", "Too many requests. Please wait a moment and try again.");
+            setState("error", "newsletter.errorTitle", "Abunəliyi təsdiqləmək alınmadı", "newsletter.busy", "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.");
             home.hidden = false;
             return;
         }
 
-        setState("error", expired ? "newsletter.expiredTitle" : "newsletter.invalidTitle", expired ? "This link has expired" : "This link is not valid",
-            "newsletter.invalidText", "The confirmation link is invalid or has expired. Enter your email address and we will send a new one.");
+        setState("error", expired ? "newsletter.expiredTitle" : "newsletter.invalidTitle", expired ? "Bu keçidin vaxtı bitib" : "Keçid etibarsızdır",
+            "newsletter.invalidText", "Təsdiq keçidi etibarsızdır və ya müddəti bitib. E-poçt ünvanınızı daxil edin, yeni keçid göndərək.");
         form.hidden = false;
         home.hidden = false;
     }
@@ -92,10 +87,10 @@
             return;
         }
 
-        setState("loading", "newsletter.confirmingTitle", "Confirming your subscription", "newsletter.confirming", "One moment...");
+        setState("loading", "newsletter.confirmingTitle", "Abunəliyiniz təsdiqlənir", "newsletter.confirming", "Bir anlıq...");
 
         window.AEROVA_API.post("api/newsletter/confirm", { token: token }).then(function () {
-            setState("success", "newsletter.confirmedTitle", "Subscription confirmed", "newsletter.confirmed", "Your subscription is confirmed. You will receive AEROVA news.");
+            setState("success", "newsletter.confirmedTitle", "Abunəlik təsdiqləndi", "newsletter.confirmed", "Abunəliyiniz təsdiqləndi. AEROVA yeniliklərini alacaqsınız.");
             home.hidden = false;
         }, failedConfirmation);
     }
@@ -107,7 +102,7 @@
             var email = emailInput.value.trim();
 
             if (!emailPattern.test(email)) {
-                emailError.textContent = say("home.newsletterError", "Please enter a valid email address.");
+                emailError.textContent = say("home.newsletterError", "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin.");
                 emailError.hidden = false;
                 return;
             }
@@ -115,16 +110,16 @@
             againButton.disabled = true;
             showFeedback("");
 
-            window.AEROVA_API.post("api/newsletter/subscribe", { email: email, language: language() }).then(function () {
+            window.AEROVA_API.post("api/newsletter/subscribe", { email: email, language: "az" }).then(function () {
                 form.hidden = true;
-                showFeedback(say("newsletter.sentAgain", "A new confirmation link was sent to your email address."));
+                showFeedback(say("newsletter.sentAgain", "Yeni təsdiq linki e-poçt ünvanınıza göndərildi."));
             }, function (error) {
                 againButton.disabled = false;
                 var text = error && error.status === 503
-                    ? say("newsletter.unavailable", "We cannot send the e-mail right now. Please try again later.")
+                    ? say("newsletter.unavailable", "E-poçtu hazırda göndərə bilmirik. Zəhmət olmasa bir az sonra yenidən cəhd edin.")
                     : error && error.status === 429
-                        ? say("newsletter.busy", "Too many requests. Please wait a moment and try again.")
-                        : say("newsletter.unreachable", "We could not reach the server. Please try again in a moment.");
+                        ? say("newsletter.busy", "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.")
+                        : say("newsletter.unreachable", "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin.");
                 showFeedback(text);
             });
         });
@@ -134,12 +129,12 @@
 
     function unsubscribeReady() {
         if (!token) {
-            setState("error", "newsletter.invalidTitle", "This link is not valid", "newsletter.unsubscribeInvalid", "This unsubscribe link is not valid.");
+            setState("error", "newsletter.invalidTitle", "Keçid etibarsızdır", "newsletter.unsubscribeInvalid", "Bu abunəlikdən çıxma keçidi etibarsızdır.");
             home.hidden = false;
             return;
         }
 
-        setState("mail", "newsletter.unsubscribeTitle", "Unsubscribe from AEROVA news", "newsletter.unsubscribeText", "Press the button to stop receiving AEROVA news at this address.");
+        setState("mail", "newsletter.unsubscribeTitle", "AEROVA yeniliklərindən çıxın", "newsletter.unsubscribeText", "Bu ünvana AEROVA yeniliklərinin gəlməsini dayandırmaq üçün düyməyə basın.");
         unsubscribeButton.hidden = false;
     }
 
@@ -147,31 +142,30 @@
         unsubscribeButton.addEventListener("click", function () {
             unsubscribeButton.disabled = true;
             showFeedback("");
-            setState("loading", "newsletter.unsubscribingTitle", "Unsubscribing", "newsletter.confirming", "One moment...");
+            setState("loading", "newsletter.unsubscribingTitle", "Abunəlikdən çıxılır", "newsletter.confirming", "Bir anlıq...");
 
             window.AEROVA_API.post("api/newsletter/unsubscribe", { token: token }).then(function () {
                 unsubscribeButton.hidden = true;
-                setState("success", "newsletter.unsubscribedTitle", "You are unsubscribed", "newsletter.unsubscribed", "You will not receive AEROVA news at this address any more. You can subscribe again at any time.");
+                setState("success", "newsletter.unsubscribedTitle", "Abunəlikdən çıxdınız", "newsletter.unsubscribed", "Bu ünvana artıq AEROVA yenilikləri göndərilməyəcək. İstədiyiniz vaxt yenidən abunə ola bilərsiniz.");
                 home.hidden = false;
             }, function (error) {
                 unsubscribeButton.disabled = false;
                 unsubscribeButton.hidden = false;
                 if (error && error.status === 422) {
                     unsubscribeButton.hidden = true;
-                    setState("error", "newsletter.invalidTitle", "This link is not valid", "newsletter.unsubscribeInvalid", "This unsubscribe link is not valid.");
+                    setState("error", "newsletter.invalidTitle", "Keçid etibarsızdır", "newsletter.unsubscribeInvalid", "Bu abunəlikdən çıxma keçidi etibarsızdır.");
                     home.hidden = false;
                     return;
                 }
 
-                setState("mail", "newsletter.unsubscribeTitle", "Unsubscribe from AEROVA news", "newsletter.unsubscribeText", "Press the button to stop receiving AEROVA news at this address.");
+                setState("mail", "newsletter.unsubscribeTitle", "AEROVA yeniliklərindən çıxın", "newsletter.unsubscribeText", "Bu ünvana AEROVA yeniliklərinin gəlməsini dayandırmaq üçün düyməyə basın.");
                 showFeedback(error && error.status === 429
-                    ? say("newsletter.busy", "Too many requests. Please wait a moment and try again.")
-                    : say("newsletter.unreachable", "We could not reach the server. Please try again in a moment."));
+                    ? say("newsletter.busy", "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.")
+                    : say("newsletter.unreachable", "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin."));
             });
         });
     }
 
-    window.addEventListener("aerova:languagechange", paint);
 
     if (mode === "confirm") {
         confirm();

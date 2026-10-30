@@ -19,13 +19,6 @@
             : fallback;
     }
 
-    function monthName(index) {
-        var key = "common.months." + String(index + 1);
-        var translated = tr(key, "");
-        if (translated && translated !== key) return translated;
-        return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][index];
-    }
-
     function escapeHtml(value) {
         return String(value)
             .replace(/&/g, "&amp;")
@@ -45,7 +38,7 @@
         if (parts.length !== 3) {
             return "—";
         }
-        return Number(parts[2]) + " " + monthName(Number(parts[1]) - 1) + " " + parts[0];
+        return parts[2].padStart(2, "0") + "." + parts[1].padStart(2, "0") + "." + parts[0];
     }
 
     function durationLabel(minutes) {
@@ -70,24 +63,24 @@
         var key = refundKey(status);
         var value = Number(amount);
         var shown = key !== "notEligible" && isFinite(value) && value > 0;
-        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible", failed: "Failed", cancelled: "Cancelled" }[key];
+        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Uyğun deyil", failed: "Failed", cancelled: "Cancelled" }[key];
         var problem = key === "failed" || key === "cancelled";
 
         return (
             '<p class="trip-card-refund">' +
-                '<span class="trip-card-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Refund status")) + "</span>" +
+                '<span class="trip-card-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Geri ödəniş statusu")) + "</span>" +
                 '<span class="trip-card-refund-status trip-card-refund-status--' + key + '">' + escapeHtml(tr("cancellation.status." + key, fallback)) + "</span>" +
                 (shown ? '<span class="trip-card-refund-amount">' + escapeHtml(value.toFixed(2) + " " + String(currency || "USD").toUpperCase()) + "</span>" : "") +
                 (demo ? '<span class="trip-card-refund-demo">' + escapeHtml(tr("cancellation.demoTag", "Demo")) + "</span>" : "") +
-                (problem ? '<span class="trip-card-refund-note">' + escapeHtml(tr("cancellation.tripNoteFailed", "Contact AEROVA support")) + "</span>" : "") +
+                (problem ? '<span class="trip-card-refund-note">' + escapeHtml(tr("cancellation.tripNoteFailed", "AEROVA dəstəyinə müraciət edin")) + "</span>" : "") +
             "</p>"
         );
     }
 
     function statusLabel(status) {
-        if (status === "Cancelled") return tr("common.statusCancelled", "Cancelled");
-        if (status === "Completed") return tr("api.trips.statusCompleted", "Completed");
-        return tr("common.statusConfirmed", "Confirmed");
+        if (status === "Cancelled") return tr("common.statusCancelled", "Ləğv edilib");
+        if (status === "Completed") return tr("api.trips.statusCompleted", "Tamamlandı");
+        return tr("common.statusConfirmed", "Təsdiqlənib");
     }
 
     /* A booking summary from the API, with times shown at each airport. */
@@ -131,33 +124,33 @@
                     '<div class="trip-card-identity">' +
                         '<p class="trip-card-airline">AEROVA</p>' +
                         '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
-                        '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Flight " + card.flightNumber, { number: card.flightNumber })) + "</p>" +
+                        '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Uçuş {number}", { number: card.flightNumber })) + "</p>" +
                         card.extraFlights.map(function (other, index) {
                             return '<p class="trip-card-flight">' + escapeHtml(card.multiCity
-                                ? tr("api.journey.tripLegLine", "Flight {n}: {flight}, {route}", { n: index + 2, flight: other.flight, route: other.route })
-                                : tr("api.journey.returnTripLine", "Return {flight}, {route}", { flight: other.flight, route: other.route })) + "</p>";
+                                ? tr("api.journey.tripLegLine", "Reys {n}: {flight}, {route}", { n: index + 2, flight: other.flight, route: other.route })
+                                : tr("api.journey.returnTripLine", "Qayıdış {flight}, {route}", { flight: other.flight, route: other.route })) + "</p>";
                         }).join("") +
                     "</div>" +
                     '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +
                 "</div>" +
                 '<dl class="trip-card-meta">' +
-                    meta(tr("trips.bookingReference", "Booking Reference"), booking.pnr) +
-                    meta(tr("trips.flightDate", "Flight Date"), formatDisplayDate(card.date)) +
-                    meta(tr("trips.departure", "Departure"), card.departure) +
-                    meta(tr("trips.arrival", "Arrival"), card.arrival) +
-                    meta(tr("trips.duration", "Duration"), card.duration) +
-                    meta(tr("trips.aircraft", "Aircraft"), card.aircraft) +
-                    meta(tr("trips.cabinClass", "Cabin Class"), booking.legs[0].cabinClass) +
-                    meta(tr("trips.passengerCount", "Passenger Count"), String(booking.passengerCount)) +
-                    meta(tr("trips.selectedSeats", "Selected Seats"), card.seats) +
+                    meta(tr("trips.bookingReference", "Bron istinadı"), booking.pnr) +
+                    meta(tr("trips.flightDate", "Uçuş tarixi"), formatDisplayDate(card.date)) +
+                    meta(tr("trips.departure", "Gediş"), card.departure) +
+                    meta(tr("trips.arrival", "Gəliş"), card.arrival) +
+                    meta(tr("trips.duration", "Müddət"), card.duration) +
+                    meta(tr("trips.aircraft", "Təyyarə"), card.aircraft) +
+                    meta(tr("trips.cabinClass", "Salon sinfi"), booking.legs[0].cabinClass) +
+                    meta(tr("trips.passengerCount", "Sərnişin sayı"), String(booking.passengerCount)) +
+                    meta(tr("trips.selectedSeats", "Seçilmiş oturacaqlar"), card.seats) +
                 "</dl>" +
                 (cancelled ? buildRefundMarkup(booking.refundStatus, booking.refundIsDemo, booking.refundAmount, booking.refundCurrency) : "") +
                 '<div class="trip-card-footer">' +
                     '<div class="trip-card-price">' +
-                        '<p class="trip-card-price-label">' + tr("trips.total", "Total") + "</p>" +
+                        '<p class="trip-card-price-label">' + tr("trips.total", "Cəmi") + "</p>" +
                         '<p class="trip-card-price-value">' + escapeHtml(formatPrice(booking.totalAmount)) + "</p>" +
                     "</div>" +
-                    '<a class="trip-card-button" href="booking-details.html?pnr=' + encodeURIComponent(booking.pnr) + '">' + tr("trips.viewDetails", "View Details") + "</a>" +
+                    '<a class="trip-card-button" href="booking-details.html?pnr=' + encodeURIComponent(booking.pnr) + '">' + tr("trips.viewDetails", "Ətraflı bax") + "</a>" +
                 "</div>" +
             "</article>"
         );
@@ -248,7 +241,7 @@
     function load() {
         var token = ++loadToken;
 
-        showStatus("loading", tr("api.trips.loadingTitle", "Loading your trips"), tr("api.trips.loadingText", "Please wait a moment."), []);
+        showStatus("loading", tr("api.trips.loadingTitle", "Səyahətləriniz yüklənir"), tr("api.trips.loadingText", "Zəhmət olmasa bir az gözləyin."), []);
 
         Promise.all([window.AEROVA_AIRPORTS.load(), window.AEROVA_API.get("api/bookings/my")]).then(function (results) {
             if (token !== loadToken) {
@@ -268,17 +261,11 @@
             }
 
             // A rejected token already sent the visitor to the sign-in page (auth.js).
-            showStatus("error", tr("api.trips.errorTitle", "We could not load your trips"), isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), [
-                { label: tr("api.options.retry", "Try again"), onClick: load }
+            showStatus("error", tr("api.trips.errorTitle", "Səyahətlərinizi yükləmək mümkün olmadı"), isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), [
+                { label: tr("api.options.retry", "Yenidən cəhd et"), onClick: load }
             ]);
         });
     }
 
     document.addEventListener("DOMContentLoaded", load);
-    window.addEventListener("aerova:languagechange", function () {
-        if (state.trips.length || state.airports.length) {
-            try { render(); } catch (error) { /* the next load repaints */ }
-        }
-        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
-    });
 })();

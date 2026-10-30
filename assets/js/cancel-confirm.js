@@ -30,14 +30,14 @@
     }
 
     var TEXTS = {
-        ask: ["cancellation.confirmTitle", "Cancel your booking?", "cancellation.confirmText", "Your booking is only cancelled when you confirm below. Cancelling cannot be undone."],
-        working: ["cancellation.confirmWorkingTitle", "Cancelling your booking", "cancellation.confirmWorking", "Please wait a moment..."],
-        done: ["cancellation.confirmDoneTitle", "Booking cancelled", "cancellation.confirmDoneText", "Booking {pnr} has been cancelled. {refund}"],
-        expired: ["cancellation.confirmExpiredTitle", "This link has expired", "cancellation.confirmExpiredText", "Open your booking in AEROVA and ask to cancel it again; we will send a new link."],
-        used: ["cancellation.confirmUsedTitle", "This link was already used", "cancellation.confirmUsedText", "Open your booking in AEROVA and ask to cancel it again if you still want to."],
-        invalid: ["cancellation.confirmFailedTitle", "This link will not work", "cancellation.confirmInvalidText", "This link is invalid or has expired."],
-        blocked: ["cancellation.confirmFailedTitle", "This link will not work", "cancellation.confirmBlockedText", "This booking can no longer be cancelled."],
-        error: ["cancellation.confirmFailedTitle", "This link will not work", "api.errors.generic", "Something went wrong. Please try again."]
+        ask: ["cancellation.confirmTitle", "Rezervasiya ləğv edilsin?", "cancellation.confirmText", "Rezervasiyanız yalnız aşağıda təsdiqlədikdən sonra ləğv olunur. Ləğvi geri qaytarmaq olmur."],
+        working: ["cancellation.confirmWorkingTitle", "Rezervasiya ləğv edilir", "cancellation.confirmWorking", "Bir az gözləyin..."],
+        done: ["cancellation.confirmDoneTitle", "Rezervasiya ləğv edildi", "cancellation.confirmDoneText", "{pnr} rezervasiyası ləğv edildi. {refund}"],
+        expired: ["cancellation.confirmExpiredTitle", "Keçidin vaxtı bitib", "cancellation.confirmExpiredText", "AEROVA-da rezervasiyanızı açıb ləğvi yenidən istəyin; yeni keçid göndərəcəyik."],
+        used: ["cancellation.confirmUsedTitle", "Keçid artıq istifadə olunub", "cancellation.confirmUsedText", "Hələ də ləğv etmək istəyirsinizsə, AEROVA-da rezervasiyanızı açıb ləğvi yenidən istəyin."],
+        invalid: ["cancellation.confirmFailedTitle", "Bu keçid işləmir", "cancellation.confirmInvalidText", "Keçid etibarsızdır və ya vaxtı bitib."],
+        blocked: ["cancellation.confirmFailedTitle", "Bu keçid işləmir", "cancellation.confirmBlockedText", "Bu rezervasiyanı artıq ləğv etmək olmur."],
+        error: ["cancellation.confirmFailedTitle", "Bu keçid işləmir", "api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."]
     };
 
     function paint() {
@@ -68,10 +68,10 @@
     /* The sentence about the refund, from what the server recorded when it cancelled (never from this page). */
     function refundSentence(cancellation) {
         if (!cancellation || !(Number(cancellation.refundAmount) > 0) || cancellation.refundStatus === "NotEligible") {
-            return tr("cancellation.confirmNoRefund", "Under the fare rules no refund is due.");
+            return tr("cancellation.confirmNoRefund", "Tarif qaydalarına görə qaytarılacaq məbləğ yoxdur.");
         }
         var amount = Number(cancellation.refundAmount).toFixed(2) + " " + String(cancellation.currency || "USD").toUpperCase();
-        return tr("cancellation.confirmRefund", "A refund of {amount} has been requested to the card you paid with. We will e-mail you when it is confirmed; it is not paid back yet.", { amount: amount });
+        return tr("cancellation.confirmRefund", "{amount} məbləğinin ödəniş etdiyiniz karta qaytarılması üçün sorğu göndərilib. Təsdiqlənəndə sizə məktub yazacağıq; hələ heç nə qaytarılmayıb.", { amount: amount });
     }
 
     confirmButton.addEventListener("click", function () {
@@ -82,7 +82,7 @@
 
         confirmButton.disabled = true;
         show("working");
-        var language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
+        var language = "az";
         window.AEROVA_API.post("api/bookings/cancel-confirm", { token: token, language: language }).then(function (booking) {
             state.pnr = booking.pnr;
             state.refund = refundSentence(booking.cancellation);
@@ -95,7 +95,7 @@
                 state.refund = "";
                 token = "";
                 show("done");
-                message.textContent = tr("cancellation.confirmAlready", "This booking is already cancelled. Check My Trips for the refund status.");
+                message.textContent = tr("cancellation.confirmAlready", "Bu rezervasiya artıq ləğv edilib. Refund statusuna Səyahətlərim bölməsindən baxın.");
             } else if (reason === "link_expired") {
                 show("expired");
             } else if (reason === "link_used") {
@@ -111,7 +111,6 @@
         });
     });
 
-    window.addEventListener("aerova:languagechange", paint);
     token = takeToken();
     if (!token) {
         show("invalid");

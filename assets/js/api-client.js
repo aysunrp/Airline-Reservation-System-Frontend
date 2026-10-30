@@ -26,20 +26,20 @@
   /* ---------- translated messages ---------- */
 
   var FALLBACKS = {
-    network: "Cannot reach the server. Check your connection and try again.",
-    fileProtocol: "This page was opened as a file, so the browser blocks it from reaching the server. Open it at http://localhost:5500 instead.",
-    timeout: "The server took too long to answer. Please try again.",
-    invalid: "Some of the details are not valid. Please check them and try again.",
-    unauthorized: "Please sign in to continue.",
-    sessionExpired: "Your session has expired. Please sign in again.",
-    forbidden: "You do not have permission to do this.",
-    notFound: "We could not find what you were looking for.",
-    conflict: "This was changed by someone else. Please refresh and try again.",
-    businessRule: "This action is not allowed right now.",
-    emailNotVerified: "Please confirm your email address before booking. Open the link we sent you, or ask for a new one in your profile.",
-    rateLimited: "Too many requests. Please wait a moment and try again.",
-    server: "Something went wrong on our side. Please try again later.",
-    generic: "Something went wrong. Please try again."
+    network: "Serverlə əlaqə qurulmur. İnternet bağlantınızı yoxlayıb yenidən cəhd edin.",
+    fileProtocol: "Bu səhifə fayl kimi açılıb, ona görə brauzer onun serverə çatmasını bloklayır. Onu http://localhost:5500 ünvanından açın.",
+    timeout: "Server çox gec cavab verdi. Zəhmət olmasa yenidən cəhd edin.",
+    invalid: "Bəzi məlumatlar düzgün deyil. Zəhmət olmasa yoxlayıb yenidən cəhd edin.",
+    unauthorized: "Davam etmək üçün daxil olun.",
+    sessionExpired: "Sessiyanızın vaxtı bitib. Zəhmət olmasa yenidən daxil olun.",
+    forbidden: "Bu əməliyyat üçün icazəniz yoxdur.",
+    notFound: "Axtardığınız məlumat tapılmadı.",
+    conflict: "Bu məlumat başqası tərəfindən dəyişdirilib. Səhifəni yeniləyib yenidən cəhd edin.",
+    businessRule: "Bu əməliyyata hazırda icazə verilmir.",
+    emailNotVerified: "Rezervasiyadan əvvəl e-poçt ünvanınızı təsdiqləyin. Göndərdiyimiz keçidi açın və ya profilinizdən yenisini istəyin.",
+    rateLimited: "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.",
+    server: "Bizim tərəfdə xəta baş verdi. Zəhmət olmasa daha sonra yenidən cəhd edin.",
+    generic: "Xəta baş verdi. Yenidən cəhd edin."
   };
 
   function tr(name) {

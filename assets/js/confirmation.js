@@ -2,8 +2,8 @@
     "use strict";
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     function setText(id, value) {
@@ -48,7 +48,7 @@
             return String(dateValue);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function getPassengerName(passenger) {
@@ -258,7 +258,7 @@
         var card = document.querySelector('article[aria-labelledby="flight-details-title"]');
         var extra = bookingData.extraFlights || [];
         var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
-            return bookingData.multiCity ? tr("api.journey.flightTitle", "Flight {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Return Flight");
+            return bookingData.multiCity ? tr("api.journey.flightTitle", "Reys {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Qayıdış reysi");
         }) : [];
 
         copies.forEach(function (copy, index) {
@@ -349,7 +349,7 @@
         var skipButton = document.getElementById("save-passengers-skip");
 
         list.innerHTML = passengers.map(function (passenger, index) {
-            var hint = [passenger.dateOfBirth ? formatDisplayDate(passenger.dateOfBirth) : "", passenger.documentNumber ? tr("api.profile.documentSaved", "document saved") : ""].filter(Boolean).join(" \u00b7 ");
+            var hint = [passenger.dateOfBirth ? formatDisplayDate(passenger.dateOfBirth) : "", passenger.documentNumber ? tr("api.profile.documentSaved", "sənəd saxlanıb") : ""].filter(Boolean).join(" \u00b7 ");
             return '<li><label class="save-passengers-item"><input type="checkbox" data-index="' + index + '" checked>' +
                 "<span>" + escapeHtml(passenger.firstName + " " + passenger.lastName) + (hint ? "<small>" + escapeHtml(hint) + "</small>" : "") + "</span></label></li>";
         }).join("");
@@ -364,12 +364,12 @@
             var chosen = Array.prototype.map.call(list.querySelectorAll("input:checked"), function (box) { return passengers[Number(box.getAttribute("data-index"))]; });
 
             if (!chosen.length) {
-                setSaveMessage(tr("api.confirmation.selectOne", "Select at least one passenger."));
+                setSaveMessage(tr("api.confirmation.selectOne", "Ən azı bir sərnişin seçin."));
                 return;
             }
 
             saveButton.disabled = true;
-            setSaveMessage(tr("api.confirmation.saving", "Saving..."));
+            setSaveMessage(tr("api.confirmation.saving", "Saxlanılır..."));
 
             var failed = [];
             var saved = 0;
@@ -379,14 +379,14 @@
                 });
             }, Promise.resolve()).then(function () {
                 if (failed.length) {
-                    paintSaveCard(card, failed, tr("api.confirmation.saveError", "Some passengers could not be saved. You can try again or add them later in your profile."));
+                    paintSaveCard(card, failed, tr("api.confirmation.saveError", "Bəzi sərnişinləri saxlamaq mümkün olmadı. Yenidən cəhd edə və ya sonra profilinizdən əlavə edə bilərsiniz."));
                     return;
                 }
 
                 clearSavable();
                 list.hidden = true;
                 actions.hidden = true;
-                setSaveMessage(tr("api.confirmation.savedDone", "{count} passenger(s) saved to your profile.", { count: saved }));
+                setSaveMessage(tr("api.confirmation.savedDone", "{count} sərnişin profilinizə saxlanıldı.", { count: saved }));
             });
         };
 
@@ -428,13 +428,13 @@
         var paid = readPaid();
 
         if (!paid) {
-            showStatus(tr("api.confirmation.missingTitle", "No booking to show"), tr("api.confirmation.missingText", "Your booking could not be found on this device. Use Manage Booking with your reference and last name."), [
-                { label: tr("api.confirmation.manage", "Manage booking"), href: "manage-booking.html" }
+            showStatus(tr("api.confirmation.missingTitle", "Göstəriləcək rezervasiya yoxdur"), tr("api.confirmation.missingText", "Rezervasiyanız bu cihazda tapılmadı. Rezervasiya kodu və soyadınızla Rezervasiyanı idarə et bölməsindən istifadə edin."), [
+                { label: tr("api.confirmation.manage", "Rezervasiyanı idarə et"), href: "manage-booking.html" }
             ]);
             return;
         }
 
-        showStatus(tr("api.confirmation.loadingTitle", "Loading your booking"), tr("api.confirmation.loadingText", "Please wait a moment."), []);
+        showStatus(tr("api.confirmation.loadingTitle", "Rezervasiyanız yüklənir"), tr("api.confirmation.loadingText", "Zəhmət olmasa bir az gözləyin."), []);
 
         Promise.all([
             window.AEROVA_AIRPORTS.load(),
@@ -443,8 +443,8 @@
             var booking = results[1];
 
             if (booking.status !== "Confirmed" && booking.status !== "Completed") {
-                showStatus(tr("api.confirmation.notPaidTitle", "This booking is not confirmed"), tr("api.confirmation.notPaidText", "The payment for this booking was not completed."), [
-                    { label: tr("api.confirmation.backHome", "Back to Home"), href: "index.html" }
+                showStatus(tr("api.confirmation.notPaidTitle", "Bu rezervasiya təsdiqlənməyib"), tr("api.confirmation.notPaidText", "Bu rezervasiya üçün ödəniş tamamlanmayıb."), [
+                    { label: tr("api.confirmation.backHome", "Ana səhifəyə qayıt"), href: "index.html" }
                 ]);
                 return;
             }
@@ -460,8 +460,8 @@
                 window.console.error(error);
             }
 
-            showStatus(tr("api.confirmation.errorTitle", "We could not load your booking"), isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), [
-                { label: tr("api.confirmation.retry", "Try again"), onClick: load }
+            showStatus(tr("api.confirmation.errorTitle", "Rezervasiyanı yükləmək mümkün olmadı"), isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), [
+                { label: tr("api.confirmation.retry", "Yenidən cəhd et"), onClick: load }
             ], true);
         });
     }

@@ -2,8 +2,8 @@
     "use strict";
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     function getParams() {
@@ -28,7 +28,7 @@
             return String(value);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function readSearchCriteria() {
@@ -68,13 +68,6 @@
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
-    }
-
-    function currentLocale() {
-        var lang = window.AEROVA_I18N && typeof window.AEROVA_I18N.getLanguage === "function"
-            ? window.AEROVA_I18N.getLanguage()
-            : "en";
-        return { az: "az-Latn-AZ", ru: "ru-RU" }[lang] || "en-GB";
     }
 
     function formatDuration(totalMinutes) {
@@ -120,16 +113,7 @@
         if (!date) {
             return "";
         }
-        try {
-            return new Intl.DateTimeFormat(currentLocale(), {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-                timeZone: "UTC"
-            }).format(new Date(Date.UTC(date.y, date.m - 1, date.d)));
-        } catch (error) {
-            return formatDisplayDate(value);
-        }
+        return formatDisplayDate(value);
     }
 
     function dayDifference(fromDate, toDate) {
@@ -297,7 +281,7 @@
             return tr("results.nonstop", null, "Non-stop");
         }
         if (count === 1) {
-            return tr("results.oneStop", null, "1 Stop");
+            return tr("results.oneStop", null, "1 dayanacaq");
         }
         if (typeof count === "number") {
             return tr("results.stopsCount", { count: count }, count + " Stops");
@@ -369,9 +353,9 @@
 
             footer =
                 '<div class="journey-footer">' +
-                    '<p class="journey-total"><span>' + escapeHtml(tr("journey.total", null, "Total journey time")) + "</span> " + escapeHtml(formatDuration(total)) + "</p>" +
+                    '<p class="journey-total"><span>' + escapeHtml(tr("journey.total", null, "Ümumi səyahət müddəti")) + "</span> " + escapeHtml(formatDuration(total)) + "</p>" +
                     (segments.length === 1 ? '<p class="journey-direct">' + escapeHtml(tr("journey.direct", null, "Direct flight")) + "</p>" : "") +
-                    '<p class="journey-note">' + escapeHtml(tr("journey.localNote", null, "All times are local.")) + "</p>" +
+                    '<p class="journey-note">' + escapeHtml(tr("journey.localNote", null, "Bütün vaxtlar yerli vaxtdır.")) + "</p>" +
                 "</div>";
         } else {
             var origin = { code: flight.fromCode, city: flight.from };
@@ -386,7 +370,7 @@
             } else {
                 items.push(
                     '<li class="journey-unavailable" role="note">' +
-                        '<p class="journey-unavailable-title">' + escapeHtml(tr("journey.unavailable", null, "Stopover details unavailable")) + "</p>" +
+                        '<p class="journey-unavailable-title">' + escapeHtml(tr("journey.unavailable", null, "Aralıq dayanacaq məlumatı mövcud deyil")) + "</p>" +
                         '<p class="journey-unavailable-text">' + escapeHtml(tr("journey.unavailableText", null, "")) + "</p>" +
                     "</li>"
                 );
@@ -399,7 +383,7 @@
             footer =
                 '<div class="journey-footer">' +
                     (flight.stopsCount === 0 ? '<p class="journey-direct">' + escapeHtml(tr("journey.direct", null, "Direct flight")) + "</p>" : "") +
-                    '<p class="journey-note">' + escapeHtml(tr("journey.localNote", null, "All times are local.")) + "</p>" +
+                    '<p class="journey-note">' + escapeHtml(tr("journey.localNote", null, "Bütün vaxtlar yerli vaxtdır.")) + "</p>" +
                 "</div>";
         }
 
@@ -507,7 +491,7 @@
                 button.disabled = !available;
                 var key = available ? "results.selectFlight" : "api.details.cabinUnavailable";
                 button.setAttribute("data-i18n", key);
-                button.textContent = tr(key, null, available ? "Select Flight" : "Not available");
+                button.textContent = tr(key, null, available ? "Uçuşu seç" : "Mövcud deyil");
             }
         });
     }
@@ -550,7 +534,7 @@
             // Keep default.
         }
 
-        back.textContent = "← Back to flight results";
+        back.textContent = "← Uçuş nəticələrinə qayıt";
         intro.appendChild(back);
     }
 
@@ -575,7 +559,7 @@
         panel.innerHTML =
             '<h2 class="details-status-title">' + escapeHtml(tr(spec.titleKey, null, spec.titleFallback)) + "</h2>" +
             '<p class="details-status-text">' + escapeHtml(spec.text || tr(spec.textKey, null, spec.textFallback)) + "</p>" +
-            (spec.retry ? '<button type="button" class="select-flight-button details-retry">' + escapeHtml(tr("api.search.retry", null, "Try again")) + "</button>" : "");
+            (spec.retry ? '<button type="button" class="select-flight-button details-retry">' + escapeHtml(tr("api.search.retry", null, "Yenidən cəhd et")) + "</button>" : "");
 
         var retryButton = panel.querySelector(".details-retry");
         if (retryButton) {
@@ -604,11 +588,11 @@
         currentFlight = null;
 
         if (!flightId) {
-            setStatus({ kind: "notice", titleKey: "api.details.noFlightTitle", titleFallback: "No flight selected", textKey: "api.details.noFlightText", textFallback: "Choose a flight from the search results to see its details." });
+            setStatus({ kind: "notice", titleKey: "api.details.noFlightTitle", titleFallback: "Uçuş seçilməyib", textKey: "api.details.noFlightText", textFallback: "Təfərrüatlarını görmək üçün axtarış nəticələrindən uçuş seçin." });
             return;
         }
 
-        setStatus({ kind: "loading", titleKey: "api.details.loadingTitle", titleFallback: "Loading flight details", textKey: "api.details.loadingText", textFallback: "Please wait while we load this flight." });
+        setStatus({ kind: "loading", titleKey: "api.details.loadingTitle", titleFallback: "Uçuş məlumatları yüklənir", textKey: "api.details.loadingText", textFallback: "Zəhmət olmasa gözləyin, uçuş yüklənir." });
 
         window.AEROVA_FLIGHTS.get(flightId).then(function (page) {
             showFlight(toDetailsFlight(page));
@@ -616,7 +600,7 @@
             var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
 
             if (isApiError && error.status === 404) {
-                setStatus({ kind: "notice", titleKey: "api.details.notFoundTitle", titleFallback: "This flight is not available", textKey: "api.details.notFoundText", textFallback: "It may have been removed or changed. Please search again." });
+                setStatus({ kind: "notice", titleKey: "api.details.notFoundTitle", titleFallback: "Bu uçuş mövcud deyil", textKey: "api.details.notFoundText", textFallback: "O, silinmiş və ya dəyişdirilmiş ola bilər. Zəhmət olmasa yenidən axtarın." });
                 return;
             }
 
@@ -624,7 +608,7 @@
                 window.console.error(error);
             }
 
-            setStatus({ kind: "error", titleKey: "api.details.errorTitle", titleFallback: "We could not load this flight", text: isApiError ? error.userMessage : tr("api.errors.generic", null, "Something went wrong. Please try again."), retry: true });
+            setStatus({ kind: "error", titleKey: "api.details.errorTitle", titleFallback: "Bu uçuşu yükləmək mümkün olmadı", text: isApiError ? error.userMessage : tr("api.errors.generic", null, "Xəta baş verdi. Yenidən cəhd edin."), retry: true });
         });
     }
 
@@ -632,14 +616,6 @@
         ensureBackLink();
         bindFareButtons();
 
-        window.addEventListener("aerova:languagechange", function () {
-            if (currentFlight) {
-                renderFlight(currentFlight);
-                renderFares(currentFlight);
-            } else {
-                paintStatus();
-            }
-        });
 
         loadFlight();
     }

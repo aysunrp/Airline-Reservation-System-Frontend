@@ -248,8 +248,8 @@
         times: flight.departure + " → " + flight.arrival
       };
       line.textContent = multi
-        ? say("api.journey.legLine", "Flight {n}: {flight}, {route}, {date}, {times}", vars)
-        : say("api.journey.returnLine", "Return: {flight}, {route}, {date}, {times}", vars);
+        ? say("api.journey.legLine", "Reys {n}: {flight}, {route}, {date}, {times}", vars)
+        : say("api.journey.returnLine", "Qayıdış: {flight}, {route}, {date}, {times}", vars);
 
       after.parentNode.insertBefore(line, after.nextSibling);
       after = line;

@@ -34,9 +34,9 @@
 
     function messageFor(error) {
         if (api && error instanceof api.ApiError && error.status === 404) {
-            return tr("destinations.detailsNotFound", "This destination is not available.");
+            return tr("destinations.detailsNotFound", "Bu təyinat mövcud deyil.");
         }
-        return tr("destinations.detailsError", "We could not load this destination. Please try again.");
+        return tr("destinations.detailsError", "Bu təyinatı yükləmək mümkün olmadı. Yenidən cəhd edin.");
     }
 
     /* A UTC time as date and time at the airport (its own time zone), or in UTC when the zone is not known. */
@@ -54,7 +54,7 @@
     /* Every airport has its own working button: Baku to exactly this airport. Without a flight the results page says so. */
     function bookButton(city, airport, className) {
         return '<a class="' + className + '" data-airport="' + esc(airport.code) + '" href="' + esc(catalog.resultsUrl(city, airport, state.page.country)) + '">' +
-            esc(tr("destinations.bookTicket", "Book Ticket")) + " · " + esc(airport.code) + "</a>";
+            esc(tr("destinations.bookTicket", "Bilet bron et")) + " · " + esc(airport.code) + "</a>";
     }
 
     function renderAirports(hubName) {
@@ -62,10 +62,10 @@
         byId("destination-airports").innerHTML = city.airports.map(function (airport) {
             return '<li class="dd-airport-card"><div class="dd-airport-head"><span class="dd-airport-code">' + esc(airport.code) + "</span>" +
                 '<span class="dd-airport-name">' + esc(airport.name) + "</span></div>" +
-                '<p class="dd-airport-zone">' + esc(tr("destinations.timeZoneLabel", "Time zone")) + ": " + esc(airport.timeZoneId) + "</p>" +
+                '<p class="dd-airport-zone">' + esc(tr("destinations.timeZoneLabel", "Saat qurşağı")) + ": " + esc(airport.timeZoneId) + "</p>" +
                 '<p class="dd-city-flights">' + esc(airport.hasRoutes
-                    ? tr("destinations.flightsAvailable", "Scheduled flights available")
-                    : tr("destinations.noFlightsYet", "No scheduled flights yet")) + "</p>" +
+                    ? tr("destinations.flightsAvailable", "Planlaşdırılmış reyslər var")
+                    : tr("destinations.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</p>" +
                 bookButton(city, airport, "dd-city-book") + "</li>";
         }).join("");
     }
@@ -78,11 +78,11 @@
         state.page.city.airports.forEach(function (airport) { zones[airport.code] = airport.timeZoneId; });
 
         if (!flights) {
-            list.innerHTML = '<li class="dd-flights-empty" role="alert">' + esc(tr("destinations.flightsError", "We could not load the flights. Please try again.")) + "</li>";
+            list.innerHTML = '<li class="dd-flights-empty" role="alert">' + esc(tr("destinations.flightsError", "Reysləri yükləmək mümkün olmadı. Yenidən cəhd edin.")) + "</li>";
             return;
         }
         if (!flights.length) {
-            list.innerHTML = '<li class="dd-flights-empty" role="status">' + esc(tr("destinations.noFlightsYet", "No scheduled flights yet")) + "</li>";
+            list.innerHTML = '<li class="dd-flights-empty" role="status">' + esc(tr("destinations.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</li>";
             return;
         }
 
@@ -92,8 +92,8 @@
                 '<span class="dd-flight-route">' + esc(flight.originCode) + " → " + esc(flight.destinationCode) + "</span></div>" +
                 '<div class="dd-flight-times"><span>' + esc(localTime(flight.departureAt, hubZone)) + "</span>" +
                 "<span>" + esc(localTime(flight.arrivalAt, zones[flight.destinationCode])) + "</span></div>" +
-                (flight.lowestFare != null ? '<span class="dd-flight-price">' + esc(tr("destinations.fromPrice", "From {price}", { price: "$" + Number(flight.lowestFare).toLocaleString("en-US") })) + "</span>" : "") +
-                '<a class="dd-flight-link" href="' + esc(link) + '">' + esc(tr("destinations.flightDetails", "Details")) + "</a></li>";
+                (flight.lowestFare != null ? '<span class="dd-flight-price">' + esc(tr("destinations.fromPrice", "{price}-dan", { price: "$" + Number(flight.lowestFare).toLocaleString("en-US") })) + "</span>" : "") +
+                '<a class="dd-flight-link" href="' + esc(link) + '">' + esc(tr("destinations.flightDetails", "Ətraflı")) + "</a></li>";
         }).join("");
     }
 
@@ -105,7 +105,7 @@
         if (!others.length) return;
 
         var country = page.country;
-        setText("destination-others-title", tr("destinations.otherCities", "Explore other cities in {country}", { country: catalog.localized(country, "name") }));
+        setText("destination-others-title", tr("destinations.otherCities", "{country} ölkəsinin digər şəhərlərini kəşf edin", { country: catalog.localized(country, "name") }));
         byId("destination-others-grid").innerHTML = others.map(function (city) {
             return catalog.cardMarkup(country, city, { booking: true });
         }).join("");
@@ -124,8 +124,8 @@
             state.chosen = target ? target.code : "";
             cta.setAttribute("href", target ? catalog.resultsUrl(city, target, state.page.country) : "#");
             setText("destination-aside-text", target && !target.hasRoutes
-                ? tr("destinations.noFlightsDetail", "No scheduled flights yet. The results page shows what is available.")
-                : tr("destinationDetails.chooseDateText", "Choose your travel date and find available flights."));
+                ? tr("destinations.noFlightsDetail", "Hələlik planlaşdırılmış reys yoxdur. Nəticə səhifəsində mövcud olanlar göstərilir.")
+                : tr("destinationDetails.chooseDateText", "Səyahət tarixinizi seçin və mövcud uçuşları tapın."));
         }
 
         picker.hidden = airports.length < 2;
@@ -152,12 +152,12 @@
         setText("destination-name", cityName);
         setText("destination-tagline", catalog.localized(city, "description"));
         setText("destination-description", catalog.localized(city, "description"));
-        setText("destination-airports-title", tr("destinations.airportsIn", "Airports in {city}", { city: cityName }));
-        setText("destination-flights-title", tr("destinations.flightsFrom", "Flights from {origin}", { origin: hubName || "Baku" }));
+        setText("destination-airports-title", tr("destinations.airportsIn", "{city} hava limanları", { city: cityName }));
+        setText("destination-flights-title", tr("destinations.flightsFrom", "{origin} şəhərindən reyslər", { origin: hubName || "Baku" }));
         byId("destination-hero-media").setAttribute("aria-label", catalog.photoAlt(city, country));
         byId("destination-hero-media").style.backgroundImage = "url('" + base + ".jpg'), url('assets/images/airport-premium.jpg')";
         setText("destination-aside-route", hubName ? tr("destinations.routeTitle", "{from} → {to}", { from: hubName, to: cityName }) : cityName);
-        setText("destination-back-country", tr("destinations.backToDestinations", "Back to Destinations"));
+        setText("destination-back-country", tr("destinations.backToDestinations", "Təyinatlara qayıt"));
 
         renderAsideBooking(city, airport);
 
@@ -172,7 +172,7 @@
     function start() {
         var id = new URLSearchParams(window.location.search).get("city");
         if (!id || !/^\d+$/.test(id)) {
-            showStatus(tr("destinations.detailsNotFound", "This destination is not available."));
+            showStatus(tr("destinations.detailsNotFound", "Bu təyinat mövcud deyil."));
             return;
         }
 
@@ -194,7 +194,6 @@
         renderAsideBooking(state.page.city, catalog.bookableAirport(state.page.city));
     });
 
-    window.addEventListener("aerova:languagechange", function () { if (state) render(); });
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", start);

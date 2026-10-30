@@ -12,16 +12,16 @@
 
     /* Countries offered as nationality / issuing country (ISO 3166-1 alpha-2). */
     var COUNTRIES = [
-        { code: "AZ", name: "Azerbaijan" },
-        { code: "TR", name: "Turkey" },
-        { code: "GE", name: "Georgia" },
-        { code: "GB", name: "United Kingdom" },
-        { code: "FR", name: "France" },
-        { code: "AT", name: "Austria" },
-        { code: "DE", name: "Germany" },
-        { code: "AE", name: "United Arab Emirates" },
-        { code: "RU", name: "Russia" },
-        { code: "US", name: "United States" }
+        { code: "AZ", name: "Azərbaycan", en: "Azerbaijan" },
+        { code: "TR", name: "Türkiyə", en: "Turkey" },
+        { code: "GE", name: "Gürcüstan", en: "Georgia" },
+        { code: "GB", name: "Birləşmiş Krallıq", en: "United Kingdom" },
+        { code: "FR", name: "Fransa", en: "France" },
+        { code: "AT", name: "Avstriya", en: "Austria" },
+        { code: "DE", name: "Almaniya", en: "Germany" },
+        { code: "AE", name: "Birləşmiş Ərəb Əmirlikləri", en: "United Arab Emirates" },
+        { code: "RU", name: "Rusiya", en: "Russia" },
+        { code: "US", name: "Amerika Birləşmiş Ştatları", en: "United States" }
     ];
 
     /* Fallback airport/city -> country lookup when segments carry no country. */
@@ -172,7 +172,7 @@
     function countryCodeFromName(value) {
         var text = normalize(value);
         for (var i = 0; i < COUNTRIES.length; i += 1) {
-            if (normalize(COUNTRIES[i].name) === text || normalize(COUNTRIES[i].code) === text) return COUNTRIES[i].code;
+            if (normalize(COUNTRIES[i].name) === text || normalize(COUNTRIES[i].en) === text || normalize(COUNTRIES[i].code) === text) return COUNTRIES[i].code;
         }
         return "";
     }

@@ -36,11 +36,6 @@
         return String(fallback).replace(/\{(\w+)\}/g, function (_, name) { return vars && vars[name] != null ? String(vars[name]) : "{" + name + "}"; });
     }
 
-    function language() {
-        var active = window.AEROVA_I18N && typeof window.AEROVA_I18N.getLanguage === "function" ? window.AEROVA_I18N.getLanguage() : document.documentElement.lang;
-        return active === "az" || active === "ru" ? active : "en";
-    }
-
     function escapeHtml(value) {
         return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
@@ -52,9 +47,7 @@
     }
 
     function pick(airport, base) {
-        var lang = language();
-        var suffix = lang === "az" ? "Az" : lang === "ru" ? "Ru" : "";
-        return airport[base + suffix] || airport[base] || "";
+        return airport[base + "Az"] || airport[base] || "";
     }
 
     function cityName(airport) { return pick(airport, "cityName") || airport.city; }
@@ -164,7 +157,7 @@
             control.appendChild(meta);
         }
         meta.innerHTML = escapeHtml(chosen.airport.name) + (chosen.airport.hasRoutes ? "" :
-            ' <span class="airport-meta-note">' + escapeHtml(tr("picker.noFlightsYet", "No scheduled flights yet")) + "</span>");
+            ' <span class="airport-meta-note">' + escapeHtml(tr("picker.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</span>");
     }
 
     function set(input, value) {
@@ -282,7 +275,7 @@
     function rowMarkup(airport, query, id, role) {
         var city = cityName(airport);
         var country = countryName(airport);
-        var note = airport.hasRoutes ? "" : '<span class="airport-row-note">' + escapeHtml(tr("picker.noFlightsYet", "No scheduled flights yet")) + "</span>";
+        var note = airport.hasRoutes ? "" : '<span class="airport-row-note">' + escapeHtml(tr("picker.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</span>";
         return '<div class="airport-row" role="option" id="' + id + '" data-code="' + escapeHtml(airport.code) + '" aria-selected="false">' + PLANE +
             '<span class="airport-row-main"><span class="airport-row-title">' + highlight(city, query) + (country ? ", " + highlight(country, query) : "") + "</span>" +
             '<span class="airport-row-sub">' + highlight(airport.name, query) + note + "</span></span>" +
@@ -300,18 +293,18 @@
         var html;
 
         if (!loaded) {
-            html = '<p class="airport-empty" role="status">' + escapeHtml(loadFailed ? tr("picker.loadError", "We could not load the destinations. Please try again.")
-                : tr("picker.loading", "Loading destinations...")) + "</p>";
+            html = '<p class="airport-empty" role="status">' + escapeHtml(loadFailed ? tr("picker.loadError", "İstiqamətləri yükləmək mümkün olmadı. Yenidən cəhd edin.")
+                : tr("picker.loading", "İstiqamətlər yüklənir...")) + "</p>";
             options = [];
         } else if (!found.length) {
-            html = '<p class="airport-empty" role="status">' + escapeHtml(tr("picker.noMatches", "No destination matches your search.")) + "</p>";
+            html = '<p class="airport-empty" role="status">' + escapeHtml(tr("picker.noMatches", "Axtarışınıza uyğun istiqamət tapılmadı.")) + "</p>";
             options = [];
         } else {
             options = found;
             html = found.map(function (airport, index) { return rowMarkup(airport, query, "airport-option-" + index, input.classList.contains("from-input") ? "from" : "to"); }).join("");
         }
 
-        panel.innerHTML = html + '<a class="airport-all" href="destinations.html">' + escapeHtml(tr("picker.allDestinations", "All destinations")) + "</a>";
+        panel.innerHTML = html + '<a class="airport-all" href="destinations.html">' + escapeHtml(tr("picker.allDestinations", "Bütün istiqamətlər")) + "</a>";
         activeIndex = -1;
         panel.hidden = false;
         panel.classList.add("is-open");
@@ -453,13 +446,6 @@
             if (!event.target.closest(".field-control") && !event.target.closest(".airport-panel")) close();
         });
         window.addEventListener("resize", function () { if (activeInput && panel && !panel.hidden) place(activeInput); });
-        window.addEventListener("aerova:languagechange", function () {
-            // The chosen airports are shown again in the new language.
-            root.querySelectorAll(".from-input, .to-input").forEach(function (input) {
-                if (input._airport) paint(input, input._airport);
-            });
-            if (activeInput) open(activeInput);
-        });
     }
 
     /* Whether an active route joins the two airports. null when it could not be checked (the search then goes on and the results say what is there). */

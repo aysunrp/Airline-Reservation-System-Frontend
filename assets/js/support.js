@@ -32,24 +32,12 @@
         return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
 
-    function language() {
-        var i18n = window.AEROVA_I18N;
-        return i18n && typeof i18n.getLanguage === "function" ? i18n.getLanguage() : "en";
-    }
-
     function formatDate(value) {
         var text = String(value || "");
         var date = new Date(/(Z|[+-]\d\d:?\d\d)$/i.test(text) ? text : text + "Z");
         if (isNaN(date.getTime())) return "";
         function pad(n) { return n < 10 ? "0" + n : String(n); }
         var clock = pad(date.getHours()) + ":" + pad(date.getMinutes());
-        if (language() === "en") {
-            try {
-                return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) + ", " + clock;
-            } catch (error) {
-                // falls through to the numeric form
-            }
-        }
         return pad(date.getDate()) + "." + pad(date.getMonth() + 1) + "." + date.getFullYear() + " " + clock;
     }
 
@@ -65,14 +53,14 @@
     }
 
     function errorText(error, fallbackKey, fallback) {
-        if (error && error.code === "database_setup_required") return tr("support.setupRequired", "Support requests are not available yet: the database setup of the site is not finished. Please try again later; the site administrator has to apply the latest database update.");
-        if (error && error.status === 429) return tr("support.busy", "Too many requests. Please wait a moment and try again.");
-        if (error && error.code === "too_many_open_tickets") return tr("support.tooMany", "You have too many open requests. Please wait for some of them to be resolved.");
+        if (error && error.code === "database_setup_required") return tr("support.setupRequired", "Dəstək müraciətləri hələ əlçatan deyil: saytın verilənlər bazası qurulması bitməyib. Zəhmət olmasa bir az sonra yenidən cəhd edin; sayt administratoru son verilənlər bazası yenilənməsini tətbiq etməlidir.");
+        if (error && error.status === 429) return tr("support.busy", "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.");
+        if (error && error.code === "too_many_open_tickets") return tr("support.tooMany", "Çox sayda açıq müraciətiniz var. Zəhmət olmasa bir qisminin həllini gözləyin.");
         if (error && error.status === 400 && error.userMessage) return error.userMessage;
-        if (error && error.status === 409) return tr("support.resolvedNote", "This request is resolved. If you still need help, send a new request.");
-        if (error && error.status === 404) return tr("support.notFound", "This request was not found.");
-        if (error && error.status === 401) return tr("support.signInPrompt", "Sign in to send a request and follow the answers.");
-        if (error && !error.status) return error.userMessage || tr("support.unreachable", "We could not reach the server. Please try again in a moment.");
+        if (error && error.status === 409) return tr("support.resolvedNote", "Bu müraciət həll olunub. Hələ də köməyə ehtiyacınız varsa, yeni müraciət göndərin.");
+        if (error && error.status === 404) return tr("support.notFound", "Bu müraciət tapılmadı.");
+        if (error && error.status === 401) return tr("support.signInPrompt", "Müraciət göndərmək və cavabları izləmək üçün daxil olun.");
+        if (error && !error.status) return error.userMessage || tr("support.unreachable", "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin.");
         return tr(fallbackKey, fallback);
     }
 
@@ -82,7 +70,7 @@
         api.get("api/support/info").then(function (info) {
             if (info && info.contactEmail) {
                 var line = $("sp-contact-email");
-                line.innerHTML = escapeHtml(tr("support.contactEmail", "Email")) + ': <a href="mailto:' + escapeHtml(info.contactEmail) + '">' + escapeHtml(info.contactEmail) + "</a>";
+                line.innerHTML = escapeHtml(tr("support.contactEmail", "E-poçt")) + ': <a href="mailto:' + escapeHtml(info.contactEmail) + '">' + escapeHtml(info.contactEmail) + "</a>";
                 show(line, true);
             }
         }, function () { /* the form works without it */ });
@@ -106,11 +94,11 @@
         var message = $("sp-message").value.trim();
         var pnr = $("sp-pnr").value.trim();
 
-        if (!subject) { fieldError("sp-subject-error", tr("support.errors.subjectRequired", "Please enter a subject.")); ok = false; }
-        else if (subject.length > 120) { fieldError("sp-subject-error", tr("support.errors.subjectLong", "The subject can have at most 120 characters.")); ok = false; }
-        if (message.length < 10) { fieldError("sp-message-error", tr("support.errors.messageShort", "Please describe the problem in a few words (at least 10 characters).")); ok = false; }
-        else if (message.length > 4000) { fieldError("sp-message-error", tr("support.errors.messageLong", "The message can have at most 4000 characters.")); ok = false; }
-        if (pnr && !/^[A-Za-z0-9]{5,10}$/.test(pnr)) { fieldError("sp-pnr-error", tr("support.errors.pnrInvalid", "A booking reference has 5 to 10 letters and digits.")); ok = false; }
+        if (!subject) { fieldError("sp-subject-error", tr("support.errors.subjectRequired", "Zəhmət olmasa mövzu başlığı yazın.")); ok = false; }
+        else if (subject.length > 120) { fieldError("sp-subject-error", tr("support.errors.subjectLong", "Mövzu başlığı ən çox 120 simvol ola bilər.")); ok = false; }
+        if (message.length < 10) { fieldError("sp-message-error", tr("support.errors.messageShort", "Zəhmət olmasa problemi bir neçə sözlə izah edin (ən azı 10 simvol).")); ok = false; }
+        else if (message.length > 4000) { fieldError("sp-message-error", tr("support.errors.messageLong", "Mesaj ən çox 4000 simvol ola bilər.")); ok = false; }
+        if (pnr && !/^[A-Za-z0-9]{5,10}$/.test(pnr)) { fieldError("sp-pnr-error", tr("support.errors.pnrInvalid", "Rezervasiya kodu 5-10 hərf və rəqəmdən ibarətdir.")); ok = false; }
         return ok;
     }
 
@@ -120,7 +108,7 @@
         if (button.disabled || !validate()) return;
 
         button.disabled = true;
-        button.textContent = tr("support.sending", "Sending...");
+        button.textContent = tr("support.sending", "Göndərilir...");
         setFeedback($("sp-feedback"), "");
 
         api.post("api/support/tickets", {
@@ -130,35 +118,35 @@
             bookingPnr: $("sp-pnr").value.trim() || null
         }).then(function (ticket) {
             button.disabled = false;
-            button.textContent = tr("support.submit", "Send request");
+            button.textContent = tr("support.submit", "Müraciəti göndər");
             $("sp-subject").value = "";
             $("sp-message").value = "";
             $("sp-pnr").value = "";
-            setFeedback($("sp-feedback"), tr("support.success", "Your request {number} was received. You will find the conversation under My Support Requests; we also email updates to your account address.", { number: ticket.ticketNumber }), false);
+            setFeedback($("sp-feedback"), tr("support.success", "{number} nömrəli müraciətiniz qəbul edildi. Yazışmanı \"Mənim dəstək müraciətlərim\" bölməsində tapacaqsınız; yenilikləri həm də hesabınızın e-poçt ünvanına göndəririk.", { number: ticket.ticketNumber }), false);
             loadList().then(function () { openTicket(ticket.id); });
         }, function (error) {
             button.disabled = false;
-            button.textContent = tr("support.submit", "Send request");
-            setFeedback($("sp-feedback"), errorText(error, "support.failed", "We could not send your request. Please try again."), true);
+            button.textContent = tr("support.submit", "Müraciəti göndər");
+            setFeedback($("sp-feedback"), errorText(error, "support.failed", "Müraciətinizi göndərə bilmədik. Zəhmət olmasa yenidən cəhd edin."), true);
         });
     }
 
     /* ---------- my requests ---------- */
 
     function loadList(quiet) {
-        if (!quiet) $("sp-requests-state").textContent = tr("support.loading", "Loading...");
+        if (!quiet) $("sp-requests-state").textContent = tr("support.loading", "Yüklənir...");
         return api.get("api/support/tickets").then(function (list) {
-            $("sp-requests-state").textContent = list.length ? "" : tr("support.myEmpty", "You have not sent any support requests yet.");
+            $("sp-requests-state").textContent = list.length ? "" : tr("support.myEmpty", "Hələ heç bir dəstək müraciəti göndərməmisiniz.");
             $("sp-list").innerHTML = list.map(function (ticket) {
                 return '<button type="button" class="sp-ticket" data-ticket="' + ticket.id + '">' +
                     '<span><span class="sp-ticket-subject">' + escapeHtml(ticket.subject) + '</span><br><span class="sp-ticket-number">' + escapeHtml(ticket.ticketNumber) + "</span></span>" +
                     '<span class="sp-badge sp-badge--' + escapeHtml(ticket.status) + '">' + escapeHtml(statusText(ticket.status)) + "</span>" +
                     '<span class="sp-ticket-meta"><span>' + escapeHtml(categoryText(ticket.category)) + "</span>" +
-                    "<span>" + escapeHtml(tr("support.created", "Created")) + ": " + escapeHtml(formatDate(ticket.createdAt)) + "</span>" +
-                    "<span>" + escapeHtml(tr("support.updated", "Updated")) + ": " + escapeHtml(formatDate(ticket.updatedAt)) + "</span></span></button>";
+                    "<span>" + escapeHtml(tr("support.created", "Yaradılıb")) + ": " + escapeHtml(formatDate(ticket.createdAt)) + "</span>" +
+                    "<span>" + escapeHtml(tr("support.updated", "Yenilənib")) + ": " + escapeHtml(formatDate(ticket.updatedAt)) + "</span></span></button>";
             }).join("");
         }, function (error) {
-            if (!quiet) $("sp-requests-state").textContent = errorText(error, "support.loadFailed", "We could not load your requests.");
+            if (!quiet) $("sp-requests-state").textContent = errorText(error, "support.loadFailed", "Müraciətlərinizi yükləyə bilmədik.");
         });
     }
 
@@ -169,12 +157,12 @@
         badge.className = "sp-badge sp-badge--" + ticket.status;
         badge.textContent = statusText(ticket.status);
         $("sp-detail-meta").textContent = ticket.ticketNumber + " \u00b7 " + categoryText(ticket.category) +
-            (ticket.bookingPnr ? " \u00b7 " + tr("support.pnrShort", "Booking") + " " + ticket.bookingPnr : "") +
-            " \u00b7 " + tr("support.created", "Created") + ": " + formatDate(ticket.createdAt);
+            (ticket.bookingPnr ? " \u00b7 " + tr("support.pnrShort", "Rezervasiya") + " " + ticket.bookingPnr : "") +
+            " \u00b7 " + tr("support.created", "Yaradılıb") + ": " + formatDate(ticket.createdAt);
         $("sp-thread").innerHTML = ticket.messages.map(function (message) {
             var staff = message.authorType === "Staff";
             return '<div class="sp-msg sp-msg--' + (staff ? "staff" : "customer") + '"><div class="sp-msg-head"><strong>' +
-                escapeHtml(staff ? tr("support.staff", "AEROVA Support") : tr("support.you", "You")) + "</strong><span>" + escapeHtml(formatDate(message.createdAt)) +
+                escapeHtml(staff ? tr("support.staff", "AEROVA Dəstək") : tr("support.you", "Siz")) + "</strong><span>" + escapeHtml(formatDate(message.createdAt)) +
                 '</span></div><div class="sp-msg-body">' + escapeHtml(message.body) + "</div></div>";
         }).join("");
         // A message that arrived while the conversation was open is marked for a moment; a draft in the reply box is kept.
@@ -201,9 +189,9 @@
     function paintLive(state) {
         var line = $("sp-live");
         var texts = {
-            connected: tr("support.live.on", "Live updates are on: new replies appear here by themselves."),
-            reconnecting: tr("support.live.reconnecting", "Reconnecting... new replies are checked every 20 seconds meanwhile."),
-            polling: tr("support.live.polling", "The live connection is not available: we check for new replies every 20 seconds.")
+            connected: tr("support.live.on", "Canlı yeniləmələr aktivdir: yeni cavablar burada özləri görünür."),
+            reconnecting: tr("support.live.reconnecting", "Yenidən qoşulur... bu arada yeni cavablar hər 20 saniyədən bir yoxlanılır."),
+            polling: tr("support.live.polling", "Canlı bağlantı əlçatan deyil: yeni cavablar hər 20 saniyədən bir yoxlanılır.")
         };
         line.className = "sp-live is-" + state;
         line.textContent = texts[state] || "";
@@ -228,8 +216,8 @@
     function onLiveEvent(event) {
         var number = event.ticketNumber;
         var text = event.type === "staffReplied"
-            ? tr("support.toast.reply", "New reply on {number}", { number: number })
-            : tr("support.toast.status", "{number} is now: {status}", { number: number, status: statusText(event.status) });
+            ? tr("support.toast.reply", "{number} üzrə yeni cavab", { number: number })
+            : tr("support.toast.status", "{number} indi: {status}", { number: number, status: statusText(event.status) });
         showToast(text, event.ticketId);
         loadList(true);
         if (openId === event.ticketId) refreshOpen();
@@ -252,7 +240,7 @@
             show($("sp-detail"), true);
             $("sp-detail").scrollIntoView({ behavior: "smooth", block: "start" });
         }, function (error) {
-            $("sp-requests-state").textContent = errorText(error, "support.loadFailed", "We could not load your requests.");
+            $("sp-requests-state").textContent = errorText(error, "support.loadFailed", "Müraciətlərinizi yükləyə bilmədik.");
         });
     }
 
@@ -262,20 +250,20 @@
         var text = $("sp-reply").value.trim();
         $("sp-reply-error").hidden = true;
         if (button.disabled || openId === null) return;
-        if (!text) { $("sp-reply-error").textContent = tr("support.errors.replyRequired", "Please write your reply."); $("sp-reply-error").hidden = false; return; }
+        if (!text) { $("sp-reply-error").textContent = tr("support.errors.replyRequired", "Zəhmət olmasa cavabınızı yazın."); $("sp-reply-error").hidden = false; return; }
 
         button.disabled = true;
-        button.textContent = tr("support.sending", "Sending...");
+        button.textContent = tr("support.sending", "Göndərilir...");
         api.post("api/support/tickets/" + encodeURIComponent(openId) + "/replies", { message: text }).then(function (ticket) {
             button.disabled = false;
-            button.textContent = tr("support.sendReply", "Send reply");
+            button.textContent = tr("support.sendReply", "Cavabı göndər");
             $("sp-reply").value = "";
             renderThread(ticket);
             loadList();
         }, function (error) {
             button.disabled = false;
-            button.textContent = tr("support.sendReply", "Send reply");
-            setFeedback($("sp-reply-feedback"), errorText(error, "support.replyFailed", "We could not send your reply. Please try again."), true);
+            button.textContent = tr("support.sendReply", "Cavabı göndər");
+            setFeedback($("sp-reply-feedback"), errorText(error, "support.replyFailed", "Cavabınızı göndərə bilmədik. Zəhmət olmasa yenidən cəhd edin."), true);
             if (error && error.status === 409) {
                 show($("sp-reply-form"), false);
                 show($("sp-resolved"), true);
@@ -298,7 +286,7 @@
 
         if (!api.session.isActive()) {
             show($("sp-signin"), true);
-            $("sp-requests-state").textContent = tr("support.signInPrompt", "Sign in to send a request and follow the answers.");
+            $("sp-requests-state").textContent = tr("support.signInPrompt", "Müraciət göndərmək və cavabları izləmək üçün daxil olun.");
             return;
         }
 
@@ -340,9 +328,6 @@
     $("sp-list").addEventListener("click", function (event) {
         var button = event.target.closest("[data-ticket]");
         if (button) openTicket(Number(button.getAttribute("data-ticket")));
-    });
-    window.addEventListener("aerova:languagechange", function () {
-        if (api.session.isActive()) loadList();
     });
 
     if (document.readyState === "loading") {

@@ -10,8 +10,8 @@
     }
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     var activeBooking = null;
@@ -53,7 +53,7 @@
             return String(dateValue);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function formatPrice(price) {
@@ -229,10 +229,10 @@
             selectedSeats: seatsByLeg[0],
             passengers: passengers,
             baggage: passengers.map(function (passenger) {
-                return { name: getPassengerName(passenger), label: passenger.baggageName || tr("api.options.noBaggage", "No Extra Baggage"), price: passenger.baggagePrice };
+                return { name: getPassengerName(passenger), label: passenger.baggageName || tr("api.options.noBaggage", "Əlavə baqaj yoxdur"), price: passenger.baggagePrice };
             }),
             meals: passengers.map(function (passenger) {
-                return { passengerName: getPassengerName(passenger), mealName: passenger.mealName || tr("api.options.noMeal", "No Meal"), price: passenger.mealPrice };
+                return { passengerName: getPassengerName(passenger), mealName: passenger.mealName || tr("api.options.noMeal", "Yemək yoxdur"), price: passenger.mealPrice };
             }),
             baseFare: price.baseFare,
             baggageTotal: price.baggage,
@@ -278,7 +278,7 @@
         }
 
         if (!items.length) {
-            list.innerHTML = '<li class="detail-list-empty">' + tr("bookingDetails.noneSelected", "None selected") + '</li>';
+            list.innerHTML = '<li class="detail-list-empty">' + tr("bookingDetails.noneSelected", "Seçilməyib") + '</li>';
             return;
         }
 
@@ -290,7 +290,7 @@
         renderList("details-passengers", passengers, function (passenger, index) {
             var seat = passenger.assignedSeat
                 ? "Seat " + passenger.assignedSeat
-                : (passenger.passengerType === "Infant" ? tr("api.bookingDetails.infantNoSeat", "Infant, no seat") : "Seat not assigned");
+                : (passenger.passengerType === "Infant" ? tr("api.bookingDetails.infantNoSeat", "Körpə, yer yoxdur") : "Oturacaq təyin edilməyib");
 
             return (
                 '<li class="detail-list-item">' +
@@ -308,7 +308,7 @@
         var items = Array.isArray(booking.baggage) ? booking.baggage : [];
 
         renderList("details-baggage", items, function (item) {
-            var label = item.label || item.optionLabel || "No Extra Baggage";
+            var label = item.label || item.optionLabel || "Əlavə baqaj yoxdur";
 
             return (
                 '<li class="detail-list-item">' +
@@ -327,7 +327,7 @@
 
         renderList("details-meals", items, function (item) {
             var passengerName = item.passengerName || item.name || "Passenger";
-            var mealName = item.mealName || item.label || "No Meal";
+            var mealName = item.mealName || item.label || "Yemək yoxdur";
 
             return (
                 '<li class="detail-list-item">' +
@@ -346,7 +346,7 @@
         var card = document.querySelector('article[aria-labelledby="flight-info-title"]');
         var extra = booking.extraFlights || [];
         var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
-            return booking.multiCity ? tr("api.journey.flightTitle", "Flight {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Return Flight");
+            return booking.multiCity ? tr("api.journey.flightTitle", "Reys {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Qayıdış reysi");
         }) : [];
 
         copies.forEach(function (copy, index) {
@@ -440,7 +440,7 @@
 
     function getRefundStatusLabel(status) {
         var key = getRefundStatusKey(status);
-        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Not Eligible", failed: "Failed", cancelled: "Cancelled" }[key];
+        var fallback = { pending: "Pending", processing: "Processing", completed: "Completed", notEligible: "Uyğun deyil", failed: "Failed", cancelled: "Cancelled" }[key];
         return tr("cancellation.status." + key, fallback);
     }
 
@@ -460,7 +460,7 @@
         var key = getRefundStatusKey(refund.status);
         box.hidden = false;
         box.innerHTML =
-            '<p class="details-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Refund status")) + "</p>" +
+            '<p class="details-refund-label">' + escapeHtml(tr("cancellation.refundStatus", "Geri ödəniş statusu")) + "</p>" +
             '<p class="details-refund-row">' +
                 '<span class="refund-status-badge refund-status-badge--' + key + '">' + escapeHtml(getRefundStatusLabel(refund.status)) + "</span>" +
                 (key === "notEligible"
@@ -468,7 +468,7 @@
                     : '<span class="details-refund-amount">' + escapeHtml(formatPrice(refund.amount)) + "</span>") +
             "</p>" +
             (refund.reference
-                ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.refundReference", "Refund request {ref}", { ref: refund.reference })) + "</p>"
+                ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.refundReference", "Geri ödəniş sorğusu {ref}", { ref: refund.reference })) + "</p>"
                 : "") +
             refundFactsMarkup(key, refund) +
             refundNoteMarkup(key, refund, booking);
@@ -503,17 +503,17 @@
     function refundFactsMarkup(key, refund) {
         var rows = [];
         var cancelledOn = shortDate(refund.requestedAt);
-        if (cancelledOn) rows.push([tr("cancellation.factsCancelledOn", "Cancelled on"), cancelledOn]);
-        if (refund.reason) rows.push([tr("cancellation.factsReason", "Reason"), refund.reason]);
-        if (refund.paid != null) rows.push([tr("cancellation.factsPaid", "Amount paid"), money(refund.paid, refund.currency)]);
-        if (Number(refund.fee) > 0) rows.push([tr("cancellation.factsFee", "Cancellation fee"), money(refund.fee, refund.currency)]);
+        if (cancelledOn) rows.push([tr("cancellation.factsCancelledOn", "Ləğv tarixi"), cancelledOn]);
+        if (refund.reason) rows.push([tr("cancellation.factsReason", "Səbəb"), refund.reason]);
+        if (refund.paid != null) rows.push([tr("cancellation.factsPaid", "Ödənilən məbləğ"), money(refund.paid, refund.currency)]);
+        if (Number(refund.fee) > 0) rows.push([tr("cancellation.factsFee", "Ləğv cəriməsi"), money(refund.fee, refund.currency)]);
         if (key !== "notEligible") {
-            rows.push([tr("cancellation.factsRefund", "Refund"), money(refund.amount, refund.currency)]);
+            rows.push([tr("cancellation.factsRefund", "Qaytarılacaq məbləğ"), money(refund.amount, refund.currency)]);
             var kept = Number(refund.paid) - Number(refund.amount);
-            if (kept > 0.004 && Number(refund.amount) > 0) rows.push([tr("cancellation.factsKept", "Not refunded"), money(kept, refund.currency)]);
-            rows.push([tr("cancellation.factsMethod", "Refunded to"), refund.demo
-                ? tr("cancellation.methodOther", "The original payment method")
-                : tr("cancellation.methodCard", "The card you paid with")]);
+            if (kept > 0.004 && Number(refund.amount) > 0) rows.push([tr("cancellation.factsKept", "Qaytarılmayan məbləğ"), money(kept, refund.currency)]);
+            rows.push([tr("cancellation.factsMethod", "Qaytarılır"), refund.demo
+                ? tr("cancellation.methodOther", "İlkin ödəniş üsuluna")
+                : tr("cancellation.methodCard", "Ödəniş etdiyiniz karta")]);
         }
 
         if (!rows.length) return "";
@@ -525,26 +525,26 @@
     /* What the traveller should know about the refund as it stands. A demo refund says so; a Stripe refund is never shown as arrived before Stripe confirms it. */
     function refundNoteMarkup(key, refund, booking) {
         if (refund.demo) {
-            return '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.demoShort", "Demo refund status: no real payment provider is contacted.")) + "</p>";
+            return '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.demoShort", "Demo geri ödəniş statusu: real ödəniş provayderi ilə əlaqə saxlanılmır.")) + "</p>";
         }
 
         var fallbacks = {
-            pending: "Your refund has been requested to the card you paid with. Nothing has been paid back yet; it will show here once it is confirmed.",
-            processing: "The refund has been started to the card you used for the original payment and is still being processed. Once it is done, your bank usually shows it within 5 to 10 business days.",
-            completed: "Stripe has confirmed the refund to the card you used for the original payment. Depending on your bank it usually takes 5 to 10 business days to appear on your statement; this is an estimate, not a guarantee.",
-            failed: "The refund did not go through, but your booking is cancelled. Please contact AEROVA support with booking reference {pnr}; we will pay you back.",
-            cancelled: "The refund was cancelled before it reached your bank. Please contact AEROVA support with booking reference {pnr}."
+            pending: "Pulun ödəniş etdiyiniz karta qaytarılması üçün sorğu göndərilib. Hələ heç nə qaytarılmayıb; təsdiqlənəndə burada görünəcək.",
+            processing: "Pulun geri qaytarılması ilkin ödəniş zamanı istifadə etdiyiniz karta başladılıb və hələ emal olunur. Emal bitdikdən sonra məbləğin bank çıxarışınızda görünməsi adətən 5–10 iş günü çəkir.",
+            completed: "Stripe pulun ilkin ödəniş zamanı istifadə etdiyiniz karta qaytarılmasını təsdiqlədi. Məbləğin bank çıxarışınızda görünməsi bankınızdan asılı olaraq adətən 5–10 iş günü çəkə bilər; bu, təxmini müddətdir, zəmanət deyil.",
+            failed: "Geri ödəniş alınmadı, amma rezervasiyanız ləğv olunub. Rezervasiya kodu {pnr} ilə AEROVA dəstəyinə müraciət edin, pulunuzu qaytaracağıq.",
+            cancelled: "Geri ödəniş bankınıza çatmamış ləğv olundu. Rezervasiya kodu {pnr} ilə AEROVA dəstəyinə müraciət edin."
         };
         var note = fallbacks[key] ? tr("cancellation.note." + key, fallbacks[key], { pnr: booking.pnr }) : "";
         var open = key === "pending" || key === "processing";
 
         var late = key === "processing" || key === "completed"
-            ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.noteLate", "If the amount has not appeared after 10 business days, please contact your bank first and, if needed, AEROVA support.")) + "</p>"
+            ? '<p class="details-refund-meta">' + escapeHtml(tr("cancellation.noteLate", "Məbləğ 10 iş günündən sonra da görünməsə, əvvəlcə bankınızla, lazım olduqda isə AEROVA dəstəyi ilə əlaqə saxlayın.")) + "</p>"
             : "";
 
         return (note ? '<p class="details-refund-meta details-refund-meta--' + key + '">' + escapeHtml(note) + "</p>" : "") + late +
             (open
-                ? '<button type="button" class="details-refund-refresh" id="details-refund-refresh">' + escapeHtml(tr("cancellation.refreshStatus", "Check refund status")) + "</button>"
+                ? '<button type="button" class="details-refund-refresh" id="details-refund-refresh">' + escapeHtml(tr("cancellation.refreshStatus", "Geri ödəniş statusuna bax")) + "</button>"
                 : "");
     }
 
@@ -556,17 +556,17 @@
         }
 
         button.disabled = true;
-        button.textContent = tr("cancellation.refreshing", "Checking...");
+        button.textContent = tr("cancellation.refreshing", "Yoxlanılır...");
 
         request.then(function (dto) {
             activeBooking = toPageBooking(dto, activeAirports);
             renderBooking(activeBooking);
         }).catch(function () {
-            showMessage(tr("cancellation.refreshFailed", "We could not refresh the refund status. Please try again."));
+            showMessage(tr("cancellation.refreshFailed", "Geri ödəniş statusunu yeniləmək mümkün olmadı. Yenidən cəhd edin."));
             var again = document.getElementById("details-refund-refresh");
             if (again) {
                 again.disabled = false;
-                again.textContent = tr("cancellation.refreshStatus", "Check refund status");
+                again.textContent = tr("cancellation.refreshStatus", "Geri ödəniş statusuna bax");
             }
         });
     }
@@ -587,8 +587,8 @@
             percent: quote.feePercent
         };
         return quote.eligible
-            ? tr("cancellation.ruleApplied", "{cabin}, {days} days before departure: {percent}% cancellation fee.", vars)
-            : tr("cancellation.ruleNotEligible", "{cabin}, {days} days before departure: not eligible for a refund.", vars);
+            ? tr("cancellation.ruleApplied", "{cabin}, uçuşa {days} gün qalmış: {percent}% ləğv haqqı.", vars)
+            : tr("cancellation.ruleNotEligible", "{cabin}, uçuşa {days} gün qalmış: geri ödənişə uyğun deyil.", vars);
     }
 
     function getCancelModal() {
@@ -609,7 +609,7 @@
         setText("cancel-modal-date", formatDisplayDate(flight.departureDate));
         setText("cancel-modal-paid", formatPrice(quote.amountPaid));
         setText("cancel-modal-fee", formatPrice(quote.cancellationFee));
-        setText("cancel-modal-refund", quote.eligible ? formatPrice(quote.refundAmount) : getRefundStatusLabel("Not Eligible"));
+        setText("cancel-modal-refund", quote.eligible ? formatPrice(quote.refundAmount) : getRefundStatusLabel("Uyğun deyil"));
         setText("cancel-modal-rule", describeRule(quote));
 
         var refundRow = document.getElementById("cancel-modal-refund-row");
@@ -654,7 +654,7 @@
         }
 
         if (isCancelled(activeBooking)) {
-            showMessage(tr("bookingDetails.alreadyCancelled", "This booking is already cancelled."));
+            showMessage(tr("bookingDetails.alreadyCancelled", "Bu bron artıq ləğv edilib."));
             return;
         }
 
@@ -673,7 +673,7 @@
                 dialog.focus();
             }
         }).catch(function (error) {
-            showCancelError(error, tr("api.bookingDetails.quoteFailed", "We could not check the cancellation terms. Please try again."));
+            showCancelError(error, tr("api.bookingDetails.quoteFailed", "Ləğv şərtlərini yoxlamaq mümkün olmadı. Zəhmət olmasa yenidən cəhd edin."));
         });
     }
 
@@ -681,12 +681,12 @@
     function showCancelError(error, fallback) {
         var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
         if (isApiError && error.status === 401) {
-            showSignInMessage(tr("cancellation.noteSignIn", "Sign in to the account that made this booking to cancel it."));
+            showSignInMessage(tr("cancellation.noteSignIn", "Bu rezervasiyanı ləğv etmək üçün onu edən hesaba daxil olun."));
             return;
         }
 
         if (isApiError && error.status === 429) {
-            showMessage(tr("cancellation.linkWait", "A confirmation link was sent a moment ago. Please wait a minute before asking for another."));
+            showMessage(tr("cancellation.linkWait", "Təsdiq keçidi bir az əvvəl göndərilib. Yenisini istəməzdən əvvəl bir dəqiqə gözləyin."));
             return;
         }
 
@@ -702,7 +702,7 @@
         var next = (window.location.pathname.split("/").pop() || "booking-details.html") + window.location.search;
         var link = document.createElement("a");
         link.href = "login.html?next=" + encodeURIComponent(next);
-        link.textContent = tr("cancellation.signInLink", "Sign in");
+        link.textContent = tr("cancellation.signInLink", "Daxil ol");
 
         message.textContent = text + " ";
         message.appendChild(link);
@@ -712,18 +712,18 @@
     /* The sentence after cancelling, from the refund the server recorded (its amount and state), never from anything typed on this page. */
     function cancelledMessage(refund, pnr) {
         if (!refund || !(refund.amount > 0)) {
-            return tr("cancellation.cancelledNoRefund", "Booking {pnr} has been cancelled. It is not eligible for a refund.", { pnr: pnr });
+            return tr("cancellation.cancelledNoRefund", "{pnr} bronu ləğv edildi. Geri ödənişə uyğun deyil.", { pnr: pnr });
         }
 
         var vars = { pnr: pnr, amount: formatPrice(refund.amount) };
         if (refund.demo) {
-            return tr("api.bookingDetails.cancelledWithRefund", "Booking {pnr} has been cancelled. A refund of {amount} was requested (demo: no real payment provider is contacted).", vars);
+            return tr("api.bookingDetails.cancelledWithRefund", "{pnr} rezervasiyası ləğv edildi. {amount} məbləğində geri ödəniş tələb olundu (demo: real ödəniş provayderi ilə əlaqə qurulmur).", vars);
         }
 
         var key = getRefundStatusKey(refund.status);
         return key === "failed" || key === "cancelled"
-            ? tr("cancellation.cancelledRefundFailed", "Booking {pnr} has been cancelled, but the refund of {amount} could not be sent yet. Please contact AEROVA support with this booking reference.", vars)
-            : tr("cancellation.cancelledStripe", "Booking {pnr} has been cancelled. A refund of {amount} is on its way to your card.", vars);
+            ? tr("cancellation.cancelledRefundFailed", "{pnr} rezervasiyası ləğv edildi, amma {amount} geri ödənişi hələ göndərilə bilmədi. Bu rezervasiya kodu ilə AEROVA dəstəyinə müraciət edin.", vars)
+            : tr("cancellation.cancelledStripe", "{pnr} rezervasiyası ləğv edildi. {amount} məbləğində geri ödəniş kartınıza göndərilir.", vars);
     }
 
     function closeCancelModal() {
@@ -773,7 +773,7 @@
     function confirmCancellation() {
         if (!activeBooking || isCancelled(activeBooking)) {
             closeCancelModal();
-            showMessage(tr("bookingDetails.alreadyCancelled", "This booking is already cancelled."));
+            showMessage(tr("bookingDetails.alreadyCancelled", "Bu bron artıq ləğv edilib."));
             return;
         }
 
@@ -783,16 +783,16 @@
         if (button) {
             button.disabled = true;
             button.setAttribute("aria-busy", "true");
-            button.textContent = tr("cancellation.cancelling", "Cancelling...");
+            button.textContent = tr("cancellation.cancelling", "Ləğv edilir...");
         }
 
         // The page language goes along so the cancellation and refund e-mails are written in it.
-        var language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
+        var language = "az";
         window.AEROVA_API.post(bookingPath("/cancel"), { lastName: ownerLastName(), language: language }).then(function (dto) {
             // A paid booking is not cancelled yet: a confirmation link went to the account's e-mail, and the booking stays as it is.
             if (dto && dto.confirmationSent) {
                 closeCancelModal();
-                showMessage(tr("cancellation.linkSent", "We sent a confirmation link to {email}. Your booking stays active until you open the link and confirm the cancellation.", { email: dto.email }));
+                showMessage(tr("cancellation.linkSent", "{email} ünvanına təsdiq keçidi göndərdik. Keçidi açıb ləğvi təsdiqləyənə qədər rezervasiyanız qüvvədə qalır.", { email: dto.email }));
                 return;
             }
 
@@ -809,7 +809,7 @@
             }
         }).catch(function (error) {
             closeCancelModal();
-            showCancelError(error, tr("bookingDetails.cancelFail", "Unable to cancel this booking. Please try again."));
+            showCancelError(error, tr("bookingDetails.cancelFail", "Bu bron ləğv edilə bilmədi. Yenidən cəhd edin."));
         }).then(function () {
             if (button) {
                 button.disabled = false;
@@ -823,7 +823,7 @@
         var flight = booking.flight || {};
         var passengers = Array.isArray(booking.passengers) ? booking.passengers : [];
         var lines = [
-            "AEROVA Booking Confirmation",
+            "AEROVA bron təsdiqi",
             "PNR: " + (booking.pnr || "—"),
             "Status: " + getBookingStatus(booking),
             "Flight: " + (flight.flightNumber || "—"),
@@ -846,7 +846,7 @@
             lines.push("Discount: -" + formatPrice(booking.discount));
         }
         lines.push("Grand Total: " + formatPrice(booking.totalPrice));
-        lines.push("Thank you for flying AEROVA.");
+        lines.push("AEROVA ilə uçduğunuz üçün təşəkkür edirik.");
 
         return lines.join("\n");
     }
@@ -882,7 +882,7 @@
         if (cancelButton) {
             cancelButton.addEventListener("click", function () {
                 if (!activeBooking || isCancelled(activeBooking)) {
-                    showMessage(tr("bookingDetails.alreadyCancelled", "This booking is already cancelled."));
+                    showMessage(tr("bookingDetails.alreadyCancelled", "Bu bron artıq ləğv edilib."));
                     return;
                 }
                 openCancelModal();
@@ -915,16 +915,6 @@
             trapModalFocus(event);
         });
 
-        window.addEventListener("aerova:languagechange", function () {
-            if (!activeBooking) {
-                return;
-            }
-            renderBooking(activeBooking);
-            var modal = getCancelModal();
-            if (modal && !modal.hidden) {
-                renderCancelModal();
-            }
-        });
     }
 
     function initMenuToggle() {
@@ -942,7 +932,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            toggle.setAttribute("aria-label", open ? "Menyunu bağla" : "Menyunu aç");
         }
 
         toggle.addEventListener("click", function () {
@@ -1029,11 +1019,11 @@
     function showEmptyBookingState() {
         setPageStatus({
             kind: "notice",
-            title: tr("api.bookingDetails.notFoundTitle", "No Booking Found"),
-            text: tr("api.bookingDetails.notFoundText", "There is no booking to display. Open one from My Trips, or search by reference in Manage Booking."),
+            title: tr("api.bookingDetails.notFoundTitle", "Rezervasiya tapılmadı"),
+            text: tr("api.bookingDetails.notFoundText", "Göstəriləcək rezervasiya yoxdur. Onu Səyahətlərim bölməsindən açın və ya Rezervasiyanı idarə et bölməsində kodla axtarın."),
             actions: [
-                { label: tr("nav.myTrips", "My Trips"), href: "my-trips.html" },
-                { label: tr("nav.manageBooking", "Manage Booking"), href: "manage-booking.html" }
+                { label: tr("nav.myTrips", "Səyahətlərim"), href: "my-trips.html" },
+                { label: tr("nav.manageBooking", "Bronu idarə et"), href: "manage-booking.html" }
             ]
         });
     }
@@ -1077,7 +1067,7 @@
             return;
         }
 
-        setPageStatus({ kind: "loading", title: tr("api.bookingDetails.loadingTitle", "Loading your booking"), text: tr("api.bookingDetails.loadingText", "Please wait a moment."), actions: [] });
+        setPageStatus({ kind: "loading", title: tr("api.bookingDetails.loadingTitle", "Rezervasiyanız yüklənir"), text: tr("api.bookingDetails.loadingText", "Zəhmət olmasa bir az gözləyin."), actions: [] });
 
         Promise.all([window.AEROVA_AIRPORTS.load(), request]).then(function (results) {
             activeAirports = results[0];
@@ -1099,9 +1089,9 @@
 
             setPageStatus({
                 kind: "error",
-                title: tr("api.bookingDetails.errorTitle", "We could not load the booking"),
-                text: isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."),
-                actions: [{ label: tr("api.options.retry", "Try again") }],
+                title: tr("api.bookingDetails.errorTitle", "Rezervasiyanı yükləmək mümkün olmadı"),
+                text: isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."),
+                actions: [{ label: tr("api.options.retry", "Yenidən cəhd et") }],
                 onAction: loadBooking
             });
         });

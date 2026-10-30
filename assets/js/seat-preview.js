@@ -3,7 +3,7 @@
     var LAYOUTS = window.AEROVA_SEAT_LAYOUTS || {};
     var ORDER = ["Economy", "Comfort", "Business"];
     var LABEL_KEYS = { Economy: "seatPreview.economy", Comfort: "seatPreview.comfort", Business: "seatPreview.business" };
-    var LABELS = { Economy: "Economy Class", Comfort: "Comfort Class", Business: "Business Class" };
+    var LABELS = { Economy: "Ekonom sinif", Comfort: "Komfort sinif", Business: "Biznes sinif" };
     var active = "Economy";
 
     function tr(key, fallback, vars) {
@@ -120,5 +120,4 @@
     } else {
         init();
     }
-    window.addEventListener("aerova:languagechange", render);
 })();

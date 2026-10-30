@@ -23,7 +23,7 @@ function tr(key, fallback, vars) {
     function setMenu(open) {
         header.classList.toggle("is-menu-open", open);
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        toggle.setAttribute("aria-label", open ? tr("nav.closeMenu", "Close menu") : tr("nav.openMenu", "Open menu"));
+        toggle.setAttribute("aria-label", open ? tr("nav.closeMenu", "Menyunu bağla") : tr("nav.openMenu", "Menyunu aç"));
     }
 
     toggle.addEventListener("click", function () {
@@ -165,12 +165,12 @@ function tr(key, fallback, vars) {
             var toMic = segment.querySelector('[data-voice="to"]');
             var removeButton = segment.querySelector(".segment-remove");
 
-            segment.querySelector(".segment-name").textContent = tr("booking.flightN", "Flight " + number, { n: number });
-            fromField.setAttribute("aria-label", "Flight " + number + " from");
-            toField.setAttribute("aria-label", "Flight " + number + " to");
-            dateField.setAttribute("aria-label", "Flight " + number + " departure date");
-            fromMic.setAttribute("aria-label", "Voice input for flight " + number + " departure");
-            toMic.setAttribute("aria-label", "Voice input for flight " + number + " destination");
+            segment.querySelector(".segment-name").textContent = tr("booking.flightN", "Uçuş {n}", { n: number });
+            fromField.setAttribute("aria-label", "Uçuş " + number + " haradan");
+            toField.setAttribute("aria-label", "Uçuş " + number + " haraya");
+            dateField.setAttribute("aria-label", "Uçuş " + number + " gediş tarixi");
+            fromMic.setAttribute("aria-label", "Səsli daxiletmə, uçuş " + number + " gediş");
+            toMic.setAttribute("aria-label", "Səsli daxiletmə, uçuş " + number + " təyinat");
             removeButton.hidden = items.length < 3;
         });
 
@@ -214,7 +214,7 @@ function tr(key, fallback, vars) {
 
     function startVoiceInput(button) {
         if (!SpeechRecognition) {
-            showMessage(tr("booking.voiceUnsupported", "Voice search is not supported in this browser. Please type your city."));
+            showMessage(tr("booking.voiceUnsupported", "Bu brauzerdə səsli axtarış dəstəklənmir. Şəhəri yazın."));
             return;
         }
 
@@ -254,7 +254,7 @@ function tr(key, fallback, vars) {
         };
 
         recognition.onerror = function () {
-            showMessage(tr("booking.voiceCaptureFail", "Unable to capture voice input. Please try again."));
+            showMessage(tr("booking.voiceCaptureFail", "Səs tutula bilmədi. Yenidən cəhd edin."));
         };
 
         recognition.onend = function () {
@@ -269,7 +269,7 @@ function tr(key, fallback, vars) {
         } catch (error) {
             button.classList.remove("is-listening");
             activeRecognition = null;
-            showMessage(tr("booking.voiceStartFail", "Unable to start voice search. Please try again."));
+            showMessage(tr("booking.voiceStartFail", "Səsli axtarış başladıla bilmədi. Yenidən cəhd edin."));
         }
     }
 
@@ -318,9 +318,9 @@ function tr(key, fallback, vars) {
     function renderMix() {
         var kinds = ["adults", "children", "infants"];
         var labels = {
-            adults: tr("api.passengers.adults", "Adults"),
-            children: tr("api.passengers.children", "Children"),
-            infants: tr("api.passengers.infants", "Infants")
+            adults: tr("api.passengers.adults", "Böyüklər"),
+            children: tr("api.passengers.children", "Uşaqlar"),
+            infants: tr("api.passengers.infants", "Körpələr")
         };
 
         kinds.forEach(function (kind) {
@@ -329,18 +329,18 @@ function tr(key, fallback, vars) {
             Array.prototype.forEach.call(mixPanel.querySelectorAll('[data-kind="' + kind + '"]'), function (button) {
                 var step = Number(button.getAttribute("data-step"));
                 button.disabled = !canChangeMix(kind, step);
-                button.setAttribute("aria-label", tr(step < 0 ? "api.passengers.fewer" : "api.passengers.more", step < 0 ? "Fewer {kind}" : "More {kind}", { kind: labels[kind].toLowerCase() }));
+                button.setAttribute("aria-label", tr(step < 0 ? "api.passengers.fewer" : "api.passengers.more", step < 0 ? "Azalt: {kind}" : "Artır: {kind}", { kind: labels[kind].toLowerCase() }));
             });
         });
 
-        document.getElementById("passenger-hint-adults").textContent = tr("api.passengers.adultsHint", "{age} years and older", { age: passengerRules.childMaxAgeYears });
-        document.getElementById("passenger-hint-children").textContent = tr("api.passengers.childrenHint", "{min} to {max} years", { min: passengerRules.infantMaxAgeYears, max: passengerRules.childMaxAgeYears - 1 });
-        document.getElementById("passenger-hint-infants").textContent = tr("api.passengers.infantsHint", "Under {age}, on an adult's lap", { age: passengerRules.infantMaxAgeYears });
-        document.getElementById("passenger-done").textContent = tr("api.passengers.done", "Done");
+        document.getElementById("passenger-hint-adults").textContent = tr("api.passengers.adultsHint", "{age} yaş və yuxarı", { age: passengerRules.childMaxAgeYears });
+        document.getElementById("passenger-hint-children").textContent = tr("api.passengers.childrenHint", "{min}–{max} yaş", { min: passengerRules.infantMaxAgeYears, max: passengerRules.childMaxAgeYears - 1 });
+        document.getElementById("passenger-hint-infants").textContent = tr("api.passengers.infantsHint", "{age} yaşdan kiçik, böyüyün qucağında", { age: passengerRules.infantMaxAgeYears });
+        document.getElementById("passenger-done").textContent = tr("api.passengers.done", "Hazırdır");
 
-        var note = tr("api.passengers.limitNote", "Up to {max} travellers on one booking.", { max: passengerRules.maxPassengers });
+        var note = tr("api.passengers.limitNote", "Bir bronda ən çox {max} sərnişin ola bilər.", { max: passengerRules.maxPassengers });
         if (passengerMix.infants > 0 && passengerMix.infants >= passengerMix.adults) {
-            note += " " + tr("api.passengers.infantsLimit", "Each infant travels on an adult's lap, so there cannot be more infants than adults.");
+            note += " " + tr("api.passengers.infantsLimit", "Hər körpə böyüyün qucağında uçur, ona görə körpələrin sayı böyüklərdən çox ola bilməz.");
         }
         document.getElementById("passenger-note").textContent = note;
 
@@ -412,7 +412,6 @@ function tr(key, fallback, vars) {
         }
     });
 
-    window.addEventListener("aerova:languagechange", renderMix);
     renderMix();
 
     if (window.AEROVA_API && typeof window.AEROVA_API.get === "function") {
@@ -431,14 +430,14 @@ function tr(key, fallback, vars) {
     function validateSharedOptions() {
         if (!passengersInput.value) {
             markInvalid(passengersInput);
-            showMessage(tr("booking.needPassengers", "Please select the number of passengers."));
+            showMessage(tr("booking.needPassengers", "Sərnişin sayını seçin."));
             passengersInput.focus();
             return false;
         }
 
         if (!cabinInput.value) {
             markInvalid(cabinInput);
-            showMessage(tr("booking.needCabin", "Please select a cabin class."));
+            showMessage(tr("booking.needCabin", "Salon sinfini seçin."));
             cabinInput.focus();
             return false;
         }
@@ -506,14 +505,14 @@ function tr(key, fallback, vars) {
             if (fromChoice && toChoice && fromChoice.airport.code === toChoice.airport.code) {
                 markInvalid(to);
                 firstInvalid = firstInvalid || to;
-                showMessage(tr("booking.sameCity", "The departure and the destination are the same. Please choose two different cities."));
+                showMessage(tr("booking.sameCity", "Gediş və təyinat eynidir. Zəhmət olmasa iki fərqli şəhər seçin."));
                 to.focus();
                 return null;
             }
         }
 
         if (firstInvalid) {
-            showMessage(tr("booking.completeMulti", "Please complete From, To and Departure Date for every flight."));
+            showMessage(tr("booking.completeMulti", "Hər uçuş üçün Haradan, Haraya və Gediş tarixini doldurun."));
             firstInvalid.focus();
             return null;
         }
@@ -525,7 +524,7 @@ function tr(key, fallback, vars) {
 
             if (thisDate.value.trim() < previousDate) {
                 markInvalid(thisDate);
-                showMessage(tr("api.journey.multiDates", "Each flight must be on or after the date of the flight before it."));
+                showMessage(tr("api.journey.multiDates", "Hər reys özündən əvvəlki reysin tarixində və ya ondan sonra olmalıdır."));
                 thisDate.focus();
                 return null;
             }
@@ -563,14 +562,14 @@ function tr(key, fallback, vars) {
 
         if (!fromValue) {
             markInvalid(fromInput);
-            showMessage(tr("booking.needFrom", "Please enter a departure city or airport."));
+            showMessage(tr("booking.needFrom", "Gediş şəhəri və ya hava limanını daxil edin."));
             fromInput.focus();
             return null;
         }
 
         if (!toValue) {
             markInvalid(toInput);
-            showMessage(tr("booking.needTo", "Please enter a destination city or airport."));
+            showMessage(tr("booking.needTo", "Təyinat şəhəri və ya hava limanını daxil edin."));
             toInput.focus();
             return null;
         }
@@ -581,42 +580,42 @@ function tr(key, fallback, vars) {
 
         if (!fromChoice) {
             markInvalid(fromInput);
-            showMessage(tr("picker.chooseFromList", "Please choose the departure from the list."));
+            showMessage(tr("picker.chooseFromList", "Zəhmət olmasa hava limanını siyahıdan seçin."));
             fromInput.focus();
             return null;
         }
 
         if (!toChoice) {
             markInvalid(toInput);
-            showMessage(tr("picker.chooseFromList", "Please choose the destination from the list."));
+            showMessage(tr("picker.chooseFromList", "Zəhmət olmasa hava limanını siyahıdan seçin."));
             toInput.focus();
             return null;
         }
 
         if (fromChoice.airport.code === toChoice.airport.code) {
             markInvalid(toInput);
-            showMessage(tr("booking.sameCity", "The departure and the destination are the same. Please choose two different cities."));
+            showMessage(tr("booking.sameCity", "Gediş və təyinat eynidir. Zəhmət olmasa iki fərqli şəhər seçin."));
             toInput.focus();
             return null;
         }
 
         if (!departureValue) {
             markInvalid(departureInput);
-            showMessage(tr("booking.needDeparture", "Please select a departure date."));
+            showMessage(tr("booking.needDeparture", "Gediş tarixini seçin."));
             openPriceCalendar("departure");
             return null;
         }
 
         if (tripType === "round-trip" && !returnValue) {
             markInvalid(returnInput);
-            showMessage(tr("booking.needReturn", "Please select a return date."));
+            showMessage(tr("booking.needReturn", "Dönüş tarixini seçin."));
             openPriceCalendar("return");
             return null;
         }
 
         if (tripType === "round-trip" && returnValue && returnValue < departureValue) {
             markInvalid(returnInput);
-            showMessage(tr("booking.returnAfter", "Return date must be on or after the departure date."));
+            showMessage(tr("booking.returnAfter", "Dönüş tarixi gediş tarixindən əvvəl ola bilməz."));
             openPriceCalendar("return");
             return null;
         }
@@ -788,7 +787,7 @@ function tr(key, fallback, vars) {
         window.AEROVA_PICKER.checkRoute(data.fromCode, data.toCode).then(function (exists) {
             if (exists === false) {
                 markInvalid(toInput);
-                showMessage(tr("picker.noRoute", "There are no scheduled flights between {from} and {to} yet.", { from: data.from, to: data.to }));
+                showMessage(tr("picker.noRoute", "{from} və {to} arasında hələlik planlaşdırılmış reys yoxdur.", { from: data.from, to: data.to }));
                 return;
             }
             navigateToResults(data);
@@ -829,8 +828,8 @@ function tr(key, fallback, vars) {
     var calendarAirports = [];
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     var calendarSection = document.getElementById("price-calendar");
@@ -937,7 +936,7 @@ function tr(key, fallback, vars) {
     function formatDisplayDate(isoValue) {
         var date = parseISODate(isoValue);
         if (!date) {
-            return tr("booking.selectADate", "Select a date");
+            return tr("booking.selectADate", "Tarix seçin");
         }
 
         return date.getDate() + " " + translatedMonth(date.getMonth()) + " " + date.getFullYear();
@@ -1020,7 +1019,7 @@ function tr(key, fallback, vars) {
             entry.status = "ready";
         }).catch(function (error) {
             entry.status = "error";
-            entry.message = error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+            entry.message = error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
         }).then(function () {
             refreshDeparturePrice();
             refreshReturnPrice();
@@ -1081,7 +1080,8 @@ function tr(key, fallback, vars) {
 
     function populateCitySelects() {
         var options = CALENDAR_CITIES.map(function (city) {
-            return '<option value="' + city + '">' + city + "</option>";
+            var named = calendarAirports.filter(function (airport) { return airport.city === city; })[0];
+            return '<option value="' + city + '">' + ((named && named.cityNameAz) || city) + "</option>";
         }).join("");
 
         calendarFrom.innerHTML = options;
@@ -1313,12 +1313,12 @@ function tr(key, fallback, vars) {
         if (calendarSubtitle) {
             if (tripType === "round-trip") {
                 if (selectionMode === "return") {
-                    calendarSubtitle.textContent = tr("booking.returnFares", "Return fares for " + returnRouteLabel + ". Choose a return date on or after your departure.", { route: returnRouteLabel });
+                    calendarSubtitle.textContent = tr("booking.returnFares", "{route} üçün dönüş qiymətləri. Gedişdən sonra və ya eyni gündə dönüş seçin.", { route: returnRouteLabel });
                 } else {
-                    calendarSubtitle.textContent = tr("booking.depFaresRound", "Departure fares for " + routeLabel + ". After you pick a departure date, select your return.", { route: routeLabel });
+                    calendarSubtitle.textContent = tr("booking.depFaresRound", "{route} üçün gediş qiymətləri. Gediş seçdikdən sonra dönüşü seçin.", { route: routeLabel });
                 }
             } else {
-                calendarSubtitle.textContent = tr("booking.oneWayFares", "One-way starting fares for " + routeLabel + ". Click a date to set your departure date.", { route: routeLabel });
+                calendarSubtitle.textContent = tr("booking.oneWayFares", "{route} üçün birtərəfli başlanğıc qiymətlər. Gediş tarixi üçün tarixə klikləyin.", { route: routeLabel });
             }
         }
 
@@ -1328,27 +1328,27 @@ function tr(key, fallback, vars) {
 
         if (selectionMode === "return") {
             if (returnDate && returnPrice != null) {
-                calendarNote.textContent = tr("booking.selectedReturn", "Selected return " + returnDate + " from " + formatFare(returnPrice) + ".", { date: returnDate, price: formatFare(returnPrice) });
+                calendarNote.textContent = tr("booking.selectedReturn", "Seçilmiş dönüş {date}, {price}-dan.", { date: returnDate, price: formatFare(returnPrice) });
             } else if (!departureDate) {
-                calendarNote.textContent = tr("booking.selectDepFirst", "Select a departure date first, then choose your return.");
+                calendarNote.textContent = tr("booking.selectDepFirst", "Əvvəlcə gediş tarixini, sonra dönüşü seçin.");
             } else {
-                calendarNote.textContent = tr("booking.showReturnFares", "Showing return fares for " + returnRouteLabel + ". Click a date to set your return date.", { route: returnRouteLabel });
+                calendarNote.textContent = tr("booking.showReturnFares", "{route} üçün dönüş qiymətləri göstərilir. Dönüş tarixi üçün tarixə klikləyin.", { route: returnRouteLabel });
             }
             return;
         }
 
         if (departureDate && departurePrice != null) {
-            calendarNote.textContent = tr("booking.selectedDep", "Selected departure " + departureDate + " from " + formatFare(departurePrice) + ".", { date: departureDate, price: formatFare(departurePrice) });
+            calendarNote.textContent = tr("booking.selectedDep", "Seçilmiş gediş {date}, {price}-dan.", { date: departureDate, price: formatFare(departurePrice) });
             return;
         }
 
-        calendarNote.textContent = tr("booking.clickDeparture", "Click a date to set your departure date.");
+        calendarNote.textContent = tr("booking.clickDeparture", "Gediş tarixi üçün tarixə klikləyin.");
     }
 
     function updateSummary() {
         var outbound = getOutboundCities();
-        var emptyDeparture = tr("booking.selectDeparture", "Select a departure date");
-        var emptyReturn = tr("booking.selectReturn", "Select a return date");
+        var emptyDeparture = tr("booking.selectDeparture", "Gediş tarixini seçin");
+        var emptyReturn = tr("booking.selectReturn", "Dönüş tarixini seçin");
 
         summaryDepartureRoute.textContent = (outbound.from && outbound.to)
             ? outbound.from + " → " + outbound.to
@@ -1397,18 +1397,18 @@ function tr(key, fallback, vars) {
             var beforeDeparture = selectionMode === "return" && departureDate && iso < departureDate;
             var unavailable = fare == null || beforeDeparture;
             var classes = ["price-calendar-day"];
-            var label = "Date " + iso;
+            var label = "Tarix " + iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(0, 4);
             var isDeparture = departureDate && iso === departureDate;
             var isReturn = tripType === "round-trip" && returnDate && iso === returnDate;
             var inRange = tripType === "round-trip" && departureDate && returnDate && iso > departureDate && iso < returnDate;
 
             if (unavailable) {
                 classes.push("is-unavailable");
-                label += beforeDeparture ? ", before departure" : ", no flights";
+                label += beforeDeparture ? ", gedişdən əvvəl" : ", reys yoxdur";
             } else {
                 label += selectionMode === "return"
-                    ? ", return fare from " + formatFare(fare)
-                    : ", departure fare from " + formatFare(fare);
+                    ? ", dönüş qiyməti: " + formatFare(fare)
+                    : ", gediş qiyməti: " + formatFare(fare);
             }
 
             if (inRange) {
@@ -1457,7 +1457,7 @@ function tr(key, fallback, vars) {
         }
 
         if (entry.status === "loading") {
-            calendarNote.textContent = tr("api.calendar.loading", "Loading fares...");
+            calendarNote.textContent = tr("api.calendar.loading", "Qiymətlər yüklənir...");
             return;
         }
 
@@ -1466,7 +1466,7 @@ function tr(key, fallback, vars) {
         var retry = document.createElement("button");
         retry.type = "button";
         retry.className = "price-calendar-retry";
-        retry.textContent = tr("api.options.retry", "Try again");
+        retry.textContent = tr("api.options.retry", "Yenidən cəhd et");
         retry.addEventListener("click", function () {
             retryFareMonth(route.from, route.to, year, month);
         });
@@ -1586,7 +1586,7 @@ function tr(key, fallback, vars) {
             if (!departureDate) {
                 setSelectionMode("departure");
                 if (calendarNote) {
-                    calendarNote.textContent = tr("booking.selectDepFirst", "Select a departure date first, then choose your return.");
+                    calendarNote.textContent = tr("booking.selectDepFirst", "Əvvəlcə gediş tarixini, sonra dönüşü seçin.");
                 }
                 return;
             }
@@ -1740,11 +1740,11 @@ function tr(key, fallback, vars) {
         }).catch(function (error) {
             if (calendarNote) {
                 calendarNote.innerHTML = "";
-                calendarNote.appendChild(document.createTextNode((error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.")) + " "));
+                calendarNote.appendChild(document.createTextNode((error && error.userMessage ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.")) + " "));
                 var retry = document.createElement("button");
                 retry.type = "button";
                 retry.className = "price-calendar-retry";
-                retry.textContent = tr("api.options.retry", "Try again");
+                retry.textContent = tr("api.options.retry", "Yenidən cəhd et");
                 retry.addEventListener("click", initCalendar);
                 calendarNote.appendChild(retry);
             }
@@ -1757,10 +1757,4 @@ function tr(key, fallback, vars) {
         initCalendar();
     }
 
-    window.addEventListener("aerova:languagechange", function () {
-        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
-        try {
-            if (typeof renderCalendar === "function") renderCalendar();
-        } catch (e) {}
-    });
 })();

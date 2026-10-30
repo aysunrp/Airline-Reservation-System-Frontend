@@ -8,8 +8,8 @@
     }
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     /* Cabin layouts live in seat-layouts.js so the home-page seat preview renders the same cabins. */
@@ -34,7 +34,7 @@
 
     function formatDisplayDate(dateValue) {
         if (!dateValue) {
-            return tr("seats.dateNotSelected", "Date not selected");
+            return tr("seats.dateNotSelected", "Tarix seçilməyib");
         }
 
         var parts = String(dateValue).split("-");
@@ -56,7 +56,7 @@
         if (!monthLabel || monthLabel === ("common.months." + String(month))) {
             monthLabel = MONTH_NAMES[month - 1];
         }
-        return day + " " + monthLabel + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function readSelectedFlight() {
@@ -182,17 +182,17 @@
     }
 
     function updateSelectedSeatSummary() {
-        var seatsLabel = selectedSeats.length === 1 ? tr("seats.selectedSeat", "Selected Seat") : tr("seats.selectedSeats", "Selected Seats");
+        var seatsLabel = selectedSeats.length === 1 ? tr("seats.selectedSeat", "Seçilmiş oturacaq") : tr("seats.selectedSeats", "Seçilmiş oturacaqlar");
         setText("selected-seat-label", seatsLabel);
         setText(
             "selected-seat-value",
-            selectedSeats.length ? selectedSeats.join(", ") : tr("seats.noSeat", "No seat selected")
+            selectedSeats.length ? selectedSeats.join(", ") : tr("seats.noSeat", "Oturacaq seçilməyib")
         );
         setText(
             "seat-progress",
             tr("seats.ofSelected", selectedSeats.length + " of " + requiredSeats + " seats selected", { selected: selectedSeats.length, total: requiredSeats })
         );
-        setText("selected-seat-price", tr("seats.priceIncluded", "Included"));
+        setText("selected-seat-price", tr("seats.priceIncluded", "Daxildir"));
         paintAssignments();
         updateContinueAvailability();
     }
@@ -216,8 +216,8 @@
             var seat = selectedSeats[index];
             item.className = "seat-assignment" + (seat ? " is-chosen" : "");
             item.textContent = seat
-                ? tr("api.seats.passengerSeat", "Passenger {n}: {seat}", { n: index + 1, seat: seat }).replace("{n}", index + 1).replace("{seat}", seat)
-                : tr("api.seats.passengerSeatEmpty", "Passenger {n}: not chosen yet", { n: index + 1 }).replace("{n}", index + 1);
+                ? tr("api.seats.passengerSeat", "Sərnişin {n}: {seat}", { n: index + 1, seat: seat }).replace("{n}", index + 1).replace("{seat}", seat)
+                : tr("api.seats.passengerSeatEmpty", "Sərnişin {n}: hələ seçilməyib", { n: index + 1 }).replace("{n}", index + 1);
             list.appendChild(item);
         }
     }
@@ -237,7 +237,7 @@
         var seats = outbound && Array.isArray(outbound.selectedSeats) ? outbound.selectedSeats.join(", ") : "";
         note.hidden = !seats;
         note.textContent = seats
-            ? tr("api.journey.outboundSeatsNote", "Your outbound seats ({seats}) stay on the outbound flight. Choose the return seats here; the same numbers are fine when they are free on this flight.", { seats: seats }).replace("{seats}", seats)
+            ? tr("api.journey.outboundSeatsNote", "Gediş oturacaqlarınız ({seats}) gediş reysində qalır. Qayıdış oturacaqlarını burada seçin; bu reysdə boşdursa, eyni nömrələri də seçə bilərsiniz.", { seats: seats }).replace("{seats}", seats)
             : "";
     }
 
@@ -267,11 +267,11 @@
 
         var title = document.querySelector(".seat-title");
         if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(flight)) {
-            title.textContent = tr("api.journey.seatsLeg", "Select Your Seats: Flight {n} of {total}", { n: window.AEROVA_JOURNEY.legNumber(flight), total: flight.multi.count });
+            title.textContent = tr("api.journey.seatsLeg", "Yerlərinizi seçin: {total} reysdən {n}-ci", { n: window.AEROVA_JOURNEY.legNumber(flight), total: flight.multi.count });
         } else if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isRoundTrip(flight)) {
             title.textContent = window.AEROVA_JOURNEY.isReturnLeg(flight)
-                ? tr("api.journey.seatsReturn", "Select Your Return Seats")
-                : tr("api.journey.seatsOutbound", "Select Your Outbound Seats");
+                ? tr("api.journey.seatsReturn", "Qayıdış yerlərini seçin")
+                : tr("api.journey.seatsOutbound", "Gediş yerlərini seçin");
         }
 
         setText("summary-airline", flight.airline || "AEROVA");
@@ -329,14 +329,14 @@
         button.textContent = seatId;
 
         if (seat.isExtraLegroom) {
-            button.title = tr("api.seats.extraLegroom", "Extra legroom");
+            button.title = tr("api.seats.extraLegroom", "Əlavə ayaq yeri");
         }
 
         if (isOccupied) {
             button.disabled = true;
-            button.setAttribute("aria-label", tr("seats.seatOccupiedAria", "Seat " + seatId + " occupied", { id: seatId }));
+            button.setAttribute("aria-label", tr("seats.seatOccupiedAria", "Oturacaq {id} məşğuldur", { id: seatId }));
         } else {
-            button.setAttribute("aria-label", tr("seats.seatAria", "Seat " + seatId, { id: seatId }));
+            button.setAttribute("aria-label", tr("seats.seatAria", "Oturacaq {id}", { id: seatId }));
             button.setAttribute("aria-pressed", "false");
         }
 
@@ -458,8 +458,8 @@
             if (selectedSeats.length >= requiredSeats) {
                 showMessage(
                     requiredSeats === 1
-                        ? tr("seats.maxSeatOne", "You can select up to 1 seat.")
-                        : tr("seats.maxSeats", "You can select up to " + requiredSeats + " seats.", { count: requiredSeats })
+                        ? tr("seats.maxSeatOne", "Ən çox 1 oturacaq seçə bilərsiniz.")
+                        : tr("seats.maxSeats", "Ən çox {count} oturacaq seçə bilərsiniz.", { count: requiredSeats })
                 );
                 return;
             }
@@ -498,13 +498,13 @@
 
         if (selectedSeats.length === 0) {
             return requiredSeats === 1
-                ? tr("seats.validation", "Please select a seat to continue.")
-                : tr("seats.selectN", "Please select " + requiredSeats + " seats to continue.", { count: requiredSeats });
+                ? tr("seats.validation", "Hər sərnişin üçün oturacaq seçin.")
+                : tr("seats.selectN", "Davam etmək üçün {count} oturacaq seçin.", { count: requiredSeats });
         }
 
         return remaining === 1
-            ? tr("seats.selectOneMore", "Please select 1 more seat.")
-            : tr("seats.selectMore", "Please select " + remaining + " more seats.", { count: remaining });
+            ? tr("seats.selectOneMore", "Daha 1 oturacaq seçin.")
+            : tr("seats.selectMore", "Daha {count} oturacaq seçin.", { count: remaining });
     }
 
     function bindContinue(flightData) {
@@ -560,7 +560,7 @@
         panel.innerHTML =
             '<h2 class="seat-status-title">' + escapeHtml(tr(spec.titleKey, spec.titleFallback)) + "</h2>" +
             '<p class="seat-status-text">' + escapeHtml(spec.text || tr(spec.textKey, spec.textFallback)) + "</p>" +
-            (spec.retry ? '<button type="button" class="continue-button seat-retry">' + escapeHtml(tr("api.search.retry", "Try again")) + "</button>" : "");
+            (spec.retry ? '<button type="button" class="continue-button seat-retry">' + escapeHtml(tr("api.search.retry", "Yenidən cəhd et")) + "</button>" : "");
 
         var retryButton = panel.querySelector(".seat-retry");
         if (retryButton) {
@@ -585,11 +585,11 @@
         updateSelectedSeatSummary();
 
         if (!(flightId > 0) || Math.floor(flightId) !== flightId) {
-            setStatus({ kind: "notice", titleKey: "api.seats.noFlightTitle", titleFallback: "No flight selected", textKey: "api.seats.noFlightText", textFallback: "Choose a flight first, then select your seats." });
+            setStatus({ kind: "notice", titleKey: "api.seats.noFlightTitle", titleFallback: "Uçuş seçilməyib", textKey: "api.seats.noFlightText", textFallback: "Əvvəlcə uçuş seçin, sonra oturacaqlarınızı seçin." });
             return;
         }
 
-        setStatus({ kind: "loading", titleKey: "api.seats.loadingTitle", titleFallback: "Loading seat map", textKey: "api.seats.loadingText", textFallback: "Please wait while we load the seats." });
+        setStatus({ kind: "loading", titleKey: "api.seats.loadingTitle", titleFallback: "Oturacaq xəritəsi yüklənir", textKey: "api.seats.loadingText", textFallback: "Zəhmət olmasa gözləyin, oturacaqlar yüklənir." });
 
         window.AEROVA_API.get("api/flights/" + flightId + "/seats", { query: { cabinClass: cabin } }).then(function (map) {
             var seats = ((map && map.seats) || []).filter(function (seat) {
@@ -597,7 +597,7 @@
             });
 
             if (!seats.length) {
-                setStatus({ kind: "notice", titleKey: "api.seats.noSeatsTitle", titleFallback: "No seats to show", textKey: "api.seats.noSeatsText", textFallback: "This cabin has no seats on this flight." });
+                setStatus({ kind: "notice", titleKey: "api.seats.noSeatsTitle", titleFallback: "Göstəriləcək oturacaq yoxdur", textKey: "api.seats.noSeatsText", textFallback: "Bu uçuşda bu kabində oturacaq yoxdur." });
                 return;
             }
 
@@ -620,7 +620,7 @@
             var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
 
             if (isApiError && error.status === 404) {
-                setStatus({ kind: "notice", titleKey: "api.details.notFoundTitle", titleFallback: "This flight is not available", textKey: "api.details.notFoundText", textFallback: "It may have been removed or changed. Please search again." });
+                setStatus({ kind: "notice", titleKey: "api.details.notFoundTitle", titleFallback: "Bu uçuş mövcud deyil", textKey: "api.details.notFoundText", textFallback: "O, silinmiş və ya dəyişdirilmiş ola bilər. Zəhmət olmasa yenidən axtarın." });
                 return;
             }
 
@@ -628,7 +628,7 @@
                 window.console.error(error);
             }
 
-            setStatus({ kind: "error", titleKey: "api.seats.errorTitle", titleFallback: "We could not load the seat map", text: isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), retry: true });
+            setStatus({ kind: "error", titleKey: "api.seats.errorTitle", titleFallback: "Oturacaq xəritəsini yükləmək mümkün olmadı", text: isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), retry: true });
         });
     }
 
@@ -662,7 +662,4 @@
     } else {
         init();
     }
-    window.addEventListener("aerova:languagechange", function () {
-        refreshForLanguage();
-    });
 })();

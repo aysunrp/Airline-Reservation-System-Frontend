@@ -1,7 +1,7 @@
 (function () {
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     var CABIN_CLASSES = ["Economy", "Comfort", "Business"];
@@ -187,7 +187,7 @@
             return dateValue;
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function parseISODate(value) {
@@ -323,7 +323,7 @@
             '<div class="results-empty" role="' + (spec.kind === "error" ? "alert" : "status") + '">' +
                 '<h2 class="results-empty-title">' + escapeHtml(title) + "</h2>" +
                 '<p class="results-empty-text">' + escapeHtml(message) + "</p>" +
-                (spec.retry ? '<button type="button" class="select-flight-button results-retry">' + escapeHtml(say("api.search.retry", "Try again")) + "</button>" : "") +
+                (spec.retry ? '<button type="button" class="select-flight-button results-retry">' + escapeHtml(say("api.search.retry", "Yenidən cəhd et")) + "</button>" : "") +
                 (spec.action ? '<button type="button" class="select-flight-button results-action">' + escapeHtml(say(spec.action.key, spec.action.fallback)) + "</button>" : "") +
             "</div>";
 
@@ -337,7 +337,7 @@
             retryButton.addEventListener("click", loadFlights);
         }
 
-        setCountText(spec.kind === "loading" ? say("api.search.loadingCount", "Searching...") : "");
+        setCountText(spec.kind === "loading" ? say("api.search.loadingCount", "Axtarılır...") : "");
     }
 
     function setStatus(spec) {
@@ -369,22 +369,22 @@
         baseFlights = [];
 
         if (!criteria.from || !criteria.to) {
-            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.needRoute", textFallback: "Enter where you are flying from and to." });
+            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı", textKey: "api.search.needRoute", textFallback: "Haradan və hara uçacağınızı daxil edin." });
             return;
         }
 
         if (criteria.range) {
-            setStatus({ kind: "loading", titleKey: "api.search.loadingTitle", titleFallback: "Searching flights", textKey: "api.search.loadingText", textFallback: "Please wait while we look for available flights." });
+            setStatus({ kind: "loading", titleKey: "api.search.loadingTitle", titleFallback: "Uçuşlar axtarılır", textKey: "api.search.loadingText", textFallback: "Zəhmət olmasa gözləyin, mövcud uçuşlar axtarılır." });
             loadRange(criteria, token);
             return;
         }
 
         if (!selectedDate) {
-            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.needDate", textFallback: "Select a departure date to search for flights." });
+            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı", textKey: "api.search.needDate", textFallback: "Uçuşları axtarmaq üçün yola düşmə tarixini seçin." });
             return;
         }
 
-        setStatus({ kind: "loading", titleKey: "api.search.loadingTitle", titleFallback: "Searching flights", textKey: "api.search.loadingText", textFallback: "Please wait while we look for available flights." });
+        setStatus({ kind: "loading", titleKey: "api.search.loadingTitle", titleFallback: "Uçuşlar axtarılır", textKey: "api.search.loadingText", textFallback: "Zəhmət olmasa gözləyin, mövcud uçuşlar axtarılır." });
 
         var directory = window.AEROVA_AIRPORTS;
         var airports = [];
@@ -435,10 +435,10 @@
 
             if (!pageFlights.length && leftOutByTime > 0) {
                 setStatus({
-                    kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found",
-                    textKey: "voice.results.noneOnDate", textFallback: "There are no {part} flights on {date}.",
+                    kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı",
+                    textKey: "voice.results.noneOnDate", textFallback: "{date} tarixində {part} uçuşu yoxdur.",
                     vars: { part: say("voice.results.partName." + criteria.timeOfDay, criteria.timeOfDay), date: formatDisplayDate(criteria.departureDate) },
-                    action: { key: "voice.results.showAllTimes", fallback: "Show all times of day", run: showAllTimes }
+                    action: { key: "voice.results.showAllTimes", fallback: "Günün bütün saatlarını göstər", run: showAllTimes }
                 });
                 return;
             }
@@ -461,7 +461,7 @@
         baseFlights = [];
 
         if (error && error.unknownCity) {
-            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found", textKey: "api.search.unknownAirport", textFallback: "We do not fly from or to \"" + error.unknownCity + "\" yet. Please choose another city.", vars: { city: error.unknownCity } });
+            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı", textKey: "api.search.unknownAirport", textFallback: "We do not fly from or to \"" + error.unknownCity + "\" yet. Please choose another city.", vars: { city: error.unknownCity } });
             return;
         }
 
@@ -470,7 +470,7 @@
             window.console.error(error);
         }
 
-        setStatus({ kind: "error", titleKey: "api.search.errorTitle", titleFallback: "We could not load flights", text: isApiError ? error.userMessage : say("api.errors.generic", "Something went wrong. Please try again."), retry: true });
+        setStatus({ kind: "error", titleKey: "api.search.errorTitle", titleFallback: "Uçuşları yükləmək mümkün olmadı", text: isApiError ? error.userMessage : say("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), retry: true });
     }
 
     function reloadWith(change) {
@@ -541,14 +541,14 @@
 
             if (!pageFlights.length) {
                 setStatus({
-                    kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "No Flights Found",
+                    kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı",
                     textKey: criteria.timeOfDay ? "voice.results.noneInPeriodTime" : "voice.results.noneInPeriod",
-                    textFallback: "There are no flights from {origin} to {destination} between {from} and {to}.",
+                    textFallback: "{from} - {to} arasında {origin} - {destination} istiqamətində uçuş yoxdur.",
                     vars: {
                         origin: criteria.from, destination: criteria.to, from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo),
                         part: say("voice.results.partName." + criteria.timeOfDay, criteria.timeOfDay)
                     },
-                    action: periodDays(criteria) < MAX_PERIOD_DAYS ? { key: "voice.results.expand", fallback: "Search up to 62 days", run: expandPeriod } : null
+                    action: periodDays(criteria) < MAX_PERIOD_DAYS ? { key: "voice.results.expand", fallback: "62 günə qədər axtar", run: expandPeriod } : null
                 });
                 paintVoiceNote(criteria);
                 return;
@@ -604,13 +604,13 @@
         };
 
         note.textContent = criteria.multi
-            ? say("api.journey.previousChosen", "Flight {n}: {flight}, {route}, {date}, {cabin}{seats}", vars)
-            : say("api.journey.outboundChosen", "Outbound: {flight}, {route}, {date}, {cabin}{seats}", vars);
+            ? say("api.journey.previousChosen", "Reys {n}: {flight}, {route}, {date}, {cabin}{seats}", vars)
+            : say("api.journey.outboundChosen", "Gediş: {flight}, {route}, {date}, {cabin}{seats}", vars);
 
         if (hiddenBeforeArrival > 0) {
             note.textContent += " \u00b7 " + (criteria.multi
-                ? say("api.journey.hiddenBeforePrevious", "{count} earlier flight(s) are not shown because they leave before your previous flight lands.", { count: hiddenBeforeArrival })
-                : say("api.journey.hiddenBeforeArrival", "{count} earlier flight(s) are not shown because they leave before your outbound flight lands.", { count: hiddenBeforeArrival }));
+                ? say("api.journey.hiddenBeforePrevious", "{count} əvvəlki reys göstərilmir, çünki əvvəlki reysiniz yerə enməmiş yola düşür.", { count: hiddenBeforeArrival })
+                : say("api.journey.hiddenBeforeArrival", "{count} əvvəlki reys göstərilmir, çünki gediş reysiniz yerə enməmiş yola düşür.", { count: hiddenBeforeArrival }));
         }
 
         note.hidden = false;
@@ -623,14 +623,14 @@
         var selectedDate = parseISODate(criteria.departureDate);
 
         if (eyebrowElement) {
-            eyebrowElement.textContent = (typeof t === "function" ? t("results.eyebrow") : "Available Flights");
+            eyebrowElement.textContent = (typeof t === "function" ? t("results.eyebrow") : "Mövcud uçuşlar");
 
             if (criteria.multi) {
-                eyebrowElement.textContent = say("api.journey.chooseLeg", "Choose flight {n} of {total}", { n: criteria.leg, total: criteria.multi.count });
+                eyebrowElement.textContent = say("api.journey.chooseLeg", "{total} reysdən {n}-ci reysi seçin", { n: criteria.leg, total: criteria.multi.count });
             } else if (criteria.leg === 2) {
-                eyebrowElement.textContent = say("api.journey.chooseReturn", "Choose your return flight");
+                eyebrowElement.textContent = say("api.journey.chooseReturn", "Qayıdış reysini seçin");
             } else if (/round/i.test(criteria.tripType || "") && criteria.returnDate) {
-                eyebrowElement.textContent = say("api.journey.chooseOutbound", "Choose your outbound flight");
+                eyebrowElement.textContent = say("api.journey.chooseOutbound", "Gediş reysini seçin");
             }
         }
 
@@ -646,18 +646,18 @@
             if (criteria.range) {
                 var span = { from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) };
                 if (isSingleCheapest(criteria)) {
-                    metaElement.textContent = say("voice.results.singleHeading", "Cheapest flight found between {from} and {to}", span);
+                    metaElement.textContent = say("voice.results.singleHeading", "{from} - {to} arasında tapılan ən ucuz uçuş", span);
                 } else if (criteria.cheapest && criteria.single) {
-                    metaElement.textContent = say("voice.results.otherHeading", "Other flights between {from} and {to}, cheapest first", span);
+                    metaElement.textContent = say("voice.results.otherHeading", "{from} - {to} arasında digər uçuşlar, ən ucuzdan başlayaraq", span);
                 } else {
                     metaElement.textContent = criteria.cheapest
-                        ? say("voice.results.cheapestHeading", "Cheapest flights between {from} and {to}", span)
-                        : say("voice.results.periodHeading", "Flights between {from} and {to}", span);
+                        ? say("voice.results.cheapestHeading", "{from} - {to} arasında ən ucuz uçuşlar", span)
+                        : say("voice.results.periodHeading", "{from} - {to} arasında uçuşlar", span);
                 }
             } else if (selectedDate) {
                 metaElement.textContent = formatDisplayDate(toISODate(selectedDate));
             } else {
-                metaElement.textContent = (typeof t === "function" ? t("results.availableNext30") : "Available flights in the next 30 days");
+                metaElement.textContent = (typeof t === "function" ? t("results.availableNext30") : "Növbəti 30 gün ərzində mövcud uçuşlar");
             }
 
             if (criteria.timeOfDay) {
@@ -709,7 +709,7 @@
             anchor.parentNode.insertBefore(button, anchor.nextSibling);
         }
 
-        button.textContent = say("voice.results.otherFlights", "View other flights");
+        button.textContent = say("voice.results.otherFlights", "Digər uçuşlara bax");
     }
 
     function paintVoiceNoteText(criteria) {
@@ -730,27 +730,27 @@
                 var each = getCabinPrice(shown, getDefaultCabin(criteria));
                 var travellers = Math.max(1, parseInt(criteria.passengers, 10) || 1);
 
-                lines.push(say("voice.results.singleNote", "This is the lowest fare found in the {days} days searched ({from} to {to}). Other dates were not searched.",
+                lines.push(say("voice.results.singleNote", "Bu, axtarılan {days} gün ərzində ({from} - {to}) tapılan ən aşağı qiymətdir. Digər tarixlər axtarılmayıb.",
                     { days: periodDays(criteria), from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) }));
 
                 if (travellers > 1 && typeof each === "number") {
-                    lines.push(say("voice.results.singleTotal", "Fare for {count} passengers: ${total} (${each} each).", { count: travellers, total: each * travellers, each: each }));
+                    lines.push(say("voice.results.singleTotal", "{count} sərnişin üçün qiymət: ${total} (hər biri ${each}).", { count: travellers, total: each * travellers, each: each }));
                 }
 
                 if (baseFlights.length > 1) {
-                    lines.push(say("voice.results.singleTie", "{count} flights share this lowest price.", { count: baseFlights.length }));
+                    lines.push(say("voice.results.singleTie", "{count} uçuş bu ən aşağı qiyməti bölüşür.", { count: baseFlights.length }));
                 }
             }
         } else if (criteria.range && criteria.cheapest) {
-            lines.push(say("voice.results.cheapestNote", "These are the cheapest fares found in this period. Other dates may have different fares."));
+            lines.push(say("voice.results.cheapestNote", "Bunlar bu dövrdə tapılan ən ucuz qiymətlərdir. Digər tarixlərdə qiymətlər fərqli ola bilər."));
         }
 
         if (criteria.range && criteria.defaultPeriod) {
-            lines.push(say("voice.results.defaultPeriodNote", "No date was given, so departures over the next {days} days are shown.", { days: periodDays(criteria) }));
+            lines.push(say("voice.results.defaultPeriodNote", "Tarix deyilmədiyi üçün növbəti {days} gün üzrə uçuşlar göstərilir.", { days: periodDays(criteria) }));
         }
 
         if (criteria.range && !single && viewState === "ready" && rangeInfo.total > rangeInfo.shown) {
-            lines.push(say("voice.results.truncated", "Showing the {shown} cheapest of {total} flights.", { shown: rangeInfo.shown, total: rangeInfo.total }));
+            lines.push(say("voice.results.truncated", "{total} uçuşdan ən ucuz {shown} göstərilir.", { shown: rangeInfo.shown, total: rangeInfo.total }));
         }
 
         if (!lines.length) {
@@ -798,7 +798,7 @@
             );
         }).join("");
 
-        var cabinLabel = typeof t === "function" ? t("results.cabinClass") : "Cabin Class";
+        var cabinLabel = typeof t === "function" ? t("results.cabinClass") : "Salon sinfi";
         return (
             '<div class="cabin-selection">' +
                 '<p class="cabin-selection-label" id="' + groupId + '-label">' + escapeHtml(cabinLabel) + "</p>" +
@@ -832,7 +832,7 @@
 
     function createFlightCard(flight, selectedCabin) {
         var price = getCabinPrice(flight, selectedCabin);
-        var displayDate = formatDisplayDate(flight.date) || "Date not selected";
+        var displayDate = formatDisplayDate(flight.date) || "Tarix seçilməyib";
         var article = document.createElement("article");
 
         article.className = "flight-card";
@@ -864,8 +864,8 @@
             '<div class="flight-card-action">' +
                 '<p class="flight-price">$' + escapeHtml(String(price)) + "</p>" +
                 '<div class="flight-card-buttons">' +
-                    '<button class="view-details-button" type="button">' + escapeHtml(typeof t === "function" ? t("results.viewDetails") : "View Details") + '</button>' +
-                    '<button class="select-flight-button" type="button">' + escapeHtml(typeof t === "function" ? t("results.selectFlight") : "Select Flight") + '</button>' +
+                    '<button class="view-details-button" type="button">' + escapeHtml(typeof t === "function" ? t("results.viewDetails") : "Ətraflı bax") + '</button>' +
+                    '<button class="select-flight-button" type="button">' + escapeHtml(typeof t === "function" ? t("results.selectFlight") : "Uçuşu seç") + '</button>' +
                 "</div>" +
             "</div>";
 
@@ -902,8 +902,8 @@
     function renderEmptyState(container) {
         container.innerHTML =
             '<div class="results-empty">' +
-                '<h2 class="results-empty-title">' + (typeof t === "function" ? t("results.noResultsTitle") : "No Flights Found") + '</h2>' +
-                '<p class="results-empty-text">' + (typeof t === "function" ? t("results.noResultsText") : "Try adjusting your filters or search criteria.") + '</p>' +
+                '<h2 class="results-empty-title">' + (typeof t === "function" ? t("results.noResultsTitle") : "Uçuş tapılmadı") + '</h2>' +
+                '<p class="results-empty-text">' + (typeof t === "function" ? t("results.noResultsText") : "Filtrləri və ya axtarış meyarlarını dəyişməyi sınayın.") + '</p>' +
             "</div>";
     }
 
@@ -1011,7 +1011,7 @@
         }
 
         if (count === 0) {
-            countElement.textContent = typeof t === "function" ? t("results.foundNone") : "0 flights match your filters";
+            countElement.textContent = typeof t === "function" ? t("results.foundNone") : "Filtrlərə uyğun uçuş yoxdur";
             return;
         }
 
@@ -1254,17 +1254,6 @@
         bindFilterControls();
         loadFlights();
 
-        window.addEventListener("aerova:languagechange", function () {
-            updateResultsHeader(searchCriteria || {});
-            if (viewState === "ready") {
-                refreshResults();
-            } else {
-                paintStatus();
-            }
-            if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
-                window.AEROVA_I18N.applyTranslations(document);
-            }
-        });
     }
 
     if (document.readyState === "loading") {

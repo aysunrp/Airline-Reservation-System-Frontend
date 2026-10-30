@@ -44,7 +44,7 @@
     if (passenger.passengerType !== "Infant") {
       if (passenger.assignedSeats && passenger.assignedSeats.length) {
         if (passenger.assignedSeats.length !== legCount) {
-          throw new TypeError("A seat is missing for one of the flights.");
+          throw new TypeError("Uçuşlardan biri üçün oturacaq seçilməyib.");
         }
         passenger.assignedSeats.forEach(function (seat) {
           seats.push({ flightId: positiveInteger(seat.flightId, "flight"), flightSeatId: positiveInteger(seat.flightSeatId, "seat") });
@@ -103,7 +103,7 @@
   /* The request the API expects, from bookingData: one flight, the two flights of a round trip, or the flights of a multi-city trip. */
   function buildRequest(bookingData) {
     if (!bookingData || !bookingData.flight || !Array.isArray(bookingData.passengers) || !bookingData.passengers.length) {
-      throw new TypeError("Booking data is incomplete.");
+      throw new TypeError("Bron məlumatları natamamdır.");
     }
 
     var contact = bookingData.contact || {};
@@ -192,7 +192,7 @@
 
     forget();
     // The page language is for the e-mail that confirms the booking; it is not part of what makes two bookings the same.
-    request.language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
+    request.language = "az";
     return release.then(function () {
       return window.AEROVA_API.post("api/bookings", request);
     }).then(function (booking) {

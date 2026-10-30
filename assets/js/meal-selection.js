@@ -10,8 +10,8 @@
     }
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     /* The choices offered by the backend, with the "none" choice first. */
@@ -53,7 +53,7 @@
             return String(dateValue);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function formatPrice(price) {
@@ -144,7 +144,7 @@
 
         return (
             '<article class="details-card passenger-meal-card" data-passenger-index="' + passenger.index + '" aria-labelledby="' + titleId + '">' +
-                '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(tr("api.options.passenger", "Passenger {n}", { n: passengerNumber })) + "</h2>" +
+                '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(tr("api.options.passenger", "Sərnişin {n}", { n: passengerNumber })) + "</h2>" +
                 '<p class="passenger-meal-note">' + escapeHtml(passenger.name) + "</p>" +
                 '<div class="meal-options" role="group" aria-label="Meal options for ' + escapeHtml(passenger.name) + '">' +
                     buildOptionsMarkup(passenger.index, passenger.optionId) +
@@ -242,8 +242,8 @@
         return [{
             id: "none",
             code: "none",
-            name: tr("api.options.noMeal", "No Meal"),
-            description: tr("api.options.noMealText", "Skip in-flight dining for this passenger."),
+            name: tr("api.options.noMeal", "Yemək yoxdur"),
+            description: tr("api.options.noMealText", "Bu sərnişin üçün uçuş yeməyindən imtina edin."),
             price: 0
         }].concat(list.map(function (option) {
             return {
@@ -308,8 +308,8 @@
             window.console.error(error);
         }
 
-        showStatus("error", tr("api.options.errorTitle", "We could not load the options"), isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."), [
-            { label: tr("api.options.retry", "Try again"), onClick: retry }
+        showStatus("error", tr("api.options.errorTitle", "Seçimləri yükləmək mümkün olmadı"), isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), [
+            { label: tr("api.options.retry", "Yenidən cəhd et"), onClick: retry }
         ]);
     }
 
@@ -318,7 +318,7 @@
             .map(function (part) { return String(part || "").trim(); })
             .filter(Boolean);
 
-        return parts.length ? parts.join(" ") : tr("api.options.passenger", "Passenger {n}", { n: index + 1 });
+        return parts.length ? parts.join(" ") : tr("api.options.passenger", "Sərnişin {n}", { n: index + 1 });
     }
 
     function summaryOfFlight() {
@@ -344,8 +344,8 @@
     }
 
     function missingBooking() {
-        showStatus("notice", tr("api.options.noBookingTitle", "No booking in progress"), tr("api.options.noBookingText", "Choose a flight and enter the passenger details first."), [
-            { label: tr("api.options.backToPassengers", "Back to passenger details"), href: "passenger-details.html" }
+        showStatus("notice", tr("api.options.noBookingTitle", "Davam edən rezervasiya yoxdur"), tr("api.options.noBookingText", "Əvvəlcə uçuş seçin və sərnişin məlumatlarını daxil edin."), [
+            { label: tr("api.options.backToPassengers", "Sərnişin məlumatlarına qayıt"), href: "passenger-details.html" }
         ]);
     }
 
@@ -373,8 +373,8 @@
     }
 
     function saveFailed() {
-        showStatus("error", tr("api.options.saveErrorTitle", "We could not save your choices"), tr("api.options.saveErrorText", "Your browser would not store them. Please try again."), [
-            { label: tr("api.options.retry", "Try again"), onClick: hideStatus }
+        showStatus("error", tr("api.options.saveErrorTitle", "Seçimlərinizi yadda saxlamaq mümkün olmadı"), tr("api.options.saveErrorText", "Brauzeriniz onları saxlamadı. Zəhmət olmasa yenidən cəhd edin."), [
+            { label: tr("api.options.retry", "Yenidən cəhd et"), onClick: hideStatus }
         ]);
     }
 
@@ -420,7 +420,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            toggle.setAttribute("aria-label", open ? "Menyunu bağla" : "Menyunu aç");
         }
 
         toggle.addEventListener("click", function () {
@@ -447,7 +447,7 @@
     }
 
     function loadOptions() {
-        showStatus("loading", tr("api.options.loadingTitle", "Loading options"), tr("api.options.loadingText", "Please wait a moment."), []);
+        showStatus("loading", tr("api.options.loadingTitle", "Seçimlər yüklənir"), tr("api.options.loadingText", "Zəhmət olmasa bir az gözləyin."), []);
 
         window.AEROVA_OPTIONS.meals().then(function (list) {
             options = toOptions(list);

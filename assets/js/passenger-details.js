@@ -10,8 +10,8 @@
     }
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     var PNR_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -149,7 +149,7 @@
         if (input.tagName === "SELECT") {
             var option = getSelectPlaceholderOption(input);
             if (option) {
-                option.textContent = message || tr("passengers.requiredField", "This field is required");
+                option.textContent = message || tr("passengers.requiredField", "Bu sahə mütləqdir");
             }
 
             if (!getTrimmedValue(input)) {
@@ -158,7 +158,7 @@
             return;
         }
 
-        input.setAttribute("placeholder", message || "This field is required");
+        input.setAttribute("placeholder", message || "Bu sahə mütləqdir");
 
         if (!getTrimmedValue(input) && input.type !== "date") {
             input.value = "";
@@ -230,7 +230,7 @@
 
     function formatDisplayDate(dateValue) {
         if (!dateValue) {
-            return "Date not selected";
+            return "Tarix seçilməyib";
         }
 
         var parts = String(dateValue).split("-");
@@ -246,7 +246,7 @@
             return dateValue;
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function formatPrice(price) {
@@ -383,7 +383,7 @@
     function seatLineFor(number, fallbackSeat) {
         var legs = activeLegSeats.length > 1 ? activeLegSeats : null;
         if (!legs) {
-            return tr("travelDocs.selectedSeat", "Selected Seat: {seat}", { seat: fallbackSeat });
+            return tr("travelDocs.selectedSeat", "Seçilmiş oturacaq: {seat}", { seat: fallbackSeat });
         }
 
         var roundTrip = legs.length === 2 && !(activeLegs[0] && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(activeLegs[0]));
@@ -391,10 +391,10 @@
             var seat = legSeats[number - 1] || "—";
             if (roundTrip) {
                 return legIndex === 0
-                    ? tr("api.journey.seatOutbound", "Outbound seat: {seat}", { seat: seat })
-                    : tr("api.journey.seatReturn", "Return seat: {seat}", { seat: seat });
+                    ? tr("api.journey.seatOutbound", "Gediş oturacağı: {seat}", { seat: seat })
+                    : tr("api.journey.seatReturn", "Qayıdış oturacağı: {seat}", { seat: seat });
             }
-            return tr("api.journey.seatLeg", "Flight {n} seat: {seat}", { n: legIndex + 1, seat: seat });
+            return tr("api.journey.seatLeg", "Reys {n} oturacağı: {seat}", { n: legIndex + 1, seat: seat });
         }).join(" · ");
     }
 
@@ -405,17 +405,17 @@
             var seats = list.join(", ") || "—";
             if (roundTrip) {
                 return legIndex === 0
-                    ? tr("api.journey.seatsOutboundList", "Outbound: {seats}", { seats: seats })
-                    : tr("api.journey.seatsReturnList", "Return: {seats}", { seats: seats });
+                    ? tr("api.journey.seatsOutboundList", "Gediş: {seats}", { seats: seats })
+                    : tr("api.journey.seatsReturnList", "Qayıdış: {seats}", { seats: seats });
             }
-            return tr("api.journey.seatsLegList", "Flight {n}: {seats}", { n: legIndex + 1, seats: seats });
+            return tr("api.journey.seatsLegList", "Reys {n}: {seats}", { n: legIndex + 1, seats: seats });
         }).join(" · ");
     }
 
     function cardTitle(number, type) {
         return type
             ? tr("api.passengers.card" + type, "Passenger {n} \u00b7 " + type, { n: number })
-            : tr("passengers.passengerN", "Passenger {n}", { n: number });
+            : tr("passengers.passengerN", "Sərnişin {n}", { n: number });
     }
 
     function passengerTypeFor(dateOfBirthText) {
@@ -459,7 +459,7 @@
 
             if (seatLine) {
                 seatLine.textContent = type === "Infant"
-                    ? tr("api.passengers.infantNote", "Infant under 2: travels on an adult's lap, so seat {seat} will be released.", { seat: seat })
+                    ? tr("api.passengers.infantNote", "2 yaşdan kiçik körpə: böyüyün qucağında uçur, ona görə {seat} oturacağı azad ediləcək.", { seat: seat })
                     : seatLineFor(index + 1, seat);
             }
 
@@ -520,9 +520,9 @@
         ["Female", "travelDocs.female"],
         ["Male", "travelDocs.male"],
         ["Other", "travelDocs.other"],
-        ["Prefer not to say", "travelDocs.preferNot"]
+        ["Göstərmək istəmirəm", "travelDocs.preferNot"]
     ];
-    var DOC_TYPE_FALLBACKS = { passport: "Passport", az_id_card: "Azerbaijani national ID card" };
+    var DOC_TYPE_FALLBACKS = { passport: "Passport", az_id_card: "Azərbaycan şəxsiyyət vəsiqəsi" };
 
     /* Options carry English values (stored) and translated labels. */
     function buildKeyedOptions(options, placeholderKey, placeholderFallback) {
@@ -546,7 +546,7 @@
         return '<label class="field-label" for="' + forId + '"><span data-i18n="' + key + '">' + escapeHtml(tr(key, fallback)) + "</span>" +
             (required
                 ? ' <span class="required-mark" aria-hidden="true">*</span>'
-                : ' <span class="optional-mark" data-i18n="travelDocs.optional">' + escapeHtml(tr("travelDocs.optional", "(Optional)")) + "</span>") +
+                : ' <span class="optional-mark" data-i18n="travelDocs.optional">' + escapeHtml(tr("travelDocs.optional", "(İstəyə bağlı)")) + "</span>") +
             "</label>";
     }
 
@@ -571,70 +571,70 @@
             '<article class="details-card passenger-card" data-passenger-index="' + passengerNumber + '" data-seat="' + escapeHtml(seat) + '" data-declared-type="' + declared + '" aria-labelledby="' + titleId + '">' +
                 '<h2 class="details-card-title" id="' + titleId + '">' + escapeHtml(cardTitle(passengerNumber, declared)) + "</h2>" +
                 '<p class="passenger-seat">' + escapeHtml(declared === "Infant"
-                    ? tr("api.passengers.infantLap", "Infant: travels on an adult's lap, no seat needed.")
+                    ? tr("api.passengers.infantLap", "Körpə: böyüyün qucağında uçur, oturacaq lazım deyil.")
                     : seatLineFor(passengerNumber, seat)) + "</p>" +
 
                 '<section class="details-section" aria-labelledby="' + personalId + '">' +
-                    '<h3 class="details-section-title" id="' + personalId + '" data-i18n="travelDocs.personalInfo">' + escapeHtml(tr("travelDocs.personalInfo", "Personal Information")) + "</h3>" +
+                    '<h3 class="details-section-title" id="' + personalId + '" data-i18n="travelDocs.personalInfo">' + escapeHtml(tr("travelDocs.personalInfo", "Şəxsi məlumatlar")) + "</h3>" +
                     '<div class="field-grid">' +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-title-field", "travelDocs.title", "Title", true) +
+                            fieldLabel(prefix + "-title-field", "travelDocs.title", "Müraciət", true) +
                             '<select class="field-input" id="' + prefix + '-title-field" ' + name("title") + described(prefix + "-title-field") + " required>" +
-                                buildKeyedOptions(TITLE_OPTIONS, "travelDocs.selectTitle", "Select title") +
+                                buildKeyedOptions(TITLE_OPTIONS, "travelDocs.selectTitle", "Müraciəti seçin") +
                             "</select>" + fieldError(prefix + "-title-field") +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-first-name", "travelDocs.firstName", "First Name / Given Name", true) +
+                            fieldLabel(prefix + "-first-name", "travelDocs.firstName", "Ad", true) +
                             '<input class="field-input" id="' + prefix + '-first-name" ' + name("firstName") + described(prefix + "-first-name") + ' type="text" autocomplete="given-name" required>' + fieldError(prefix + "-first-name") +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-middle-name", "travelDocs.middleName", "Middle Name", false) +
+                            fieldLabel(prefix + "-middle-name", "travelDocs.middleName", "Ata adı", false) +
                             '<input class="field-input" id="' + prefix + '-middle-name" ' + name("middleName") + ' type="text" autocomplete="additional-name">' +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-last-name", "travelDocs.lastName", "Last Name / Surname", true) +
+                            fieldLabel(prefix + "-last-name", "travelDocs.lastName", "Soyad", true) +
                             '<input class="field-input" id="' + prefix + '-last-name" ' + name("lastName") + described(prefix + "-last-name") + ' type="text" autocomplete="family-name" required>' + fieldError(prefix + "-last-name") +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-dob", "travelDocs.dob", "Date of Birth", true) +
+                            fieldLabel(prefix + "-dob", "travelDocs.dob", "Doğum tarixi", true) +
                             '<input class="field-input" id="' + prefix + '-dob" ' + name("dateOfBirth") + described(prefix + "-dob") + ' type="date" required>' + fieldError(prefix + "-dob") +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-gender", "travelDocs.gender", "Gender", true) +
+                            fieldLabel(prefix + "-gender", "travelDocs.gender", "Cins", true) +
                             '<select class="field-input" id="' + prefix + '-gender" ' + name("gender") + described(prefix + "-gender") + " required>" +
-                                buildKeyedOptions(GENDER_OPTIONS, "travelDocs.selectGender", "Select gender") +
+                                buildKeyedOptions(GENDER_OPTIONS, "travelDocs.selectGender", "Cinsi seçin") +
                             "</select>" + fieldError(prefix + "-gender") +
                         "</div>" +
                         '<div class="field field--full">' +
-                            fieldLabel(prefix + "-nationality", "travelDocs.nationality", "Nationality", true) +
+                            fieldLabel(prefix + "-nationality", "travelDocs.nationality", "Vətəndaşlıq", true) +
                             '<select class="field-input" id="' + prefix + '-nationality" ' + name("nationality") + described(prefix + "-nationality") + ' data-doc-trigger="nationality" required>' +
-                                countryOptions("travelDocs.selectNationality", "Select nationality") +
+                                countryOptions("travelDocs.selectNationality", "Vətəndaşlığı seçin") +
                             "</select>" + fieldError(prefix + "-nationality") +
                         "</div>" +
                     "</div>" +
                 "</section>" +
 
                 '<section class="details-section" aria-labelledby="' + documentId + '">' +
-                    '<h3 class="details-section-title" id="' + documentId + '" data-i18n="travelDocs.travelDocument">' + escapeHtml(tr("travelDocs.travelDocument", "Travel Document")) + "</h3>" +
+                    '<h3 class="details-section-title" id="' + documentId + '" data-i18n="travelDocs.travelDocument">' + escapeHtml(tr("travelDocs.travelDocument", "Səyahət sənədi")) + "</h3>" +
                     '<div class="field-grid">' +
                         '<div class="field field--full">' +
-                            fieldLabel(prefix + "-document-type", "travelDocs.documentType", "Document Type", true) +
+                            fieldLabel(prefix + "-document-type", "travelDocs.documentType", "Sənəd növü", true) +
                             '<select class="field-input" id="' + prefix + '-document-type" ' + name("documentType") + described(prefix + "-document-type") + ' data-doc-trigger="type" required></select>' +
                             fieldError(prefix + "-document-type") +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-document-number", "travelDocs.documentNumber", "Document Number", true) +
+                            fieldLabel(prefix + "-document-number", "travelDocs.documentNumber", "Sənəd nömrəsi", true) +
                             '<input class="field-input" id="' + prefix + '-document-number" ' + name("documentNumber") + described(prefix + "-document-number", true) + ' type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required>' +
                             '<p class="field-hint" id="' + prefix + '-document-number-hint"></p>' + fieldError(prefix + "-document-number") +
                         "</div>" +
                         '<div class="field" id="' + prefix + '-issuing-field">' +
-                            fieldLabel(prefix + "-issuing-country", "travelDocs.issuingCountry", "Issuing Country", true) +
+                            fieldLabel(prefix + "-issuing-country", "travelDocs.issuingCountry", "Verən ölkə", true) +
                             '<select class="field-input" id="' + prefix + '-issuing-country" ' + name("issuingCountry") + described(prefix + "-issuing-country") + ' data-doc-trigger="issuing" data-auto="1" required>' +
-                                countryOptions("travelDocs.selectCountry", "Select country") +
+                                countryOptions("travelDocs.selectCountry", "Ölkəni seçin") +
                             "</select>" + fieldError(prefix + "-issuing-country") +
                         "</div>" +
                         '<div class="field">' +
-                            fieldLabel(prefix + "-document-expiry", "travelDocs.expiry", "Document Expiry Date", true) +
+                            fieldLabel(prefix + "-document-expiry", "travelDocs.expiry", "Sənədin etibarlılıq müddəti", true) +
                             '<input class="field-input" id="' + prefix + '-document-expiry" ' + name("documentExpiry") + described(prefix + "-document-expiry", true) + ' type="date" required>' +
                             '<p class="field-hint" id="' + prefix + '-document-expiry-hint"></p>' + fieldError(prefix + "-document-expiry") +
                         "</div>" +
@@ -659,8 +659,7 @@
     }
 
     function localizedDate(date) {
-        var monthName = tr("common.months." + (date.getMonth() + 1), MONTH_NAMES[date.getMonth()]);
-        return date.getDate() + " " + monthName + " " + date.getFullYear();
+        return String(date.getDate()).padStart(2, "0") + "." + String(date.getMonth() + 1).padStart(2, "0") + "." + date.getFullYear();
     }
 
     /* Earliest acceptable expiry date (exclusive bound is the last travel date + mock validity days). */
@@ -700,7 +699,7 @@
 
         typeSelect.innerHTML = buildKeyedOptions(options.documents.map(function (code) {
             return [code, "travelDocs.docTypes." + code];
-        }), "travelDocs.selectDocumentType", "Select document type").replace(/data-i18n="travelDocs\.docTypes\.(\w+)">[^<]*</g, function (match, code) {
+        }), "travelDocs.selectDocumentType", "Sənəd növünü seçin").replace(/data-i18n="travelDocs\.docTypes\.(\w+)">[^<]*</g, function (match, code) {
             return 'data-i18n="travelDocs.docTypes.' + code + '">' + escapeHtml(tr("travelDocs.docTypes." + code, DOC_TYPE_FALLBACKS[code] || code)) + "<";
         });
 
@@ -733,15 +732,15 @@
 
         numberInput.maxLength = definition && definition.code === "az_id_card" ? 11 : 9;
         setText(prefix + "-document-number-hint", definition
-            ? tr("travelDocs.hints." + definition.code, definition.code === "az_id_card" ? "AA + 7 digits or AZE + 8 digits, e.g. {example}" : "6–9 letters or digits, e.g. {example}", { example: definition.numberExample })
-            : tr("travelDocs.hints.chooseType", "Choose a document type first."));
+            ? tr("travelDocs.hints." + definition.code, definition.code === "az_id_card" ? "AA + 7 rəqəm və ya AZE + 8 rəqəm, məsələn {example}" : "6–9 hərf və ya rəqəm, məsələn {example}", { example: definition.numberExample })
+            : tr("travelDocs.hints.chooseType", "Əvvəlcə sənəd növünü seçin."));
         if (typeChanged && numberInput.value) clearFieldError(numberInput);
 
         var limits = minimumExpiryDate(options.minValidityDays);
         getFieldById(prefix + "-document-expiry").min = toISODateLocal(limits.minimum);
         setText(prefix + "-document-expiry-hint", options.minValidityDays
-            ? tr("travelDocs.hints.expiryValidity", "Must be valid at least {days} days after {date}.", { days: options.minValidityDays, date: localizedDate(limits.travel) })
-            : tr("travelDocs.hints.expiry", "Must be valid after your last travel date ({date}).", { date: localizedDate(limits.travel) }));
+            ? tr("travelDocs.hints.expiryValidity", "{date} tarixindən sonra ən azı {days} gün etibarlı olmalıdır.", { days: options.minValidityDays, date: localizedDate(limits.travel) })
+            : tr("travelDocs.hints.expiry", "Son səyahət tarixindən ({date}) sonra da etibarlı olmalıdır.", { date: localizedDate(limits.travel) }));
     }
 
     function updateRouteNotice() {
@@ -752,8 +751,8 @@
         var unique = names.filter(function (value, index) { return names.indexOf(value) === index; });
         var domestic = DOCS.routeType(activeFlightData) === "domestic";
         setText("travel-docs-route", domestic
-            ? tr("travelDocs.routeDomestic", "Domestic flight within {country}", { country: names[0] })
-            : tr("travelDocs.routeInternational", "International flight: {countries}", { countries: unique.join(" → ") }));
+            ? tr("travelDocs.routeDomestic", "{country} daxilində daxili uçuş", { country: names[0] })
+            : tr("travelDocs.routeInternational", "Beynəlxalq uçuş: {countries}", { countries: unique.join(" → ") }));
         notice.setAttribute("data-route-type", domestic ? "domestic" : "international");
         notice.hidden = false;
     }
@@ -767,7 +766,7 @@
             var seatLine = card.querySelector(".passenger-seat");
             if (seatLine && declared) {
                 seatLine.textContent = declared === "Infant"
-                    ? tr("api.passengers.infantLap", "Infant: travels on an adult's lap, no seat needed.")
+                    ? tr("api.passengers.infantLap", "Körpə: böyüyün qucağında uçur, oturacaq lazım deyil.")
                     : seatLineFor(index, card.getAttribute("data-seat"));
             }
             updateDocumentFields(card);
@@ -787,7 +786,7 @@
      */
     var savedPassengers = [];
 
-    var SAVED_GENDERS = { Male: "Male", Female: "Female", Other: "Other", PreferNotToSay: "Prefer not to say" };
+    var SAVED_GENDERS = { Male: "Male", Female: "Female", Other: "Other", PreferNotToSay: "Göstərmək istəmirəm" };
     var SAVED_DOCUMENTS = { Passport: "passport", NationalIdCard: "az_id_card" };
 
     function savedLabel(saved) {
@@ -848,9 +847,9 @@
             var wrapper = document.createElement("div");
             wrapper.className = "field field--full saved-picker";
             wrapper.innerHTML =
-                '<label class="field-label" for="' + id + '">' + escapeHtml(tr("api.passengers.savedLabel", "Saved passenger")) + "</label>" +
+                '<label class="field-label" for="' + id + '">' + escapeHtml(tr("api.passengers.savedLabel", "Saxlanmış sərnişin")) + "</label>" +
                 '<select class="field-input" id="' + id + '">' +
-                    '<option value="">' + escapeHtml(tr("api.passengers.savedNone", "Enter the details myself")) + "</option>" +
+                    '<option value="">' + escapeHtml(tr("api.passengers.savedNone", "Məlumatları özüm daxil edəcəyəm")) + "</option>" +
                     savedPassengers.map(function (saved) {
                         return '<option value="' + saved.id + '">' + escapeHtml(savedLabel(saved)) + "</option>";
                     }).join("") +
@@ -903,9 +902,9 @@
         }
 
         var texts = {
-            loading: tr("api.passengers.profileLoading", "Loading the details of your profile..."),
-            filled: tr("api.passengers.profileFilled", "We filled in your details from your profile. Check them and change anything that differs for this trip; fields your profile does not have stay empty."),
-            failed: tr("api.passengers.profileFailed", "We could not load your profile details. Please fill in the form yourself.")
+            loading: tr("api.passengers.profileLoading", "Profil məlumatlarınız yüklənir..."),
+            filled: tr("api.passengers.profileFilled", "Məlumatlarınızı profilinizdən doldurduq. Yoxlayın və bu səfər üçün fərqli olanı dəyişin; profildə olmayan sahələr boş qalır."),
+            failed: tr("api.passengers.profileFailed", "Profil məlumatlarınızı yükləmək mümkün olmadı. Formanı özünüz doldurun.")
         };
         note.hidden = !texts[profileNoteState];
         note.setAttribute("data-state", profileNoteState);
@@ -1086,16 +1085,16 @@
 
         var issuingVisible = !getFieldById(prefix + "-issuing-field").hidden;
         var requiredChecks = [
-            { key: "title", error: "travelDocs.errors.title", message: "Select a title" },
-            { key: "firstName", error: "travelDocs.errors.firstName", message: "Enter your first name" },
-            { key: "lastName", error: "travelDocs.errors.lastName", message: "Enter your last name" },
-            { key: "dateOfBirth", error: "travelDocs.errors.dob", message: "Enter your date of birth" },
-            { key: "gender", error: "travelDocs.errors.gender", message: "Select your gender" },
-            { key: "nationality", error: "travelDocs.errors.nationality", message: "Select your nationality" },
-            { key: "documentType", error: "travelDocs.errors.documentType", message: "Select document type" },
-            { key: "documentNumber", error: "travelDocs.errors.documentNumber", message: "Enter document number" },
-            { key: "issuingCountry", error: "travelDocs.errors.issuingCountry", message: "Select issuing country", skip: !issuingVisible },
-            { key: "documentExpiry", error: "travelDocs.errors.expiry", message: "Enter expiry date" }
+            { key: "title", error: "travelDocs.errors.title", message: "Müraciəti seçin" },
+            { key: "firstName", error: "travelDocs.errors.firstName", message: "Adınızı daxil edin" },
+            { key: "lastName", error: "travelDocs.errors.lastName", message: "Soyadınızı daxil edin" },
+            { key: "dateOfBirth", error: "travelDocs.errors.dob", message: "Doğum tarixinizi daxil edin" },
+            { key: "gender", error: "travelDocs.errors.gender", message: "Cinsinizi seçin" },
+            { key: "nationality", error: "travelDocs.errors.nationality", message: "Vətəndaşlığınızı seçin" },
+            { key: "documentType", error: "travelDocs.errors.documentType", message: "Sənəd növünü seçin" },
+            { key: "documentNumber", error: "travelDocs.errors.documentNumber", message: "Sənəd nömrəsini daxil edin" },
+            { key: "issuingCountry", error: "travelDocs.errors.issuingCountry", message: "Sənədi verən ölkəni seçin", skip: !issuingVisible },
+            { key: "documentExpiry", error: "travelDocs.errors.expiry", message: "Bitmə tarixini daxil edin" }
         ];
 
         var isValid = true;
@@ -1122,7 +1121,7 @@
         });
 
         if (getTrimmedValue(fields.dateOfBirth) && (!dateOfBirth || dateOfBirth >= today)) {
-            invalid(fields.dateOfBirth, "travelDocs.errors.dobInvalid", "Enter a valid date of birth in the past");
+            invalid(fields.dateOfBirth, "travelDocs.errors.dobInvalid", "Keçmişdə olan düzgün doğum tarixi daxil edin");
         }
 
         // The type chosen in the search must match the date of birth (the server checks it again).
@@ -1134,24 +1133,24 @@
                     fields.dateOfBirth,
                     "api.passengers.type" + wantedType,
                     wantedType === "Adult"
-                        ? "An adult must be {age} or older on the day of the last flight ({date})."
+                        ? "Böyük sərnişin son reysin günündə ({date}) {age} yaşda və ya daha böyük olmalıdır."
                         : (wantedType === "Child"
-                            ? "A child must be {min} to {max} years old on the day of the last flight ({date})."
-                            : "An infant must be under {age} on the day of the last flight ({date})."),
+                            ? "Uşaq son reysin günündə ({date}) {min}–{max} yaşında olmalıdır."
+                            : "Körpə son reysin günündə ({date}) {age} yaşdan kiçik olmalıdır."),
                     { age: wantedType === "Adult" ? ADULT_FROM_AGE : INFANT_UNDER_AGE, min: INFANT_UNDER_AGE, max: ADULT_FROM_AGE - 1, date: localizedDate(minimumExpiryDate(0).travel) }
                 );
             }
         }
 
         if (getTrimmedValue(fields.documentType) && (!definition || options.documents.indexOf(definition.code) === -1)) {
-            invalid(fields.documentType, "travelDocs.errors.documentTypeNotAllowed", "This document type is not accepted for this route");
+            invalid(fields.documentType, "travelDocs.errors.documentTypeNotAllowed", "Bu sənəd növü bu marşrut üçün qəbul edilmir");
         } else if (definition && numberValue && !definition.numberPattern.test(numberValue)) {
             invalid(
                 fields.documentNumber,
                 "travelDocs.errors.number_" + definition.code,
                 definition.code === "az_id_card"
-                    ? "Enter a valid ID card number (AA + 7 digits or AZE + 8 digits), e.g. {example}"
-                    : "Enter a valid passport number (6–9 letters or digits), e.g. {example}",
+                    ? "Düzgün şəxsiyyət vəsiqəsi nömrəsi daxil edin (AA + 7 rəqəm və ya AZE + 8 rəqəm), məsələn {example}"
+                    : "Düzgün pasport nömrəsi daxil edin (6–9 hərf və ya rəqəm), məsələn {example}",
                 { example: definition.numberExample }
             );
         }
@@ -1159,12 +1158,12 @@
         if (expiryValue) {
             var limits = minimumExpiryDate(options.minValidityDays);
             if (!expiry) {
-                invalid(fields.documentExpiry, "travelDocs.errors.expiry", "Enter expiry date");
+                invalid(fields.documentExpiry, "travelDocs.errors.expiry", "Etibarlılıq tarixini daxil edin");
             } else if (expiry < limits.minimum) {
                 if (options.minValidityDays) {
-                    invalid(fields.documentExpiry, "travelDocs.errors.expiryValidity", "The document must be valid at least {days} days after {date}", { days: options.minValidityDays, date: localizedDate(limits.travel) });
+                    invalid(fields.documentExpiry, "travelDocs.errors.expiryValidity", "Sənəd {date} tarixindən sonra ən azı {days} gün etibarlı olmalıdır", { days: options.minValidityDays, date: localizedDate(limits.travel) });
                 } else {
-                    invalid(fields.documentExpiry, "travelDocs.errors.expiryAfterTravel", "The document must be valid after your last travel date ({date})", { date: localizedDate(limits.travel) });
+                    invalid(fields.documentExpiry, "travelDocs.errors.expiryAfterTravel", "Sənəd son səyahət tarixindən ({date}) sonra da etibarlı olmalıdır", { date: localizedDate(limits.travel) });
                 }
             }
         }
@@ -1227,18 +1226,18 @@
         var focusField = null;
 
         if (!email) {
-            markInvalid(emailInput, "Enter a valid email");
+            markInvalid(emailInput, "Düzgün e-poçt ünvanı daxil edin");
             focusField = emailInput;
             isValid = false;
         } else if (!isValidEmail(email)) {
-            markInvalid(emailInput, "Enter a valid email");
+            markInvalid(emailInput, "Düzgün e-poçt ünvanı daxil edin");
             emailInput.value = "";
             focusField = emailInput;
             isValid = false;
         }
 
         if (!countryCode) {
-            markInvalid(countryCodeInput, "This field is required");
+            markInvalid(countryCodeInput, "Bu sahə mütləqdir");
             if (!focusField) {
                 focusField = countryCodeInput;
             }
@@ -1246,7 +1245,7 @@
         }
 
         if (!mobilePhone) {
-            markInvalid(phoneInput, "Enter your phone number");
+            markInvalid(phoneInput, "Telefon nömrənizi daxil edin");
             if (!focusField) {
                 focusField = phoneInput;
             }
@@ -1351,7 +1350,7 @@
         showMessage("");
 
         if (!activeFlightData || !activeSelectedSeats.length) {
-            showMessage(tr("passengers.incompleteBooking", "Booking data is incomplete. Please return to seat selection."));
+            showMessage(tr("passengers.incompleteBooking", "Bron məlumatı natamamdır. Oturacaq seçiminə qayıdın."));
             return;
         }
 
@@ -1395,19 +1394,19 @@
         var infants = passengers.filter(function (passenger) { return passenger.passengerType === "Infant"; }).length;
 
         if (adults === 0) {
-            showMessage(tr("api.passengers.needAdult", "At least one passenger must be {age} or older.", { age: ADULT_FROM_AGE }));
+            showMessage(tr("api.passengers.needAdult", "Ən azı bir sərnişin {age} yaşda və ya daha böyük olmalıdır.", { age: ADULT_FROM_AGE }));
             return;
         }
 
         if (infants > adults) {
-            showMessage(tr("api.passengers.tooManyInfants", "Each infant needs an adult: there cannot be more infants than adults."));
+            showMessage(tr("api.passengers.tooManyInfants", "Hər körpəyə bir böyük lazımdır: körpələrin sayı böyüklərdən çox ola bilməz."));
             return;
         }
 
         bookingData = buildBookingData(passengers, contactResult.contact);
 
         if (!saveBookingData(bookingData)) {
-            showMessage(tr("passengers.saveFail", "Unable to save booking details. Please try again."));
+            showMessage(tr("passengers.saveFail", "Bron detalları yadda saxlanılmadı. Yenidən cəhd edin."));
             return;
         }
 
@@ -1465,15 +1464,13 @@
         bindContinueButton();
         bindClearInvalidOnInput();
         bindDocumentControls();
-        window.addEventListener("aerova:languagechange", refreshPassengerCardText);
-        window.addEventListener("aerova:languagechange", paintProfileNote);
 
         if (!flightData) {
             showMessage(returnWithoutOutbound
                 ? (window.AEROVA_JOURNEY.isMultiCity(chosen)
-                    ? tr("api.journey.legsMissing", "Some flights of this trip are missing. Please start your search again.")
-                    : tr("api.journey.outboundMissing", "The outbound flight of this round trip is missing. Please start your search again."))
-                : tr("passengers.noBooking", "No booking data found. Please select a flight and seats first."));
+                    ? tr("api.journey.legsMissing", "Bu səfərin bəzi reysləri çatışmır. Axtarışı yenidən başladın.")
+                    : tr("api.journey.outboundMissing", "Bu gediş-qayıdış səyahətinin gediş reysi tapılmadı. Zəhmət olmasa axtarışa yenidən başlayın."))
+                : tr("passengers.noBooking", "Bron tapılmadı. Əvvəlcə uçuş və oturacaq seçin."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -1482,7 +1479,7 @@
         }
 
         if (!passengerCount) {
-            showMessage(tr("passengers.missingCount", "Passenger count is missing. Please return to booking and try again."));
+            showMessage(tr("passengers.missingCount", "Sərnişin sayı yoxdur. Bron səhifəsinə qayıdın."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -1491,7 +1488,7 @@
         }
 
         if (!selectedSeats.length) {
-            showMessage(tr("passengers.noSeats", "No seats selected. Please return to seat selection and choose seats."));
+            showMessage(tr("passengers.noSeats", "Oturacaq seçilməyib. Oturacaq seçiminə qayıdın."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -1500,7 +1497,7 @@
         }
 
         if (hasDuplicateSeats(selectedSeats)) {
-            showMessage(tr("passengers.duplicateSeats", "Duplicate seats were found. Please return to seat selection and choose unique seats."));
+            showMessage(tr("passengers.duplicateSeats", "Təkrarlanan oturacaqlar tapıldı. Unikal oturacaqlar seçin."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";
@@ -1530,7 +1527,7 @@
         });
 
         if (otherLegBroken || activeSelectedSeatIds.length !== selectedSeats.length || activeSelectedSeatIds.indexOf(0) !== -1) {
-            showMessage(tr("api.passengers.seatDataMissing", "Seat details are missing. Please return to seat selection."));
+            showMessage(tr("api.passengers.seatDataMissing", "Oturacaq məlumatları yoxdur. Zəhmət olmasa oturacaq seçiminə qayıdın."));
             setFormsVisibility(false);
             if (container) {
                 container.innerHTML = "";

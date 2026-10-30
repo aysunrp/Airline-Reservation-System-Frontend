@@ -14,7 +14,7 @@
   }
 
   function stopsLabel(count) {
-    return count === 0 ? "Non-stop" : (count === 1 ? "1 Stop" : count + " Stops");
+    return count === 0 ? "Non-stop" : (count === 1 ? "1 dayanacaq" : count + " Stops");
   }
 
   function airportInfo(airport) {

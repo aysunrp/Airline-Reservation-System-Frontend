@@ -25,22 +25,22 @@
 
     function translateStatus(status) {
         var map = {
-            "On Time": "common.statusOnTime",
-            "Delayed": "common.statusDelayed",
-            "Scheduled": "common.statusScheduled",
-            "Cancelled": "common.statusCancelled",
-            "Confirmed": "common.statusConfirmed",
-            "Pending": "common.statusPending",
-            "Active": "common.statusActive",
-            "Inactive": "common.statusInactive",
-            "Completed": "common.statusCompleted",
-            "Available": "common.available",
-            "Occupied": "common.occupied",
-            "Reserved": "common.reserved",
-            "Blocked": "common.blocked",
-            "Processing": "cancellation.status.processing",
-            "Failed": "cancellation.status.failed",
-            "Not Eligible": "cancellation.status.notEligible"
+            "Vaxtında": "common.statusOnTime",
+            "Vaxtında": "common.statusDelayed",
+            "Gecikir": "common.statusScheduled",
+            "Planlaşdırılıb": "common.statusCancelled",
+            "Ləğv edilib": "common.statusConfirmed",
+            "Təsdiqlənib": "common.statusPending",
+            "Gözləmədə": "common.statusActive",
+            "Aktiv": "common.statusInactive",
+            "Qeyri-aktiv": "common.statusCompleted",
+            "Tamamlanıb": "common.available",
+            "Mövcud": "common.occupied",
+            "Məşğul": "common.reserved",
+            "Rezerv": "common.blocked",
+            "Bloklanıb": "cancellation.status.processing",
+            "İcra olunur": "cancellation.status.failed",
+            "Uğursuz": "cancellation.status.notEligible"
         };
         var key = map[status];
         return key ? tr(key, status) : status;
@@ -53,22 +53,22 @@
 
     function getSectionMeta() {
         return {
-            dashboard: { title: tr("admin.dashboard", "Dashboard"), subtitle: tr("admin.dashboardSub", "Airline operations overview") },
-            flights: { title: tr("admin.flights", "Flights"), subtitle: tr("admin.flightsSub", "Manage flight operations and status") },
-            routes: { title: tr("admin.routes", "Routes"), subtitle: tr("admin.routesSub", "Network route management") },
-            schedules: { title: tr("admin.schedules", "Schedules"), subtitle: tr("admin.schedulesSub", "Departure planning and timetable control") },
-            aircraft: { title: tr("admin.aircraft", "Aircraft"), subtitle: tr("admin.aircraftSub", "Fleet configuration and seat capacity") },
-            seats: { title: tr("admin.seats", "Seat Inventory"), subtitle: tr("admin.seatsSub", "Cabin availability by flight") },
-            bookings: { title: tr("admin.bookings", "Bookings"), subtitle: tr("admin.bookingsSub", "Reservation management and cancellations") },
-            support: { title: tr("support.admin.title", "Support"), subtitle: tr("support.admin.sub", "Customer requests and replies") },
-            refunds: { title: tr("cancellation.admin.nav", "Refunds"), subtitle: tr("cancellation.admin.sub", "Refunds of cancelled bookings and their Stripe status") },
-            passengers: { title: tr("admin.passengers", "Passengers"), subtitle: tr("admin.passengersSub", "Traveler records and contact details") },
-            airports: { title: tr("api.admin.airports", "Airports"), subtitle: tr("api.admin.airportsSub", "Where AEROVA flies and the time zone of each airport") },
-            promos: { title: tr("api.admin.promos", "Promo Codes"), subtitle: tr("api.admin.promosSub", "Discount codes for the payment page") },
-            options: { title: tr("api.admin.options", "Baggage & Meals"), subtitle: tr("api.admin.optionsSub", "Extras travellers can add to a booking") },
-            rules: { title: tr("api.admin.rules", "Cancellation Rules"), subtitle: tr("api.admin.rulesSub", "Fees by cabin and days before departure") },
-            users: { title: tr("api.admin.users", "Users"), subtitle: tr("api.admin.usersSub", "Accounts, roles and access") },
-            audit: { title: tr("api.admin.audit", "Audit Log"), subtitle: tr("api.admin.auditSub", "Who did what, and when") }
+            dashboard: { title: tr("admin.dashboard", "Panel"), subtitle: tr("admin.dashboardSub", "Aviaşirkət əməliyyatlarına baxış") },
+            flights: { title: tr("admin.flights", "Uçuşlar"), subtitle: tr("admin.flightsSub", "Uçuş əməliyyatlarını və statusu idarə et") },
+            routes: { title: tr("admin.routes", "Marşrutlar"), subtitle: tr("admin.routesSub", "Şəbəkə marşrutlarının idarəsi") },
+            schedules: { title: tr("admin.schedules", "Cədvəllər"), subtitle: tr("admin.schedulesSub", "Gediş planlaşdırması və cədvəl nəzarəti") },
+            aircraft: { title: tr("admin.aircraft", "Təyyarə"), subtitle: tr("admin.aircraftSub", "Park konfiqurasiyası və oturacaq tutumu") },
+            seats: { title: tr("admin.seats", "Oturacaq ehtiyatı"), subtitle: tr("admin.seatsSub", "Uçuş üzrə salon mövcudluğu") },
+            bookings: { title: tr("admin.bookings", "Bronlar"), subtitle: tr("admin.bookingsSub", "Rezervasiya idarəsi və ləğvlər") },
+            support: { title: tr("support.admin.title", "Dəstək"), subtitle: tr("support.admin.sub", "Müştəri müraciətləri və cavablar") },
+            refunds: { title: tr("cancellation.admin.nav", "Geri ödənişlər"), subtitle: tr("cancellation.admin.sub", "Ləğv olunmuş rezervasiyaların geri ödənişləri və Stripe statusu") },
+            passengers: { title: tr("admin.passengers", "Sərnişinlər"), subtitle: tr("admin.passengersSub", "Sərnişin qeydləri və əlaqə") },
+            airports: { title: tr("api.admin.airports", "Hava limanları"), subtitle: tr("api.admin.airportsSub", "AEROVA-nın uçduğu yerlər və hər hava limanının saat qurşağı") },
+            promos: { title: tr("api.admin.promos", "Promo kodlar"), subtitle: tr("api.admin.promosSub", "Ödəniş səhifəsi üçün endirim kodları") },
+            options: { title: tr("api.admin.options", "Baqaj və yemək"), subtitle: tr("api.admin.optionsSub", "Sərnişinin rezervasiyaya əlavə edə biləcəyi xidmətlər") },
+            rules: { title: tr("api.admin.rules", "Ləğv qaydaları"), subtitle: tr("api.admin.rulesSub", "Salona və uçuşa qalan günlərə görə komissiya") },
+            users: { title: tr("api.admin.users", "İstifadəçilər"), subtitle: tr("api.admin.usersSub", "Hesablar, rollar və giriş") },
+            audit: { title: tr("api.admin.audit", "Audit jurnalı"), subtitle: tr("api.admin.auditSub", "Kim nə vaxt nə etdi") }
         };
     }
 
@@ -139,7 +139,7 @@
     function apiMessage(error) {
         var isApiError = api && error instanceof api.ApiError;
         if (!isApiError && window.console) window.console.error(error);
-        return isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+        return isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
     }
 
     function statusBadge(status) {
@@ -200,9 +200,9 @@
 
     function denyAccess() {
         showAccessPanel(
-            tr("api.admin.deniedTitle", "Administrators only"),
-            tr("api.admin.deniedText", "This area is for AEROVA administrators. Sign in with an administrator account to continue."),
-            [{ label: tr("api.admin.signIn", "Sign in"), href: "login.html?next=admin.html" }, { label: tr("auth.backHome", "Back to Home"), href: "index.html" }]
+            tr("api.admin.deniedTitle", "Yalnız administratorlar üçün"),
+            tr("api.admin.deniedText", "Bu bölmə AEROVA administratorları üçündür. Davam etmək üçün administrator hesabı ilə daxil olun."),
+            [{ label: tr("api.admin.signIn", "Daxil ol"), href: "login.html?next=admin.html" }, { label: tr("auth.backHome", "Ana səhifəyə qayıt"), href: "index.html" }]
         );
     }
 
@@ -219,7 +219,7 @@
 
         var content = '<td colspan="' + columns + '" class="admin-empty" role="' + (kind === "error" ? "alert" : "status") + '">' + escapeHtml(text);
         if (retry) {
-            content += ' <button class="admin-btn admin-btn--ghost" type="button" data-retry="1">' + escapeHtml(tr("api.options.retry", "Try again")) + "</button>";
+            content += ' <button class="admin-btn admin-btn--ghost" type="button" data-retry="1">' + escapeHtml(tr("api.options.retry", "Yenidən cəhd et")) + "</button>";
         }
         body.innerHTML = "<tr>" + content + "</td></tr>";
 
@@ -230,7 +230,7 @@
     }
 
     function loading(bodyId, columns) {
-        setTableStatus(bodyId, columns, "loading", tr("api.admin.loading", "Loading..."));
+        setTableStatus(bodyId, columns, "loading", tr("api.admin.loading", "Yüklənir..."));
     }
 
     function failed(error, bodyId, columns, retry) {
@@ -275,12 +275,12 @@
                 // The row opens the booking: a click or Enter shows its details.
                 var departs = String(item.departureAt || "");
                 return '<tr class="admin-row-link" tabindex="0" data-open-booking="' + escapeHtml(item.pnr) + '" title="' +
-                    escapeHtml(tr("admin.openBooking", "Open booking {pnr}", { pnr: item.pnr })) + '"><td>' + escapeHtml(item.pnr) + "</td><td>" + escapeHtml(item.leadPassenger) +
+                    escapeHtml(tr("admin.openBooking", "{pnr} bronuna bax", { pnr: item.pnr })) + '"><td>' + escapeHtml(item.pnr) + "</td><td>" + escapeHtml(item.leadPassenger) +
                     "</td><td>" + escapeHtml(item.flightNumber) + "</td><td>" + escapeHtml(item.route) +
                     "</td><td>" + escapeHtml(departs.slice(0, 10) + " · " + departs.slice(11, 16) + " UTC") +
                     "</td><td>" + escapeHtml(formatMoney(item.totalAmount)) + "</td><td>" + statusBadge(item.status) + "</td></tr>";
             }).join("")
-            : '<tr><td colspan="7" class="admin-empty">' + escapeHtml(tr("admin.noBookings", "No bookings found.")) + "</td></tr>";
+            : '<tr><td colspan="7" class="admin-empty">' + escapeHtml(tr("admin.noBookings", "Bron tapılmadı.")) + "</td></tr>";
 
         byId("dashboard-flights-body").innerHTML = data.upcomingFlights.length
             ? data.upcomingFlights.map(function (item) {
@@ -290,7 +290,7 @@
                     escapeHtml(departure.date + " · " + departure.time) + "</td><td>" +
                     escapeHtml(item.aircraftModel) + "</td><td>" + statusBadge(item.status) + "</td></tr>";
             }).join("")
-            : '<tr><td colspan="5" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "No flights found.")) + "</td></tr>";
+            : '<tr><td colspan="5" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "Uçuş tapılmadı.")) + "</td></tr>";
     }
 
     /* The six numbers show a dash until the API has answered, so nothing made up is ever on screen. */
@@ -333,7 +333,7 @@
     function renderFlights() {
         var body = byId("flights-body");
         if (!state.flights.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "No flights found.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "Uçuş tapılmadı.")) + "</td></tr>";
         } else {
             body.innerHTML = state.flights.map(function (item) {
                 var departure = atAirport(item.departureAt, item.originCode);
@@ -348,7 +348,7 @@
                     "<td>" + escapeHtml(item.aircraftModel) + "</td>" +
                     "<td>" + statusBadge(item.status) + "</td>" +
                     '<td><div class="admin-actions">' +
-                    '<button class="admin-btn admin-btn--ghost" type="button" data-edit-flight="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
+                    '<button class="admin-btn admin-btn--ghost" type="button" data-edit-flight="' + item.id + '">' + escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" +
                     deleteButton("flight", item.id) +
                     "</div></td></tr>";
             }).join("");
@@ -356,7 +356,7 @@
 
         var pager = byId("flights-pager");
         if (pager) {
-            byId("flights-pager-info").textContent = tr("api.admin.page", "Page {n}", { n: state.flightPage + 1 });
+            byId("flights-pager-info").textContent = tr("api.admin.page", "Səhifə {n}", { n: state.flightPage + 1 });
             byId("flights-prev").disabled = state.flightPage === 0;
             byId("flights-next").disabled = state.flights.length < PAGE_SIZE;
         }
@@ -388,7 +388,7 @@
         var body = byId("routes-body");
 
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="7" class="admin-empty">' + escapeHtml(tr("admin.noRoutes", "No routes found.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="7" class="admin-empty">' + escapeHtml(tr("admin.noRoutes", "Marşrut tapılmadı.")) + "</td></tr>";
             return;
         }
 
@@ -401,7 +401,7 @@
                 "<td>" + escapeHtml(formatDuration(item.durationMinutes)) + "</td>" +
                 "<td>" + statusBadge(item.isActive ? "Active" : "Inactive") + "</td>" +
                 '<td><div class="admin-actions">' +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-edit-route="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-edit-route="' + item.id + '">' + escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" +
                 deleteButton("route", item.id) +
                 "</div></td></tr>";
         }).join("");
@@ -418,8 +418,8 @@
 
     function daysLabel(days) {
         var text = String(days || "");
-        if (text === "Everyday") return tr("api.admin.everyday", "Every day");
-        if (text === "Weekdays") return tr("api.admin.weekdays", "Weekdays");
+        if (text === "Everyday") return tr("api.admin.everyday", "Hər gün");
+        if (text === "Weekdays") return tr("api.admin.weekdays", "İş günləri");
         return text.split(",").map(function (name) { return name.trim().slice(0, 3); }).join(" ");
     }
 
@@ -434,7 +434,7 @@
         var body = byId("schedules-body");
 
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="8" class="admin-empty">' + escapeHtml(tr("admin.noSchedules", "No schedules found.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="8" class="admin-empty">' + escapeHtml(tr("admin.noSchedules", "Cədvəl tapılmadı.")) + "</td></tr>";
             return;
         }
 
@@ -450,7 +450,7 @@
                 "<td>" + statusBadge(item.isActive ? "Active" : "Inactive") + "</td>" +
                 '<td><div class="admin-actions">' +
                 generateButton(item.id) +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-edit-schedule="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-edit-schedule="' + item.id + '">' + escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" +
                 deleteButton("schedule", item.id) +
                 "</div></td></tr>";
         }).join("");
@@ -476,7 +476,7 @@
         var body = byId("aircraft-body");
 
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noAircraft", "No aircraft found.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noAircraft", "Təyyarə tapılmadı.")) + "</td></tr>";
             return;
         }
 
@@ -491,8 +491,8 @@
                 "<td>" + item.economySeats + "</td>" +
                 "<td>" + statusBadge(item.status) + "</td>" +
                 '<td><div class="admin-actions">' +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-view-aircraft="' + item.id + '">' + escapeHtml(tr("admin.viewDetails", "View Details")) + "</button>" +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-edit-aircraft="' + item.id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-view-aircraft="' + item.id + '">' + escapeHtml(tr("admin.viewDetails", "Ətraflı bax")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-edit-aircraft="' + item.id + '">' + escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" +
                 deleteButton("aircraft", item.id) +
                 "</div></td></tr>";
         }).join("");
@@ -529,15 +529,15 @@
         var counts = { Available: 0, Held: 0, Booked: 0, Blocked: 0 };
         seats.forEach(function (seat) { counts[seat.status] += 1; });
 
-        byId("seat-map-title").textContent = inventory.flightNumber + " · " + cabinName + " " + tr("ui.seatMap", "Seat Map");
+        byId("seat-map-title").textContent = inventory.flightNumber + " · " + cabinName + " " + tr("ui.seatMap", "Oturacaq xəritəsi");
         byId("seat-summary-list").innerHTML =
-            "<div><dt>" + escapeHtml(tr("api.admin.seatsAvailable", "Available seats")) + "</dt><dd>" + counts.Available + "</dd></div>" +
-            "<div><dt>" + escapeHtml(tr("api.admin.seatsOccupied", "Occupied seats")) + "</dt><dd>" + counts.Booked + "</dd></div>" +
-            "<div><dt>" + escapeHtml(tr("api.admin.seatsReserved", "Reserved seats")) + "</dt><dd>" + counts.Held + "</dd></div>" +
-            "<div><dt>" + escapeHtml(tr("api.admin.seatsBlocked", "Blocked seats")) + "</dt><dd>" + counts.Blocked + "</dd></div>";
+            "<div><dt>" + escapeHtml(tr("api.admin.seatsAvailable", "Boş yerlər")) + "</dt><dd>" + counts.Available + "</dd></div>" +
+            "<div><dt>" + escapeHtml(tr("api.admin.seatsOccupied", "Tutulmuş yerlər")) + "</dt><dd>" + counts.Booked + "</dd></div>" +
+            "<div><dt>" + escapeHtml(tr("api.admin.seatsReserved", "Rezerv olunmuş yerlər")) + "</dt><dd>" + counts.Held + "</dd></div>" +
+            "<div><dt>" + escapeHtml(tr("api.admin.seatsBlocked", "Bloklanmış yerlər")) + "</dt><dd>" + counts.Blocked + "</dd></div>";
 
         if (!seats.length) {
-            deck.innerHTML = '<p class="admin-empty">' + escapeHtml(tr("api.admin.noSeatsInCabin", "This aircraft has no seats in this cabin.")) + "</p>";
+            deck.innerHTML = '<p class="admin-empty">' + escapeHtml(tr("api.admin.noSeatsInCabin", "Bu təyyarənin bu salonda yeri yoxdur.")) + "</p>";
             return;
         }
 
@@ -607,12 +607,12 @@
         if (!flightId) {
             state.seatInventory = null;
             renderSeatInventory();
-            deck.innerHTML = '<p class="admin-empty">' + escapeHtml(tr("api.admin.noFlightsThatDay", "There are no flights on this day.")) + "</p>";
+            deck.innerHTML = '<p class="admin-empty">' + escapeHtml(tr("api.admin.noFlightsThatDay", "Bu gün üçün reys yoxdur.")) + "</p>";
             return;
         }
 
         if (!quiet) {
-            deck.innerHTML = '<p class="admin-empty" role="status">' + escapeHtml(tr("api.admin.loading", "Loading...")) + "</p>";
+            deck.innerHTML = '<p class="admin-empty" role="status">' + escapeHtml(tr("api.admin.loading", "Yüklənir...")) + "</p>";
         }
 
         api.get("api/admin/flights/" + encodeURIComponent(flightId) + "/seats").then(function (inventory) {
@@ -636,7 +636,7 @@
         if (!line) return;
         var now = new Date();
         var time = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") + ":" + String(now.getSeconds()).padStart(2, "0");
-        line.textContent = tr("api.admin.seatsUpdated", "Updated {time}. The map refreshes by itself.", { time: time });
+        line.textContent = tr("api.admin.seatsUpdated", "Yenilənib: {time}. Xəritə özü yenilənir.", { time: time });
     }
 
     var SEAT_REFRESH_MS = 10000;
@@ -658,7 +658,7 @@
         dayInput.value = day;
 
         select.innerHTML = "";
-        byId("aircraft-deck").innerHTML = '<p class="admin-empty" role="status">' + escapeHtml(tr("api.admin.loading", "Loading...")) + "</p>";
+        byId("aircraft-deck").innerHTML = '<p class="admin-empty" role="status">' + escapeHtml(tr("api.admin.loading", "Yüklənir...")) + "</p>";
 
         Promise.all([directory.load(), api.get("api/admin/flights?date=" + encodeURIComponent(day) + "&take=200")]).then(function (results) {
             state.airports = results[0];
@@ -682,7 +682,7 @@
         if (!seat) return;
 
         if (seat.status !== "Available" && seat.status !== "Blocked") {
-            showMessage(tr("api.admin.seatLocked", "A reserved or occupied seat cannot be changed."), true);
+            showMessage(tr("api.admin.seatLocked", "Rezerv olunmuş və ya tutulmuş yeri dəyişmək olmaz."), true);
             return;
         }
 
@@ -691,8 +691,8 @@
             renderSeatInventory();
             // Blocked and open seats look the same, so the change is confirmed in words.
             showMessage(updated.status === "Blocked"
-                ? tr("api.admin.seatBlockedMsg", "Seat {seat} is now blocked.", { seat: seat.label })
-                : tr("api.admin.seatUnblockedMsg", "Seat {seat} is open again.", { seat: seat.label }));
+                ? tr("api.admin.seatBlockedMsg", "{seat} yeri indi bloklanıb.", { seat: seat.label })
+                : tr("api.admin.seatUnblockedMsg", "{seat} yeri yenidən açıqdır.", { seat: seat.label }));
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
             loadSeatInventory();
@@ -717,7 +717,7 @@
         var body = byId("bookings-body");
 
         if (!state.bookings.length) {
-            body.innerHTML = '<tr><td colspan="10" class="admin-empty">' + escapeHtml(tr("admin.noBookings", "No bookings found.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="10" class="admin-empty">' + escapeHtml(tr("admin.noBookings", "Bron tapılmadı.")) + "</td></tr>";
             return;
         }
 
@@ -734,8 +734,8 @@
                 "<td>" + escapeHtml(formatMoney(item.totalAmount)) + "</td>" +
                 "<td>" + statusBadge(item.status) + "</td>" +
                 '<td><div class="admin-actions">' +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-view-booking="' + escapeHtml(item.pnr) + '">' + escapeHtml(tr("admin.viewDetails", "View Details")) + "</button>" +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-cancel-booking="' + escapeHtml(item.pnr) + '"' + (cancellable ? "" : " disabled") + ">" + escapeHtml(tr("admin.cancelBooking", "Cancel Booking")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-view-booking="' + escapeHtml(item.pnr) + '">' + escapeHtml(tr("admin.viewDetails", "Ətraflı bax")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-cancel-booking="' + escapeHtml(item.pnr) + '"' + (cancellable ? "" : " disabled") + ">" + escapeHtml(tr("admin.cancelBooking", "Bronu ləğv et")) + "</button>" +
                 "</div></td></tr>";
         }).join("");
     }
@@ -766,7 +766,7 @@
         var body = byId("passengers-body");
 
         if (!state.passengers.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noPassengers", "No passengers found.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noPassengers", "Sərnişin tapılmadı.")) + "</td></tr>";
             return;
         }
 
@@ -781,7 +781,7 @@
                 "<td>" + item.trips + "</td>" +
                 "<td>" + statusBadge(item.isActive ? "Active" : "Inactive") + "</td>" +
                 '<td><div class="admin-actions">' +
-                '<button class="admin-btn admin-btn--ghost" type="button" data-view-passenger="' + index + '">' + escapeHtml(tr("admin.viewDetails", "View Details")) + "</button>" +
+                '<button class="admin-btn admin-btn--ghost" type="button" data-view-passenger="' + index + '">' + escapeHtml(tr("admin.viewDetails", "Ətraflı bax")) + "</button>" +
                 "</div></td></tr>";
         }).join("");
     }
@@ -809,7 +809,7 @@
         }
 
         return '<td><div class="admin-actions">' +
-            '<button class="admin-btn admin-btn--ghost" type="button" data-edit-' + kind + '="' + id + '">' + escapeHtml(tr("admin.edit", "Edit")) + "</button>" +
+            '<button class="admin-btn admin-btn--ghost" type="button" data-edit-' + kind + '="' + id + '">' + escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" +
             deleteButton(kind, id) +
             "</div></td>";
     }
@@ -828,7 +828,7 @@
             return "<tr><td>" + escapeHtml(item.code) + "</td><td>" + escapeHtml(item.name) + "</td><td>" + escapeHtml(item.city) +
                 "</td><td>" + escapeHtml(item.countryCode) + "</td><td>" + escapeHtml(item.timeZoneId) + "</td><td>" + activeBadge(item.isActive) + "</td>" +
                 rowButtons("airport", item.id) + "</tr>";
-        }).join("") : emptyRow(7, tr("api.admin.noAirports", "No airports found."));
+        }).join("") : emptyRow(7, tr("api.admin.noAirports", "Hava limanı tapılmadı."));
     }
 
     /* ---- destination catalog: countries and cities are switched on and off here, never deleted ---- */
@@ -844,17 +844,16 @@
     }
 
     function destinationName(item) {
-        var lang = window.AEROVA_I18N && window.AEROVA_I18N.getLanguage ? window.AEROVA_I18N.getLanguage() : "en";
-        return (lang === "az" ? item.nameAz : lang === "ru" ? item.nameRu : item.name) || item.name;
+        return item.nameAz || item.name;
     }
 
     function destinationEdit(kind, item) {
         return '<button class="admin-btn admin-btn--ghost" type="button" data-destination-edit="' + kind + '" data-destination-id="' + item.id + '">' +
-            escapeHtml(tr("admin.edit", "Edit")) + "</button>";
+            escapeHtml(tr("admin.edit", "Redaktə")) + "</button>";
     }
 
     function destinationToggle(kind, item) {
-        var label = item.isActive ? tr("api.admin.destDeactivate", "Deactivate") : tr("api.admin.destActivate", "Activate");
+        var label = item.isActive ? tr("api.admin.destDeactivate", "Deaktiv et") : tr("api.admin.destActivate", "Aktiv et");
         return '<button class="admin-btn admin-btn--ghost' + (item.isActive ? " admin-btn--danger-text" : "") + '" type="button" data-destination-toggle="' + kind +
             '" data-destination-id="' + item.id + '">' + escapeHtml(label) + "</button>";
     }
@@ -868,11 +867,11 @@
                 var codes = city.airports.map(function (airport) { return airport.code; }).join(", ");
                 var flights = city.airports.some(function (airport) { return airport.hasRoutes; });
                 html += "<tr><td></td><td>" + escapeHtml(destinationName(city)) + "</td><td>" + escapeHtml(codes) + "</td><td>" +
-                    escapeHtml(flights ? tr("api.admin.destYes", "Yes") : tr("api.admin.destNo", "None yet")) + "</td><td>" + activeBadge(city.isActive) +
+                    escapeHtml(flights ? tr("api.admin.destYes", "Var") : tr("api.admin.destNo", "Hələ yoxdur")) + "</td><td>" + activeBadge(city.isActive) +
                     '</td><td><div class="admin-actions">' + destinationEdit("city", city) + destinationToggle("city", city) + "</div></td></tr>";
             });
             return html;
-        }).join("") : emptyRow(6, tr("api.admin.destEmpty", "The destination catalog is empty."));
+        }).join("") : emptyRow(6, tr("api.admin.destEmpty", "Təyinat kataloqu boşdur. API başlayanda və verilənlər bazası yeni olduqda əlavə olunur."));
     }
 
     function toggleDestination(kind, id) {
@@ -886,16 +885,16 @@
         var turnOn = !found.isActive;
         var name = destinationName(found);
         var ask = turnOn ? Promise.resolve(true) : confirmAction({
-            title: tr("api.admin.destDeactivate", "Deactivate"),
-            text: tr("api.admin.destDeactivateConfirm", "Deactivate {name}?", { name: name }),
-            confirm: tr("api.admin.destDeactivate", "Deactivate"),
+            title: tr("api.admin.destDeactivate", "Deaktiv et"),
+            text: tr("api.admin.destDeactivateConfirm", "{name} deaktiv edilsin? O, təyinat siyahısından və axtarış təkliflərindən çıxır; hava limanları, marşrutlar, reyslər və bronlar toxunulmaz qalır.", { name: name }),
+            confirm: tr("api.admin.destDeactivate", "Deaktiv et"),
             danger: true
         });
 
         ask.then(function (confirmed) {
             if (!confirmed) return;
             api.put("api/admin/destinations/" + (kind === "country" ? "countries/" : "cities/") + id + "/active", { isActive: turnOn }).then(function () {
-                showMessage(tr("api.admin.destUpdated", "{name} is now {state}.", { name: name, state: turnOn ? tr("api.admin.destActive", "active") : tr("api.admin.destInactive", "inactive") }));
+                showMessage(tr("api.admin.destUpdated", "{name} indi {state}.", { name: name, state: turnOn ? tr("api.admin.destActive", "aktivdir") : tr("api.admin.destInactive", "deaktivdir") }));
                 loadDestinations();
             }).catch(function (error) {
                 showMessage(apiMessage(error), true);
@@ -926,25 +925,25 @@
                 "<td>" + escapeHtml(item.validTo ? String(item.validTo).slice(0, 16).replace("T", " ") + " UTC" : "\u2014") + "</td>" +
                 "<td>" + item.usedCount + (item.maxUses != null ? " / " + item.maxUses : "") + "</td><td>" + activeBadge(item.isActive) + "</td>" +
                 promoButtons(item) + "</tr>";
-        }).join("") : emptyRow(7, tr("api.admin.noPromos", "No promo codes found."));
+        }).join("") : emptyRow(7, tr("api.admin.noPromos", "Promo kod tapılmadı."));
     }
 
     /* The usual edit and delete buttons, and one more to preview and send the promotion by e-mail (never sent when a promo code is saved). */
     function promoButtons(item) {
         return rowButtons("promo", item.id).replace('<div class="admin-actions">',
             '<div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-campaign-promo="' + item.id + '">' +
-            escapeHtml(tr("api.admin.campaignButton", "Email campaign")) + "</button>");
+            escapeHtml(tr("api.admin.campaignButton", "E-poçt kampaniyası")) + "</button>");
     }
 
     var CAMPAIGN_PROBLEMS = {
-        promo_inactive: "The promo code is not active.",
-        promo_expired: "The promo code has expired.",
-        promo_exhausted: "The promo code has no uses left.",
-        no_subscribers: "There are no confirmed subscribers yet.",
-        campaign_already_sent: "A campaign for this promo code was already created."
+        promo_inactive: "Promo kod aktiv deyil.",
+        promo_expired: "Promo kodun müddəti bitib.",
+        promo_exhausted: "Promo kodun istifadə limiti bitib.",
+        no_subscribers: "Hələ təsdiqlənmiş abunəçi yoxdur.",
+        campaign_already_sent: "Bu promo kod üçün kampaniya artıq yaradılıb."
     };
 
-    var CAMPAIGN_STATUS = { Queued: "Waiting to start", Sending: "Sending", Completed: "Completed", CompletedWithErrors: "Completed with errors" };
+    var CAMPAIGN_STATUS = { Queued: "Başlamağı gözləyir", Sending: "Sending", Completed: "Completed", CompletedWithErrors: "Xətalarla tamamlandı" };
 
     function renderCampaigns() {
         var rows = state.campaigns || [];
@@ -953,7 +952,7 @@
                 "<td>" + escapeHtml(tr("api.admin.campaignStatus" + item.status, CAMPAIGN_STATUS[item.status] || item.status)) + "</td>" +
                 "<td>" + item.sent + " / " + item.totalRecipients + "</td><td>" + item.failed + "</td><td>" + item.skipped + "</td><td>" + item.pending + "</td>" +
                 "<td>" + escapeHtml(String(item.createdAt || "").slice(0, 16).replace("T", " ") + " UTC") + "</td></tr>";
-        }).join("") : emptyRow(7, tr("api.admin.noCampaigns", "No campaigns yet."));
+        }).join("") : emptyRow(7, tr("api.admin.noCampaigns", "Hələ kampaniya yoxdur."));
     }
 
     function loadCampaigns() {
@@ -968,46 +967,39 @@
     /* The reason the server names (the campaign tables are missing) is shown as it is; any other failure keeps the page's own wording. */
     function campaignError(error) {
         if (error && error.code === "campaign_setup_required") {
-            return tr("api.admin.campaignSetupRequired", "E-mail campaigns are not set up yet: the latest database migration (AddEmailCampaignsAndAdminAlerts) has not been applied.");
+            return tr("api.admin.campaignSetupRequired", "E-poçt kampaniyaları hələ qurulmayıb: verilənlər bazasının son miqrasiyası (AddEmailCampaignsAndAdminAlerts) tətbiq olunmayıb.");
         }
 
-        return (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again.");
+        return (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
     }
 
     /*
      * Preview and confirm: the page shows the e-mail the server built from the saved promotion (in a sandboxed frame, so nothing in it can run),
      * and sends back only the hash of that preview and the confirmation. The discount, code and dates are never sent by the page.
      */
-    function openCampaign(id, language) {
-        var lang = language || "en";
-        byId("details-modal-title").textContent = tr("api.admin.campaignButton", "Email campaign");
-        byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Please wait...")) + "</p>";
+    function openCampaign(id) {
+        byId("details-modal-title").textContent = tr("api.admin.campaignButton", "E-poçt kampaniyası");
+        byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Zəhmət olmasa gözləyin, mövcud uçuşlar axtarılır.")) + "</p>";
         byId("details-modal").hidden = false;
 
-        api.get("api/admin/promo-codes/" + id + "/campaign-preview?language=" + encodeURIComponent(lang)).then(function (preview) {
+        api.get("api/admin/promo-codes/" + id + "/campaign-preview?language=az").then(function (preview) {
             var problems = (preview.problems || []).map(function (code) {
                 return "<li>" + escapeHtml(tr("api.admin.campaignProblem_" + code, CAMPAIGN_PROBLEMS[code] || code)) + "</li>";
             }).join("");
-            var options = ["en", "az", "ru"].map(function (code) {
-                return '<option value="' + code + '"' + (code === preview.language ? " selected" : "") + ">" + code.toUpperCase() + "</option>";
-            }).join("");
-
             byId("details-modal-body").innerHTML =
                 '<p><strong>' + escapeHtml(preview.code) + "</strong> — " + preview.discountPercent + "%" +
-                (preview.validTo ? " · " + escapeHtml(tr("api.admin.validUntil", "Valid until")) + " " + escapeHtml(String(preview.validTo).slice(0, 10)) : "") + "</p>" +
-                "<p>" + escapeHtml(tr("api.admin.campaignRecipients", "Confirmed subscribers who will receive it:")) + " <strong>" + preview.recipientCount + "</strong></p>" +
+                (preview.validTo ? " · " + escapeHtml(tr("api.admin.validUntil", "Bitmə tarixi")) + " " + escapeHtml(String(preview.validTo).slice(0, 10)) : "") + "</p>" +
+                "<p>" + escapeHtml(tr("api.admin.campaignRecipients", "Məktubu alacaq təsdiqlənmiş abunəçilər:")) + " <strong>" + preview.recipientCount + "</strong></p>" +
                 (problems ? '<ul class="admin-error">' + problems + "</ul>" : "") +
-                '<label class="admin-field"><span>' + escapeHtml(tr("api.admin.campaignLanguage", "Preview language")) + '</span><select id="campaign-language" class="admin-input">' + options + "</select></label>" +
                 "<p><strong>" + escapeHtml(preview.subject) + "</strong></p>" +
                 '<iframe id="campaign-frame" class="admin-campaign-frame" sandbox="" style="width:100%;height:420px;border:1px solid #ddd;background:#fff"></iframe>' +
                 '<label class="admin-check"><input type="checkbox" id="campaign-confirm"' + (preview.canSend ? "" : " disabled") + "> " +
-                escapeHtml(tr("api.admin.campaignConfirm", "Send email campaign to subscribed customers")) + "</label>" +
+                escapeHtml(tr("api.admin.campaignConfirm", "E-poçt kampaniyasını abunə olmuş müştərilərə göndər")) + "</label>" +
                 '<p class="admin-hint" id="campaign-result" role="status"></p>' +
                 '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--primary" id="campaign-send" disabled>' +
-                escapeHtml(tr("api.admin.campaignSend", "Send campaign")) + "</button></div>";
+                escapeHtml(tr("api.admin.campaignSend", "Kampaniyanı göndər")) + "</button></div>";
 
             byId("campaign-frame").setAttribute("srcdoc", preview.html);
-            byId("campaign-language").addEventListener("change", function () { openCampaign(id, this.value); });
 
             var box = byId("campaign-confirm");
             var button = byId("campaign-send");
@@ -1017,7 +1009,7 @@
                 button.disabled = true;
                 byId("campaign-result").textContent = "";
                 api.post("api/admin/promo-codes/" + id + "/campaign", { previewHash: preview.previewHash, confirm: true }).then(function () {
-                    byId("campaign-result").textContent = tr("api.admin.campaignQueued", "The campaign was confirmed and is being sent in the background. Follow it in the Email campaigns table.");
+                    byId("campaign-result").textContent = tr("api.admin.campaignQueued", "Kampaniya təsdiqləndi və arxa planda göndərilir. Onu \"E-poçt kampaniyaları\" cədvəlində izləyin.");
                     box.disabled = true;
                     loadCampaigns();
                 }, function (error) {
@@ -1045,12 +1037,12 @@
         byId("baggage-body").innerHTML = state.baggage.length ? state.baggage.map(function (item) {
             return "<tr><td>" + escapeHtml(item.code) + "</td><td>" + escapeHtml(item.name) + "</td><td>" + item.weightKg + " kg</td><td>" + escapeHtml(formatMoney(item.price)) +
                 "</td><td>" + activeBadge(item.isActive) + "</td>" + rowButtons("baggage", item.id) + "</tr>";
-        }).join("") : emptyRow(6, tr("api.admin.noBaggage", "No baggage options."));
+        }).join("") : emptyRow(6, tr("api.admin.noBaggage", "Baqaj seçimi yoxdur."));
 
         byId("meals-body").innerHTML = state.meals.length ? state.meals.map(function (item) {
             return "<tr><td>" + escapeHtml(item.code) + "</td><td>" + escapeHtml(item.name) + "</td><td>" + escapeHtml(item.description || "\u2014") + "</td><td>" + escapeHtml(formatMoney(item.price)) +
                 "</td><td>" + activeBadge(item.isActive) + "</td>" + rowButtons("meal", item.id) + "</tr>";
-        }).join("") : emptyRow(6, tr("api.admin.noMeals", "No meals."));
+        }).join("") : emptyRow(6, tr("api.admin.noMeals", "Yemək yoxdur."));
     }
 
     function loadOptions() {
@@ -1069,10 +1061,10 @@
     function renderRules() {
         byId("rules-body").innerHTML = state.rules.length ? state.rules.map(function (item) {
             var refundable = item.feePercent != null;
-            return "<tr><td>" + escapeHtml(item.cabinClass) + "</td><td>\u2265 " + item.minDaysBeforeDeparture + " " + escapeHtml(tr("api.admin.daysUnit", "days")) + "</td><td>" +
-                (refundable ? item.feePercent + "%" : "\u2014") + "</td><td>" + escapeHtml(refundable ? tr("api.admin.refundable", "Refund of the rest") : tr("api.admin.noRefund", "No refund")) + "</td>" +
+            return "<tr><td>" + escapeHtml(item.cabinClass) + "</td><td>\u2265 " + item.minDaysBeforeDeparture + " " + escapeHtml(tr("api.admin.daysUnit", "gün")) + "</td><td>" +
+                (refundable ? item.feePercent + "%" : "\u2014") + "</td><td>" + escapeHtml(refundable ? tr("api.admin.refundable", "Qalan hissənin geri ödənişi") : tr("api.admin.noRefund", "Geri ödəniş yoxdur")) + "</td>" +
                 rowButtons("rule", item.id) + "</tr>";
-        }).join("") : emptyRow(5, tr("api.admin.noRules", "No rules: every cancellation is without a refund."));
+        }).join("") : emptyRow(5, tr("api.admin.noRules", "Qayda yoxdur: hər ləğv geri ödənişsizdir."));
     }
 
     function loadRules() {
@@ -1158,7 +1150,7 @@
 
     function openEntityForm(config, item) {
         state.formContext = { config: config, id: item ? item.id : null, item: item || null };
-        byId("entity-modal-title").textContent = (item ? tr("admin.editPrefix", "Edit ") : tr("admin.addPrefix", "Add ")) + config.title;
+        byId("entity-modal-title").textContent = (item ? tr("admin.editPrefix", "Redaktə: ") : tr("admin.addPrefix", "Əlavə et: ")) + config.title;
         byId("entity-form-fields").innerHTML = buildFields(config.fields(), item ? config.toForm(item) : (config.defaults ? config.defaults() : {}));
         openModal();
     }
@@ -1173,7 +1165,7 @@
         var options = state.aircraft.map(function (item) {
             return { value: item.id, label: item.name + " (" + item.model + ")" };
         });
-        return allowNone ? [{ value: "", label: tr("api.admin.none", "— none —") }].concat(options) : options;
+        return allowNone ? [{ value: "", label: tr("api.admin.none", "— yoxdur —") }].concat(options) : options;
     }
 
     function utcInput(value) {
@@ -1182,16 +1174,16 @@
 
     var FORMS = {
         destCountry: {
-            title: tr("api.admin.destCountry", "Country"),
+            title: tr("api.admin.destCountry", "Ölkə"),
             path: "api/admin/destinations/countries",
             fields: function () {
                 return [
-                    { key: "name", label: tr("api.admin.destNameEn", "Name (English)") },
-                    { key: "nameAz", label: tr("api.admin.destNameAz", "Name (Azerbaijani)") },
-                    { key: "nameRu", label: tr("api.admin.destNameRu", "Name (Russian)") },
-                    { key: "description", label: tr("api.admin.destDescEn", "Description (English)"), full: true },
-                    { key: "descriptionAz", label: tr("api.admin.destDescAz", "Description (Azerbaijani)"), full: true },
-                    { key: "descriptionRu", label: tr("api.admin.destDescRu", "Description (Russian)"), full: true }
+                    { key: "name", label: tr("api.admin.destNameEn", "Ad (ingilis)") },
+                    { key: "nameAz", label: tr("api.admin.destNameAz", "Ad (azərbaycan)") },
+                    { key: "nameRu", label: tr("api.admin.destNameRu", "Ad (rus)") },
+                    { key: "description", label: tr("api.admin.destDescEn", "Təsvir (ingilis)"), full: true },
+                    { key: "descriptionAz", label: tr("api.admin.destDescAz", "Təsvir (azərbaycan)"), full: true },
+                    { key: "descriptionRu", label: tr("api.admin.destDescRu", "Təsvir (rus)"), full: true }
                 ];
             },
             toForm: function (item) {
@@ -1203,16 +1195,16 @@
             reload: loadDestinations
         },
         destCity: {
-            title: tr("api.admin.destCity", "City"),
+            title: tr("api.admin.destCity", "Şəhər"),
             path: "api/admin/destinations/cities",
             fields: function () {
                 return [
-                    { key: "nameAz", label: tr("api.admin.destNameAz", "Name (Azerbaijani)") },
-                    { key: "nameRu", label: tr("api.admin.destNameRu", "Name (Russian)") },
-                    { key: "description", label: tr("api.admin.destDescEn", "Description (English)"), full: true },
-                    { key: "descriptionAz", label: tr("api.admin.destDescAz", "Description (Azerbaijani)"), full: true },
-                    { key: "descriptionRu", label: tr("api.admin.destDescRu", "Description (Russian)"), full: true },
-                    { key: "aliases", label: tr("api.admin.destAliases", "Other spellings (separated by ;)"), full: true, required: false }
+                    { key: "nameAz", label: tr("api.admin.destNameAz", "Ad (azərbaycan)") },
+                    { key: "nameRu", label: tr("api.admin.destNameRu", "Ad (rus)") },
+                    { key: "description", label: tr("api.admin.destDescEn", "Təsvir (ingilis)"), full: true },
+                    { key: "descriptionAz", label: tr("api.admin.destDescAz", "Təsvir (azərbaycan)"), full: true },
+                    { key: "descriptionRu", label: tr("api.admin.destDescRu", "Təsvir (rus)"), full: true },
+                    { key: "aliases", label: tr("api.admin.destAliases", "Digər yazılışlar (; ilə ayırın)"), full: true, required: false }
                 ];
             },
             toForm: function (item) {
@@ -1224,14 +1216,14 @@
             reload: loadDestinations
         },
         admin: {
-            title: tr("api.admin.adminAccount", "Admin account"),
+            title: tr("api.admin.adminAccount", "Admin hesabı"),
             path: "api/admin/users",
             fields: function () {
                 return [
-                    { key: "firstName", label: tr("api.admin.fieldFirstName", "First name") },
-                    { key: "lastName", label: tr("api.admin.fieldLastName", "Last name") },
-                    { key: "email", label: tr("api.admin.colEmail", "Email"), type: "email", full: true },
-                    { key: "password", label: tr("api.admin.fieldPassword", "Password (8+ characters, letters and digits)"), type: "password", full: true }
+                    { key: "firstName", label: tr("api.admin.fieldFirstName", "Ad") },
+                    { key: "lastName", label: tr("api.admin.fieldLastName", "Soyad") },
+                    { key: "email", label: tr("api.admin.colEmail", "E-poçt"), type: "email", full: true },
+                    { key: "password", label: tr("api.admin.fieldPassword", "Parol (8+ simvol, hərf və rəqəm)"), type: "password", full: true }
                 ];
             },
             defaults: function () { return {}; },
@@ -1240,20 +1232,20 @@
             reload: loadUsers
         },
         flight: {
-            title: tr("admin.flight", "Flight"),
+            title: tr("admin.flight", "Uçuş"),
             path: "api/admin/flights",
             fields: function () {
                 return [
-                    { key: "flightNumber", label: tr("admin.flightNumber", "Flight Number") },
-                    { key: "aircraftId", label: tr("flightDetails.aircraft", "Aircraft"), type: "select", options: aircraftOptions(false) },
-                    { key: "originCode", label: tr("common.origin", "Origin"), type: "select", options: airportOptions() },
-                    { key: "destinationCode", label: tr("common.destination", "Destination"), type: "select", options: airportOptions() },
-                    { key: "departureAt", label: tr("api.admin.departureUtc", "Departure (UTC)"), type: "datetime-local" },
-                    { key: "arrivalAt", label: tr("api.admin.arrivalUtc", "Arrival (UTC)"), type: "datetime-local" },
+                    { key: "flightNumber", label: tr("admin.flightNumber", "Uçuş nömrəsi") },
+                    { key: "aircraftId", label: tr("flightDetails.aircraft", "Təyyarə"), type: "select", options: aircraftOptions(false) },
+                    { key: "originCode", label: tr("common.origin", "Mənşə"), type: "select", options: airportOptions() },
+                    { key: "destinationCode", label: tr("common.destination", "Təyinat"), type: "select", options: airportOptions() },
+                    { key: "departureAt", label: tr("api.admin.departureUtc", "Yola düşmə (UTC)"), type: "datetime-local" },
+                    { key: "arrivalAt", label: tr("api.admin.arrivalUtc", "Çatma (UTC)"), type: "datetime-local" },
                     { key: "status", label: tr("admin.status", "Status"), type: "select", options: FLIGHT_STATUSES.map(function (name) { return { value: name, label: statusText(name) }; }), full: true },
-                    { key: "fareEconomy", label: tr("api.admin.fareEconomy", "Economy fare"), type: "number", required: false },
-                    { key: "fareComfort", label: tr("api.admin.fareComfort", "Comfort fare"), type: "number", required: false },
-                    { key: "fareBusiness", label: tr("api.admin.fareBusiness", "Business fare"), type: "number", required: false }
+                    { key: "fareEconomy", label: tr("api.admin.fareEconomy", "Economy qiyməti"), type: "number", required: false },
+                    { key: "fareComfort", label: tr("api.admin.fareComfort", "Comfort qiyməti"), type: "number", required: false },
+                    { key: "fareBusiness", label: tr("api.admin.fareBusiness", "Business qiyməti"), type: "number", required: false }
                 ];
             },
             defaults: function () {
@@ -1292,14 +1284,14 @@
             reload: loadFlights
         },
         route: {
-            title: tr("admin.route", "Route"),
+            title: tr("admin.route", "Marşrut"),
             path: "api/admin/routes",
             fields: function () {
                 return [
-                    { key: "originCode", label: tr("common.origin", "Origin"), type: "select", options: airportOptions() },
-                    { key: "destinationCode", label: tr("common.destination", "Destination"), type: "select", options: airportOptions() },
-                    { key: "distanceKm", label: tr("api.admin.distanceKm", "Distance (km)"), type: "number" },
-                    { key: "durationMinutes", label: tr("api.admin.durationMinutes", "Duration (minutes)"), type: "number" },
+                    { key: "originCode", label: tr("common.origin", "Mənşə"), type: "select", options: airportOptions() },
+                    { key: "destinationCode", label: tr("common.destination", "Təyinat"), type: "select", options: airportOptions() },
+                    { key: "distanceKm", label: tr("api.admin.distanceKm", "Məsafə (km)"), type: "number" },
+                    { key: "durationMinutes", label: tr("api.admin.durationMinutes", "Müddət (dəqiqə)"), type: "number" },
                     { key: "isActive", label: tr("admin.status", "Status"), type: "select", options: [{ value: "true", label: statusText("Active") }, { value: "false", label: statusText("Inactive") }], full: true }
                 ];
             },
@@ -1315,23 +1307,23 @@
             reload: loadRoutes
         },
         schedule: {
-            title: tr("api.admin.schedule", "Schedule"),
+            title: tr("api.admin.schedule", "Cədvəl"),
             path: "api/admin/schedules",
             fields: function () {
                 return [
-                    { key: "flightNumber", label: tr("admin.flightNumber", "Flight Number") },
-                    { key: "routeId", label: tr("admin.route", "Route"), type: "select", options: state.routes.map(function (route) { return { value: route.id, label: route.code + " · " + route.originCity + " → " + route.destinationCity }; }) },
-                    { key: "defaultAircraftId", label: tr("flightDetails.aircraft", "Aircraft"), type: "select", options: aircraftOptions(true) },
+                    { key: "flightNumber", label: tr("admin.flightNumber", "Uçuş nömrəsi") },
+                    { key: "routeId", label: tr("admin.route", "Marşrut"), type: "select", options: state.routes.map(function (route) { return { value: route.id, label: route.code + " · " + route.originCity + " → " + route.destinationCity }; }) },
+                    { key: "defaultAircraftId", label: tr("flightDetails.aircraft", "Təyyarə"), type: "select", options: aircraftOptions(true) },
                     { key: "isActive", label: tr("admin.status", "Status"), type: "select", options: [{ value: "true", label: statusText("Active") }, { value: "false", label: statusText("Inactive") }] },
-                    { key: "departureTime", label: tr("api.admin.departureLocal", "Departure (airport time)"), type: "time" },
-                    { key: "arrivalTime", label: tr("api.admin.arrivalLocal", "Arrival (airport time)"), type: "time" },
-                    { key: "arrivalDayOffset", label: tr("api.admin.dayOffset", "Lands days later (0 or 1)"), type: "number" },
-                    { key: "validFrom", label: tr("api.admin.validFrom", "Valid from"), type: "date" },
-                    { key: "validTo", label: tr("api.admin.validTo", "Valid until (optional)"), type: "date", required: false },
-                    { key: "daysOfWeek", label: tr("api.admin.days", "Days of the week"), type: "days", full: true },
-                    { key: "fareEconomy", label: tr("api.admin.fareEconomy", "Economy fare"), type: "number", required: false },
-                    { key: "fareComfort", label: tr("api.admin.fareComfort", "Comfort fare"), type: "number", required: false },
-                    { key: "fareBusiness", label: tr("api.admin.fareBusiness", "Business fare"), type: "number", required: false }
+                    { key: "departureTime", label: tr("api.admin.departureLocal", "Yola düşmə (hava limanı vaxtı)"), type: "time" },
+                    { key: "arrivalTime", label: tr("api.admin.arrivalLocal", "Çatma (hava limanı vaxtı)"), type: "time" },
+                    { key: "arrivalDayOffset", label: tr("api.admin.dayOffset", "Neçə gün sonra enir (0 və ya 1)"), type: "number" },
+                    { key: "validFrom", label: tr("api.admin.validFrom", "Başlama tarixi"), type: "date" },
+                    { key: "validTo", label: tr("api.admin.validTo", "Bitmə tarixi (ixtiyari)"), type: "date", required: false },
+                    { key: "daysOfWeek", label: tr("api.admin.days", "Həftənin günləri"), type: "days", full: true },
+                    { key: "fareEconomy", label: tr("api.admin.fareEconomy", "Economy qiyməti"), type: "number", required: false },
+                    { key: "fareComfort", label: tr("api.admin.fareComfort", "Comfort qiyməti"), type: "number", required: false },
+                    { key: "fareBusiness", label: tr("api.admin.fareBusiness", "Business qiyməti"), type: "number", required: false }
                 ];
             },
             defaults: function () {
@@ -1361,7 +1353,7 @@
                 if (data.fareBusiness) fares.push({ cabinClass: "Business", basePrice: data.fareBusiness });
 
                 if (!data.daysOfWeek.length) {
-                    throw new Error(tr("api.admin.pickDays", "Choose at least one day of the week."));
+                    throw new Error(tr("api.admin.pickDays", "Ən azı bir gün seçin."));
                 }
 
                 return {
@@ -1385,17 +1377,17 @@
             reload: loadSchedules
         },
         aircraft: {
-            title: tr("flightDetails.aircraft", "Aircraft"),
+            title: tr("flightDetails.aircraft", "Təyyarə"),
             path: "api/admin/aircraft",
             fields: function () {
                 return [
-                    { key: "name", label: tr("flightDetails.aircraft", "Aircraft") },
+                    { key: "name", label: tr("flightDetails.aircraft", "Təyyarə") },
                     { key: "model", label: tr("api.admin.model", "Model") },
-                    { key: "registrationNumber", label: tr("api.admin.registration", "Registration Number") },
+                    { key: "registrationNumber", label: tr("api.admin.registration", "Qeydiyyat nömrəsi") },
                     { key: "status", label: tr("admin.status", "Status"), type: "select", options: ["Active", "Maintenance", "Inactive"].map(function (name) { return { value: name, label: statusText(name) }; }) },
-                    { key: "businessSeats", label: tr("api.admin.businessSeats", "Business Seats"), type: "number" },
-                    { key: "comfortSeats", label: tr("api.admin.comfortSeats", "Comfort Seats"), type: "number" },
-                    { key: "economySeats", label: tr("api.admin.economySeats", "Economy Seats"), type: "number" }
+                    { key: "businessSeats", label: tr("api.admin.businessSeats", "Business yerləri"), type: "number" },
+                    { key: "comfortSeats", label: tr("api.admin.comfortSeats", "Comfort yerləri"), type: "number" },
+                    { key: "economySeats", label: tr("api.admin.economySeats", "Economy yerləri"), type: "number" }
                 ];
             },
             defaults: function () {
@@ -1410,15 +1402,15 @@
             reload: loadAircraft
         },
         airport: {
-            title: tr("api.admin.airport", "Airport"),
+            title: tr("api.admin.airport", "Hava limanı"),
             path: "api/admin/airports",
             fields: function () {
                 return [
-                    { key: "code", label: tr("api.admin.codeIata", "Code (3 letters)") },
-                    { key: "name", label: tr("api.admin.name", "Name") },
-                    { key: "city", label: tr("api.admin.city", "City") },
-                    { key: "countryCode", label: tr("api.admin.countryCode", "Country (2 letters)") },
-                    { key: "timeZoneId", label: tr("api.admin.timeZoneId", "Time zone (e.g. Asia/Baku)"), full: true },
+                    { key: "code", label: tr("api.admin.codeIata", "Kod (3 hərf)") },
+                    { key: "name", label: tr("api.admin.name", "Ad") },
+                    { key: "city", label: tr("api.admin.city", "Şəhər") },
+                    { key: "countryCode", label: tr("api.admin.countryCode", "Ölkə (2 hərf)") },
+                    { key: "timeZoneId", label: tr("api.admin.timeZoneId", "Saat qurşağı (məs. Asia/Baku)"), full: true },
                     { key: "isActive", label: tr("admin.status", "Status"), type: "select", options: [{ value: "true", label: statusText("Active") }, { value: "false", label: statusText("Inactive") }], full: true }
                 ];
             },
@@ -1432,15 +1424,15 @@
             reload: loadAirports
         },
         promo: {
-            title: tr("api.admin.promo", "Promo code"),
+            title: tr("api.admin.promo", "Promo kod"),
             path: "api/admin/promo-codes",
             fields: function () {
                 return [
-                    { key: "code", label: tr("api.admin.code", "Code") },
-                    { key: "discountPercent", label: tr("api.admin.discountPercent", "Discount (%)"), type: "number" },
-                    { key: "validFrom", label: tr("api.admin.validFromUtc", "Valid from (UTC, optional)"), type: "datetime-local", required: false },
-                    { key: "validTo", label: tr("api.admin.validToUtc", "Valid until (UTC, optional)"), type: "datetime-local", required: false },
-                    { key: "maxUses", label: tr("api.admin.maxUses", "Maximum uses (optional)"), type: "number", required: false },
+                    { key: "code", label: tr("api.admin.code", "Kod") },
+                    { key: "discountPercent", label: tr("api.admin.discountPercent", "Endirim (%)"), type: "number" },
+                    { key: "validFrom", label: tr("api.admin.validFromUtc", "Başlama (UTC, ixtiyari)"), type: "datetime-local", required: false },
+                    { key: "validTo", label: tr("api.admin.validToUtc", "Bitmə (UTC, ixtiyari)"), type: "datetime-local", required: false },
+                    { key: "maxUses", label: tr("api.admin.maxUses", "Maksimum istifadə (ixtiyari)"), type: "number", required: false },
                     { key: "isActive", label: tr("admin.status", "Status"), type: "select", options: [{ value: "true", label: statusText("Active") }, { value: "false", label: statusText("Inactive") }] }
                 ];
             },
@@ -1461,14 +1453,14 @@
             reload: loadPromos
         },
         baggage: {
-            title: tr("api.admin.baggageOption", "Baggage option"),
+            title: tr("api.admin.baggageOption", "Baqaj seçimi"),
             path: "api/admin/booking-options/baggage",
             fields: function () {
                 return [
-                    { key: "code", label: tr("api.admin.code", "Code") },
-                    { key: "name", label: tr("api.admin.name", "Name") },
-                    { key: "weightKg", label: tr("api.admin.weightKg", "Weight (kg)"), type: "number" },
-                    { key: "price", label: tr("api.admin.price", "Price"), type: "number" },
+                    { key: "code", label: tr("api.admin.code", "Kod") },
+                    { key: "name", label: tr("api.admin.name", "Ad") },
+                    { key: "weightKg", label: tr("api.admin.weightKg", "Çəki (kq)"), type: "number" },
+                    { key: "price", label: tr("api.admin.price", "Qiymət"), type: "number" },
                     { key: "isActive", label: tr("admin.status", "Status"), type: "select", options: [{ value: "true", label: statusText("Active") }, { value: "false", label: statusText("Inactive") }], full: true }
                 ];
             },
@@ -1478,14 +1470,14 @@
             reload: loadOptions
         },
         meal: {
-            title: tr("api.admin.meal", "Meal"),
+            title: tr("api.admin.meal", "Yemək"),
             path: "api/admin/booking-options/meals",
             fields: function () {
                 return [
-                    { key: "code", label: tr("api.admin.code", "Code") },
-                    { key: "name", label: tr("api.admin.name", "Name") },
-                    { key: "description", label: tr("api.admin.description", "Description"), full: true, required: false },
-                    { key: "price", label: tr("api.admin.price", "Price"), type: "number" },
+                    { key: "code", label: tr("api.admin.code", "Kod") },
+                    { key: "name", label: tr("api.admin.name", "Ad") },
+                    { key: "description", label: tr("api.admin.description", "Təsvir"), full: true, required: false },
+                    { key: "price", label: tr("api.admin.price", "Qiymət"), type: "number" },
                     { key: "isActive", label: tr("admin.status", "Status"), type: "select", options: [{ value: "true", label: statusText("Active") }, { value: "false", label: statusText("Inactive") }] }
                 ];
             },
@@ -1495,13 +1487,13 @@
             reload: loadOptions
         },
         rule: {
-            title: tr("api.admin.rule", "Rule"),
+            title: tr("api.admin.rule", "Qayda"),
             path: "api/admin/cancellation-rules",
             fields: function () {
                 return [
-                    { key: "cabinClass", label: tr("admin.cabin", "Cabin"), type: "select", options: CABINS },
-                    { key: "minDaysBeforeDeparture", label: tr("api.admin.minDays", "Cancelled at least (days before departure)"), type: "number" },
-                    { key: "feePercent", label: tr("api.admin.feePercentHint", "Fee % of the amount paid (empty = no refund)"), type: "number", required: false, full: true }
+                    { key: "cabinClass", label: tr("admin.cabin", "Salon"), type: "select", options: CABINS },
+                    { key: "minDaysBeforeDeparture", label: tr("api.admin.minDays", "Ən azı neçə gün qalmış ləğv (uçuşa)"), type: "number" },
+                    { key: "feePercent", label: tr("api.admin.feePercentHint", "Ödənilən məbləğin komissiya %-i (boş = geri ödəniş yoxdur)"), type: "number", required: false, full: true }
                 ];
             },
             defaults: function () { return { cabinClass: "Economy", minDaysBeforeDeparture: 7 }; },
@@ -1531,7 +1523,7 @@
         var path = context.id ? config.path + "/" + context.id : config.path;
         (context.id ? api.put(path, request) : api.post(path, request)).then(function () {
             closeModal();
-            showMessage(config.title + (context.id ? tr("api.admin.updated", " updated.") : tr("api.admin.added", " added.")));
+            showMessage(config.title + (context.id ? tr("api.admin.updated", " yeniləndi.") : tr("api.admin.added", " əlavə olundu.")));
             config.reload();
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
@@ -1545,11 +1537,11 @@
     function remove(config, id, label) {
         var isPromo = config.path === "api/admin/promo-codes";
         confirmAction({
-            title: tr("admin.delete", "Delete"),
+            title: tr("admin.delete", "Sil"),
             text: isPromo
-                ? tr("api.admin.confirmDeletePromo", "Delete {name}? If bookings already used it, it will be deactivated and kept instead.", { name: label })
-                : tr("api.admin.confirmDelete", "Delete {name}? This cannot be undone.", { name: label }),
-            confirm: tr("admin.delete", "Delete"),
+                ? tr("api.admin.confirmDeletePromo", "{name} silinsin? Bronlarda artıq istifadə olunubsa, silinmir, deaktiv edilir.", { name: label })
+                : tr("api.admin.confirmDelete", "{name} silinsin? Bu geri qaytarıla bilməz.", { name: label }),
+            confirm: tr("admin.delete", "Sil"),
             danger: true
         }).then(function (confirmed) {
             if (!confirmed) return;
@@ -1562,9 +1554,9 @@
             api.del(key).then(function (result) {
                 // Only now, with the server's answer, is anything said about the outcome.
                 if (result && String(result.outcome).toLowerCase() === "deactivated") {
-                    showMessage(tr("api.admin.promoDeactivated", "{name} has been used by bookings, so it was deactivated instead of deleted.", { name: label }));
+                    showMessage(tr("api.admin.promoDeactivated", "{name} bronlarda istifadə olunub, ona görə silinmədi, deaktiv edildi.", { name: label }));
                 } else {
-                    showMessage(config.title + tr("api.admin.deleted", " deleted."));
+                    showMessage(config.title + tr("api.admin.deleted", " silindi."));
                 }
                 config.reload();
             }).catch(function (error) {
@@ -1631,7 +1623,7 @@
         if (!shell || !toggle) return;
         shell.classList.toggle("is-sidebar-open", open);
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        toggle.setAttribute("aria-label", open ? "Menyunu bağla" : "Menyunu aç");
     }
 
     function find(list, id) {
@@ -1644,23 +1636,23 @@
         api.get("api/admin/bookings/" + encodeURIComponent(pnr)).then(function (booking) {
             var leg = booking.legs[0];
             var departure = atAirport(leg.departureAt, leg.originCode);
-            openDetails(tr("api.admin.bookingDetails", "Booking Details"), detailsGrid([
+            openDetails(tr("api.admin.bookingDetails", "Rezervasiya təfərrüatları"), detailsGrid([
                 { label: "PNR", value: escapeHtml(booking.pnr) },
                 { label: tr("admin.status", "Status"), value: statusBadge(booking.status) },
-                { label: tr("api.admin.contact", "Contact"), value: escapeHtml(booking.contactEmail + " · " + booking.contactPhone), full: true },
-                { label: tr("manage.flight", "Flight"), value: escapeHtml(leg.flightNumber) },
-                { label: tr("manage.route", "Route"), value: escapeHtml(leg.originCity + " → " + leg.destinationCity) },
-                { label: tr("manage.date", "Date"), value: escapeHtml(departure.date + " · " + departure.time) },
-                { label: tr("admin.cabin", "Cabin"), value: escapeHtml(leg.cabinClass) },
+                { label: tr("api.admin.contact", "Əlaqə"), value: escapeHtml(booking.contactEmail + " · " + booking.contactPhone), full: true },
+                { label: tr("manage.flight", "Uçuş"), value: escapeHtml(leg.flightNumber) },
+                { label: tr("manage.route", "Marşrut"), value: escapeHtml(leg.originCity + " → " + leg.destinationCity) },
+                { label: tr("manage.date", "Tarix"), value: escapeHtml(departure.date + " · " + departure.time) },
+                { label: tr("admin.cabin", "Salon"), value: escapeHtml(leg.cabinClass) },
                 {
-                    label: tr("booking.passengers", "Passengers"),
+                    label: tr("booking.passengers", "Sərnişinlər"),
                     value: booking.passengers.map(function (passenger) {
                         var seat = passenger.tickets[0] && passenger.tickets[0].seat;
-                        return escapeHtml([passenger.title, passenger.firstName, passenger.lastName].join(" ") + " · " + (seat || tr("api.admin.noSeat", "no seat")));
+                        return escapeHtml([passenger.title, passenger.firstName, passenger.lastName].join(" ") + " · " + (seat || tr("api.admin.noSeat", "yer yoxdur")));
                     }).join("<br>"),
                     full: true
                 },
-                { label: tr("payment.grandTotal", "Total"), value: escapeHtml(formatMoney(booking.price.total)), full: true }
+                { label: tr("payment.grandTotal", "Cəmi"), value: escapeHtml(formatMoney(booking.price.total)), full: true }
             ]));
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
@@ -1669,15 +1661,15 @@
 
     function cancelBooking(pnr) {
         confirmAction({
-            title: tr("admin.cancelBooking", "Cancel Booking"),
-            text: tr("api.admin.confirmCancel", "Cancel booking {pnr}? The seats are released and a refund is requested where the fare rules allow it.", { pnr: pnr }),
-            confirm: tr("admin.cancelBooking", "Cancel Booking"),
+            title: tr("admin.cancelBooking", "Bronu ləğv et"),
+            text: tr("api.admin.confirmCancel", "{pnr} rezervasiyası ləğv edilsin? Yerlər azad olunur və tarif qaydaları icazə verirsə geri ödəniş tələb olunur.", { pnr: pnr }),
+            confirm: tr("admin.cancelBooking", "Bronu ləğv et"),
             danger: true
         }).then(function (confirmed) {
             if (!confirmed) return;
 
             api.post("api/admin/bookings/" + encodeURIComponent(pnr) + "/cancel", {}).then(function () {
-                showMessage(tr("admin.bookingCancelledMsg", "Booking {pnr} cancelled.", { pnr: pnr }));
+                showMessage(tr("admin.bookingCancelledMsg", "{pnr} bronu ləğv edildi.", { pnr: pnr }));
                 loadBookings();
             }).catch(function (error) {
                 showMessage(apiMessage(error), true);
@@ -1691,17 +1683,17 @@
 
         api.get("api/admin/passengers/" + encodeURIComponent(passenger.documentType) + "/" + encodeURIComponent(passenger.documentNumber)).then(function (details) {
             var person = details.passenger;
-            openDetails(tr("api.admin.passengerDetails", "Passenger Details"), detailsGrid([
-                { label: tr("api.admin.passengerName", "Passenger Name"), value: escapeHtml(person.fullName) },
+            openDetails(tr("api.admin.passengerDetails", "Sərnişin təfərrüatları"), detailsGrid([
+                { label: tr("api.admin.passengerName", "Sərnişinin adı"), value: escapeHtml(person.fullName) },
                 { label: tr("admin.status", "Status"), value: statusBadge(person.isActive ? "Active" : "Inactive") },
                 { label: "Email", value: escapeHtml(person.email) },
-                { label: tr("api.admin.phone", "Phone"), value: escapeHtml(person.phone) },
-                { label: tr("api.admin.nationality", "Nationality"), value: escapeHtml(person.nationalityCode) },
-                { label: tr("api.admin.totalTrips", "Total Trips"), value: String(person.trips) },
-                { label: tr("api.admin.documentType", "Document Type"), value: escapeHtml(person.documentType) },
-                { label: tr("api.admin.documentNumber", "Document Number"), value: escapeHtml(person.documentNumber) },
+                { label: tr("api.admin.phone", "Telefon"), value: escapeHtml(person.phone) },
+                { label: tr("api.admin.nationality", "Vətəndaşlıq"), value: escapeHtml(person.nationalityCode) },
+                { label: tr("api.admin.totalTrips", "Səyahətlərin sayı"), value: String(person.trips) },
+                { label: tr("api.admin.documentType", "Sənəd növü"), value: escapeHtml(person.documentType) },
+                { label: tr("api.admin.documentNumber", "Sənəd nömrəsi"), value: escapeHtml(person.documentNumber) },
                 {
-                    label: tr("admin.bookings", "Bookings"),
+                    label: tr("admin.bookings", "Bronlar"),
                     value: details.bookings.length ? details.bookings.map(function (booking) {
                         return escapeHtml(booking.pnr + " · " + statusText(booking.status) + " · " + formatMoney(booking.totalAmount));
                     }).join("<br>") : escapeHtml("—"),
@@ -1716,15 +1708,15 @@
     function showAircraftDetails(id) {
         api.get("api/admin/aircraft/" + encodeURIComponent(id)).then(function (details) {
             var aircraft = details.aircraft;
-            openDetails(tr("api.admin.aircraftDetails", "Aircraft Details"), detailsGrid([
-                { label: tr("flightDetails.aircraft", "Aircraft"), value: escapeHtml(aircraft.name) },
+            openDetails(tr("api.admin.aircraftDetails", "Təyyarə təfərrüatları"), detailsGrid([
+                { label: tr("flightDetails.aircraft", "Təyyarə"), value: escapeHtml(aircraft.name) },
                 { label: tr("admin.status", "Status"), value: statusBadge(aircraft.status) },
                 { label: tr("api.admin.model", "Model"), value: escapeHtml(aircraft.model) },
-                { label: tr("api.admin.registration", "Registration Number"), value: escapeHtml(aircraft.registrationNumber) },
-                { label: tr("api.admin.businessSeats", "Business Seats"), value: String(aircraft.businessSeats) },
-                { label: tr("api.admin.comfortSeats", "Comfort Seats"), value: String(aircraft.comfortSeats) },
-                { label: tr("api.admin.economySeats", "Economy Seats"), value: String(aircraft.economySeats) },
-                { label: tr("api.admin.totalSeats", "Total Seats"), value: String(aircraft.totalSeats) }
+                { label: tr("api.admin.registration", "Qeydiyyat nömrəsi"), value: escapeHtml(aircraft.registrationNumber) },
+                { label: tr("api.admin.businessSeats", "Business yerləri"), value: String(aircraft.businessSeats) },
+                { label: tr("api.admin.comfortSeats", "Comfort yerləri"), value: String(aircraft.comfortSeats) },
+                { label: tr("api.admin.economySeats", "Economy yerləri"), value: String(aircraft.economySeats) },
+                { label: tr("api.admin.totalSeats", "Ümumi yerlər"), value: String(aircraft.totalSeats) }
             ]));
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
@@ -1733,7 +1725,7 @@
 
     function generateFlights(id) {
         api.post("api/admin/schedules/" + encodeURIComponent(id) + "/generate", {}).then(function (result) {
-            showMessage(tr("api.admin.generated", "{created} flights created, {existing} already existed, {skipped} skipped.", { created: result.created.length, existing: result.alreadyExisting, skipped: result.skipped.length }) + (result.skipped.length ? " " + result.skipped[0].reason : ""));
+            showMessage(tr("api.admin.generated", "{created} reys yaradıldı, {existing} artıq mövcud idi, {skipped} atlandı.", { created: result.created.length, existing: result.alreadyExisting, skipped: result.skipped.length }) + (result.skipped.length ? " " + result.skipped[0].reason : ""));
         }).catch(function (error) {
             showMessage(apiMessage(error), true);
         });
@@ -1750,13 +1742,13 @@
 
     function deleteButton(kind, id) {
         return isSuperAdmin()
-            ? '<button class="admin-btn admin-btn--ghost admin-btn--danger-text" type="button" data-delete-' + kind + '="' + id + '">' + TRASH_ICON + escapeHtml(tr("admin.delete", "Delete")) + "</button>"
+            ? '<button class="admin-btn admin-btn--ghost admin-btn--danger-text" type="button" data-delete-' + kind + '="' + id + '">' + TRASH_ICON + escapeHtml(tr("admin.delete", "Sil")) + "</button>"
             : "";
     }
 
     function generateButton(id) {
         return isSuperAdmin()
-            ? '<button class="admin-btn admin-btn--ghost" type="button" data-generate-schedule="' + id + '">' + escapeHtml(tr("api.admin.generate", "Create flights")) + "</button>"
+            ? '<button class="admin-btn admin-btn--ghost" type="button" data-generate-schedule="' + id + '">' + escapeHtml(tr("api.admin.generate", "Reysləri yarat")) + "</button>"
             : "";
     }
 
@@ -1795,7 +1787,7 @@
             byId("confirm-modal-title").textContent = options.title;
             byId("confirm-modal-text").textContent = options.text;
             var accept = byId("confirm-accept");
-            accept.textContent = options.confirm || tr("api.admin.confirm", "Confirm");
+            accept.textContent = options.confirm || tr("api.admin.confirm", "Təsdiqlə");
             accept.classList.toggle("admin-btn--danger", !!options.danger);
             accept.classList.toggle("admin-btn--primary", !options.danger);
             byId("confirm-modal").hidden = false;
@@ -1839,7 +1831,7 @@
         var body = byId("users-body");
 
         if (!state.users.length) {
-            body.innerHTML = emptyRow(7, tr("api.admin.noUsers", "No accounts found."));
+            body.innerHTML = emptyRow(7, tr("api.admin.noUsers", "Hesab tapılmadı."));
             return;
         }
 
@@ -1849,19 +1841,19 @@
             var buttons = "";
 
             // A SuperAdmin's role is not changed here; nobody changes or removes their own account.
-            if (item.role === "User") buttons += userButton("make-admin", item.id, tr("api.admin.makeAdmin", "Make Admin"));
-            if (item.role === "Admin") buttons += userButton("remove-admin", item.id, tr("api.admin.removeAdmin", "Remove Admin"));
+            if (item.role === "User") buttons += userButton("make-admin", item.id, tr("api.admin.makeAdmin", "Admin et"));
+            if (item.role === "Admin") buttons += userButton("remove-admin", item.id, tr("api.admin.removeAdmin", "Adminliyi al"));
             if (!self) {
-                buttons += userButton(item.isActive ? "deactivate" : "activate", item.id, item.isActive ? tr("api.admin.deactivate", "Deactivate") : tr("api.admin.activate", "Activate"), item.isActive);
-                buttons += userButton("delete", item.id, tr("admin.delete", "Delete"), true);
+                buttons += userButton(item.isActive ? "deactivate" : "activate", item.id, item.isActive ? tr("api.admin.deactivate", "Deaktiv et") : tr("api.admin.activate", "Aktiv et"), item.isActive);
+                buttons += userButton("delete", item.id, tr("admin.delete", "Sil"), true);
             }
 
             return "<tr>" +
-                "<td>" + escapeHtml(item.firstName + " " + item.lastName) + (self ? '<span class="admin-you">' + escapeHtml(tr("api.admin.you", "(you)")) + "</span>" : "") + "</td>" +
+                "<td>" + escapeHtml(item.firstName + " " + item.lastName) + (self ? '<span class="admin-you">' + escapeHtml(tr("api.admin.you", "(siz)")) + "</span>" : "") + "</td>" +
                 '<td class="admin-cell-wrap">' + escapeHtml(item.email) + "</td>" +
                 "<td>" + roleBadge(item.role) + "</td>" +
                 "<td>" + activeBadge(item.isActive) + "</td>" +
-                "<td>" + escapeHtml(item.emailVerified ? tr("api.admin.yes", "Yes") : tr("api.admin.no", "No")) + "</td>" +
+                "<td>" + escapeHtml(item.emailVerified ? tr("api.admin.yes", "Bəli") : tr("api.admin.no", "Xeyr")) + "</td>" +
                 "<td>" + escapeHtml(utcDay(item.createdAt)) + "</td>" +
                 '<td><div class="admin-actions">' + buttons + "</div></td></tr>";
         }).join("");
@@ -1880,11 +1872,11 @@
     function userAction(action, user) {
         var name = user.firstName + " " + user.lastName;
         var plans = {
-            "make-admin": { text: "api.admin.confirmMakeAdmin", fallback: "Give {name} the Admin role? They will be able to use the admin area.", label: tr("api.admin.makeAdmin", "Make Admin"), done: "api.admin.roleChangedMsg", run: function () { return api.put("api/admin/users/" + user.id + "/role", { role: "Admin" }); } },
-            "remove-admin": { text: "api.admin.confirmRemoveAdmin", fallback: "Take the Admin role away from {name}? Their open sessions stop working at once.", label: tr("api.admin.removeAdmin", "Remove Admin"), done: "api.admin.roleChangedMsg", danger: true, run: function () { return api.put("api/admin/users/" + user.id + "/role", { role: "User" }); } },
-            "deactivate": { text: "api.admin.confirmDeactivate", fallback: "Deactivate {name}? They cannot sign in and their open sessions stop at once.", label: tr("api.admin.deactivate", "Deactivate"), done: "api.admin.userUpdatedMsg", danger: true, run: function () { return api.put("api/admin/users/" + user.id + "/active", { isActive: false }); } },
-            "activate": { text: "api.admin.confirmActivate", fallback: "Activate {name} again?", label: tr("api.admin.activate", "Activate"), done: "api.admin.userUpdatedMsg", run: function () { return api.put("api/admin/users/" + user.id + "/active", { isActive: true }); } },
-            "delete": { text: "api.admin.confirmDeleteUser", fallback: "Delete the account of {name}? This cannot be undone. An account with bookings cannot be deleted; deactivate it instead.", label: tr("admin.delete", "Delete"), done: "api.admin.userDeletedMsg", danger: true, run: function () { return api.del("api/admin/users/" + user.id); } }
+            "make-admin": { text: "api.admin.confirmMakeAdmin", fallback: "{name} adlı istifadəçiyə Admin rolu verilsin? O, admin bölməsindən istifadə edə biləcək.", label: tr("api.admin.makeAdmin", "Admin et"), done: "api.admin.roleChangedMsg", run: function () { return api.put("api/admin/users/" + user.id + "/role", { role: "Admin" }); } },
+            "remove-admin": { text: "api.admin.confirmRemoveAdmin", fallback: "{name} adlı istifadəçidən Admin rolu alınsın? Açıq sessiyaları dərhal dayanacaq.", label: tr("api.admin.removeAdmin", "Adminliyi al"), done: "api.admin.roleChangedMsg", danger: true, run: function () { return api.put("api/admin/users/" + user.id + "/role", { role: "User" }); } },
+            "deactivate": { text: "api.admin.confirmDeactivate", fallback: "{name} deaktiv edilsin? O, daxil ola bilməyəcək, açıq sessiyaları dərhal dayanacaq.", label: tr("api.admin.deactivate", "Deaktiv et"), done: "api.admin.userUpdatedMsg", danger: true, run: function () { return api.put("api/admin/users/" + user.id + "/active", { isActive: false }); } },
+            "activate": { text: "api.admin.confirmActivate", fallback: "{name} yenidən aktiv edilsin?", label: tr("api.admin.activate", "Aktiv et"), done: "api.admin.userUpdatedMsg", run: function () { return api.put("api/admin/users/" + user.id + "/active", { isActive: true }); } },
+            "delete": { text: "api.admin.confirmDeleteUser", fallback: "{name} hesabı silinsin? Bu geri qaytarıla bilməz. Rezervasiyası olan hesab silinmir, onu deaktiv edin.", label: tr("admin.delete", "Sil"), done: "api.admin.userDeletedMsg", danger: true, run: function () { return api.del("api/admin/users/" + user.id); } }
         };
         var plan = plans[action];
         if (!plan) return;
@@ -1916,7 +1908,7 @@
         var body = byId("refunds-body");
 
         if (!state.refunds.length) {
-            body.innerHTML = emptyRow(9, tr("cancellation.admin.empty", "No refunds yet."));
+            body.innerHTML = emptyRow(9, tr("cancellation.admin.empty", "Hələ geri ödəniş yoxdur."));
             return;
         }
 
@@ -1937,7 +1929,7 @@
                 "<td>" + escapeHtml(refundWhen(item.createdAt)) + "</td>" +
                 "<td>" + escapeHtml(refundWhen(item.updatedAt || item.processedAt)) + "</td>" +
                 '<td><div class="admin-actions">' +
-                (retryable ? '<button class="admin-btn admin-btn--ghost" type="button" data-retry-refund="' + escapeHtml(String(item.id)) + '">' + escapeHtml(tr("cancellation.admin.retry", "Send again")) + "</button>" : "") +
+                (retryable ? '<button class="admin-btn admin-btn--ghost" type="button" data-retry-refund="' + escapeHtml(String(item.id)) + '">' + escapeHtml(tr("cancellation.admin.retry", "Yenidən göndər")) + "</button>" : "") +
                 "</div></td></tr>";
         }).join("");
     }
@@ -1972,14 +1964,14 @@
                 "<td>" + escapeHtml(item.subject) + (item.bookingPnr ? "<br><small>" + escapeHtml(item.bookingPnr) + "</small>" : "") + "</td>" +
                 "<td>" + escapeHtml(tr("support.categories." + item.category, item.category)) + "</td>" +
                 "<td>" + statusBadge(supportStatusText(item.status)) + "</td><td>" + supportDate(item.createdAt) + "</td><td>" + supportDate(item.updatedAt) + "</td>" +
-                '<td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-support-open="' + item.id + '">' + escapeHtml(tr("support.admin.open", "Open")) + "</button></div></td></tr>";
-        }).join("") : emptyRow(8, tr("support.admin.empty", "No support requests found."));
+                '<td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-support-open="' + item.id + '">' + escapeHtml(tr("support.admin.open", "Aç")) + "</button></div></td></tr>";
+        }).join("") : emptyRow(8, tr("support.admin.empty", "Dəstək müraciəti tapılmadı."));
 
         var pages = Math.max(1, Math.ceil(page.total / page.pageSize));
         byId("support-pager").innerHTML = page.total > page.pageSize
-            ? '<button class="admin-btn admin-btn--ghost" type="button" data-support-page="' + (page.page - 1) + '"' + (page.page <= 1 ? " disabled" : "") + ">" + escapeHtml(tr("support.admin.prev", "Previous")) + "</button>" +
-              "<span>" + escapeHtml(tr("support.admin.page", "Page {page} of {pages} ({total})", { page: page.page, pages: pages, total: page.total })) + "</span>" +
-              '<button class="admin-btn admin-btn--ghost" type="button" data-support-page="' + (page.page + 1) + '"' + (page.page >= pages ? " disabled" : "") + ">" + escapeHtml(tr("support.admin.next", "Next")) + "</button>"
+            ? '<button class="admin-btn admin-btn--ghost" type="button" data-support-page="' + (page.page - 1) + '"' + (page.page <= 1 ? " disabled" : "") + ">" + escapeHtml(tr("support.admin.prev", "Əvvəlki")) + "</button>" +
+              "<span>" + escapeHtml(tr("support.admin.page", "Səhifə {page} / {pages} ({total})", { page: page.page, pages: pages, total: page.total })) + "</span>" +
+              '<button class="admin-btn admin-btn--ghost" type="button" data-support-page="' + (page.page + 1) + '"' + (page.page >= pages ? " disabled" : "") + ">" + escapeHtml(tr("support.admin.next", "Növbəti")) + "</button>"
             : "";
     }
 
@@ -2011,9 +2003,9 @@
         // A refresh while the admin is typing keeps the draft and the chosen status.
         var draft = keepDraft && byId("support-reply-text") ? { text: byId("support-reply-text").value, after: byId("support-after-reply").value } : null;
         state.openSupportId = id;
-        byId("details-modal-title").textContent = tr("support.admin.title", "Support");
+        byId("details-modal-title").textContent = tr("support.admin.title", "Dəstək");
         if (!keepDraft) {
-            byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Please wait...")) + "</p>";
+            byId("details-modal-body").innerHTML = '<p class="admin-hint">' + escapeHtml(tr("api.search.loadingText", "Zəhmət olmasa gözləyin, mövcud uçuşlar axtarılır.")) + "</p>";
         }
         byId("details-modal").hidden = false;
 
@@ -2021,29 +2013,29 @@
             var thread = ticket.messages.map(function (message) {
                 var staff = message.authorType === "Staff";
                 return '<div style="margin:.5rem 0;padding:.6rem .8rem;border-radius:10px;background:' + (staff ? "#07111d" : "#f1ece0") + ";color:" + (staff ? "#f6f1e7" : "#1c150c") + '">' +
-                    "<small><strong>" + escapeHtml(staff ? tr("support.admin.staff", "AEROVA Support") : message.authorName) + "</strong> \u00b7 " + supportDate(message.createdAt) + "</small>" +
+                    "<small><strong>" + escapeHtml(staff ? tr("support.admin.staff", "AEROVA Dəstək") : message.authorName) + "</strong> \u00b7 " + supportDate(message.createdAt) + "</small>" +
                     '<div style="white-space:pre-wrap;word-break:break-word">' + escapeHtml(message.body) + "</div></div>";
             }).join("");
             var statusOptions = SUPPORT_STATUSES.map(function (value) {
                 return '<option value="' + value + '"' + (value === ticket.status ? " selected" : "") + ">" + escapeHtml(supportStatusText(value)) + "</option>";
             }).join("");
-            var afterOptions = '<option value="">' + escapeHtml(tr("support.admin.keepWaiting", "Waiting for the customer")) + "</option>" + SUPPORT_STATUSES.map(function (value) {
+            var afterOptions = '<option value="">' + escapeHtml(tr("support.admin.keepWaiting", "Müştərini gözləyir")) + "</option>" + SUPPORT_STATUSES.map(function (value) {
                 return '<option value="' + value + '">' + escapeHtml(supportStatusText(value)) + "</option>";
             }).join("");
 
             byId("details-modal-body").innerHTML =
                 "<p><strong>" + escapeHtml(ticket.ticketNumber) + "</strong> \u2014 " + escapeHtml(ticket.subject) + "</p>" +
-                "<p>" + escapeHtml(tr("support.admin.customer", "Customer")) + ": " + escapeHtml(ticket.customerName) + " (" + escapeHtml(ticket.customerEmail) + ")" +
-                (ticket.bookingPnr ? " \u00b7 " + escapeHtml(tr("support.admin.booking", "Booking")) + ": " + escapeHtml(ticket.bookingPnr) : "") + "</p>" +
-                "<p>" + escapeHtml(tr("support.categories." + ticket.category, ticket.category)) + " \u00b7 " + escapeHtml(tr("support.admin.colCreated", "Created")) + ": " + supportDate(ticket.createdAt) +
-                " \u00b7 " + escapeHtml(tr("support.admin.colUpdated", "Last update")) + ": " + supportDate(ticket.updatedAt) + "</p>" +
+                "<p>" + escapeHtml(tr("support.admin.customer", "Müştəri")) + ": " + escapeHtml(ticket.customerName) + " (" + escapeHtml(ticket.customerEmail) + ")" +
+                (ticket.bookingPnr ? " \u00b7 " + escapeHtml(tr("support.admin.booking", "Rezervasiya")) + ": " + escapeHtml(ticket.bookingPnr) : "") + "</p>" +
+                "<p>" + escapeHtml(tr("support.categories." + ticket.category, ticket.category)) + " \u00b7 " + escapeHtml(tr("support.admin.colCreated", "Yaradılıb")) + ": " + supportDate(ticket.createdAt) +
+                " \u00b7 " + escapeHtml(tr("support.admin.colUpdated", "Son yenilənmə")) + ": " + supportDate(ticket.updatedAt) + "</p>" +
                 '<div id="support-thread">' + thread + "</div>" +
                 '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.statusLabel", "Status")) + '</span><select id="support-status-select" class="admin-input">' + statusOptions + "</select></label>" +
-                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--ghost" id="support-status-save">' + escapeHtml(tr("support.admin.saveStatus", "Save status")) + "</button></div>" +
-                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.reply", "Reply to the customer")) + '</span><textarea id="support-reply-text" class="admin-input" rows="4" maxlength="4000" placeholder="' + escapeHtml(tr("support.admin.replyPlaceholder", "Write the reply (the customer is told by e-mail)...")) + '"></textarea></label>' +
-                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.afterReply", "Status after the reply")) + '</span><select id="support-after-reply" class="admin-input">' + afterOptions + "</select></label>" +
+                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--ghost" id="support-status-save">' + escapeHtml(tr("support.admin.saveStatus", "Statusu saxla")) + "</button></div>" +
+                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.reply", "Müştəriyə cavab")) + '</span><textarea id="support-reply-text" class="admin-input" rows="4" maxlength="4000" placeholder="' + escapeHtml(tr("support.admin.replyPlaceholder", "Cavabı yazın (müştəriyə e-poçtla bildirilir)...")) + '"></textarea></label>' +
+                '<label class="admin-field"><span>' + escapeHtml(tr("support.admin.afterReply", "Cavabdan sonrakı status")) + '</span><select id="support-after-reply" class="admin-input">' + afterOptions + "</select></label>" +
                 '<p class="admin-hint" id="support-result" role="status"></p>' +
-                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--primary" id="support-reply-send">' + escapeHtml(tr("support.admin.send", "Send reply")) + "</button></div>";
+                '<div class="admin-actions"><button type="button" class="admin-btn admin-btn--primary" id="support-reply-send">' + escapeHtml(tr("support.admin.send", "Cavabı göndər")) + "</button></div>";
 
             if (draft) {
                 byId("support-reply-text").value = draft.text;
@@ -2052,7 +2044,7 @@
 
             byId("support-status-save").addEventListener("click", function () {
                 api.put("api/admin/support/tickets/" + id + "/status", { status: byId("support-status-select").value }).then(function () {
-                    byId("support-result").textContent = tr("support.admin.statusSaved", "The status was saved.");
+                    byId("support-result").textContent = tr("support.admin.statusSaved", "Status saxlanıldı.");
                     loadSupport(state.supportPage ? state.supportPage.page : 1);
                 }, function (error) {
                     byId("support-result").textContent = supportError(error);
@@ -2089,11 +2081,11 @@
         var badge = byId("admin-bell-count");
         badge.textContent = unread > 99 ? "99+" : String(unread);
         badge.hidden = unread === 0;
-        byId("admin-bell").setAttribute("aria-label", tr("support.admin.bellTitle", "Support notifications") + (unread ? " (" + unread + ")" : ""));
+        byId("admin-bell").setAttribute("aria-label", tr("support.admin.bellTitle", "Dəstək bildirişləri") + (unread ? " (" + unread + ")" : ""));
         byId("admin-bell-list").innerHTML = bellItems.length ? bellItems.slice(0, 20).map(function (item) {
             return '<li><button type="button" class="admin-bell-item' + (item.isRead ? "" : " is-unread") + '" data-bell="' + item.id + '">' +
                 "<strong>" + escapeHtml(item.title) + "</strong><small>" + escapeHtml(item.message) + " \u00b7 " + supportDate(item.createdAt) + "</small></button></li>";
-        }).join("") : '<li class="admin-bell-empty">' + escapeHtml(tr("support.admin.bellEmpty", "No support notifications yet.")) + "</li>";
+        }).join("") : '<li class="admin-bell-empty">' + escapeHtml(tr("support.admin.bellEmpty", "Hələ dəstək bildirişi yoxdur.")) + "</li>";
     }
 
     /* The persisted staff notifications (GET api/notifications): they are still there after a refresh or a new visit. */
@@ -2132,17 +2124,17 @@
         if (supportEvent.type === "ticketCreated" || supportEvent.type === "customerReplied") {
             loadBell();
             adminToast(supportEvent.type === "ticketCreated"
-                ? tr("support.admin.toastNew", "New support request {number}", { number: supportEvent.ticketNumber })
-                : tr("support.admin.toastReply", "Customer reply on {number}", { number: supportEvent.ticketNumber }), supportEvent.ticketNumber);
+                ? tr("support.admin.toastNew", "Yeni dəstək müraciəti {number}", { number: supportEvent.ticketNumber })
+                : tr("support.admin.toastReply", "{number} üzrə müştəri cavabı", { number: supportEvent.ticketNumber }), supportEvent.ticketNumber);
         }
         refreshSupportViews(supportEvent);
     }
 
     function paintAdminLive(liveState) {
         var texts = {
-            connected: tr("support.live.adminOn", "Live updates are on."),
-            reconnecting: tr("support.live.reconnecting", "Reconnecting..."),
-            polling: tr("support.live.adminPolling", "No live connection: checking every 20 seconds.")
+            connected: tr("support.live.adminOn", "Canlı yeniləmələr aktivdir."),
+            reconnecting: tr("support.live.reconnecting", "Yenidən qoşulur... bu arada yeni cavablar hər 20 saniyədən bir yoxlanılır."),
+            polling: tr("support.live.adminPolling", "Canlı bağlantı yoxdur: hər 20 saniyədən bir yoxlanılır.")
         };
         byId("admin-live").textContent = texts[liveState] || "";
     }
@@ -2199,10 +2191,10 @@
 
     function supportError(error) {
         if (error && error.code === "database_setup_required") {
-            return tr("support.admin.setupRequired", "Support requests are not set up yet: the latest database migration (AddSupportTickets) has not been applied.");
+            return tr("support.admin.setupRequired", "Dəstək müraciətləri hələ qurulmayıb: verilənlər bazasının son miqrasiyası (AddSupportTickets) tətbiq olunmayıb.");
         }
 
-        return (error && error.userMessage) || tr("support.admin.failed", "Something went wrong. Please try again.");
+        return (error && error.userMessage) || tr("support.admin.failed", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
     }
 
     function retryRefund(id) {
@@ -2210,15 +2202,15 @@
         if (!item) return;
 
         confirmAction({
-            title: tr("cancellation.admin.retryTitle", "Send the refund again"),
-            text: tr("cancellation.admin.retryText", "Ask Stripe again to refund {amount} for booking {pnr}? The amount stays what the cancellation worked out.", { pnr: item.pnr, amount: formatMoney(item.amount) }),
-            confirm: tr("cancellation.admin.retry", "Send again"),
+            title: tr("cancellation.admin.retryTitle", "Geri ödənişi yenidən göndər"),
+            text: tr("cancellation.admin.retryText", "{pnr} rezervasiyası üçün {amount} geri ödənişi Stripe-dan yenidən istənilsin? Məbləğ ləğv zamanı hesablanan məbləğ olaraq qalır.", { pnr: item.pnr, amount: formatMoney(item.amount) }),
+            confirm: tr("cancellation.admin.retry", "Yenidən göndər"),
             danger: true
         }).then(function (confirmed) {
             if (!confirmed) return;
 
             api.post("api/admin/refunds/" + encodeURIComponent(item.id) + "/retry", {}).then(function () {
-                showMessage(tr("cancellation.admin.retried", "The refund of booking {pnr} was sent again.", { pnr: item.pnr }));
+                showMessage(tr("cancellation.admin.retried", "{pnr} rezervasiyasının geri ödənişi yenidən göndərildi.", { pnr: item.pnr }));
                 loadRefunds();
             }).catch(function (error) {
                 showMessage(apiMessage(error), true);
@@ -2240,7 +2232,7 @@
     function paintAuditFilter() {
         var select = byId("audit-action-filter");
         var chosen = select.value;
-        select.innerHTML = '<option value="">' + escapeHtml(tr("api.admin.allActions", "All actions")) + "</option>" + AUDIT_ACTIONS.map(function (action) {
+        select.innerHTML = '<option value="">' + escapeHtml(tr("api.admin.allActions", "Bütün əməliyyatlar")) + "</option>" + AUDIT_ACTIONS.map(function (action) {
             return '<option value="' + action + '">' + escapeHtml(auditActionLabel(action)) + "</option>";
         }).join("");
         select.value = chosen;
@@ -2250,14 +2242,14 @@
         var body = byId("audit-body");
 
         if (!state.audit.length) {
-            body.innerHTML = emptyRow(5, tr("api.admin.noAudit", "No entries yet."));
+            body.innerHTML = emptyRow(5, tr("api.admin.noAudit", "Hələ qeyd yoxdur."));
             return;
         }
 
         body.innerHTML = state.audit.map(function (item) {
             var who = item.actorUserId != null
                 ? "#" + item.actorUserId + (item.actorRole ? " · " + roleLabel(item.actorRole) : "")
-                : (item.actorRole === "Server" ? tr("api.admin.auditServer", "Server") : tr("api.admin.auditNobody", "Not signed in"));
+                : (item.actorRole === "Server" ? tr("api.admin.auditServer", "Server") : tr("api.admin.auditNobody", "Daxil olunmayıb"));
             var when = String(item.createdAt || "").replace("T", " ").slice(0, 19);
             var target = item.targetType + (item.targetId ? " · " + item.targetId : "");
 
@@ -2551,15 +2543,6 @@
         applyRole();
         showSection("dashboard");
 
-        window.addEventListener("aerova:languagechange", function () {
-            // The page's own words first, then the ones set from code (the title of the open section, the account chip, the table).
-            if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
-                window.AEROVA_I18N.applyTranslations(document);
-            }
-            applyRole();
-            paintAuditFilter();
-            repaint();
-        });
     }
 
     function init() {
@@ -2591,9 +2574,9 @@
                 denyAccess();
             } else {
                 showAccessPanel(
-                    tr("api.admin.unreachableTitle", "We could not check your access"),
+                    tr("api.admin.unreachableTitle", "Girişinizi yoxlaya bilmədik"),
                     apiMessage(error),
-                    [{ label: tr("api.options.retry", "Try again"), href: "admin.html" }, { label: tr("auth.backHome", "Back to Home"), href: "index.html" }]
+                    [{ label: tr("api.options.retry", "Yenidən cəhd et"), href: "admin.html" }, { label: tr("auth.backHome", "Ana səhifəyə qayıt"), href: "index.html" }]
                 );
             }
         });

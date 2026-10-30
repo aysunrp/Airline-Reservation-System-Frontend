@@ -2,7 +2,7 @@
 window.AEROVA_SEAT_LAYOUTS = {
     Business: {
         key: "business",
-        label: "Business Class", labelKey: "seats.businessClass",
+        label: "Biznes sinif", labelKey: "seats.businessClass",
         startRow: 1,
         endRow: 3,
         groups: [["A", "B"], ["C", "D"]],

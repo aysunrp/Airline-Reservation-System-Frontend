@@ -10,8 +10,8 @@
     "use strict";
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     var priceState = {
@@ -86,7 +86,7 @@
             return String(dateValue);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function readJSON(key) {
@@ -177,7 +177,7 @@
             control.classList.add("is-invalid");
         }
         if (error) {
-            error.textContent = message || (typeof t === "function" ? t("payment.invalidPromo") : "Invalid promo code");
+            error.textContent = message || (typeof t === "function" ? t("payment.invalidPromo") : "Yanlış promo kod");
             error.hidden = false;
         }
         if (input) {
@@ -323,7 +323,7 @@
 
         var bookingData = readBookingData();
         if (!bookingData) {
-            showPromoError(tr("payment.bookingNotFound", "Booking not found"));
+            showPromoError(tr("payment.bookingNotFound", "Bron tapılmadı"));
             return;
         }
 
@@ -331,17 +331,17 @@
         var code = normalizePromoCode(input ? input.value : "");
 
         if (!code) {
-            showPromoError(tr("payment.enterPromo", "Enter a promo code"));
+            showPromoError(tr("payment.enterPromo", "Promo kod daxil edin"));
             return;
         }
 
         if (appliedPromo && appliedPromo.code === code) {
-            showPromoError(tr("payment.promoAlready", "Promo code already applied"));
+            showPromoError(tr("payment.promoAlready", "Promo kod artıq tətbiq olunub"));
             return;
         }
 
         if (appliedPromo) {
-            showPromoError(tr("payment.removeCodeFirst", "Remove the current code first"));
+            showPromoError(tr("payment.removeCodeFirst", "Əvvəlcə cari kodu silin"));
             return;
         }
 
@@ -354,14 +354,14 @@
             bookingData.promoCode = promo.code;
 
             if (!saveBookingData(bookingData)) {
-                showPromoError(tr("payment.promoSaveFail", "Unable to save promo code"));
+                showPromoError(tr("payment.promoSaveFail", "Promo kod yadda saxlanılmadı"));
                 return;
             }
 
             reserveBooking(bookingData, document.querySelector(".payment-layout"));
         }).catch(function (error) {
             var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
-            showPromoError(isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."));
+            showPromoError(isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
         }).then(function () {
             if (applyButton && !appliedPromo) {
                 applyButton.disabled = false;
@@ -379,7 +379,7 @@
 
         delete bookingData.promoCode;
         if (!saveBookingData(bookingData)) {
-            showPromoError(tr("payment.promoSaveFail", "Unable to save promo code"));
+            showPromoError(tr("payment.promoSaveFail", "Promo kod yadda saxlanılmadı"));
             return;
         }
 
@@ -400,7 +400,7 @@
         if (payButton) {
             payButton.disabled = isPaying;
             if (isPaying) {
-                payButton.textContent = tr("api.payment.opening", "Opening secure payment...");
+                payButton.textContent = tr("api.payment.opening", "Təhlükəsiz ödəniş açılır...");
             } else {
                 refreshTotals();
             }
@@ -438,7 +438,7 @@
                 window.console.error(error);
             }
             setPaying(false);
-            showMessage(tr("api.errors.generic", "Something went wrong. Please try again."));
+            showMessage(tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             return;
         }
 
@@ -502,7 +502,7 @@
 
         var bookingData = readBookingData();
         if (!heldBooking || !bookingData || !bookingData.passengers || !bookingData.passengers.length) {
-            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
+            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Bron məlumatı tapılmadı. Əvvəlcə sərnişin məlumatlarını tamamlayın.");
             return;
         }
 
@@ -512,7 +512,7 @@
         setPaying(true);
         window.AEROVA_API.post("api/payments/checkout-session", { pnr: pnr, lastName: lastName }).then(function (session) {
             if (!isStripeCheckoutUrl(session && session.checkoutUrl)) {
-                throw new Error("The payment page address is not a Stripe Checkout address.");
+                throw new Error("Ödəniş səhifəsinin ünvanı Stripe Checkout ünvanı deyil.");
             }
 
             rememberCheckout(session, pnr, lastName);
@@ -608,8 +608,8 @@
         stopHoldTimer();
         window.AEROVA_BOOKING.forget();
         heldBooking = null;
-        bookingPanel("error", tr("api.booking.expiredTitle", "Your seat hold has ended"), tr("api.booking.expiredText", "The seats were held for 15 minutes and are now released. Please choose your seats again."), [
-            { label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" }
+        bookingPanel("error", tr("api.booking.expiredTitle", "Yerlərin saxlanma müddəti bitdi"), tr("api.booking.expiredText", "Yerlər 15 dəqiqə saxlanılmışdı və indi azad edilib. Zəhmət olmasa yerləri yenidən seçin."), [
+            { label: tr("api.booking.backToSeats", "Yerləri yenidən seç"), href: "seat-selection.html" }
         ]);
     }
 
@@ -627,7 +627,7 @@
 
         var totalSeconds = Math.ceil(left / 1000);
         var clock = Math.floor(totalSeconds / 60) + ":" + (totalSeconds % 60 < 10 ? "0" : "") + (totalSeconds % 60);
-        hold.textContent = tr("api.booking.holdText", "Your seats are held for {time}. Booking reference {pnr}.", { time: clock, pnr: heldBooking.pnr });
+        hold.textContent = tr("api.booking.holdText", "Yerləriniz {time} müddətinə saxlanılır. Rezervasiya kodu {pnr}.", { time: clock, pnr: heldBooking.pnr });
         hold.hidden = false;
     }
 
@@ -671,10 +671,10 @@
                 if (window.AerovaAuth && window.AerovaAuth.updateCurrentUser) {
                     window.AerovaAuth.updateCurrentUser({ emailVerified: true });
                 }
-                setText("booking-status-text", tr("api.booking.confirmedResuming", "Your email is confirmed. Continuing with your booking..."));
+                setText("booking-status-text", tr("api.booking.confirmedResuming", "E-poçtunuz təsdiqləndi. Rezervasiya davam edir..."));
                 retry();
             } else if (manual) {
-                setText("booking-status-text", tr("api.booking.notYetConfirmed", "We cannot see the confirmation yet. Open the link in your email, then try again in a moment."));
+                setText("booking-status-text", tr("api.booking.notYetConfirmed", "Təsdiqi hələ görmürük. E-poçtdakı keçidi açın, sonra bir azdan yenidən yoxlayın."));
             }
         }).catch(function (error) {
             verifyWatch.busy = false;
@@ -685,7 +685,7 @@
                 return;
             }
             if (manual) {
-                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             }
         });
     }
@@ -698,7 +698,7 @@
             verifyWatch.polls += 1;
             if (verifyWatch.polls > VERIFY_MAX_POLLS) {
                 stopVerifyTimer();
-                setText("booking-status-text", tr("api.booking.watchStopped", "We stopped checking by ourselves. Press the button once you have opened the link."));
+                setText("booking-status-text", tr("api.booking.watchStopped", "Avtomatik yoxlamanı dayandırdıq. Keçidi açandan sonra düyməni basın."));
                 return;
             }
             checkVerification(false);
@@ -744,7 +744,7 @@
         firstLinkSent = true;
 
         window.AEROVA_API.post("api/auth/resend-verification", {}).then(function () {
-            setText("booking-status-text", tr("api.booking.firstLinkSent", "We sent a confirmation link to your email. Open it and this page continues to payment by itself."));
+            setText("booking-status-text", tr("api.booking.firstLinkSent", "E-poçtunuza təsdiq keçidi göndərdik. Onu açın, bu səhifə özü ödənişə davam edəcək."));
         }).catch(function (error) {
             if (error && error.status === 409) {
                 checkVerification(false);
@@ -755,12 +755,12 @@
     /* The confirmation link can be asked for again right here; a 409 means the address was confirmed in the meantime. */
     function resendVerificationLink() {
         window.AEROVA_API.post("api/auth/resend-verification", {}).then(function () {
-            setText("booking-status-text", tr("api.booking.linkSent", "A new confirmation link is on its way. Open it, then come back here."));
+            setText("booking-status-text", tr("api.booking.linkSent", "Yeni təsdiq keçidi yoldadır. Onu açın, sonra bura qayıdın."));
         }).catch(function (error) {
             var status = error && error.status;
             setText("booking-status-text", status === 409
-                ? tr("api.booking.alreadyConfirmed", "Your email is already confirmed. Press the button to continue.")
-                : (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+                ? tr("api.booking.alreadyConfirmed", "E-poçtunuz artıq təsdiqlənib. Davam etmək üçün düyməni basın.")
+                : (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
         });
     }
 
@@ -768,7 +768,7 @@
         var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
         var status = isApiError ? error.status : 0;
         var actions = [];
-        var title = tr("api.booking.errorTitle", "We could not reserve your seats");
+        var title = tr("api.booking.errorTitle", "Yerləri rezerv etmək mümkün olmadı");
         var text;
 
         if (!isApiError && window.console) {
@@ -776,23 +776,23 @@
         }
 
         if (isApiError && error.code === "emailNotVerified") {
-            title = tr("api.booking.verifyTitle", "Confirm your email to book");
-            text = tr("api.booking.verifyText", "Your seats are not held yet. Open the confirmation link we sent to your email, then press the button below. You only confirm once, not for every booking.");
-            actions.push({ label: tr("api.booking.verifiedRetry", "I have confirmed my email"), onClick: function () { checkVerification(true); } });
-            actions.push({ label: tr("api.booking.sendLink", "Send a new link"), onClick: resendVerificationLink });
-            actions.push({ label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" });
+            title = tr("api.booking.verifyTitle", "Rezerv üçün e-poçtu təsdiqləyin");
+            text = tr("api.booking.verifyText", "E-poçtunuza göndərdiyimiz təsdiq keçidini açın. Ünvan təsdiqlənən kimi bu səhifə özü davam edəcək. Təsdiq yalnız bir dəfə lazımdır, hər rezervasiyada yox.");
+            actions.push({ label: tr("api.booking.verifiedRetry", "E-poçtu təsdiqlədim"), onClick: function () { checkVerification(true); } });
+            actions.push({ label: tr("api.booking.sendLink", "Yeni keçid göndər"), onClick: resendVerificationLink });
+            actions.push({ label: tr("api.booking.backToPassengers", "Sərnişin məlumatlarına qayıt"), href: "passenger-details.html" });
             watchVerification(retry);
             sendFirstLink();
         } else if (status === 409) {
-            title = tr("api.booking.conflictTitle", "A seat is no longer available");
-            text = tr("api.booking.conflictText", "Another traveller has just taken one of your seats. Please choose your seats again.");
-            actions.push({ label: tr("api.booking.backToSeats", "Choose seats again"), href: "seat-selection.html" });
+            title = tr("api.booking.conflictTitle", "Yer artıq mövcud deyil");
+            text = tr("api.booking.conflictText", "Başqa sərnişin yerlərinizdən birini indicə tutdu. Zəhmət olmasa yerləri yenidən seçin.");
+            actions.push({ label: tr("api.booking.backToSeats", "Yerləri yenidən seç"), href: "seat-selection.html" });
         } else {
-            text = isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+            text = isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
             if (!isApiError || status === 0 || status >= 500) {
-                actions.push({ label: tr("api.booking.retry", "Try again"), onClick: retry });
+                actions.push({ label: tr("api.booking.retry", "Yenidən cəhd et"), onClick: retry });
             }
-            actions.push({ label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" });
+            actions.push({ label: tr("api.booking.backToPassengers", "Sərnişin məlumatlarına qayıt"), href: "passenger-details.html" });
         }
 
         bookingPanel("error", title, text, actions);
@@ -871,10 +871,10 @@
                 stopLinkTimer();
                 confirmed.contactConfirmed = true;
                 window.AEROVA_BOOKING.markConfirmed();
-                setText("booking-status-text", tr("api.booking.confirmedResuming", "Your email is confirmed. Continuing with your booking..."));
+                setText("booking-status-text", tr("api.booking.confirmedResuming", "E-poçtunuz təsdiqləndi. Rezervasiya davam edir..."));
                 showReserved(confirmed, linkWatch.bookingData, linkWatch.layout);
             } else if (manual) {
-                setText("booking-status-text", tr("api.booking.notYetConfirmed", "We cannot see the confirmation yet. Open the link in your email, then try again in a moment."));
+                setText("booking-status-text", tr("api.booking.notYetConfirmed", "Təsdiqi hələ görmürük. E-poçtdakı keçidi açın, sonra bir azdan yenidən yoxlayın."));
             }
         }).catch(function (error) {
             linkWatch.busy = false;
@@ -888,7 +888,7 @@
                 return;
             }
             if (manual) {
-                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             }
         });
     }
@@ -899,17 +899,17 @@
             return;
         }
 
-        var language = (window.AEROVA_I18N && window.AEROVA_I18N.getLanguage && window.AEROVA_I18N.getLanguage()) || null;
+        var language = "az";
         window.AEROVA_API.post("api/bookings/" + encodeURIComponent(held.pnr) + "/resend-confirmation", { language: language }).then(function () {
-            setText("booking-status-text", linkText("api.booking.bookingLinkResent", "A new link is on its way to {email}. The old one no longer works."));
+            setText("booking-status-text", linkText("api.booking.bookingLinkResent", "Yeni keçid {email} ünvanına yoldadır. Köhnəsi artıq işləmir."));
         }).catch(function (error) {
             var status = error && error.status;
             if (status === 409) {
                 checkBookingLink(false);
             } else if (status === 429) {
-                setText("booking-status-text", tr("api.booking.bookingLinkWait", "A message was sent a moment ago. Please wait a minute before asking for another."));
+                setText("booking-status-text", tr("api.booking.bookingLinkWait", "Məktub bir az əvvəl göndərilib. Yenisini istəməzdən əvvəl bir dəqiqə gözləyin."));
             } else {
-                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."));
+                setText("booking-status-text", (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             }
         });
     }
@@ -921,19 +921,19 @@
         linkWatch.polls = 0;
         stopLinkTimer();
 
-        var text = linkText("api.booking.bookingLinkText", "We sent a confirmation link to {email}. Open it and this page continues to payment by itself. Your seats are held until {time}.")
+        var text = linkText("api.booking.bookingLinkText", "{email} ünvanına təsdiq keçidi göndərdik. Onu açın, bu səhifə özü ödənişə davam edəcək. Yerləriniz saat {time}-dək tutulub.")
             .replace("{time}", holdClock(held));
-        bookingPanel("info", tr("api.booking.bookingLinkTitle", "Confirm your booking"), text, [
-            { label: tr("api.booking.bookingLinkOpened", "I opened the link"), onClick: function () { checkBookingLink(true); } },
-            { label: tr("api.booking.bookingLinkResend", "Send the link again"), onClick: resendBookingLink },
-            { label: tr("api.booking.backToPassengers", "Back to passenger details"), href: "passenger-details.html" }
+        bookingPanel("info", tr("api.booking.bookingLinkTitle", "Rezervasiyanı təsdiqləyin"), text, [
+            { label: tr("api.booking.bookingLinkOpened", "Keçidi açdım"), onClick: function () { checkBookingLink(true); } },
+            { label: tr("api.booking.bookingLinkResend", "Keçidi yenidən göndər"), onClick: resendBookingLink },
+            { label: tr("api.booking.backToPassengers", "Sərnişin məlumatlarına qayıt"), href: "passenger-details.html" }
         ]);
 
         linkWatch.timer = window.setInterval(function () {
             linkWatch.polls += 1;
             if (linkWatch.polls > VERIFY_MAX_POLLS) {
                 stopLinkTimer();
-                setText("booking-status-text", tr("api.booking.watchStopped", "We stopped checking by ourselves. Press the button once you have opened the link."));
+                setText("booking-status-text", tr("api.booking.watchStopped", "Avtomatik yoxlamanı dayandırdıq. Keçidi açandan sonra düyməni basın."));
                 return;
             }
             checkBookingLink(false);
@@ -970,7 +970,7 @@
     function reserveBooking(bookingData, layout) {
         var panel = document.getElementById("booking-status");
 
-        bookingPanel("loading", tr("api.booking.loadingTitle", "Reserving your seats"), tr("api.booking.loadingText", "Please wait while we hold your seats and confirm the price."), []);
+        bookingPanel("loading", tr("api.booking.loadingTitle", "Yerləriniz rezerv olunur"), tr("api.booking.loadingText", "Zəhmət olmasa gözləyin, yerləriniz saxlanılır və qiymət təsdiqlənir."), []);
 
         window.AEROVA_BOOKING.ensure(bookingData).then(function (held) {
             if (held.contactConfirmed === false) {
@@ -998,7 +998,7 @@
         }
 
         if (!bookingData) {
-            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Booking information could not be found. Please complete passenger details first.");
+            showMessage(typeof t === "function" ? t("payment.bookingMissing") : "Bron məlumatı tapılmadı. Əvvəlcə sərnişin məlumatlarını tamamlayın.");
             if (layout) {
                 layout.hidden = true;
             }
@@ -1010,7 +1010,4 @@
     }
 
     document.addEventListener("DOMContentLoaded", init);
-    window.addEventListener("aerova:languagechange", function () {
-        if (typeof updatePaymentSummary === 'function') { try { updatePaymentSummary(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
-    });
 })();

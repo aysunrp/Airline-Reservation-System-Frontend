@@ -27,16 +27,9 @@
         return String(fallback).replace(/\{(\w+)\}/g, function (_, name) { return vars && vars[name] != null ? String(vars[name]) : "{" + name + "}"; });
     }
 
-    function language() {
-        var active = window.AEROVA_I18N && typeof window.AEROVA_I18N.getLanguage === "function" ? window.AEROVA_I18N.getLanguage() : document.documentElement.lang;
-        return active === "az" || active === "ru" ? active : "en";
-    }
-
-    /* The text of a record in the page language: name / nameAz / nameRu, description / descriptionAz / descriptionRu. */
+    /* The Azerbaijani text of a record: nameAz, descriptionAz (the English one when there is none). */
     function localized(item, base) {
-        var lang = language();
-        var suffix = lang === "az" ? "Az" : lang === "ru" ? "Ru" : "";
-        return item[base + suffix] || item[base] || "";
+        return item[base + "Az"] || item[base] || "";
     }
 
     function escapeHtml(value) {
@@ -168,12 +161,12 @@
         var cityName = localized(city, "name");
         var flights = hasFlights(city);
         var description = localized(city, "description") || localized(country, "description");
-        var note = flights ? "" : '<p class="destination-note">' + escapeHtml(tr("destinations.noFlightsYet", "No scheduled flights yet")) + "</p>";
-        var explore = escapeHtml(tr("destinations.explore", "Explore"));
+        var note = flights ? "" : '<p class="destination-note">' + escapeHtml(tr("destinations.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</p>";
+        var explore = escapeHtml(tr("destinations.explore", "Kəşf et"));
         var book = "";
 
         if (options.booking) {
-            book = '<a class="destination-book destination-book--ghost" href="' + escapeHtml(resultsUrl(city, null, country)) + '">' + escapeHtml(tr("destinations.bookTicket", "Book Ticket")) + "</a>";
+            book = '<a class="destination-book destination-book--ghost" href="' + escapeHtml(resultsUrl(city, null, country)) + '">' + escapeHtml(tr("destinations.bookTicket", "Bilet bron et")) + "</a>";
         }
 
         return '<article class="destination-card" data-city="' + escapeHtml(city.id) + '" data-country="' + escapeHtml(country.code) + '"' + (flights ? "" : ' data-no-flights="true"') + ">" +
@@ -190,7 +183,7 @@
 
     function statusMarkup(text, withRetry) {
         return '<p class="destination-status" role="' + (withRetry ? "alert" : "status") + '">' + escapeHtml(text) + "</p>" +
-            (withRetry ? '<button type="button" class="destination-retry">' + escapeHtml(tr("destinations.catalogRetry", "Try again")) + "</button>" : "");
+            (withRetry ? '<button type="button" class="destination-retry">' + escapeHtml(tr("destinations.catalogRetry", "Yenidən cəhd et")) + "</button>" : "");
     }
 
     /* Everything a visitor may type to find a destination: names in the three languages, the extra spellings, the country and the airport codes. */
@@ -242,13 +235,13 @@
         function paintFilters(all) {
             var withRoutes = all.filter(function (entry) { return hasFlights(entry.city); }).length;
             var chips = [
-                { id: "all", label: tr("destinations.filterAll", "All"), count: all.length },
-                { id: "flights", label: tr("destinations.filterFlights", "Flights available"), count: withRoutes },
-                { id: "soon", label: tr("destinations.filterSoon", "Coming soon"), count: all.length - withRoutes }
+                { id: "all", label: tr("destinations.filterAll", "Hamısı"), count: all.length },
+                { id: "flights", label: tr("destinations.filterFlights", "Reys var"), count: withRoutes },
+                { id: "soon", label: tr("destinations.filterSoon", "Tezliklə"), count: all.length - withRoutes }
             ];
-            filters.innerHTML = '<label class="destination-search"><span class="visually-hidden">' + escapeHtml(tr("destinations.searchLabel", "Search destinations")) + "</span>" +
-                '<input type="search" value="' + escapeHtml(query) + '" placeholder="' + escapeHtml(tr("destinations.searchPlaceholder", "Search country, city or airport")) + '" autocomplete="off"></label>' +
-                '<div class="destination-chips" role="group" aria-label="' + escapeHtml(tr("destinations.filterLabel", "Explore")) + '">' +
+            filters.innerHTML = '<label class="destination-search"><span class="visually-hidden">' + escapeHtml(tr("destinations.searchLabel", "Təyinatları axtar")) + "</span>" +
+                '<input type="search" value="' + escapeHtml(query) + '" placeholder="' + escapeHtml(tr("destinations.searchPlaceholder", "Ölkə, şəhər və ya hava limanı axtarın")) + '" autocomplete="off"></label>' +
+                '<div class="destination-chips" role="group" aria-label="' + escapeHtml(tr("destinations.filterLabel", "Kəşf et")) + '">' +
                 chips.map(function (chip) {
                     return '<button type="button" class="destination-chip' + (chip.id === availability ? " is-active" : "") + '" data-chip="' + chip.id +
                         '" aria-pressed="' + (chip.id === availability) + '">' + escapeHtml(chip.label) + ' <span class="destination-chip-count">' + chip.count + "</span></button>";
@@ -288,12 +281,12 @@
 
             if (!all.length) {
                 // The catalog answered but holds nothing to show: say so instead of leaving an empty area.
-                grid.innerHTML = statusMarkup(tr("destinations.emptyCatalog", "No destinations are available yet. Please check back soon."), false);
+                grid.innerHTML = statusMarkup(tr("destinations.emptyCatalog", "Hələlik təyinat yoxdur. Zəhmət olmasa bir az sonra yenidən baxın."), false);
                 more.innerHTML = "";
                 return;
             }
             if (!cards.length) {
-                grid.innerHTML = statusMarkup(tr("destinations.noMatches", "No destinations match your search."), false);
+                grid.innerHTML = statusMarkup(tr("destinations.noMatches", "Axtarışınıza uyğun təyinat tapılmadı."), false);
                 more.innerHTML = "";
                 return;
             }
@@ -310,8 +303,8 @@
 
             if (limit && cards.length > limit) {
                 more.innerHTML = '<button type="button" class="destination-toggle" aria-expanded="' + expanded + '">' +
-                    escapeHtml(expanded ? tr("destinations.showFewerDestinations", "Show fewer")
-                        : tr("destinations.showAllDestinations", "Show all {count} destinations", { count: cards.length })) + "</button>";
+                    escapeHtml(expanded ? tr("destinations.showFewerDestinations", "Daha az göstər")
+                        : tr("destinations.showAllDestinations", "Bütün {count} təyinatı göstər", { count: cards.length })) + "</button>";
                 more.querySelector(".destination-toggle").addEventListener("click", function () { expanded = !expanded; paintGrid(all); });
             } else {
                 more.innerHTML = "";
@@ -325,20 +318,19 @@
         }
 
         function start() {
-            grid.innerHTML = statusMarkup(tr("destinations.loadingCatalog", "Loading destinations..."), false);
+            grid.innerHTML = statusMarkup(tr("destinations.loadingCatalog", "Təyinatlar yüklənir..."), false);
             more.innerHTML = "";
             if (filters) filters.innerHTML = "";
             load().then(function (list) {
                 countries = list;
                 paint();
             }, function () {
-                grid.innerHTML = statusMarkup(tr("destinations.catalogError", "We could not load the destinations. Please try again."), true);
+                grid.innerHTML = statusMarkup(tr("destinations.catalogError", "Təyinatları yükləmək mümkün olmadı. Yenidən cəhd edin."), true);
                 var retry = grid.querySelector(".destination-retry");
                 if (retry) retry.addEventListener("click", start);
             });
         }
 
-        window.addEventListener("aerova:languagechange", function () { if (countries) paint(); });
         start();
     }
 
@@ -350,7 +342,7 @@
         load: load, loadCity: loadCity, loadCityFlights: loadCityFlights, hubInfo: hubInfo, hubCityName: hubCityName,
         localized: localized, hasFlights: hasFlights, bookableAirport: bookableAirport, imageBase: imageBase,
         resultsUrl: resultsUrl, detailsUrl: detailsUrl, photoAlt: photoAlt, watchImages: watchImages, cardMarkup: cardMarkup,
-        featuredCity: featuredCity, tr: tr, escapeHtml: escapeHtml, language: language
+        featuredCity: featuredCity, tr: tr, escapeHtml: escapeHtml
     };
 
     if (document.readyState === "loading") {

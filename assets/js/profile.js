@@ -97,7 +97,7 @@
         if (input.tagName === "SELECT") {
             var option = getSelectPlaceholderOption(input);
             if (option) {
-                option.textContent = message || tr("profile.fieldRequired", "This field is required");
+                option.textContent = message || tr("profile.fieldRequired", "Bu sahə mütləqdir");
             }
 
             if (!String(input.value || "").trim()) {
@@ -106,7 +106,7 @@
             return;
         }
 
-        input.setAttribute("placeholder", message || "This field is required");
+        input.setAttribute("placeholder", message || "Bu sahə mütləqdir");
 
         if (!String(input.value || "").trim() && input.type !== "date") {
             input.value = "";
@@ -180,7 +180,7 @@
         if (!isApiError && window.console) {
             window.console.error(error);
         }
-        return isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+        return isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
     }
 
     function buildNationalityOptions() {
@@ -190,9 +190,9 @@
         }
 
         [
-            { id: "profile-nationality", placeholderKey: "travelDocs.selectNationality", placeholder: "Select nationality", required: true },
-            { id: "passenger-nationality", placeholderKey: "travelDocs.selectNationality", placeholder: "Select nationality", required: false },
-            { id: "passenger-issuing-country", placeholderKey: "travelDocs.selectCountry", placeholder: "Select country", required: false }
+            { id: "profile-nationality", placeholderKey: "travelDocs.selectNationality", placeholder: "Vətəndaşlığı seçin", required: true },
+            { id: "passenger-nationality", placeholderKey: "travelDocs.selectNationality", placeholder: "Vətəndaşlığı seçin", required: false },
+            { id: "passenger-issuing-country", placeholderKey: "travelDocs.selectCountry", placeholder: "Ölkəni seçin", required: false }
         ].forEach(function (spec) {
             var select = document.getElementById(spec.id);
             if (!select) {
@@ -235,7 +235,7 @@
     }
 
     function loadProfile() {
-        setProfileStatus("loading", tr("api.profile.loadingTitle", "Loading your profile"), tr("api.profile.loadingText", "Please wait a moment."), null);
+        setProfileStatus("loading", tr("api.profile.loadingTitle", "Profiliniz yüklənir"), tr("api.profile.loadingText", "Zəhmət olmasa bir az gözləyin."), null);
 
         Promise.all([window.AEROVA_API.get("api/profile"), window.AEROVA_API.get("api/profile/saved-passengers")]).then(function (results) {
             profileState = toPageProfile(results[0], results[1]);
@@ -246,7 +246,7 @@
             renderSavedPassengers();
             setProfileStatus(null);
         }).catch(function (error) {
-            setProfileStatus("error", tr("api.profile.errorTitle", "We could not load your profile"), apiMessage(error), loadProfile);
+            setProfileStatus("error", tr("api.profile.errorTitle", "Profilinizi yükləmək mümkün olmadı"), apiMessage(error), loadProfile);
         });
     }
 
@@ -270,7 +270,7 @@
         var passengers = profileState.savedPassengers || [];
 
         if (!passengers.length) {
-            list.innerHTML = '<p class="saved-passengers-empty">' + tr("profile.noSaved", "No saved passengers yet. Add one to speed up future bookings.") + '</p>';
+            list.innerHTML = '<p class="saved-passengers-empty">' + tr("profile.noSaved", "Hələ yadda saxlanılmış sərnişin yoxdur. Gələcək bronları sürətləndirmək üçün əlavə edin.") + '</p>';
             return;
         }
 
@@ -283,7 +283,7 @@
                         "</p>" +
                         '<p class="saved-passenger-meta">' +
                             escapeHtml(passenger.relationship || "Travel companion") +
-                            (passenger.documentNumber ? " \u00b7 " + escapeHtml(tr("api.profile.documentSaved", "document saved")) : "") +
+                            (passenger.documentNumber ? " \u00b7 " + escapeHtml(tr("api.profile.documentSaved", "sənəd saxlanıb")) : "") +
                         "</p>" +
                     "</div>" +
                     '<div class="saved-passenger-actions">' +
@@ -297,14 +297,14 @@
 
     function validateProfileForm() {
         var fields = [
-            { id: "profile-title", message: "Select a title" },
-            { id: "profile-first-name", message: "Enter your first name" },
-            { id: "profile-last-name", message: "Enter your last name" },
-            { id: "profile-dob", message: "Enter your date of birth" },
-            { id: "profile-nationality", message: "Enter your nationality" },
-            { id: "profile-email", message: "Enter your email" },
-            { id: "profile-country-code", message: "Select a country code" },
-            { id: "profile-phone", message: "Enter your mobile phone" }
+            { id: "profile-title", message: "Müraciəti seçin" },
+            { id: "profile-first-name", message: "Adınızı daxil edin" },
+            { id: "profile-last-name", message: "Soyadınızı daxil edin" },
+            { id: "profile-dob", message: "Doğum tarixinizi daxil edin" },
+            { id: "profile-nationality", message: "Vətəndaşlığınızı daxil edin" },
+            { id: "profile-email", message: "E-poçt ünvanınızı daxil edin" },
+            { id: "profile-country-code", message: "Ölkə kodunu seçin" },
+            { id: "profile-phone", message: "Mobil telefon nömrənizi daxil edin" }
         ];
 
         var isValid = true;
@@ -321,7 +321,7 @@
 
         var email = getTrimmedValue("profile-email");
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            markInvalid(document.getElementById("profile-email"), "Enter a valid email");
+            markInvalid(document.getElementById("profile-email"), "Düzgün e-poçt ünvanı daxil edin");
             isValid = false;
         }
 
@@ -357,7 +357,7 @@
         showMessage("");
 
         if (!validateProfileForm()) {
-            showMessage(tr("profile.completeFields", "Please complete the highlighted fields."));
+            showMessage(tr("profile.completeFields", "Vurğulanmış sahələri tamamlayın."));
             return;
         }
 
@@ -381,7 +381,7 @@
             if (window.AerovaAuth && window.AerovaAuth.updateCurrentUser) {
                 window.AerovaAuth.updateCurrentUser({ firstName: saved.firstName, lastName: saved.lastName, email: saved.email, emailVerified: saved.emailVerified });
             }
-            showMessage(tr("profile.saved", "Your profile changes have been saved."), true);
+            showMessage(tr("profile.saved", "Profil dəyişiklikləriniz yadda saxlanıldı."), true);
         }).catch(function (error) {
             var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
             if (isApiError && error.status === 400 && error.errors) {
@@ -419,7 +419,7 @@
         }
 
         if (title) {
-            title.textContent = passenger ? tr("profile.editPassenger", "Edit Passenger") : tr("profile.addPassenger", "Add Passenger");
+            title.textContent = passenger ? tr("profile.editPassenger", "Sərnişini redaktə et") : tr("profile.addPassenger", "Sərnişin əlavə et");
         }
 
         if (editId) {
@@ -464,18 +464,18 @@
         clearFieldError(documentType);
 
         if (!getTrimmedValue("passenger-first-name")) {
-            markInvalid(firstName, "Enter first name");
+            markInvalid(firstName, "Adı daxil edin");
             isValid = false;
         }
 
         if (!getTrimmedValue("passenger-last-name")) {
-            markInvalid(lastName, "Enter last name");
+            markInvalid(lastName, "Soyadı daxil edin");
             isValid = false;
         }
 
         // A document number only makes sense together with its type (the backend checks this too).
         if (getTrimmedValue("passenger-document-number") && !getTrimmedValue("passenger-document-type")) {
-            markInvalid(documentType, tr("travelDocs.errors.documentType", "Select document type"));
+            markInvalid(documentType, tr("travelDocs.errors.documentType", "Sənəd növünü seçin"));
             isValid = false;
         }
 
@@ -520,7 +520,7 @@
 
             renderSavedPassengers();
             closePassengerModal();
-            showMessage(tr("profile.passengerUpdated", "Saved passenger profile updated."), true);
+            showMessage(tr("profile.passengerUpdated", "Yadda saxlanılmış sərnişin yeniləndi."), true);
         }).catch(function (error) {
             // Stay in the window so what was typed is not lost; the reason is shown at the top of the page.
             showMessage(apiMessage(error));
@@ -537,7 +537,7 @@
                 return String(item.id) !== String(passengerId);
             });
             renderSavedPassengers();
-            showMessage(tr("profile.passengerRemoved", "Passenger removed from your saved profiles."), true);
+            showMessage(tr("profile.passengerRemoved", "Sərnişin yadda saxlanılmış siyahıdan silindi."), true);
         }).catch(function (error) {
             showMessage(apiMessage(error));
         });
@@ -558,7 +558,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            toggle.setAttribute("aria-label", open ? "Menyunu bağla" : "Menyunu aç");
         }
 
         toggle.addEventListener("click", function () {
@@ -652,7 +652,4 @@
     } else {
         init();
     }
-    window.addEventListener("aerova:languagechange", function () {
-        if (typeof renderSavedPassengers === 'function') { try { buildNationalityOptions(); renderSavedPassengers(); } catch (e) {} } if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
-    });
 })();

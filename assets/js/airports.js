@@ -87,7 +87,7 @@
     var text = String(utcValue || "");
     var millis = Date.parse(/(Z|[+-]\d\d:?\d\d)$/i.test(text) ? text : text + "Z");
     if (!isFinite(millis)) {
-      throw new RangeError("Not a valid date and time: " + text);
+      throw new RangeError("Tarix və vaxt düzgün deyil: " + text);
     }
 
     var wholeMinute = Math.floor(millis / 60000) * 60000;

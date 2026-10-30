@@ -159,10 +159,10 @@
     }
 
     function displayName(user) {
-        if (!user) return tr("nav.profile", "Profile");
+        if (!user) return tr("nav.profile", "Profil");
         var first = String(user.firstName || "").trim();
         if (first) return first;
-        return tr("nav.profile", "Profile");
+        return tr("nav.profile", "Profil");
     }
 
     function findLoginButtons() {
@@ -190,7 +190,7 @@
             } else {
                 button.style.display = "";
                 button.href = "login.html";
-                button.textContent = tr("nav.login", "Login");
+                button.textContent = tr("nav.login", "Giriş");
                 button.setAttribute("data-auth-state", "login");
                 button.setAttribute("data-i18n", "nav.login");
                 button.removeAttribute("aria-current");
@@ -231,12 +231,12 @@
      */
     var ACCOUNT_STYLE_ID = "aerova-account-menu-style";
     var ACCOUNT_ITEMS = [
-        { href: "profile.html", key: "profile.title", fallback: "My Profile" },
-        { href: "my-trips.html", key: "nav.myTrips", fallback: "My Trips" },
+        { href: "profile.html", key: "profile.title", fallback: "Profilim" },
+        { href: "my-trips.html", key: "nav.myTrips", fallback: "Səyahətlərim" },
         { href: "notifications.html", key: "nav.notifications", fallback: "Notifications", badge: true },
         { logout: true, key: "nav.logout", fallback: "Logout" }
     ];
-    var ADMIN_ITEM = { href: "admin.html", key: "nav.adminPanel", fallback: "Admin Panel" };
+    var ADMIN_ITEM = { href: "admin.html", key: "nav.adminPanel", fallback: "Admin paneli" };
     var accountDocumentBound = false;
 
     /* The menu items for the signed-in user: an Admin also sees the admin panel (the backend still checks the role on every admin request). */
@@ -330,7 +330,7 @@
     function setAccountButtonName(button, user) {
         var name = button.querySelector(".account-menu-name");
         if (name) name.textContent = displayName(user);
-        button.setAttribute("data-account-label", displayName(user) + " – " + tr("nav.accountMenu", "Account menu"));
+        button.setAttribute("data-account-label", displayName(user) + " – " + tr("nav.accountMenu", "Hesab menyusu"));
         button.setAttribute("aria-label", button.getAttribute("data-account-label"));
     }
 
@@ -565,14 +565,13 @@
                 var shown = input.type === "text";
                 button.innerHTML = shown ? EYE_OFF_ICON : EYE_ICON;
                 button.setAttribute("aria-pressed", shown ? "true" : "false");
-                button.setAttribute("aria-label", shown ? tr("auth.hidePassword", "Hide password") : tr("auth.showPassword", "Show password"));
+                button.setAttribute("aria-label", shown ? tr("auth.hidePassword", "Şifrəni gizlət") : tr("auth.showPassword", "Şifrəni göstər"));
             }
 
             button.addEventListener("click", function () {
                 input.type = input.type === "password" ? "text" : "password";
                 paint();
             });
-            window.addEventListener("aerova:languagechange", paint);
             paint();
         });
     }
@@ -622,7 +621,7 @@
 
         if (!isApiError) {
             if (window.console) window.console.error(error);
-            setFieldError(fields.fallback, tr("api.errors.generic", "Something went wrong. Please try again."));
+            setFieldError(fields.fallback, tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             return;
         }
 
@@ -638,7 +637,7 @@
         }
 
         if (!shown) {
-            setFieldError(error.status === 409 && fields.email ? fields.email : fields.fallback, error.status === 409 ? tr("auth.emailExists", "An account with this email already exists") : error.userMessage);
+            setFieldError(error.status === 409 && fields.email ? fields.email : fields.fallback, error.status === 409 ? tr("auth.emailExists", "Bu e-poçt ilə hesab artıq mövcuddur") : error.userMessage);
         }
     }
 
@@ -677,18 +676,18 @@
             clearFieldError(passwordInput);
 
             if (!email) {
-                setFieldError(emailInput, tr("auth.emailRequired", "Email is required"));
+                setFieldError(emailInput, tr("auth.emailRequired", "E-poçt mütləqdir"));
                 valid = false;
             } else if (!isValidEmail(email)) {
-                setFieldError(emailInput, tr("auth.emailInvalid", "Enter a valid email address"));
+                setFieldError(emailInput, tr("auth.emailInvalid", "Düzgün e-poçt daxil edin"));
                 valid = false;
             }
 
             if (!password) {
-                setFieldError(passwordInput, tr("auth.passwordRequired", "Password is required"));
+                setFieldError(passwordInput, tr("auth.passwordRequired", "Şifrə mütləqdir"));
                 valid = false;
             } else if (password.length < 6) {
-                setFieldError(passwordInput, tr("auth.passwordShort", "Password must be at least 6 characters"));
+                setFieldError(passwordInput, tr("auth.passwordShort", "Şifrə ən azı 6 simvol olmalıdır"));
                 valid = false;
             }
 
@@ -699,18 +698,18 @@
             window.AEROVA_API.post("api/auth/login", { email: email, password: password }).then(function (response) {
                 var signedIn = setLoggedInUser(response);
                 if (!signedIn) {
-                    throw new TypeError("The sign-in response had no token.");
+                    throw new TypeError("Giriş cavabında token yoxdur.");
                 }
                 passwordInput.value = "";
                 window.location.href = pageAfterLogin(signedIn);
             }).catch(function (error) {
                 passwordInput.value = "";
                 if (error && error.status === 401) {
-                    setFieldError(emailInput, tr("auth.loginFailed", "Incorrect email or password"));
-                    setFieldError(passwordInput, tr("auth.loginFailed", "Incorrect email or password"));
+                    setFieldError(emailInput, tr("auth.loginFailed", "E-poçt və ya şifrə yanlışdır"));
+                    setFieldError(passwordInput, tr("auth.loginFailed", "E-poçt və ya şifrə yanlışdır"));
                 } else if (error && error.status === 429) {
                     // Sign-in is paused for this address after repeated failures, or this network sent too many requests.
-                    setFieldError(passwordInput, tr("api.account.loginLocked", "Too many failed attempts. Please wait about 15 minutes before trying again."));
+                    setFieldError(passwordInput, tr("api.account.loginLocked", "Çox sayda uğursuz cəhd oldu. Zəhmət olmasa təxminən 15 dəqiqə gözləyib yenidən cəhd edin."));
                 } else {
                     showApiFormError(error, { email: emailInput, password: passwordInput, fallback: passwordInput });
                 }
@@ -745,36 +744,36 @@
             [firstInput, lastInput, emailInput, passwordInput, confirmInput].forEach(clearFieldError);
 
             if (!firstName) {
-                setFieldError(firstInput, tr("auth.firstRequired", "First name is required"));
+                setFieldError(firstInput, tr("auth.firstRequired", "Ad mütləqdir"));
                 valid = false;
             }
 
             if (!lastName) {
-                setFieldError(lastInput, tr("auth.lastRequired", "Last name is required"));
+                setFieldError(lastInput, tr("auth.lastRequired", "Soyad mütləqdir"));
                 valid = false;
             }
 
             if (!email) {
-                setFieldError(emailInput, tr("auth.emailRequired", "Email is required"));
+                setFieldError(emailInput, tr("auth.emailRequired", "E-poçt mütləqdir"));
                 valid = false;
             } else if (!isValidEmail(email)) {
-                setFieldError(emailInput, tr("auth.emailInvalid", "Enter a valid email address"));
+                setFieldError(emailInput, tr("auth.emailInvalid", "Düzgün e-poçt daxil edin"));
                 valid = false;
             }
 
             if (!password) {
-                setFieldError(passwordInput, tr("auth.passwordRequired", "Password is required"));
+                setFieldError(passwordInput, tr("auth.passwordRequired", "Şifrə mütləqdir"));
                 valid = false;
             } else if (password.length < 6) {
-                setFieldError(passwordInput, tr("auth.passwordShort", "Password must be at least 6 characters"));
+                setFieldError(passwordInput, tr("auth.passwordShort", "Şifrə ən azı 6 simvol olmalıdır"));
                 valid = false;
             }
 
             if (!confirm) {
-                setFieldError(confirmInput, tr("auth.confirmRequired", "Please confirm your password"));
+                setFieldError(confirmInput, tr("auth.confirmRequired", "Şifrəni təsdiqləyin"));
                 valid = false;
             } else if (password && confirm !== password) {
-                setFieldError(confirmInput, tr("auth.passwordMismatch", "Passwords do not match"));
+                setFieldError(confirmInput, tr("auth.passwordMismatch", "Şifrələr uyğun gəlmir"));
                 valid = false;
             }
 
@@ -789,7 +788,7 @@
                 email: email,
                 password: password,
                 confirmPassword: confirm,
-                language: currentLanguage()
+                language: "az"
             }).then(function (response) {
                 // Registering does not sign anybody in: the person confirms the address with the e-mailed link and signs in.
                 passwordInput.value = "";
@@ -805,13 +804,6 @@
                 setBusy(submit, false);
             });
         });
-    }
-
-    function currentLanguage() {
-        if (window.AEROVA_I18N && typeof window.AEROVA_I18N.getLanguage === "function") {
-            return window.AEROVA_I18N.getLanguage();
-        }
-        return document.documentElement.lang || "en";
     }
 
     /* A message inside the card; kind is "success", "error" or nothing. */
@@ -848,15 +840,15 @@
         var registered = params.get("registered");
 
         if (registered === "sent") {
-            showNoticeKey(notice, "api.account.registeredSent", "Account created. We sent a confirmation link to your email address. Open it, then sign in.", "success");
+            showNoticeKey(notice, "api.account.registeredSent", "Hesab yaradıldı. E-poçt ünvanınıza təsdiq keçidi göndərdik. Onu açın, sonra daxil olun.", "success");
         } else if (registered === "nomail") {
-            showNoticeKey(notice, "api.account.registeredNoMail", "Account created. We could not send the confirmation email right now. Sign in, then ask for a new link in your profile.", "");
+            showNoticeKey(notice, "api.account.registeredNoMail", "Hesab yaradıldı, amma təsdiq məktubunu indi göndərə bilmədik. Daxil olun və profilinizdən yeni keçid istəyin.", "");
         } else if (params.get("verified") === "1") {
-            showNoticeKey(notice, "api.account.verifiedLogin", "Your email is confirmed. You can now sign in.", "success");
+            showNoticeKey(notice, "api.account.verifiedLogin", "E-poçtunuz təsdiqləndi. İndi daxil ola bilərsiniz.", "success");
         } else if (params.get("reset") === "1") {
-            showNoticeKey(notice, "api.account.resetDone", "Your password was changed. Sign in with your new password.", "success");
+            showNoticeKey(notice, "api.account.resetDone", "Şifrəniz dəyişdirildi. Yeni şifrənizlə daxil olun.", "success");
         } else if (params.get("needed") === "booking") {
-            showNoticeKey(notice, "api.account.signInToBook", "Sign in to continue your booking. The flight and seats you chose are kept.", "");
+            showNoticeKey(notice, "api.account.signInToBook", "Rezervasiyanı davam etdirmək üçün daxil olun. Seçdiyiniz uçuş və oturacaqlar saxlanılır.", "");
         }
     }
 
@@ -876,29 +868,29 @@
             showNotice(result, "");
 
             if (!email) {
-                setFieldError(emailInput, tr("auth.emailRequired", "Email is required"));
+                setFieldError(emailInput, tr("auth.emailRequired", "E-poçt mütləqdir"));
                 return;
             }
             if (!isValidEmail(email)) {
-                setFieldError(emailInput, tr("auth.emailInvalid", "Enter a valid email address"));
+                setFieldError(emailInput, tr("auth.emailInvalid", "Düzgün e-poçt daxil edin"));
                 return;
             }
 
             var submit = form.querySelector(".auth-submit");
             setBusy(submit, true);
 
-            window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
+            window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: "az" }).then(function () {
                 // The same step whether or not an account exists: the code page says "if an account exists".
                 try { sessionStorage.setItem(RESET_EMAIL_KEY, email); } catch (error) { /* ignore */ }
                 window.location.href = "verify-reset-code.html";
             }).catch(function (error) {
                 var status = error && error.status;
                 if (status === 404) {
-                    setFieldError(emailInput, tr("api.account.forgotNoAccount", "No account was found for this email address."));
+                    setFieldError(emailInput, tr("api.account.forgotNoAccount", "Bu e-poçt ünvanı ilə hesab tapılmadı."));
                 } else if (status === 429) {
-                    showNoticeKey(result, "api.account.forgotWait", "A code was sent a moment ago. Please wait a minute before asking for another.", "error");
+                    showNoticeKey(result, "api.account.forgotWait", "Kod bir az əvvəl göndərilib. Yenisini istəməzdən əvvəl bir dəqiqə gözləyin.", "error");
                 } else if (status === 503) {
-                    showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
+                    showNoticeKey(result, "api.account.forgotUnavailable", "E-poçtu indi göndərə bilmirik. Zəhmət olmasa sonra yenidən cəhd edin.", "error");
                 } else {
                     showApiFormError(error, { email: emailInput, fallback: emailInput });
                 }
@@ -944,7 +936,7 @@
         var timer = null;
 
         function paintSubtitle() {
-            subtitle.textContent = tr("api.account.codeSubtitle", "We sent a 6-digit code to {email}. It works for 10 minutes. Check your spam folder too.", { email: email });
+            subtitle.textContent = tr("api.account.codeSubtitle", "{email} ünvanına 6 rəqəmli kod göndərdik. Kod 10 dəqiqə etibarlıdır. Spam qovluğuna da baxın.", { email: email });
         }
 
         function showError(text) {
@@ -968,8 +960,8 @@
         function paintResend() {
             resend.disabled = cooldown > 0;
             resend.textContent = cooldown > 0
-                ? tr("api.account.codeResendIn", "New code in {seconds} s", { seconds: cooldown })
-                : tr("api.account.codeResend", "Send a new code");
+                ? tr("api.account.codeResendIn", "Yeni kod {seconds} san. sonra", { seconds: cooldown })
+                : tr("api.account.codeResend", "Yeni kod göndər");
         }
 
         function startCooldown(seconds) {
@@ -997,7 +989,7 @@
 
         function paintLabels() {
             boxes.forEach(function (box, index) {
-                box.setAttribute("aria-label", tr("api.account.codeDigit", "Digit {n} of 6", { n: index + 1 }));
+                box.setAttribute("aria-label", tr("api.account.codeDigit", "6 rəqəmdən {n}-ci", { n: index + 1 }));
             });
         }
 
@@ -1037,7 +1029,7 @@
 
             var code = readCode();
             if (!/^\d{6}$/.test(code)) {
-                showError(tr("api.account.codeIncomplete", "Enter all six digits."));
+                showError(tr("api.account.codeIncomplete", "Altı rəqəmin hamısını daxil edin."));
                 (boxes.filter(function (box) { return !box.value; })[0] || boxes[0]).focus();
                 return;
             }
@@ -1054,14 +1046,14 @@
             }).catch(function (error) {
                 var status = error && error.status;
                 if (status === 429) {
-                    showError(tr("api.account.codeTooMany", "Too many attempts. Please wait a minute and try again."));
+                    showError(tr("api.account.codeTooMany", "Çox cəhd edildi. Bir dəqiqə gözləyib yenidən cəhd edin."));
                 } else if (status === 422) {
-                    showError(tr("api.account.codeInvalid", "That code is not correct or has expired. Check it or ask for a new one."));
+                    showError(tr("api.account.codeInvalid", "Kod səhvdir və ya vaxtı bitib. Yoxlayın və ya yeni kod istəyin."));
                     clearBoxes();
                 } else if (status === 400) {
-                    showError(tr("api.account.codeIncomplete", "Enter all six digits."));
+                    showError(tr("api.account.codeIncomplete", "Altı rəqəmin hamısını daxil edin."));
                 } else {
-                    showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."), "error");
+                    showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), "error");
                 }
                 setBusy(submit, false);
             });
@@ -1073,20 +1065,20 @@
             showError("");
             startCooldown(60);
 
-            window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: currentLanguage() }).then(function () {
+            window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: "az" }).then(function () {
                 // The same words whether or not an account exists.
-                showNoticeKey(result, "api.account.codeResent", "A new code is on its way. The old one no longer works.", "success");
+                showNoticeKey(result, "api.account.codeResent", "Yeni kod yoldadır. Köhnə kod artıq işləmir.", "success");
                 clearBoxes();
             }).catch(function (error) {
                 var status = error && error.status;
                 if (status === 404) {
-                    showNoticeKey(result, "api.account.forgotNoAccount", "No account was found for this email address.", "error");
+                    showNoticeKey(result, "api.account.forgotNoAccount", "Bu e-poçt ünvanı ilə hesab tapılmadı.", "error");
                 } else if (status === 429) {
-                    showNoticeKey(result, "api.account.forgotWait", "A code was sent a moment ago. Please wait a minute before asking for another.", "error");
+                    showNoticeKey(result, "api.account.forgotWait", "Kod bir az əvvəl göndərilib. Yenisini istəməzdən əvvəl bir dəqiqə gözləyin.", "error");
                 } else if (status === 503) {
-                    showNoticeKey(result, "api.account.forgotUnavailable", "We cannot send email right now. Please try again later.", "error");
+                    showNoticeKey(result, "api.account.forgotUnavailable", "E-poçtu indi göndərə bilmirik. Zəhmət olmasa sonra yenidən cəhd edin.", "error");
                 } else {
-                    showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Something went wrong. Please try again."), "error");
+                    showNotice(result, (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."), "error");
                 }
             });
         });
@@ -1094,7 +1086,6 @@
         paintSubtitle();
         paintLabels();
         startCooldown(60);
-        window.addEventListener("aerova:languagechange", function () { paintSubtitle(); paintResend(); paintLabels(); });
         boxes[0].focus();
     }
 
@@ -1131,7 +1122,7 @@
         }
 
         if (!token) {
-            linkProblem("api.account.resetNoToken", "This link is incomplete. Ask for a new one.");
+            linkProblem("api.account.resetNoToken", "Bu addım tamamlanmayıb. Yeni kod istəyin.");
             return;
         }
 
@@ -1147,18 +1138,18 @@
             [passwordInput, confirmInput].forEach(clearFieldError);
 
             if (!password) {
-                setFieldError(passwordInput, tr("auth.passwordRequired", "Password is required"));
+                setFieldError(passwordInput, tr("auth.passwordRequired", "Şifrə mütləqdir"));
                 valid = false;
             } else if (password.length < 6) {
-                setFieldError(passwordInput, tr("auth.passwordShort", "Password must be at least 6 characters"));
+                setFieldError(passwordInput, tr("auth.passwordShort", "Şifrə ən azı 6 simvol olmalıdır"));
                 valid = false;
             }
 
             if (!confirm) {
-                setFieldError(confirmInput, tr("auth.confirmRequired", "Please confirm your password"));
+                setFieldError(confirmInput, tr("auth.confirmRequired", "Şifrəni təsdiqləyin"));
                 valid = false;
             } else if (password && confirm !== password) {
-                setFieldError(confirmInput, tr("auth.passwordMismatch", "Passwords do not match"));
+                setFieldError(confirmInput, tr("auth.passwordMismatch", "Şifrələr uyğun gəlmir"));
                 valid = false;
             }
 
@@ -1177,7 +1168,7 @@
                 confirmInput.value = "";
                 if (error && error.status === 422) {
                     forgetResetTicket();
-                    linkProblem("api.account.resetInvalid", "This step has expired or was already used. Ask for a new code.");
+                    linkProblem("api.account.resetInvalid", "Bu addımın vaxtı bitib və ya artıq istifadə olunub. Yeni kod istəyin.");
                 } else {
                     showApiFormError(error, { newPassword: passwordInput, confirmPassword: confirmInput, fallback: passwordInput });
                 }
@@ -1188,7 +1179,7 @@
 
     /* Asks for a new verification e-mail for the signed-in account; done(kind) gets "sent", "already", "wait", "unavailable", "signin" or "error". */
     function requestNewVerificationLink(done) {
-        window.AEROVA_API.post("api/auth/resend-verification", { language: currentLanguage() }).then(function () {
+        window.AEROVA_API.post("api/auth/resend-verification", { language: "az" }).then(function () {
             done("sent");
         }).catch(function (error) {
             var status = error && error.status;
@@ -1209,12 +1200,12 @@
 
     function resendMessage(kind) {
         var texts = {
-            sent: ["api.account.verifyResent", "We sent a new link. Check your inbox and spam folder."],
-            already: ["api.account.verifyAlready", "Your email address is already confirmed."],
-            wait: ["api.account.verifyWait", "Please wait a minute before asking for another link."],
-            unavailable: ["api.account.verifyUnavailable", "We cannot send email right now. Please try again later."],
-            signin: ["api.account.verifySignInFirst", "Sign in to get a new link."],
-            error: ["api.errors.generic", "Something went wrong. Please try again."]
+            sent: ["api.account.verifyResent", "Yeni keçid göndərdik. Gələnlər və Spam qovluğuna baxın."],
+            already: ["api.account.verifyAlready", "E-poçt ünvanınız artıq təsdiqlənib."],
+            wait: ["api.account.verifyWait", "Başqa keçid istəməzdən əvvəl bir dəqiqə gözləyin."],
+            unavailable: ["api.account.verifyUnavailable", "E-poçtu indi göndərə bilmirik. Zəhmət olmasa sonra yenidən cəhd edin."],
+            signin: ["api.account.verifySignInFirst", "Yeni keçid almaq üçün daxil olun."],
+            error: ["api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."]
         };
         var pair = texts[kind] || texts.error;
         return tr(pair[0], pair[1]);
@@ -1247,11 +1238,11 @@
         }
 
         function failed(textKey, textFallback, titleKey, titleFallback) {
-            show("error", titleKey || "api.account.verifyFailedTitle", titleFallback || "This link will not work", textKey, textFallback);
+            show("error", titleKey || "api.account.verifyFailedTitle", titleFallback || "Bu keçid işləmir", textKey, textFallback);
             if (isLoggedIn()) {
                 resend.hidden = false;
             } else {
-                showNoticeKey(feedback, "api.account.verifySignInFirst", "Sign in to get a new link.", "");
+                showNoticeKey(feedback, "api.account.verifySignInFirst", "Yeni keçid almaq üçün daxil olun.", "");
             }
         }
 
@@ -1264,7 +1255,7 @@
         });
 
         if (!token) {
-            failed("api.account.verifyInvalid", "This link is invalid or has expired.");
+            failed("api.account.verifyInvalid", "Bu keçid etibarsızdır və ya müddəti bitib.");
             return;
         }
 
@@ -1301,10 +1292,10 @@
                 // The sign-in is shared by the tabs of this browser: a booking waiting in another tab carries on there by itself.
                 askOtherTabs(function (answered) {
                     if (answered) {
-                        setKeyedText(message, "api.account.verifyBookingWaits", "Your booking is waiting in the other AEROVA tab and continues there by itself. You can close this tab.");
+                        setKeyedText(message, "api.account.verifyBookingWaits", "Rezervasiyanız digər AEROVA səhifəsində gözləyir və orada özü davam edir. Bu səhifəni bağlaya bilərsiniz.");
                         return;
                     }
-                    setKeyedText(redirect, "api.account.verifyContinue", "Taking you back to your booking...");
+                    setKeyedText(redirect, "api.account.verifyContinue", "Sizi rezervasiyaya qaytarırıq...");
                     redirect.hidden = false;
                     window.setTimeout(function () {
                         window.location.href = booking ? "payment.html" : "profile.html";
@@ -1316,7 +1307,7 @@
             signIn.setAttribute("href", "login.html?verified=1");
             askOtherTabs(function (answered) {
                 if (answered) {
-                    setKeyedText(message, "api.account.verifyBookingWaits", "Your booking is waiting in the other AEROVA tab and continues there by itself. You can close this tab.");
+                    setKeyedText(message, "api.account.verifyBookingWaits", "Rezervasiyanız digər AEROVA səhifəsində gözləyir və orada özü davam edir. Bu səhifəni bağlaya bilərsiniz.");
                     return;
                 }
                 redirect.hidden = false;
@@ -1329,23 +1320,23 @@
 
         window.AEROVA_API.post("api/auth/verify-email", { token: token }).then(function () {
             markEmailVerified();
-            show("success", "api.account.verifyDoneTitle", "Email confirmed!", "api.account.verifyDoneText", "Your account is ready. You can now sign in securely.");
+            show("success", "api.account.verifyDoneTitle", "E-poçt təsdiqləndi!", "api.account.verifyDoneText", "Hesabınız hazırdır. İndi təhlükəsiz şəkildə daxil ola bilərsiniz.");
             leaveAfterConfirming();
         }).catch(function (error) {
             var reason = error && error.status === 422 ? error.code : "";
             if (reason === "link_expired") {
-                failed("api.account.verifyExpiredText", "Confirmation links work for 24 hours. Sign in and ask for a new one.", "api.account.verifyExpiredTitle", "This link has expired");
+                failed("api.account.verifyExpiredText", "Təsdiq linkləri 24 saat işləyir. Daxil olun və yenisini istəyin.", "api.account.verifyExpiredTitle", "Linkin vaxtı bitib");
             } else if (reason === "link_confirmed") {
                 // Opened twice, or a mail program opened it first: the address is confirmed, nothing is wrong.
                 markEmailVerified();
-                show("success", "api.account.verifyConfirmedTitle", "Already confirmed", "api.account.verifyConfirmedText", "Your email address was confirmed with this link. You can sign in.");
+                show("success", "api.account.verifyConfirmedTitle", "Artıq təsdiqlənib", "api.account.verifyConfirmedText", "E-poçt ünvanınız bu linklə təsdiqlənib. Daxil ola bilərsiniz.");
                 askOtherTabs(function () {});
             } else if (reason === "link_used") {
-                failed("api.account.verifyUsedText", "Ask for a new link, or sign in if your address is confirmed.", "api.account.verifyUsedTitle", "This link was already used");
+                failed("api.account.verifyUsedText", "Yeni link istəyin və ya ünvanınız təsdiqlənibsə daxil olun.", "api.account.verifyUsedTitle", "Bu link artıq istifadə olunub");
             } else if (error && error.status === 422) {
-                failed("api.account.verifyInvalid", "This link is invalid or has expired.");
+                failed("api.account.verifyInvalid", "Bu keçid etibarsızdır və ya müddəti bitib.");
             } else {
-                show("error", "api.account.verifyFailedTitle", "This link will not work", "api.errors.generic", "Something went wrong. Please try again.");
+                show("error", "api.account.verifyFailedTitle", "Bu keçid işləməyəcək", "api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
                 if (error && error.userMessage) message.textContent = error.userMessage;
             }
         });
@@ -1367,13 +1358,13 @@
         function paint() {
             status.setAttribute("data-state", noMail ? "success" : "mail");
             if (noMail) {
-                title.textContent = tr("api.account.checkNoMailTitle", "Your account is ready");
-                text.textContent = tr("api.account.checkNoMailText", "We could not send the confirmation email right now. Sign in and press \"Resend link\" in your profile.");
+                title.textContent = tr("api.account.checkNoMailTitle", "Hesabınız hazırdır");
+                text.textContent = tr("api.account.checkNoMailText", "Təsdiq məktubunu indi göndərə bilmədik. Daxil olun və profilinizdə \"Keçidi yenidən göndər\" düyməsinə basın.");
             } else {
-                title.textContent = tr("api.account.checkTitle", "Check your email");
+                title.textContent = tr("api.account.checkTitle", "E-poçtunuzu yoxlayın");
                 text.textContent = masked
-                    ? tr("api.account.checkText", "We sent a confirmation link to {email}. Open it to activate your account.").replace("{email}", masked)
-                    : tr("api.account.checkTextNoAddress", "We sent you a confirmation link. Open it to activate your account.");
+                    ? tr("api.account.checkText", "{email} ünvanına təsdiq keçidi göndərdik. Hesabınızı aktivləşdirmək üçün onu açın.").replace("{email}", masked)
+                    : tr("api.account.checkTextNoAddress", "Sizə təsdiq keçidi göndərdik. Hesabınızı aktivləşdirmək üçün onu açın.");
             }
             status.querySelectorAll("[data-sent-only]").forEach(function (item) {
                 item.hidden = noMail;
@@ -1381,7 +1372,6 @@
         }
 
         paint();
-        window.addEventListener("aerova:languagechange", paint);
     }
 
     /* Remembers in this tab that the signed-in address is confirmed (what the profile banner reads). */
@@ -1407,11 +1397,11 @@
             banner.innerHTML = "";
             var text = document.createElement("p");
             text.className = "verify-banner-text";
-            text.textContent = extra || tr("api.account.bannerText", "Your email address is not confirmed yet. Confirm it to book flights.");
+            text.textContent = extra || tr("api.account.bannerText", "E-poçt ünvanınız hələ təsdiqlənməyib. Reys almaq üçün onu təsdiqləyin.");
             var button = document.createElement("button");
             button.type = "button";
             button.className = "verify-banner-button";
-            button.textContent = tr("api.account.bannerButton", "Resend link");
+            button.textContent = tr("api.account.bannerButton", "Keçidi yenidən göndər");
             button.addEventListener("click", function () {
                 button.disabled = true;
                 requestNewVerificationLink(function (kind) {
@@ -1428,7 +1418,6 @@
         }
 
         paint();
-        window.addEventListener("aerova:languagechange", function () { paint(); });
         window.addEventListener("aerova:userchange", function () { paint(); });
     }
 
@@ -1461,7 +1450,7 @@
         if (!links.length) return;
         ensureBadgeStyles();
         var count = isLoggedIn() ? unreadCount : 0;
-        var label = count + " " + tr("common.unread", "Unread");
+        var label = count + " " + tr("common.unread", "Oxunmayıb");
 
         links.forEach(function (link) {
             var badge = link.querySelector(".aerova-notif-badge");
@@ -1549,10 +1538,6 @@
         refreshVerification();
         handleCheckEmailPage();
         handleVerifyBanner();
-        window.addEventListener("aerova:languagechange", function () {
-            updateNavigation();
-            showLoginNotice();
-        });
         // The API rejected the token (it ran out): forget it and send the visitor to sign in again.
         window.addEventListener("aerova:session-expired", function () {
             clearAuthState();

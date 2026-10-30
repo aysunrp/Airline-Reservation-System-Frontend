@@ -126,7 +126,6 @@
         paint();
     }
 
-    window.addEventListener("aerova:languagechange", paint);
 
     /* ---------------------------------------------------------------- the booking behind a confirmed payment */
 
@@ -145,15 +144,15 @@
         if (lastName) {
             return api.get("api/bookings/" + encodeURIComponent(pnr), { query: { lastName: lastName } });
         }
-        return Promise.reject(new Error("No way to read the booking."));
+        return Promise.reject(new Error("Bronu oxumaq mümkün olmadı."));
     }
 
     function describe(booking, status) {
-        var rows = [{ key: "api.payment.labelReference", fallback: "Booking reference", value: booking ? booking.pnr : status.pnr, pnr: true }];
+        var rows = [{ key: "api.payment.labelReference", fallback: "Rezervasiya kodu", value: booking ? booking.pnr : status.pnr, pnr: true }];
         var directory = window.AEROVA_AIRPORTS;
 
         if (!booking) {
-            rows.push({ key: "api.payment.labelTotal", fallback: "Total paid", value: formatMoney(status.amount, status.currency) });
+            rows.push({ key: "api.payment.labelTotal", fallback: "Ödənilən məbləğ", value: formatMoney(status.amount, status.currency) });
             return Promise.resolve(rows);
         }
 
@@ -165,10 +164,10 @@
                 rows.push({ key: "api.payment.labelDeparture", fallback: "Departure", value: local ? local.date + " · " + local.time : String(leg.departureAt).slice(0, 16).replace("T", " ") + " UTC" });
             });
             rows.push({ key: "api.payment.labelPassengers", fallback: "Passengers", value: booking.passengers.map(function (p) { return p.firstName + " " + p.lastName; }).join(", ") });
-            rows.push({ key: "api.payment.labelTotal", fallback: "Total paid", value: formatMoney(status.amount, status.currency) });
+            rows.push({ key: "api.payment.labelTotal", fallback: "Ödənilən məbləğ", value: formatMoney(status.amount, status.currency) });
             return rows;
         }, function () {
-            rows.push({ key: "api.payment.labelTotal", fallback: "Total paid", value: formatMoney(status.amount, status.currency) });
+            rows.push({ key: "api.payment.labelTotal", fallback: "Ödənilən məbləğ", value: formatMoney(status.amount, status.currency) });
             return rows;
         });
     }
@@ -189,7 +188,7 @@
                 var actions = ["return-primary"];
                 if (isLoggedIn()) actions.push("return-trips");
                 actions.push("return-home");
-                show({ state: "success", title: ["api.payment.successTitle", "Payment confirmed"], text: ["api.payment.successText", "Thank you! Your booking is confirmed."], actions: actions, summary: rows });
+                show({ state: "success", title: ["api.payment.successTitle", "Ödəniş təsdiqləndi"], text: ["api.payment.successText", "Təşəkkür edirik! Rezervasiyanız təsdiqləndi."], actions: actions, summary: rows });
                 clearStored();
             });
         };
@@ -207,10 +206,10 @@
             // The money is taken but the booking could not be confirmed (its time had run out): support has to refund it.
             show({
                 state: "error",
-                title: ["api.payment.paidNotConfirmedTitle", "We received your payment, but could not confirm the booking"],
-                text: ["api.payment.paidNotConfirmedText", "The seats were no longer held when the payment arrived. Please contact AEROVA support with your booking reference; the payment will be refunded."],
+                title: ["api.payment.paidNotConfirmedTitle", "Ödənişi aldıq, amma rezervasiyanı təsdiqləyə bilmədik"],
+                text: ["api.payment.paidNotConfirmedText", "Ödəniş gələndə oturacaqlar artıq tutulmurdu. Rezervasiya kodunuzla AEROVA dəstəyinə müraciət edin, ödəniş geri qaytarılacaq."],
                 actions: ["return-trips", "return-home"],
-                summary: [{ key: "api.payment.labelReference", fallback: "Booking reference", value: status.pnr, pnr: true }]
+                summary: [{ key: "api.payment.labelReference", fallback: "Rezervasiya kodu", value: status.pnr, pnr: true }]
             });
             return true;
         }
@@ -218,8 +217,8 @@
         if (status.status === "Failed" || status.status === "Cancelled") {
             show({
                 state: "error",
-                title: ["api.payment.failedTitle", "Payment did not go through"],
-                text: ["api.payment.failedText", "Stripe could not take the payment. No money was charged. You can try again."],
+                title: ["api.payment.failedTitle", "Ödəniş alınmadı"],
+                text: ["api.payment.failedText", "Stripe ödənişi qəbul edə bilmədi. Heç bir məbləğ tutulmayıb. Yenidən cəhd edə bilərsiniz."],
                 actions: ["return-retry", "return-home"]
             });
             return true;
@@ -230,8 +229,8 @@
 
     function waitingView(slow) {
         return slow
-            ? { state: "loading", title: ["api.payment.waitingTitle", "Still confirming your payment"], text: ["api.payment.waitingText", "Your payment is taking a little longer to confirm. This page keeps checking. Your seats stay reserved for now."], actions: [] }
-            : { state: "loading", title: ["api.payment.checkingTitle", "Checking your payment"], text: ["api.payment.checkingText", "Please wait while we confirm your payment with Stripe. Do not close this page."], actions: [] };
+            ? { state: "loading", title: ["api.payment.waitingTitle", "Ödəniş hələ təsdiqlənir"], text: ["api.payment.waitingText", "Ödənişin təsdiqi bir az uzun çəkir. Səhifə yoxlamağa davam edir. Oturacaqlarınız hələlik rezerv olunub."], actions: [] }
+            : { state: "loading", title: ["api.payment.checkingTitle", "Ödənişiniz yoxlanılır"], text: ["api.payment.checkingText", "Ödənişin Stripe tərəfindən təsdiqlənməsini gözləyirik. Bu səhifəni bağlamayın."], actions: [] };
     }
 
     function pollSuccess(address, stored) {
@@ -247,8 +246,8 @@
             if (waited >= GIVE_UP_MS) {
                 show({
                     state: "loading",
-                    title: ["api.payment.slowTitle", "We are still waiting for confirmation"],
-                    text: ["api.payment.slowText", "Stripe has not confirmed your payment yet. If money left your account, your booking will appear in My Trips once it is confirmed. You can check again now."],
+                    title: ["api.payment.slowTitle", "Təsdiqi hələ gözləyirik"],
+                    text: ["api.payment.slowText", "Stripe ödənişi hələ təsdiqləməyib. Hesabınızdan pul çıxıbsa, təsdiqdən sonra rezervasiyanız Səfərlərim bölməsində görünəcək. İndi yenidən yoxlaya bilərsiniz."],
                     actions: ["return-again", "return-trips", "return-home"]
                 });
                 byId("return-status").removeAttribute("aria-busy");
@@ -262,8 +261,8 @@
             if (error && error.status === 404) {
                 show({
                     state: "error",
-                    title: ["api.payment.notFoundTitle", "We could not find this payment"],
-                    text: ["api.payment.notFoundText", "Open My Trips to see your bookings, or start again from the home page."],
+                    title: ["api.payment.notFoundTitle", "Bu ödənişi tapa bilmədik"],
+                    text: ["api.payment.notFoundText", "Rezervasiyalarınızı görmək üçün Səfərlərim bölməsini açın və ya ana səhifədən yenidən başlayın."],
                     actions: ["return-trips", "return-home"]
                 });
                 return;
@@ -277,8 +276,8 @@
 
             show({
                 state: "error",
-                title: ["api.payment.errorTitle", "We could not check your payment"],
-                text: ["api.errors.generic", "Something went wrong. Please try again."],
+                title: ["api.payment.errorTitle", "Ödənişinizi yoxlaya bilmədik"],
+                text: ["api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."],
                 actions: ["return-again", "return-trips", "return-home"]
             });
         });
@@ -291,8 +290,8 @@
         if (!address.paymentId) {
             show({
                 state: "error",
-                title: ["api.payment.notFoundTitle", "We could not find this payment"],
-                text: ["api.payment.notFoundText", "Open My Trips to see your bookings, or start again from the home page."],
+                title: ["api.payment.notFoundTitle", "Bu ödənişi tapa bilmədik"],
+                text: ["api.payment.notFoundText", "Rezervasiyalarınızı görmək üçün Səfərlərim bölməsini açın və ya ana səhifədən yenidən başlayın."],
                 actions: ["return-trips", "return-home"]
             });
             return;
@@ -328,8 +327,8 @@
 
         show({
             state: "cancel",
-            title: ["api.payment.cancelTitle", "Payment cancelled"],
-            text: ["api.payment.cancelText", "You left Stripe's page before paying, so nothing was charged. Your seats stay held for a little longer so you can try again."],
+            title: ["api.payment.cancelTitle", "Ödəniş ləğv edildi"],
+            text: ["api.payment.cancelText", "Ödəniş etmədən Stripe səhifəsindən çıxdınız, heç bir məbləğ tutulmayıb. Yenidən cəhd edə bilməyiniz üçün oturacaqlar bir qədər də saxlanılır."],
             actions: ["return-retry", "return-home"]
         });
 
@@ -339,8 +338,8 @@
                 if (status.status === "Paid" && status.bookingStatus === "Confirmed") {
                     show({
                         state: "success",
-                        title: ["api.payment.cancelPaidTitle", "This booking is already paid"],
-                        text: ["api.payment.cancelPaidText", "Your booking is confirmed, so there is nothing more to pay."],
+                        title: ["api.payment.cancelPaidTitle", "Bu rezervasiya artıq ödənilib"],
+                        text: ["api.payment.cancelPaidText", "Rezervasiyanız təsdiqlənib, yenidən ödəməyə ehtiyac yoxdur."],
                         actions: ["return-trips", "return-home"]
                     });
                 }

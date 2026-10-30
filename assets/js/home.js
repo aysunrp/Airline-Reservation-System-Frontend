@@ -21,7 +21,7 @@
     function setMenu(open) {
         header.classList.toggle("is-menu-open", open);
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        toggle.setAttribute("aria-label", open ? (typeof t === "function" ? t("nav.closeMenu") : "Close menu") : (typeof t === "function" ? t("nav.openMenu") : "Open menu"));
+        toggle.setAttribute("aria-label", open ? (typeof t === "function" ? t("nav.closeMenu") : "Menyunu bağla") : (typeof t === "function" ? t("nav.openMenu") : "Menyunu aç"));
     }
 
     toggle.addEventListener("click", function () {
@@ -328,7 +328,6 @@
     }
 
     var submitButton = document.getElementById("search-flights-button");
-    var RECOGNITION_LANGUAGES = { az: "az-AZ", en: "en-US", ru: "ru-RU" };
     var busy = false;
 
     function say(key, fallback, vars) {
@@ -338,12 +337,6 @@
 
         var value = t(key, vars);
         return value && value !== key ? value : fallback;
-    }
-
-    function siteLanguage() {
-        var i18n = window.AEROVA_I18N;
-        var lang = i18n && typeof i18n.getLanguage === "function" ? i18n.getLanguage() : "en";
-        return RECOGNITION_LANGUAGES[lang] ? lang : "en";
     }
 
     function clearMessage() {
@@ -378,9 +371,9 @@
     function setListening(isListening) {
         micButton.classList.toggle("is-listening", isListening);
         micButton.setAttribute("aria-pressed", isListening ? "true" : "false");
-        micButton.setAttribute("aria-label", isListening ? say("home.voiceStop", "Stop voice search") : say("home.voiceStart", "Start voice search"));
+        micButton.setAttribute("aria-label", isListening ? say("home.voiceStop", "Səsli axtarışı dayandır") : say("home.voiceStart", "Səsli axtarışı başlat"));
         form.classList.toggle("is-listening", isListening);
-        showStatus(isListening ? say("voice.listening", "Listening… say where and when you want to fly.") : "");
+        showStatus(isListening ? say("voice.listening", "Dinləyirəm… hara və nə vaxt uçmaq istədiyinizi deyin.") : "");
     }
 
     function setProcessing(isProcessing) {
@@ -392,7 +385,7 @@
             submitButton.disabled = isProcessing;
         }
 
-        showStatus(isProcessing ? say("voice.processing", "Reading your request…") : "");
+        showStatus(isProcessing ? say("voice.processing", "Sorğunuz oxunur…") : "");
     }
 
     /* Stops listening and drops what was heard (used when the form is submitted). */
@@ -418,19 +411,19 @@
         switch (code) {
             case "not-allowed":
             case "service-not-allowed":
-                return say("voice.denied", "Microphone access is blocked. Allow the microphone for this site in your browser, or type your request.");
+                return say("voice.denied", "Mikrofona giriş bağlıdır. Brauzerdə bu sayt üçün mikrofona icazə verin və ya sorğunuzu yazın.");
             case "no-speech":
-                return say("voice.heardNothing", "We did not hear anything. Try again, or type your request.");
+                return say("voice.heardNothing", "Heç nə eşitmədik. Yenidən cəhd edin və ya sorğunuzu yazın.");
             case "audio-capture":
-                return say("voice.noMicrophone", "No microphone was found. Please type your request.");
+                return say("voice.noMicrophone", "Mikrofon tapılmadı. Zəhmət olmasa sorğunuzu yazın.");
             case "network":
-                return say("voice.network", "Speech recognition needs an internet connection. Check it, or type your request.");
+                return say("voice.network", "Səsin tanınması internet tələb edir. Bağlantını yoxlayın və ya sorğunuzu yazın.");
             case "language-not-supported":
-                return say("voice.languageNotSupported", "This browser cannot recognise this language by voice. Please type your request.");
+                return say("voice.languageNotSupported", "Bu brauzer bu dili səslə tanıya bilmir. Zəhmət olmasa sorğunuzu yazın.");
             case "aborted":
                 return "";
             default:
-                return say("home.voiceCaptureFail", "Unable to capture voice input. Please try again or type your request.");
+                return say("home.voiceCaptureFail", "Səs tutula bilmədi. Yenidən cəhd edin və ya yazın.");
         }
     }
 
@@ -440,7 +433,7 @@
         }
 
         if (!SpeechRecognition) {
-            showMessage(say("home.voiceUnsupported", "Voice search is not supported in this browser. Please type your request."));
+            showMessage(say("home.voiceUnsupported", "Bu brauzerdə səsli axtarış dəstəklənmir. Zəhmət olmasa yazın."));
             input.focus();
             return;
         }
@@ -462,8 +455,8 @@
         var transcript = "";
         var failed = false;
 
-        // The language of the site is the language that is recognised.
-        recognition.lang = RECOGNITION_LANGUAGES[siteLanguage()];
+        // Azerbaijani is the language that is recognised.
+        recognition.lang = "az-AZ";
         recognition.interimResults = true;
         recognition.continuous = false;
         recognition.maxAlternatives = 1;
@@ -502,14 +495,14 @@
             }
 
             if (!transcript) {
-                showMessage(say("voice.heardNothing", "We did not hear anything. Try again, or type your request."));
+                showMessage(say("voice.heardNothing", "Heç nə eşitmədik. Yenidən cəhd edin və ya sorğunuzu yazın."));
                 input.focus();
                 return;
             }
 
             // The text is only shown: the traveller checks it, may correct it, and presses Search.
             input.value = transcript;
-            showMessage(say("voice.review", "Check the text, correct it if needed, then press Search Flights."), true);
+            showMessage(say("voice.review", "Mətni yoxlayın, lazım olsa düzəldin, sonra «Uçuşları axtar» düyməsinə basın."), true);
             input.focus();
         };
 
@@ -518,7 +511,7 @@
         } catch (error) {
             setListening(false);
             activeRecognition = null;
-            showMessage(say("home.voiceStartFail", "Unable to start voice search. Please try again or type your request."));
+            showMessage(say("home.voiceStartFail", "Səsli axtarış başladıla bilmədi. Yenidən cəhd edin və ya yazın."));
         }
     }
 
@@ -540,7 +533,7 @@
             value = Number(parts[2]) + "." + parts[1] + "." + parts[0];
         }
 
-        return say("voice.issues." + issue.code, say("home.voiceEmpty", "Please say or type where you would like to fly."), { value: value, options: options });
+        return say("voice.issues." + issue.code, say("home.voiceEmpty", "Haraya uçmaq istədiyinizi deyin və ya yazın."), { value: value, options: options });
     }
 
     function goToResults(result, query) {
@@ -647,7 +640,7 @@
         input.value = query;
 
         if (!query) {
-            showMessage(say("home.voiceEmpty", "Please say or type where you would like to fly."));
+            showMessage(say("home.voiceEmpty", "Haraya uçmaq istədiyinizi deyin və ya yazın."));
             input.focus();
             return;
         }
@@ -655,7 +648,7 @@
         var api = window.AEROVA_API;
         if (!api || typeof api.post !== "function") {
             if (!goToResultsOffline(query)) {
-                showMessage(say("voice.unreachable", "We could not reach the server to read your request. Please try again."));
+                showMessage(say("voice.unreachable", "Sorğunuzu oxumaq üçün serverə qoşula bilmədik. Yenidən cəhd edin."));
             }
 
             return;
@@ -663,13 +656,13 @@
 
         setProcessing(true);
 
-        api.post("api/voice-search/interpret", { text: query, language: siteLanguage() }).then(function (result) {
+        api.post("api/voice-search/interpret", { text: query, language: "az" }).then(function (result) {
             if (!result || result.status !== "ready" || !result.origin || !result.destination) {
                 setProcessing(false);
                 var issues = (result && result.issues) || [];
                 showMessage(issues.length
                     ? issues.map(issueText).join(" ")
-                    : say("home.voiceEmpty", "Please say or type where you would like to fly."));
+                    : say("home.voiceEmpty", "Haraya uçmaq istədiyinizi deyin və ya yazın."));
                 input.focus();
                 return;
             }
@@ -684,15 +677,12 @@
             }
 
             if (!goToResultsOffline(query)) {
-                showMessage(say("voice.unreachable", "We could not reach the server to read your request. Please try again."));
+                showMessage(say("voice.unreachable", "Sorğunuzu oxumaq üçün serverə qoşula bilmədik. Yenidən cəhd edin."));
             }
         });
     });
 
     // The recording language follows the site language; a language change while listening ends that recording.
-    window.addEventListener("aerova:languagechange", function () {
-        abortVoice();
-    });
 
 })();
 
@@ -747,12 +737,7 @@
         button.disabled = isBusy;
         input.readOnly = isBusy;
         form.setAttribute("aria-busy", isBusy ? "true" : "false");
-        button.textContent = isBusy ? say("home.newsletterSending", "Sending...") : say("home.newsletterButton", "Subscribe");
-    }
-
-    function languageOfPage() {
-        var i18n = window.AEROVA_I18N;
-        return i18n && typeof i18n.getLanguage === "function" ? i18n.getLanguage() : "en";
+        button.textContent = isBusy ? say("home.newsletterSending", "Göndərilir...") : say("home.newsletterButton", "Abunə ol");
     }
 
     form.addEventListener("submit", function (event) {
@@ -767,42 +752,42 @@
         input.value = email;
 
         if (!email) {
-            showMessage(say("home.newsletterEmailRequired", "Please enter your email address."), "error");
+            showMessage(say("home.newsletterEmailRequired", "E-poçt ünvanınızı daxil edin."), "error");
             input.focus();
             return;
         }
 
         if (!emailPattern.test(email)) {
-            showMessage(say("home.newsletterError", "Please enter a valid email address."), "error");
+            showMessage(say("home.newsletterError", "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin."), "error");
             input.focus();
             return;
         }
 
         var api = window.AEROVA_API;
         if (!api || typeof api.post !== "function") {
-            showMessage(say("home.newsletterUnreachable", "We could not reach the server. Please try again in a moment."), "error");
+            showMessage(say("home.newsletterUnreachable", "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin."), "error");
             return;
         }
 
         setBusy(true);
-        showMessage(say("home.newsletterSending", "Sending..."), "");
+        showMessage(say("home.newsletterSending", "Göndərilir..."), "");
 
-        api.post("api/newsletter/subscribe", { email: email, language: languageOfPage() }).then(function () {
+        api.post("api/newsletter/subscribe", { email: email, language: "az" }).then(function () {
             setBusy(false);
             input.value = "";
             // The same sentence for every address: the form does not say whether it was already on the list.
-            showMessage(say("home.newsletterSuccess", "A confirmation link was sent to your email address."), "success");
+            showMessage(say("home.newsletterSuccess", "Təsdiq linki e-poçt ünvanınıza göndərildi."), "success");
         }, function (error) {
             setBusy(false);
 
             if (error && error.status === 400) {
-                showMessage(say("home.newsletterError", "Please enter a valid email address."), "error");
+                showMessage(say("home.newsletterError", "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin."), "error");
             } else if (error && error.status === 429) {
-                showMessage(say("home.newsletterBusy", "Too many requests. Please wait a moment and try again."), "error");
+                showMessage(say("home.newsletterBusy", "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin."), "error");
             } else if (error && error.status) {
-                showMessage(say("home.newsletterUnavailable", "We cannot send the confirmation e-mail right now. Please try again later."), "error");
+                showMessage(say("home.newsletterUnavailable", "Təsdiq məktubunu hazırda göndərə bilmirik. Zəhmət olmasa bir az sonra yenidən cəhd edin."), "error");
             } else {
-                showMessage(say("home.newsletterUnreachable", "We could not reach the server. Please try again in a moment."), "error");
+                showMessage(say("home.newsletterUnreachable", "Serverə qoşula bilmədik. Zəhmət olmasa bir az sonra yenidən cəhd edin."), "error");
             }
         });
     });

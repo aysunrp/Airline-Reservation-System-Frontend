@@ -16,12 +16,6 @@
     return value && value !== "chat." + key ? value : fallback;
   }
 
-  function language() {
-    var lang = window.AEROVA_I18N && typeof window.AEROVA_I18N.getLanguage === "function"
-      ? window.AEROVA_I18N.getLanguage() : "en";
-    return ["en", "az", "ru"].indexOf(lang) === -1 ? "en" : lang;
-  }
-
   function loadHistory() {
     try {
       var parsed = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || "[]");
@@ -129,27 +123,27 @@
 
   function applyText() {
     var e = state.els;
-    e.launcher.querySelector(".aerova-chat__launcher-label").textContent = tr("launcher", "Ask AEROVA");
-    e.launcher.setAttribute("aria-label", tr("open", "Open travel assistant"));
-    e.eyebrow.textContent = tr("eyebrow", "AEROVA Concierge");
-    e.title.textContent = tr("title", "Travel assistant");
-    e.subtitle.textContent = tr("subtitle", "AI answers to your travel questions");
-    e.clear.textContent = tr("clear", "Clear");
-    e.clear.setAttribute("aria-label", tr("clearLabel", "Clear conversation"));
-    e.close.setAttribute("aria-label", tr("close", "Close travel assistant"));
-    e.label.textContent = tr("inputLabel", "Your message");
-    e.input.setAttribute("placeholder", tr("placeholder", "Ask about baggage, destinations, check-in..."));
-    e.send.querySelector(".aerova-chat__send-label").textContent = tr("send", "Send");
-    e.send.setAttribute("aria-label", tr("send", "Send"));
-    e.disclaimer.textContent = tr("disclaimer", "AI can make mistakes. It cannot book, change or cancel trips or verify documents.");
-    e.log.setAttribute("aria-label", tr("logLabel", "Conversation"));
+    e.launcher.querySelector(".aerova-chat__launcher-label").textContent = tr("launcher", "AEROVA-dan soruşun");
+    e.launcher.setAttribute("aria-label", tr("open", "Səyahət köməkçisini açın"));
+    e.eyebrow.textContent = tr("eyebrow", "AEROVA Konsyerj");
+    e.title.textContent = tr("title", "Səyahət köməkçisi");
+    e.subtitle.textContent = tr("subtitle", "Səyahət suallarınıza süni intellekt cavabları");
+    e.clear.textContent = tr("clear", "Təmizlə");
+    e.clear.setAttribute("aria-label", tr("clearLabel", "Söhbəti təmizləyin"));
+    e.close.setAttribute("aria-label", tr("close", "Səyahət köməkçisini bağlayın"));
+    e.label.textContent = tr("inputLabel", "Mesajınız");
+    e.input.setAttribute("placeholder", tr("placeholder", "Baqaj, istiqamətlər, qeydiyyat barədə soruşun..."));
+    e.send.querySelector(".aerova-chat__send-label").textContent = tr("send", "Göndər");
+    e.send.setAttribute("aria-label", tr("send", "Göndər"));
+    e.disclaimer.textContent = tr("disclaimer", "Süni intellekt səhv edə bilər. O, səyahəti bron edə, dəyişə, ləğv edə və ya sənədləri yoxlaya bilməz.");
+    e.log.setAttribute("aria-label", tr("logLabel", "Söhbət"));
     renderLog();
   }
 
   function messageItem(role, text, extraClass) {
     var item = el("li", "aerova-chat__message aerova-chat__message--" + role + (extraClass ? " " + extraClass : ""));
     var who = el("span", "aerova-chat__sr");
-    who.textContent = role === "user" ? tr("you", "You") : tr("assistantName", "AEROVA assistant");
+    who.textContent = role === "user" ? tr("you", "You") : tr("assistantName", "AEROVA köməkçisi");
     var bubble = el("p", "aerova-chat__bubble");
     bubble.textContent = text;
     item.appendChild(who);
@@ -160,7 +154,7 @@
   function renderLog() {
     var log = state.els.log;
     log.innerHTML = "";
-    log.appendChild(messageItem("assistant", tr("welcome", "Hello! I am the AEROVA travel assistant. How can I help with your trip today?"), "aerova-chat__message--welcome"));
+    log.appendChild(messageItem("assistant", tr("welcome", "Salam! Mən AEROVA səyahət köməkçisiyəm. Bu gün səyahətinizlə bağlı necə kömək edə bilərəm?"), "aerova-chat__message--welcome"));
     state.history.forEach(function (m) { log.appendChild(messageItem(m.role, m.content)); });
     if (state.sending) log.appendChild(typingItem());
     scrollToBottom();
@@ -169,7 +163,7 @@
   function typingItem() {
     var item = el("li", "aerova-chat__message aerova-chat__message--assistant aerova-chat__typing", { id: "aerova-chat-typing" });
     var label = el("span", "aerova-chat__sr");
-    label.textContent = tr("typing", "Assistant is typing...");
+    label.textContent = tr("typing", "Köməkçi yazır...");
     var dots = el("p", "aerova-chat__bubble aerova-chat__dots", { "aria-hidden": "true" });
     dots.innerHTML = "<span></span><span></span><span></span>";
     item.appendChild(label);
@@ -214,24 +208,24 @@
   }
 
   function errorMessage(status, body) {
-    if (status === 503) return tr("errors.notConfigured", "The assistant is not available right now. Please try again later.");
-    if (status === 429) return tr("errors.rateLimited", "You are sending messages too quickly. Please wait a minute and try again.");
-    if (status === 400) return tr("errors.invalid", "That message could not be sent. Please shorten it and try again.");
-    if (status === 504) return tr("errors.timeout", "The assistant took too long to answer. Please try again.");
-    if (status === 0) return tr("errors.network", "Cannot reach the assistant. Check your connection or try again later.");
-    return tr("errors.generic", "Something went wrong. Please try again.");
+    if (status === 503) return tr("errors.notConfigured", "Köməkçi hazırda əlçatan deyil. Zəhmət olmasa, bir az sonra yenidən cəhd edin.");
+    if (status === 429) return tr("errors.rateLimited", "Çox tez-tez mesaj göndərirsiniz. Bir dəqiqə gözləyib yenidən cəhd edin.");
+    if (status === 400) return tr("errors.invalid", "Mesaj göndərilə bilmədi. Onu qısaldıb yenidən cəhd edin.");
+    if (status === 504) return tr("errors.timeout", "Köməkçi çox gec cavab verdi. Yenidən cəhd edin.");
+    if (status === 0) return tr("errors.network", "Köməkçiyə qoşulmaq mümkün olmadı. Bağlantınızı yoxlayın və ya sonra yenidən cəhd edin.");
+    return tr("errors.generic", "Xəta baş verdi. Yenidən cəhd edin.");
   }
 
   function sendMessage(text) {
     if (state.sending) return;
     var content = String(text || "").trim();
     if (!content) {
-      setError(tr("errors.empty", "Please type a message."));
+      setError(tr("errors.empty", "Zəhmət olmasa, mesaj yazın."));
       state.els.input.focus();
       return;
     }
     if (content.length > MAX_MESSAGE_LENGTH) {
-      setError(tr("errors.tooLong", "Your message is too long."));
+      setError(tr("errors.tooLong", "Mesajınız çox uzundur."));
       return;
     }
 
@@ -251,7 +245,7 @@
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ language: language(), messages: payloadMessages() }),
+      body: JSON.stringify({ language: "az", messages: payloadMessages() }),
       signal: controller ? controller.signal : undefined
     }).then(function (response) {
       return response.json().catch(function () { return null; }).then(function (body) {
@@ -328,7 +322,6 @@
         setOpen(false);
       }
     });
-    window.addEventListener("aerova:languagechange", applyText);
   }
 
   function init() {

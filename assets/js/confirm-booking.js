@@ -20,13 +20,13 @@
     }
 
     var TEXTS = {
-        loading: ["api.booking.confirmLoadingTitle", "Confirming your booking", "api.booking.confirmLoading", "Please wait a moment..."],
-        done: ["api.booking.confirmDoneTitle", "Booking confirmed!", "api.booking.confirmDoneText", "Your booking is confirmed. Return to the AEROVA tab where you were booking: it continues to payment by itself. You can close this tab."],
-        already: ["api.booking.confirmAlreadyTitle", "Already confirmed", "api.booking.confirmAlreadyText", "This booking is already confirmed. Continue in the AEROVA tab where you were booking."],
-        expired: ["api.booking.confirmExpiredTitle", "This link has expired", "api.booking.confirmExpiredText", "The seats were held for a short time and are released. Please book again."],
-        used: ["api.booking.confirmUsedTitle", "This link was already used", "api.booking.confirmUsedText", "Open the AEROVA tab where you were booking and ask for a new link there."],
-        invalid: ["api.booking.confirmFailedTitle", "This link will not work", "api.booking.confirmInvalidText", "This link is invalid or has expired."],
-        error: ["api.booking.confirmFailedTitle", "This link will not work", "api.errors.generic", "Something went wrong. Please try again."]
+        loading: ["api.booking.confirmLoadingTitle", "Rezervasiya təsdiqlənir", "api.booking.confirmLoading", "Bir az gözləyin..."],
+        done: ["api.booking.confirmDoneTitle", "Rezervasiya təsdiqləndi!", "api.booking.confirmDoneText", "Rezervasiyanız təsdiqləndi. Rezerv etdiyiniz AEROVA səhifəsinə qayıdın: o, özü ödənişə davam edəcək. Bu səhifəni bağlaya bilərsiniz."],
+        already: ["api.booking.confirmAlreadyTitle", "Artıq təsdiqlənib", "api.booking.confirmAlreadyText", "Bu rezervasiya artıq təsdiqlənib. Rezerv etdiyiniz AEROVA səhifəsində davam edin."],
+        expired: ["api.booking.confirmExpiredTitle", "Keçidin vaxtı bitib", "api.booking.confirmExpiredText", "Yerlər qısa müddət tutulur və buraxılıb. Zəhmət olmasa yenidən rezerv edin."],
+        used: ["api.booking.confirmUsedTitle", "Keçid artıq istifadə olunub", "api.booking.confirmUsedText", "Rezerv etdiyiniz AEROVA səhifəsini açın və yeni keçidi orada istəyin."],
+        invalid: ["api.booking.confirmFailedTitle", "Bu keçid işləmir", "api.booking.confirmInvalidText", "Keçid etibarsızdır və ya vaxtı bitib."],
+        error: ["api.booking.confirmFailedTitle", "Bu keçid işləmir", "api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."]
     };
 
     function paint() {
@@ -80,7 +80,6 @@
         }
     }
 
-    window.addEventListener("aerova:languagechange", paint);
     paint();
 
     var token = takeToken();

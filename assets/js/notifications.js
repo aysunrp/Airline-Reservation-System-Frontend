@@ -94,7 +94,7 @@
     };
 
     /* The backend writes the status of a ticket in English; the same four words are translated by the Support page's keys. */
-    var SUPPORT_STATUS = { "Open": "Open", "In progress": "InProgress", "Waiting for your reply": "WaitingForCustomer", "Resolved": "Resolved" };
+    var SUPPORT_STATUS = { "Open": "Open", "İcradadır": "InProgress", "Cavabınız gözlənilir": "WaitingForCustomer", "Resolved": "Resolved" };
 
     function supportStatus(text) {
         var key = SUPPORT_STATUS[text];
@@ -139,13 +139,13 @@
 
     function destinationFor(notification) {
         if (notification.type === "SupportUpdate" && Number(notification.supportTicketId) > 0) {
-            return { href: "support.html?ticket=" + encodeURIComponent(notification.supportTicketId), labelKey: "notifications.openTicket", label: "Open conversation" };
+            return { href: "support.html?ticket=" + encodeURIComponent(notification.supportTicketId), labelKey: "notifications.openTicket", label: "Yazışmanı aç" };
         }
 
         if (BOOKING_TYPES[notification.type]) {
             var match = /\b[Bb]ooking(?: reference)? ([A-Z0-9]{6})\b/.exec(String(notification.message || ""));
             if (match) {
-                return { href: "booking-details.html?pnr=" + encodeURIComponent(match[1]), labelKey: "notifications.openBooking", label: "View booking" };
+                return { href: "booking-details.html?pnr=" + encodeURIComponent(match[1]), labelKey: "notifications.openBooking", label: "Rezervasiyaya bax" };
             }
         }
 
@@ -170,7 +170,7 @@
     function stateLabelMarkup(isUnread) {
         return '<span class="notification-state ' +
             (isUnread ? "notification-state--unread" : "notification-state--read") + '">' +
-            escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) +
+            escapeHtml(isUnread ? tr("common.unread", "Oxunmayıb") : tr("common.read", "Oxunub")) +
             "</span>";
     }
 
@@ -186,13 +186,13 @@
         return '<div class="notifications-empty" role="' + (kind === "error" ? "alert" : "status") + '">' +
             '<h2 class="notifications-empty-title">' + escapeHtml(title) + "</h2>" +
             '<p class="notifications-empty-text">' + escapeHtml(text) + "</p>" +
-            (withRetry ? '<button type="button" class="notifications-toolbar-button" id="notifications-retry">' + escapeHtml(tr("api.options.retry", "Try again")) + "</button>" : "") +
+            (withRetry ? '<button type="button" class="notifications-toolbar-button" id="notifications-retry">' + escapeHtml(tr("api.options.retry", "Yenidən cəhd et")) + "</button>" : "") +
             "</div>";
     }
 
     function render() {
         if (!notifications.length) {
-            paintList(statusMarkup("empty", tr("notifications.emptyTitle", "No Notifications"), tr("notifications.emptyText", "You are all caught up. Booking and flight updates will appear here when available."), false));
+            paintList(statusMarkup("empty", tr("notifications.emptyTitle", "Hamısı oxunub"), tr("notifications.emptyText", "Hamısı oxunub. Bron və uçuş yenilikləri burada görünəcək."), false));
             return;
         }
 
@@ -249,10 +249,10 @@
                         '<div class="notification-panel-inner">' +
                             '<p class="notification-message">' + escapeHtml(messageFor(notification)) + "</p>" +
                             '<dl class="notification-details">' +
-                                '<div class="notification-detail"><dt>' + escapeHtml(tr("common.date", "Date")) + "</dt><dd>" +
+                                '<div class="notification-detail"><dt>' + escapeHtml(tr("common.date", "Tarix")) + "</dt><dd>" +
                                     escapeHtml(formatDateTime(notification.createdAt)) + "</dd></div>" +
                                 '<div class="notification-detail"><dt>' + escapeHtml(tr("common.status", "Status")) + '</dt><dd class="notification-detail-status">' +
-                                    escapeHtml(isUnread ? tr("common.unread", "Unread") : tr("common.read", "Read")) + "</dd></div>" +
+                                    escapeHtml(isUnread ? tr("common.unread", "Oxunmayıb") : tr("common.read", "Oxunub")) + "</dd></div>" +
                             "</dl>" +
                         "</div>" +
                     "</div>" +
@@ -270,13 +270,13 @@
         if (!isApiError && window.console) {
             window.console.error(error);
         }
-        return isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again.");
+        return isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
     }
 
     function load() {
         var token = ++loadToken;
 
-        paintList(statusMarkup("loading", tr("api.notifications.loadingTitle", "Loading notifications"), tr("api.notifications.loadingText", "Please wait a moment."), false));
+        paintList(statusMarkup("loading", tr("api.notifications.loadingTitle", "Bildirişlər yüklənir"), tr("api.notifications.loadingText", "Zəhmət olmasa bir az gözləyin."), false));
 
         window.AEROVA_API.get("api/notifications").then(function (list) {
             if (token !== loadToken) {
@@ -290,7 +290,7 @@
                 return;
             }
             notifications = [];
-            var list = paintList(statusMarkup("error", tr("api.notifications.errorTitle", "We could not load your notifications"), apiMessage(error), true));
+            var list = paintList(statusMarkup("error", tr("api.notifications.errorTitle", "Bildirişlərinizi yükləmək mümkün olmadı"), apiMessage(error), true));
             var retry = list && list.querySelector("#notifications-retry");
             if (retry) {
                 retry.addEventListener("click", load);
@@ -314,7 +314,7 @@
         var state = card.querySelector(".notification-state");
         if (state) state.outerHTML = stateLabelMarkup(false);
         var detailStatus = card.querySelector(".notification-detail-status");
-        if (detailStatus) detailStatus.textContent = tr("common.read", "Read");
+        if (detailStatus) detailStatus.textContent = tr("common.read", "Oxunub");
     }
 
     function toggleNotification(card) {
@@ -374,12 +374,12 @@
 
     function markAllAsRead() {
         if (!notifications.length) {
-            showMessage(tr("notifications.noneToUpdate", "There are no notifications to update."));
+            showMessage(tr("notifications.noneToUpdate", "Yenilənəcək bildiriş yoxdur."));
             return;
         }
 
         if (!notifications.some(function (item) { return !item.isRead; })) {
-            showMessage(tr("notifications.allAlreadyRead", "All notifications are already read."));
+            showMessage(tr("notifications.allAlreadyRead", "Bütün bildirişlər artıq oxunub."));
             return;
         }
 
@@ -387,7 +387,7 @@
             notifications.forEach(function (item) { item.isRead = true; });
             render();
             announceChange();
-            showMessage(tr("notifications.allMarkedRead", "All notifications marked as read."));
+            showMessage(tr("notifications.allMarkedRead", "Bütün bildirişlər oxunmuş kimi işarələndi."));
         }).catch(function (error) {
             showMessage(apiMessage(error));
         });
@@ -395,7 +395,7 @@
 
     function clearNotifications() {
         if (!notifications.length) {
-            showMessage(tr("notifications.noneToClear", "There are no notifications to clear."));
+            showMessage(tr("notifications.noneToClear", "Təmizlənəcək bildiriş yoxdur."));
             return;
         }
 
@@ -404,7 +404,7 @@
             expandedIds = {};
             render();
             announceChange();
-            showMessage(tr("notifications.allCleared", "All notifications have been cleared."));
+            showMessage(tr("notifications.allCleared", "Bütün bildirişlər təmizləndi."));
         }).catch(function (error) {
             showMessage(apiMessage(error));
         });
@@ -455,7 +455,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? tr("nav.closeMenu", "Close menu") : tr("nav.openMenu", "Open menu"));
+            toggle.setAttribute("aria-label", open ? tr("nav.closeMenu", "Menyunu bağla") : tr("nav.openMenu", "Menyunu aç"));
         }
 
         toggle.addEventListener("click", function () {
@@ -493,10 +493,4 @@
         init();
     }
 
-    window.addEventListener("aerova:languagechange", function () {
-        if (notifications.length) {
-            try { render(); } catch (error) { /* the next load repaints */ }
-        }
-        if (window.AEROVA_I18N) window.AEROVA_I18N.applyTranslations(document);
-    });
 })();

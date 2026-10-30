@@ -10,8 +10,8 @@
     }
 
     var MONTH_NAMES = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun",
+        "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
     ];
 
     var activeBooking = null;
@@ -51,7 +51,7 @@
             return String(dateValue);
         }
 
-        return day + " " + MONTH_NAMES[month - 1] + " " + year;
+        return (day < 10 ? "0" + day : day) + "." + (month < 10 ? "0" + month : month) + "." + year;
     }
 
     function writeJSON(key, value) {
@@ -117,7 +117,7 @@
         }
 
         input.classList.add("is-invalid");
-        input.setAttribute("placeholder", message || tr("manage.fieldRequired", "This field is required"));
+        input.setAttribute("placeholder", message || tr("manage.fieldRequired", "Bu sahə mütləqdir"));
 
         if (!String(input.value || "").trim()) {
             input.value = "";
@@ -133,12 +133,12 @@
         clearFieldError(lastNameInput);
 
         if (!pnrInput || !String(pnrInput.value || "").trim()) {
-            markInvalid(pnrInput, tr("manage.enterPnr", "Enter your booking reference"));
+            markInvalid(pnrInput, tr("manage.enterPnr", "Bron istinadını daxil edin"));
             isValid = false;
         }
 
         if (!lastNameInput || !String(lastNameInput.value || "").trim()) {
-            markInvalid(lastNameInput, tr("manage.enterLastName", "Enter the passenger last name"));
+            markInvalid(lastNameInput, tr("manage.enterLastName", "Sərnişinin soyadını daxil edin"));
             isValid = false;
         }
 
@@ -154,8 +154,8 @@
         results.hidden = false;
         results.innerHTML =
             '<div class="booking-not-found">' +
-                '<h2 class="booking-not-found-title">' + tr("manage.notFoundTitle", "Booking Not Found") + '</h2>' +
-                '<p class="booking-not-found-text">' + tr("manage.notFoundText", "We could not find a reservation matching that reference and last name. Please check your details and try again.") + '</p>' +
+                '<h2 class="booking-not-found-title">' + tr("manage.notFoundTitle", "Bron tapılmadı") + '</h2>' +
+                '<p class="booking-not-found-text">' + tr("manage.notFoundText", "Bu istinad və soyada uyğun rezervasiya tapılmadı. Məlumatları yoxlayıb yenidən cəhd edin.") + '</p>' +
             "</div>";
     }
 
@@ -176,10 +176,10 @@
     }
 
     function statusLabel(status) {
-        if (status === "Cancelled") return tr("common.statusCancelled", "Cancelled");
-        if (status === "Completed") return tr("api.trips.statusCompleted", "Completed");
-        if (status === "Pending") return tr("api.manage.awaitingPayment", "Awaiting payment");
-        return tr("common.statusConfirmed", "Confirmed");
+        if (status === "Cancelled") return tr("common.statusCancelled", "Ləğv edilib");
+        if (status === "Completed") return tr("api.trips.statusCompleted", "Tamamlandı");
+        if (status === "Pending") return tr("api.manage.awaitingPayment", "Ödəniş gözlənilir");
+        return tr("common.statusConfirmed", "Təsdiqlənib");
     }
 
     function renderBookingResult(result) {
@@ -190,24 +190,24 @@
 
         results.hidden = false;
         results.innerHTML =
-            '<article class="booking-result-card" aria-label="' + tr("manage.resultAria", "Booking result") + '">' +
+            '<article class="booking-result-card" aria-label="' + tr("manage.resultAria", "Bron nəticəsi") + '">' +
                 '<div class="booking-result-top">' +
                     "<div>" +
-                        '<p class="booking-result-pnr-label">' + tr("manage.bookingReference", "Booking Reference") + '</p>' +
+                        '<p class="booking-result-pnr-label">' + tr("manage.bookingReference", "Bron istinadı") + '</p>' +
                         '<p class="booking-result-pnr">' + escapeHtml(result.pnr) + "</p>" +
                     "</div>" +
                     '<p class="booking-status-badge">' + escapeHtml(statusLabel(result.status)) + "</p>" +
                 "</div>" +
                 '<dl class="booking-result-meta">' +
-                    '<div class="booking-result-meta-item"><dt>' + tr("manage.passenger", "Passenger") + '</dt><dd>' + escapeHtml(result.passenger || "\u2014") + "</dd></div>" +
-                    '<div class="booking-result-meta-item"><dt>' + tr("manage.flight", "Flight") + '</dt><dd>' + escapeHtml(result.flightNumber) + "</dd></div>" +
-                    '<div class="booking-result-meta-item"><dt>' + tr("manage.route", "Route") + '</dt><dd>' + escapeHtml(result.route) + "</dd></div>" +
-                    '<div class="booking-result-meta-item"><dt>' + tr("manage.date", "Date") + '</dt><dd>' + escapeHtml(formatDisplayDate(result.date)) + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.passenger", "Sərnişin") + '</dt><dd>' + escapeHtml(result.passenger || "\u2014") + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.flight", "Uçuş") + '</dt><dd>' + escapeHtml(result.flightNumber) + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.route", "Marşrut") + '</dt><dd>' + escapeHtml(result.route) + "</dd></div>" +
+                    '<div class="booking-result-meta-item"><dt>' + tr("manage.date", "Tarix") + '</dt><dd>' + escapeHtml(formatDisplayDate(result.date)) + "</dd></div>" +
                 "</dl>" +
                 '<div class="booking-result-actions">' +
-                    '<button class="booking-action-button booking-action-button--primary" type="button" data-action="view">' + tr("manage.viewBooking", "View Booking") + '</button>' +
+                    '<button class="booking-action-button booking-action-button--primary" type="button" data-action="view">' + tr("manage.viewBooking", "Bronu göstər") + '</button>' +
                     (result.status === "Confirmed" || result.status === "Pending"
-                        ? '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="cancel">' + tr("manage.cancelBooking", "Cancel Booking") + '</button>'
+                        ? '<button class="booking-action-button booking-action-button--secondary" type="button" data-action="cancel">' + tr("manage.cancelBooking", "Bronu ləğv et") + '</button>'
                         : "") +
                 "</div>" +
             "</article>";
@@ -228,7 +228,7 @@
         try {
             sessionStorage.setItem("aerovaManaged", JSON.stringify({ pnr: activeBooking.pnr, lastName: activeBooking.lastName }));
         } catch (error) {
-            showMessage(tr("api.errors.generic", "Something went wrong. Please try again."));
+            showMessage(tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             return;
         }
 
@@ -276,7 +276,7 @@
             if (!isApiError && window.console) {
                 window.console.error(error);
             }
-            showMessage(isApiError ? error.userMessage : tr("api.errors.generic", "Something went wrong. Please try again."));
+            showMessage(isApiError ? error.userMessage : tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
         }).then(function () {
             if (button) {
                 button.disabled = false;
@@ -299,7 +299,7 @@
         function setMenu(open) {
             header.classList.toggle("is-menu-open", open);
             toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            toggle.setAttribute("aria-label", open ? tr("manage.closeMenu", "Close menu") : tr("manage.openMenu", "Open menu"));
+            toggle.setAttribute("aria-label", open ? tr("manage.closeMenu", "Menyunu bağla") : tr("manage.openMenu", "Menyunu aç"));
         }
 
         toggle.addEventListener("click", function () {
