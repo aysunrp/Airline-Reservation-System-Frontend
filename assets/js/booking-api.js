@@ -14,7 +14,7 @@
   var GENDERS = { "male": "Male", "female": "Female", "other": "Other", "prefer not to say": "PreferNotToSay", "prefernottosay": "PreferNotToSay" };
   var DOCUMENT_TYPES = { "passport": "Passport", "az_id_card": "NationalIdCard", "id card": "NationalIdCard" };
   var CABINS = { "economy": "Economy", "comfort": "Comfort", "business": "Business" };
-  var TRIP_TYPES = { "one-way": "OneWay", "oneway": "OneWay", "one_way": "OneWay", "round-trip": "RoundTrip", "roundtrip": "RoundTrip", "multi-city": "MultiCity", "multicity": "MultiCity" };
+  var TRIP_TYPES = { "one-way": "OneWay", "oneway": "OneWay", "one_way": "OneWay", "round-trip": "RoundTrip", "roundtrip": "RoundTrip" };
 
   function lookup(table, value, label) {
     var mapped = table[String(value || "").trim().toLowerCase()];
@@ -100,7 +100,7 @@
     });
   }
 
-  /* The request the API expects, from bookingData: one flight, the two flights of a round trip, or the flights of a multi-city trip. */
+  /* The request the API expects, from bookingData: one flight, or the two flights of a round trip. */
   function buildRequest(bookingData) {
     if (!bookingData || !bookingData.flight || !Array.isArray(bookingData.passengers) || !bookingData.passengers.length) {
       throw new TypeError("Bron məlumatları natamamdır.");
@@ -110,9 +110,11 @@
     var legs = bookingData.legs && bookingData.legs.length
       ? bookingData.legs
       : [{ flight: bookingData.flight, cabinClass: bookingData.cabinClass }];
-    var chosen = bookingData.flight.tripType ? lookup(TRIP_TYPES, bookingData.flight.tripType, "trip type") : "OneWay";
-    // Two to six flights chosen as a multi-city trip; two flights back and forth are a round trip.
-    var tripType = legs.length > 1 ? (chosen === "MultiCity" || legs.length > 2 ? "MultiCity" : "RoundTrip") : "OneWay";
+    // Two flights back and forth are a round trip, one flight is one-way; there is no other kind of trip.
+    var tripType = legs.length === 2 ? "RoundTrip" : "OneWay";
+    if (legs.length > 2) {
+      throw new TypeError("Bron məlumatları natamamdır.");
+    }
 
     var flightId = positiveInteger(legs[0].flight.id, "flight");
 

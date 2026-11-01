@@ -378,7 +378,7 @@
 
     /*
      * The seats of one passenger (card number n) on every flight of the trip, named by flight: "Outbound seat: 12A · Return seat:
-     * 14C" on a round trip, "Flight 1 seat: ... · Flight 2 seat: ..." on a multi-city trip. Each flight has its own seat.
+     * 14C" on a round trip. Each flight has its own seat.
      */
     function seatLineFor(number, fallbackSeat) {
         var legs = activeLegSeats.length > 1 ? activeLegSeats : null;
@@ -386,7 +386,7 @@
             return tr("travelDocs.selectedSeat", "Seçilmiş oturacaq: {seat}", { seat: fallbackSeat });
         }
 
-        var roundTrip = legs.length === 2 && !(activeLegs[0] && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(activeLegs[0]));
+        var roundTrip = legs.length === 2;
         return legs.map(function (legSeats, legIndex) {
             var seat = legSeats[number - 1] || "—";
             if (roundTrip) {
@@ -400,7 +400,7 @@
 
     /* The seats of the whole trip for the summary, named by flight. */
     function legSeatsSummary(lists) {
-        var roundTrip = lists.length === 2 && !(activeLegs[0] && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(activeLegs[0]));
+        var roundTrip = lists.length === 2;
         return lists.map(function (list, legIndex) {
             var seats = list.join(", ") || "—";
             if (roundTrip) {
@@ -1457,7 +1457,7 @@
         var chosen = readSelectedFlight();
         activeLegs = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.legs(chosen) : (chosen ? [chosen] : []);
 
-        // A flight of a round trip or a multi-city trip without the other flights cannot be booked on its own.
+        // The return flight of a round trip without its outbound flight cannot be booked on its own.
         var returnWithoutOutbound = !!chosen && !!window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isIncomplete(chosen, activeLegs);
         var flightData = returnWithoutOutbound ? null : (activeLegs[0] || null);
         var passengerCount = resolvePassengerCount(flightData);
@@ -1477,9 +1477,7 @@
 
         if (!flightData) {
             showMessage(returnWithoutOutbound
-                ? (window.AEROVA_JOURNEY.isMultiCity(chosen)
-                    ? tr("api.journey.legsMissing", "Bu səfərin bəzi reysləri çatışmır. Axtarışı yenidən başladın.")
-                    : tr("api.journey.outboundMissing", "Bu gediş-qayıdış səyahətinin gediş reysi tapılmadı. Zəhmət olmasa axtarışa yenidən başlayın."))
+                ? tr("api.journey.outboundMissing", "Bu gediş-qayıdış səyahətinin gediş reysi tapılmadı. Zəhmət olmasa axtarışa yenidən başlayın.")
                 : tr("passengers.noBooking", "Bron tapılmadı. Əvvəlcə uçuş və oturacaq seçin."));
             setFormsVisibility(false);
             if (container) {

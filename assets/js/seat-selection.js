@@ -266,9 +266,7 @@
         var flight = flightData || {};
 
         var title = document.querySelector(".seat-title");
-        if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isMultiCity(flight)) {
-            title.textContent = tr("api.journey.seatsLeg", "Yerlərinizi seçin: {total} reysdən {n}-ci", { n: window.AEROVA_JOURNEY.legNumber(flight), total: flight.multi.count });
-        } else if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isRoundTrip(flight)) {
+        if (title && window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.isRoundTrip(flight)) {
             title.textContent = window.AEROVA_JOURNEY.isReturnLeg(flight)
                 ? tr("api.journey.seatsReturn", "Qayıdış yerlərini seçin")
                 : tr("api.journey.seatsOutbound", "Gediş yerlərini seçin");
