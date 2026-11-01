@@ -183,7 +183,7 @@
         };
     }
 
-    /* A trip of several flights (round trip, multi-city): the documents every flight accepts, the strictest validity, international if any flight is. */
+    /* A trip of several flights (a round trip): the documents every flight accepts, the strictest validity, international if any flight is. */
     function documentOptionsForLegs(legs, nationality) {
         var list = (legs || []).filter(Boolean);
         if (!list.length) return documentOptions(null, nationality);
