@@ -82,6 +82,9 @@
         criteria.cheapest = params.get("cheapest") === "1";
         criteria.defaultPeriod = params.get("defaultPeriod") === "1";
         criteria.single = params.get("single") === "1";
+        // The fastest flight, and direct or connecting flights only (from the voice search).
+        criteria.fastest = params.get("fastest") === "1";
+        criteria.stops = params.get("stops") === "direct" || params.get("stops") === "connecting" ? params.get("stops") : "";
         criteria.showAll = params.get("all") === "1";
         criteria.cheapestId = params.get("cheapestId") || "";
         criteria.range = !criteria.departureDate &&
@@ -370,6 +373,11 @@
             var found = (legs && legs[0] && legs[0].flights) || [];
             var pageFlights = found.map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
 
+            // Journeys with one transfer sit among the direct flights: the same cards, filters and sorting, one price for the whole journey.
+            ((legs && legs[0] && legs[0].connections) || []).forEach(function (dto) {
+                pageFlights.push(window.AEROVA_FLIGHTS.toConnectionFlight(dto, airports));
+            });
+
             // Only the part of the day that was asked for; when nothing else is left it is said, and the other flights are not shown instead.
             var leftOutByTime = 0;
             if (criteria.timeOfDay) {
@@ -408,9 +416,28 @@
             paintOutboundNote(criteria);
             viewState = "ready";
             statusSpec = null;
+            applyVoicePreferences(criteria);
             refreshResults();
         }).catch(function (error) {
             showLoadError(error, token);
+        });
+    }
+
+    /* A spoken "ən sürətli" or "birbaşa"/"transferli" sets the sorting and the stops filter once; the traveller can change both afterwards. */
+    function applyVoicePreferences(criteria) {
+        var sortSelect = document.getElementById("sort-by-select");
+
+        if (criteria.fastest && !criteria.cheapest && sortSelect) {
+            sortSelect.value = "fastest";
+        }
+
+        if (!criteria.stops) {
+            return;
+        }
+
+        var wanted = criteria.stops === "direct" ? ["Non-stop"] : ["1 Stop", "2+"];
+        document.querySelectorAll('input[name="filter-stops"]').forEach(function (input) {
+            input.checked = wanted.indexOf(input.value) !== -1;
         });
     }
 
@@ -422,7 +449,8 @@
         baseFlights = [];
 
         if (error && error.unknownCity) {
-            setStatus({ kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı", textKey: "api.search.unknownAirport", textFallback: "We do not fly from or to \"" + error.unknownCity + "\" yet. Please choose another city.", vars: { city: error.unknownCity } });
+            // A city that is not in the list is not the same as a city with no flights: the title and the words say which one it is.
+            setStatus({ kind: "notice", titleKey: "api.search.unknownAirportTitle", titleFallback: "Şəhər tapılmadı", textKey: "api.search.unknownAirport", textFallback: "\"" + error.unknownCity + "\" adlı şəhər AEROVA-nın şəhər siyahısında yoxdur. Adı yoxlayın və ya siyahıdan şəhər seçin.", vars: { city: error.unknownCity } });
             return;
         }
 
@@ -481,7 +509,8 @@
                 cabinClass: resolveCabinName(criteria.cabinClass) || null,
                 passengers: isFinite(travellers) ? Math.min(9, Math.max(1, travellers)) : 1,
                 timeOfDay: criteria.timeOfDay ? criteria.timeOfDay.charAt(0).toUpperCase() + criteria.timeOfDay.slice(1) : null,
-                sortBy: criteria.cheapest ? "price" : "departure",
+                sortBy: criteria.cheapest ? "price" : criteria.fastest ? "duration" : "departure",
+                stops: criteria.stops || null,
                 // "The cheapest flight": the API compares the whole period first and returns every flight at the lowest fare, and no dearer one.
                 lowestOnly: isSingleCheapest(criteria)
             });
@@ -491,10 +520,16 @@
             }
 
             var pageFlights = ((result && result.flights) || []).map(function (dto) { return window.AEROVA_FLIGHTS.toPageFlight(dto, airports); });
+
+            // Journeys of two flights through a transfer airport belong to the period as well, as on a one-day search: the same cards, one price.
+            ((result && result.connections) || []).forEach(function (dto) {
+                pageFlights.push(window.AEROVA_FLIGHTS.toConnectionFlight(dto, airports));
+            });
+
             // After "view other flights" the flight that was already shown is not listed again.
             if (criteria.showAll && criteria.cheapestId) {
                 var already = criteria.cheapestId.split(",");
-                pageFlights = pageFlights.filter(function (flight) { return already.indexOf(String(flight.id)) === -1; });
+                pageFlights = pageFlights.filter(function (flight) { return already.indexOf(String(flight.instanceId || flight.id)) === -1; });
             }
 
             rangeInfo = { total: (result && result.totalFound) || pageFlights.length, shown: pageFlights.length, lowest: (result && result.lowestPriceCount) || 0 };
@@ -517,7 +552,7 @@
 
             var sortSelect = document.getElementById("sort-by-select");
             if (sortSelect) {
-                sortSelect.value = criteria.cheapest ? "cheapest" : "earliest";
+                sortSelect.value = criteria.cheapest ? "cheapest" : criteria.fastest ? "fastest" : "earliest";
             }
 
             viewState = "ready";
@@ -654,7 +689,7 @@
             button.id = "voice-others";
             button.className = "select-flight-button voice-others-button";
             button.addEventListener("click", function () {
-                var shownId = baseFlights.map(function (flight) { return String(flight.id); }).join(",");
+                var shownId = baseFlights.map(function (flight) { return String(flight.instanceId || flight.id); }).join(",");
                 reloadWith(function (params) {
                     params.set("all", "1");
                     params.set("cheapestId", shownId);
@@ -698,6 +733,8 @@
             }
         } else if (criteria.range && criteria.cheapest) {
             lines.push(say("voice.results.cheapestNote", "Bunlar bu dövrdə tapılan ən ucuz qiymətlərdir. Digər tarixlərdə qiymətlər fərqli ola bilər."));
+        } else if (criteria.range && criteria.fastest) {
+            lines.push(say("voice.results.fastestNote", "Bunlar bu dövrdə tapılan ən qısa müddətli uçuşlardır, qısa olandan başlayaraq."));
         }
 
         if (criteria.range && criteria.defaultPeriod) {
@@ -705,7 +742,9 @@
         }
 
         if (criteria.range && !single && viewState === "ready" && rangeInfo.total > rangeInfo.shown) {
-            lines.push(say("voice.results.truncated", "{total} uçuşdan ən ucuz {shown} göstərilir.", { shown: rangeInfo.shown, total: rangeInfo.total }));
+            lines.push(criteria.fastest && !criteria.cheapest
+                ? say("voice.results.truncatedFastest", "{total} uçuşdan ən qısa {shown} göstərilir.", { shown: rangeInfo.shown, total: rangeInfo.total })
+                : say("voice.results.truncated", "{total} uçuşdan ən ucuz {shown} göstərilir.", { shown: rangeInfo.shown, total: rangeInfo.total }));
         }
 
         if (!lines.length) {
@@ -785,6 +824,27 @@
         return " · " + (typeof t === "function" ? t("results.via", { codes: codes }) : "via " + codes);
     }
 
+    function waitLabel(minutes) {
+        var hours = Math.floor(minutes / 60);
+        var rest = minutes % 60;
+        return hours + "s " + (rest < 10 ? "0" : "") + rest + "d";
+    }
+
+    /* The flights of a journey with a transfer and the wait between them, under the card's ordinary details. */
+    function connectionDetailMarkup(flight) {
+        if (!flight.legsData || !flight.transfer) {
+            return "";
+        }
+
+        var lines = flight.legsData.map(function (part) {
+            return '<p class="detail-item connection-leg"><span class="detail-label">' + escapeHtml(part.flightNumber) + "</span> " +
+                escapeHtml(part.fromCode + " " + part.departure + " → " + part.toCode + " " + part.arrival) + "</p>";
+        }).join("");
+
+        return lines + '<p class="detail-item connection-transfer"><span class="detail-label">' + escapeHtml(say("results.transferLabel", "Aktarma")) + "</span> " +
+            escapeHtml(flight.transfer.city + " (" + flight.transfer.code + "), " + say("results.transferWait", "gözləmə") + " " + waitLabel(flight.transfer.minutes)) + "</p>";
+    }
+
     function createFlightCard(flight, selectedCabin) {
         var price = getCabinPrice(flight, selectedCabin);
         var displayDate = formatDisplayDate(flight.date) || "Tarix seçilməyib";
@@ -814,6 +874,7 @@
                     return flight.stops;
                 })() + stopoverCodesLabel(flight)) + "</p>" +
                 '<p class="detail-item"><span class="detail-label">' + escapeHtml(typeof t === "function" ? t("flightDetails.aircraft") : "Aircraft") + '</span> ' + escapeHtml(flight.aircraft) + "</p>" +
+                connectionDetailMarkup(flight) +
                 buildCabinOptionsMarkup(flight, selectedCabin) +
             "</div>" +
             '<div class="flight-card-action">' +
@@ -908,8 +969,9 @@
 
     function applyClientFilters(flights, filterState) {
         return flights.filter(function (flight) {
-            if (filterState.stops.length && filterState.stops.indexOf(flight.stops) === -1 &&
-                !(flight.stopsCount >= 2 && filterState.stops.indexOf("2+") !== -1)) {
+            if (filterState.stops.length && !filterState.stops.some(function (value) {
+                return value === "2+" ? flight.stopsCount >= 2 : (value === "1 Stop" ? flight.stopsCount === 1 : flight.stopsCount === 0);
+            })) {
                 return false;
             }
 
@@ -1064,10 +1126,11 @@
         });
     }
 
-    function saveSelectedFlight(flight, cabinClass, criteria) {
+    /* The booking page's record of one flight of the trip. */
+    function selectionOf(flight, cabinClass, criteria) {
         var price = getCabinPrice(flight, cabinClass);
 
-        var selection = {
+        return {
             id: flight.id,
             flightNumber: flight.flightNumber,
             from: flight.from,
@@ -1094,8 +1157,18 @@
             tripType: criteria.tripType,
             leg: criteria.leg,
             departureAtUtc: flight.departureAtUtc || null,
-            arrivalAtUtc: flight.arrivalAtUtc || null
+            arrivalAtUtc: flight.arrivalAtUtc || null,
+            journeyNo: criteria.leg
         };
+    }
+
+    function saveSelectedFlight(flight, cabinClass, criteria) {
+        // A journey with a transfer is chosen as one: its first flight is the selection and the other flights follow it (seats are chosen flight by flight).
+        var parts = flight.legsData || [flight];
+        var selection = selectionOf(parts[0], cabinClass, criteria);
+        if (parts.length > 1) {
+            selection.via = parts.slice(1).map(function (part) { return selectionOf(part, cabinClass, criteria); });
+        }
 
         // Choosing a new first flight starts a new trip; the later flights keep the ones before them.
         if (criteria.leg === 1 && window.AEROVA_JOURNEY) {
@@ -1168,7 +1241,10 @@
                 });
             });
 
-            if (viewDetailsButton) {
+            if (viewDetailsButton && flight.legsData) {
+                // A journey with a transfer shows all of its flights in the card itself.
+                viewDetailsButton.hidden = true;
+            } else if (viewDetailsButton) {
                 viewDetailsButton.addEventListener("click", function () {
                     openFlightDetails(flight, criteria);
                 });

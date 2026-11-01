@@ -540,7 +540,28 @@
         var params = new URLSearchParams();
         params.set("from", result.origin.city);
         params.set("to", result.destination.city);
-        params.set("passengers", String(result.passengers || 1));
+        // Seats are the adults and the children; an infant travels on an adult's lap and has no seat of its own.
+        var seats = result.adults ? result.adults + (result.children || 0) : (result.passengers || 1);
+        params.set("passengers", String(seats));
+
+        if (result.adults) {
+            params.set("adults", String(result.adults));
+            params.set("children", String(result.children || 0));
+            params.set("infants", String(result.infants || 0));
+        }
+
+        if (result.fastest) {
+            params.set("fastest", "1");
+        }
+
+        if (result.stops) {
+            params.set("stops", result.stops);
+        }
+
+        if (result.date && result.returnDate) {
+            params.set("tripType", "roundtrip");
+            params.set("returnDate", result.returnDate);
+        }
 
         if (result.cabinClass) {
             params.set("cabinClass", result.cabinClass);
@@ -578,11 +599,15 @@
             from: result.origin.city,
             to: result.destination.city,
             query: query,
-            passengers: result.passengers || 1
+            passengers: seats
         };
 
         if (result.date) {
             data.departureDate = result.date;
+        }
+
+        if (result.date && result.returnDate) {
+            data.returnDate = result.returnDate;
         }
 
         if (result.cabinClass) {
@@ -656,20 +681,37 @@
 
         setProcessing(true);
 
-        api.post("api/voice-search/interpret", { text: query, language: "az" }).then(function (result) {
-            if (!result || result.status !== "ready" || !result.origin || !result.destination) {
-                setProcessing(false);
-                var issues = (result && result.issues) || [];
-                showMessage(issues.length
-                    ? issues.map(issueText).join(" ")
-                    : say("home.voiceEmpty", "Haraya uçmaq istədiyinizi deyin və ya yazın."));
-                input.focus();
-                return;
-            }
-
-            goToResults(result, query);
-        }, function (error) {
+        // The loading state always ends: on success, on failure, and by a watchdog if the answer never comes.
+        var watchdog = window.setTimeout(function () {
+            if (!busy) return;
             setProcessing(false);
+            showMessage(say("voice.unreachable", "Sorğunuzu oxumaq üçün serverə qoşula bilmədik. Yenidən cəhd edin."));
+        }, 25000);
+
+        function finish() {
+            window.clearTimeout(watchdog);
+            setProcessing(false);
+        }
+
+        api.post("api/voice-search/interpret", { text: query, language: "az" }).then(function (result) {
+            try {
+                if (!result || result.status !== "ready" || !result.origin || !result.destination) {
+                    finish();
+                    var issues = (result && result.issues) || [];
+                    showMessage(issues.length
+                        ? issues.map(issueText).join(" ")
+                        : say("home.voiceEmpty", "Haraya uçmaq istədiyinizi deyin və ya yazın."));
+                    input.focus();
+                    return;
+                }
+
+                goToResults(result, query);
+            } catch (error) {
+                finish();
+                showMessage(say("voice.unreachable", "Sorğunuzu oxumaq üçün serverə qoşula bilmədik. Yenidən cəhd edin."));
+            }
+        }, function (error) {
+            finish();
 
             if (error && error.status && error.userMessage) {
                 showMessage(error.userMessage);
