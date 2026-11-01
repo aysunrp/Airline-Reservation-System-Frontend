@@ -103,7 +103,6 @@
             duration: durationLabel(arrival.utcMinutes - departure.utcMinutes),
             aircraft: "AEROVA " + leg.aircraftModel,
             seats: booking.legs.map(function (item) { return item.seats.join(", "); }).filter(Boolean).join(" | ") || "—",
-            multiCity: booking.tripType === "MultiCity",
             extraFlights: booking.legs.slice(1).map(function (item) {
                 return { flight: item.flightNumber, route: item.originCity + " \u2192 " + item.destinationCity };
             })
@@ -125,10 +124,8 @@
                         '<p class="trip-card-airline">AEROVA</p>' +
                         '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
                         '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Uçuş {number}", { number: card.flightNumber })) + "</p>" +
-                        card.extraFlights.map(function (other, index) {
-                            return '<p class="trip-card-flight">' + escapeHtml(card.multiCity
-                                ? tr("api.journey.tripLegLine", "Reys {n}: {flight}, {route}", { n: index + 2, flight: other.flight, route: other.route })
-                                : tr("api.journey.returnTripLine", "Qayıdış {flight}, {route}", { flight: other.flight, route: other.route })) + "</p>";
+                        card.extraFlights.map(function (other) {
+                            return '<p class="trip-card-flight">' + escapeHtml(tr("api.journey.returnTripLine", "Qayıdış {flight}, {route}", { flight: other.flight, route: other.route })) + "</p>";
                         }).join("") +
                     "</div>" +
                     '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +

@@ -241,8 +241,7 @@
             passengerCount: passengers.length,
             selectedSeats: seats,
             seatsText: seatsByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | "),
-            // The other flights of the trip: the return flight of a round trip, or the next flights of a multi-city trip.
-            multiCity: booking.tripType === "MultiCity",
+            // The other flight of the trip: the return flight of a round trip.
             extraFlights: booking.legs.slice(1).map(function (item, index) {
                 var other = flightOf(item);
                 other.seats = seatsByLeg[index + 1].join(", ");
@@ -258,7 +257,7 @@
         var card = document.querySelector('article[aria-labelledby="flight-details-title"]');
         var extra = bookingData.extraFlights || [];
         var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
-            return bookingData.multiCity ? tr("api.journey.flightTitle", "Reys {n}", { n: number }) : tr("api.journey.returnFlightTitle", "Qayıdış reysi");
+            return tr("api.journey.returnFlightTitle", "Qayıdış reysi");
         }) : [];
 
         copies.forEach(function (copy, index) {
