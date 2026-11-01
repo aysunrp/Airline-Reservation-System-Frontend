@@ -39,28 +39,6 @@
             .replace(/'/g, "&#39;");
     }
 
-    /* The searches of a multi-city trip: they all travel in the link as JSON (and as from1, to1, departureDate1... too). */
-    function readSegments(params) {
-        var list = [];
-
-        try {
-            list = JSON.parse(params.get("segmentsJson") || "[]");
-        } catch (error) {
-            list = [];
-        }
-
-        if (!Array.isArray(list) || list.length < 2) {
-            list = [];
-            for (var number = 1; number <= 6 && params.get("from" + number); number += 1) {
-                list.push({ from: params.get("from" + number), to: params.get("to" + number) || "", departureDate: params.get("departureDate" + number) || "" });
-            }
-        }
-
-        return list.filter(function (item) {
-            return item && typeof item.from === "string" && typeof item.to === "string" && typeof item.departureDate === "string";
-        }).slice(0, 6);
-    }
-
     /* Who travels: adults, children and infants. An older link only has the number of seats, all of them adults. */
     function readMix(params, seats) {
         var adults = parseInt(params.get("adults"), 10);
@@ -88,11 +66,13 @@
             returnDate: params.get("returnDate") || "",
             passengers: params.get("passengers") || "1",
             cabinClass: (params.get("cabinClass") || "").trim(),
-            // Which flight of the trip is being chosen. 2 on a round trip = the return flight (the link already holds the way
-            // back as from/to and the return date); on a multi-city trip it counts up to the number of searches.
-            leg: Math.max(1, Math.floor(Number(params.get("leg")) || 1)),
-            multi: null
+            // Which flight of the trip is being chosen: 2 on a round trip = the return flight (the link already holds the way
+            // back as from/to and the return date).
+            leg: Math.max(1, Math.floor(Number(params.get("leg")) || 1))
         };
+
+        // Only one-way and round trip exist; an older link that says anything else is searched as one-way.
+        criteria.tripType = /round/i.test(criteria.tripType) ? "roundtrip" : (criteria.tripType ? "oneway" : "");
 
         // Voice search: a part of the day, or a whole period (the cheapest flight, "next week", no day at all) instead of one day.
         var part = (params.get("timeOfDay") || "").toLowerCase();
@@ -104,7 +84,7 @@
         criteria.single = params.get("single") === "1";
         criteria.showAll = params.get("all") === "1";
         criteria.cheapestId = params.get("cheapestId") || "";
-        criteria.range = !criteria.departureDate && !/multi/i.test(criteria.tripType) &&
+        criteria.range = !criteria.departureDate &&
             Boolean(parseISODate(criteria.dateFrom) && parseISODate(criteria.dateTo));
 
         var mix = readMix(params, Math.max(1, parseInt(criteria.passengers, 10) || 1));
@@ -112,36 +92,17 @@
         criteria.children = mix.children;
         criteria.infants = mix.infants;
 
-        if (/multi/i.test(criteria.tripType)) {
-            var segments = readSegments(params);
-
-            if (segments.length >= 2) {
-                criteria.leg = Math.min(criteria.leg, segments.length);
-                var segment = segments[criteria.leg - 1];
-                criteria.from = segment.from.trim();
-                criteria.to = segment.to.trim();
-                criteria.fromCode = String(segment.fromCode || "").trim();
-                criteria.toCode = String(segment.toCode || "").trim();
-                criteria.departureDate = segment.departureDate;
-                criteria.multi = { count: segments.length, segments: segments };
-            }
-        } else {
-            criteria.leg = criteria.leg === 2 ? 2 : 1;
-        }
+        criteria.leg = criteria.leg === 2 ? 2 : 1;
 
         return criteria;
     }
 
-    /* The flight chosen just before the one being chosen now: the outbound flight, or the earlier flight of a multi-city trip. */
+    /* The flight chosen just before the one being chosen now: the outbound flight when the return flight is being chosen. */
     function previousFlight(criteria) {
         var journey = window.AEROVA_JOURNEY;
 
         if (!journey || criteria.leg < 2) {
             return null;
-        }
-
-        if (criteria.multi) {
-            return journey.previous(criteria.leg);
         }
 
         return criteria.leg === 2 ? journey.outbound() : null;
@@ -603,14 +564,10 @@
             seats: seats ? ", " + seats : ""
         };
 
-        note.textContent = criteria.multi
-            ? say("api.journey.previousChosen", "Reys {n}: {flight}, {route}, {date}, {cabin}{seats}", vars)
-            : say("api.journey.outboundChosen", "Gediş: {flight}, {route}, {date}, {cabin}{seats}", vars);
+        note.textContent = say("api.journey.outboundChosen", "Gediş: {flight}, {route}, {date}, {cabin}{seats}", vars);
 
         if (hiddenBeforeArrival > 0) {
-            note.textContent += " \u00b7 " + (criteria.multi
-                ? say("api.journey.hiddenBeforePrevious", "{count} əvvəlki reys göstərilmir, çünki əvvəlki reysiniz yerə enməmiş yola düşür.", { count: hiddenBeforeArrival })
-                : say("api.journey.hiddenBeforeArrival", "{count} əvvəlki reys göstərilmir, çünki gediş reysiniz yerə enməmiş yola düşür.", { count: hiddenBeforeArrival }));
+            note.textContent += " \u00b7 " + say("api.journey.hiddenBeforeArrival", "{count} əvvəlki reys göstərilmir, çünki gediş reysiniz yerə enməmiş yola düşür.", { count: hiddenBeforeArrival });
         }
 
         note.hidden = false;
@@ -625,9 +582,7 @@
         if (eyebrowElement) {
             eyebrowElement.textContent = (typeof t === "function" ? t("results.eyebrow") : "Mövcud uçuşlar");
 
-            if (criteria.multi) {
-                eyebrowElement.textContent = say("api.journey.chooseLeg", "{total} reysdən {n}-ci reysi seçin", { n: criteria.leg, total: criteria.multi.count });
-            } else if (criteria.leg === 2) {
+            if (criteria.leg === 2) {
                 eyebrowElement.textContent = say("api.journey.chooseReturn", "Qayıdış reysini seçin");
             } else if (/round/i.test(criteria.tripType || "") && criteria.returnDate) {
                 eyebrowElement.textContent = say("api.journey.chooseOutbound", "Gediş reysini seçin");
@@ -1142,11 +1097,6 @@
             arrivalAtUtc: flight.arrivalAtUtc || null
         };
 
-        // A multi-city trip carries all of its searches, so every page can open the next flight's results.
-        if (criteria.multi) {
-            selection.multi = criteria.multi;
-        }
-
         // Choosing a new first flight starts a new trip; the later flights keep the ones before them.
         if (criteria.leg === 1 && window.AEROVA_JOURNEY) {
             window.AEROVA_JOURNEY.reset();
@@ -1179,9 +1129,6 @@
         }
         if (criteria.leg > 1) {
             params.set("leg", String(criteria.leg));
-        }
-        if (criteria.multi) {
-            params.set("segmentsJson", JSON.stringify(criteria.multi.segments));
         }
         if (flight.date || criteria.departureDate) {
             params.set("departureDate", flight.date || criteria.departureDate);

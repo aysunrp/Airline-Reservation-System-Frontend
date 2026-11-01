@@ -203,23 +203,9 @@
             return params.get(name) || stored[name] || "";
         }
 
-        var tripType = pick("tripType") || "oneway";
+        // Only one-way and round trip exist; an older link that says anything else is treated as one-way.
+        var tripType = /round/i.test(pick("tripType")) ? "roundtrip" : "oneway";
         var leg = Math.max(1, Math.floor(Number(params.get("leg")) || 1));
-        var multi = null;
-
-        // A multi-city trip carries all of its searches in the link.
-        if (/multi/i.test(tripType)) {
-            var segments = [];
-            try {
-                segments = JSON.parse(params.get("segmentsJson") || "[]");
-            } catch (error) {
-                segments = [];
-            }
-            if (Array.isArray(segments) && segments.length >= 2) {
-                multi = { count: segments.length, segments: segments.slice(0, 6) };
-                leg = Math.min(leg, multi.count);
-            }
-        }
 
         // Who travels (an older link only has the number of seats, all of them adults).
         var seats = Math.max(1, parseInt(pick("passengers"), 10) || 1);
@@ -240,8 +226,7 @@
             tripType: tripType,
             returnDate: pick("returnDate"),
             departureDate: pick("departureDate"),
-            leg: multi ? leg : (leg === 2 ? 2 : 1),
-            multi: multi
+            leg: leg === 2 ? 2 : 1
         };
     }
 
@@ -448,10 +433,6 @@
             departureAtUtc: flight.departureAtUtc || null,
             arrivalAtUtc: flight.arrivalAtUtc || null
         };
-
-        if (context.multi) {
-            selection.multi = context.multi;
-        }
 
         // Choosing a new first flight starts a new trip; the later flights keep the ones before them.
         if (context.leg === 1 && window.AEROVA_JOURNEY) {

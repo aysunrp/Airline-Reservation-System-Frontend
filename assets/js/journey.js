@@ -1,12 +1,11 @@
 /*
  * The flights of one trip. A one-way trip is the flight in "aerovaSelectedFlight". A round trip is chosen in two passes
  * through the same pages: the outbound flight (details, seats), then the return flight (results for the way back, details,
- * seats). A multi-city trip is the same idea with two to six passes, one results page per flight of the trip. When the seats
- * of a flight are saved it is kept here; when the last flight's seats are saved the traveller goes on to the passenger
- * details, where legs() gives all the flights in travel order.
+ * seats). When the seats of the outbound flight are saved it is kept here; when the return flight's seats are saved the
+ * traveller goes on to the passenger details, where legs() gives both flights in travel order.
  *
  *   AEROVA_JOURNEY.afterSeats(selection)   -> the page to open next
- *   AEROVA_JOURNEY.legs(selection)         -> [outbound, return], every flight of a multi-city trip, or [selection]
+ *   AEROVA_JOURNEY.legs(selection)         -> [outbound, return], or [selection]
  */
 (function () {
   "use strict";
@@ -42,11 +41,6 @@
   /* A round trip needs its return date; without one the search is treated as one-way. */
   function isRoundTrip(selection) {
     return !!selection && /round/i.test(String(selection.tripType || "")) && !!selection.returnDate;
-  }
-
-  /* A multi-city trip carries all of its searches ({ count, segments: [{ from, to, departureDate }] }). */
-  function isMultiCity(selection) {
-    return !!selection && /multi/i.test(String(selection.tripType || "")) && !!selection.multi && Number(selection.multi.count) >= 2 && Array.isArray(selection.multi.segments);
   }
 
   /* Which flight of the trip this selection is: 1 for the outbound flight, 2 for the return flight of a round trip... */
@@ -87,17 +81,6 @@
     }), outbound);
   }
 
-  /* The results page for the next flight of a multi-city trip: its own from, to and date come from the stored searches. */
-  function nextLegUrl(selection, next) {
-    return resultsUrl(new URLSearchParams({
-      tripType: "multicity",
-      leg: String(next),
-      segments: String(selection.multi.count),
-      segmentsJson: JSON.stringify(selection.multi.segments),
-      passengers: String(selection.passengers || "1")
-    }), selection);
-  }
-
   function rememberResultsUrl(url) {
     try {
       sessionStorage.setItem("aerovaBookingResultsUrl", url);
@@ -106,35 +89,7 @@
     }
   }
 
-  function afterMultiCitySeats(selection) {
-    var number = legNumber(selection);
-    var count = Number(selection.multi.count);
-    var journey = number === 1 ? { multi: true, legs: [] } : readJourney();
-
-    if (number > 1 && (!journey.multi || !Array.isArray(journey.legs) || journey.legs.length < number - 1)) {
-      // An earlier flight is gone (a new tab or cleared storage): start the search again.
-      return "booking.html";
-    }
-
-    // Choosing this flight again drops the flights chosen after it.
-    journey.legs = journey.legs.slice(0, number - 1);
-    journey.legs.push(selection);
-    writeJourney(journey);
-
-    if (number >= count) {
-      return "passenger-details.html";
-    }
-
-    var url = nextLegUrl(selection, number + 1);
-    rememberResultsUrl(url);
-    return url;
-  }
-
   function afterSeats(selection) {
-    if (isMultiCity(selection)) {
-      return afterMultiCitySeats(selection);
-    }
-
     if (!isRoundTrip(selection)) {
       reset();
       return "passenger-details.html";
@@ -159,15 +114,6 @@
   }
 
   function legs(selection) {
-    if (isMultiCity(selection)) {
-      var trip = readJourney();
-      var count = Number(selection.multi.count);
-      if (trip.multi && Array.isArray(trip.legs) && trip.legs.length === count && legNumber(selection) === count && trip.legs[count - 1] && trip.legs[count - 1].id === selection.id) {
-        return trip.legs;
-      }
-      return [selection];
-    }
-
     if (isRoundTrip(selection) && isReturnLeg(selection)) {
       var journey = readJourney();
       if (journey.outbound && journey["return"] && journey["return"].id === selection.id) {
@@ -182,16 +128,7 @@
     if (!selection) {
       return false;
     }
-    if (isMultiCity(selection)) {
-      return (activeLegs || []).length < Number(selection.multi.count);
-    }
     return isReturnLeg(selection) && (activeLegs || []).length < 2;
-  }
-
-  /* The flight chosen just before the given flight number of a multi-city trip. */
-  function previous(number) {
-    var trip = readJourney();
-    return trip.multi && Array.isArray(trip.legs) && number > 1 ? (trip.legs[number - 2] || null) : null;
   }
 
   function say(key, fallback, vars) {
@@ -206,7 +143,7 @@
 
   /*
    * A summary shows the first flight in its own fields. This adds one line under `afterElementId` for every other flight of
-   * the trip (the return flight of a round trip, the following flights of a multi-city trip); with one flight it removes
+   * the trip (the return flight of a round trip); with one flight it removes
    * the lines. `legs` are the booking legs ({ flight: {...} }).
    */
   function paintReturnLine(afterElementId, legs) {
@@ -229,7 +166,6 @@
     }
 
     var first = legs[0].flight || legs[0];
-    var multi = legs.length > 2 || /multi/i.test(String(first.tripType || ""));
     var after = anchor;
 
     legs.slice(1).forEach(function (leg, position) {
@@ -247,9 +183,7 @@
         date: flight.departureDate,
         times: flight.departure + " → " + flight.arrival
       };
-      line.textContent = multi
-        ? say("api.journey.legLine", "Reys {n}: {flight}, {route}, {date}, {times}", vars)
-        : say("api.journey.returnLine", "Qayıdış: {flight}, {route}, {date}, {times}", vars);
+      line.textContent = say("api.journey.returnLine", "Qayıdış: {flight}, {route}, {date}, {times}", vars);
 
       after.parentNode.insertBefore(line, after.nextSibling);
       after = line;
@@ -317,12 +251,10 @@
     paintReturnLine: paintReturnLine,
     seatsText: seatsText,
     isRoundTrip: isRoundTrip,
-    isMultiCity: isMultiCity,
     isReturnLeg: isReturnLeg,
     isIncomplete: isIncomplete,
     legNumber: legNumber,
     outbound: function () { return readJourney().outbound || null; },
-    previous: previous,
     reset: reset,
     afterSeats: afterSeats,
     legs: legs
