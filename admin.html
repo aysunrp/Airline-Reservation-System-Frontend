@@ -35,17 +35,16 @@
 
 
 
-    <link rel="stylesheet" href="assets/css/admin.css?v=at1">
+    <link rel="stylesheet" href="assets/css/admin.css?v=cn5">
 
 
-    <link rel="stylesheet" href="assets/css/scrollbars.css?v=at1">
-    <link rel="stylesheet" href="assets/css/logo.css?v=at1">
-    <link rel="stylesheet" href="assets/css/chat-widget.css?v=at1">
+    <link rel="stylesheet" href="assets/css/scrollbars.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/logo.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/chat-widget.css?v=rs1">
 
 
 
-    <link rel="stylesheet" href="assets/css/theme.css?v=at3">
-    <link rel="stylesheet" href="assets/css/design.css?v=at3">
+    <link rel="stylesheet" href="assets/css/theme.css?v=num5">
 </head>
 
 
@@ -142,6 +141,7 @@
                 <button class="admin-nav-link" type="button" data-section="promos" data-i18n="api.admin.promos">Promo kodlar</button>
                 <button class="admin-nav-link" type="button" data-section="options" data-i18n="api.admin.options">Baqaj və yemək</button>
                 <button class="admin-nav-link" type="button" data-section="rules" data-i18n="api.admin.rules">Ləğv qaydaları</button>
+                <button class="admin-nav-link" type="button" data-section="content" data-i18n="api.admin.content">Səhifə mətnləri</button>
                 <p class="admin-nav-group" data-super-only hidden data-i18n="api.admin.superAdminGroup">SuperAdmin</p>
                 <button class="admin-nav-link" type="button" data-section="users" data-super-only hidden data-i18n="api.admin.users">İstifadəçilər</button>
                 <button class="admin-nav-link" type="button" data-section="audit" data-super-only hidden data-i18n="api.admin.audit">Audit jurnalı</button>
@@ -408,96 +408,54 @@
 
 
 
-                <div class="admin-panel admin-panel--cream">
-
-
-
+                                <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
-
-
-
-                        <input class="admin-search" id="flight-search" type="search" data-i18n-placeholder="admin.searchFlights" placeholder="Uçuş, haradan, haraya axtar"">
-
-
-
-                        <input class="admin-select" id="flight-date-filter" type="date" aria-label="Uçuş günü (UTC)">
-                        <select class="admin-select" id="flight-status-filter">
-
-
-
-                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
-
-
-
-                            <option data-i18n="common.statusScheduled">Planlaşdırılıb</option>
-
-
-
-                            <option data-i18n="admin.onTime">Vaxtında</option>
-
-
-
-                            <option data-i18n="admin.delayed">Gecikir</option>
-
-
-
-                            <option data-i18n="trips.cancelled">Ləğv edilib</option>
-
-
-
+                        <input class="admin-search" id="flight-search" type="search" data-i18n-placeholder="admin.searchFlights" placeholder="Uçuş nömrəsi və ya hava limanı kodu (məs. AV 1105, ATH)">
+                        <input class="admin-select" id="flight-date-filter" type="date" aria-label="Gediş tarixi (UTC)">
+                        <select class="admin-select" id="flight-origin-filter" aria-label="Mənşə"><option value="">Bütün mənşələr</option></select>
+                        <select class="admin-select" id="flight-destination-filter" aria-label="Təyinat"><option value="">Bütün təyinatlar</option></select>
+                        <select class="admin-select" id="flight-month-filter" aria-label="Ay">
+                            <option value="">Bütün aylar</option><option value="11">Noyabr</option><option value="12">Dekabr</option><option value="1">Yanvar</option>
                         </select>
-
-
-
+                        <select class="admin-select" id="flight-year-filter" aria-label="İl">
+                            <option value="">Bütün illər</option><option value="2026">2026</option><option value="2027">2027</option>
+                        </select>
+                        <select class="admin-select" id="flight-aircraft-filter" aria-label="Təyyarə"><option value="">Bütün təyyarələr</option></select>
+                        <select class="admin-select" id="flight-type-filter" aria-label="Uçuş növü">
+                            <option value="">Bütün növlər</option><option value="direct">Birbaşa</option><option value="withStops">Dayanacaqlı</option>
+                        </select>
+                        <select class="admin-select" id="flight-active-filter" aria-label="Cədvəl statusu">
+                            <option value="">Bütün cədvəllər</option><option value="true">Aktiv cədvəl</option><option value="false">Deaktiv cədvəl</option>
+                        </select>
+                        <select class="admin-select" id="flight-status-filter" aria-label="Status">
+                            <option value="" data-i18n="admin.allStatuses">Bütün statuslar</option>
+                            <option value="Scheduled" data-i18n="common.statusScheduled">Planlaşdırılıb</option>
+                            <option value="OnTime" data-i18n="admin.onTime">Vaxtında</option>
+                            <option value="Delayed" data-i18n="admin.delayed">Gecikir</option>
+                            <option value="Cancelled" data-i18n="trips.cancelled">Ləğv edilib</option>
+                            <option value="Completed">Tamamlanıb</option>
+                        </select>
                         <button class="admin-btn admin-btn--primary" id="add-flight-btn" type="button" data-i18n="booking.addFlight">Uçuş əlavə et</button>
-
-
-
                     </div>
+                </div>
 
-
-
-                    <div class="admin-table-wrap">
-
-
-
-                        <table class="admin-table">
-
-
-
-                            <thead>
-
-
-
-                                <tr>
-
-
-
-                                    <th data-i18n="admin.flightNumber">Uçuş nömrəsi</th><th data-i18n="common.origin">Mənşə</th><th data-i18n="common.destination">Təyinat</th><th data-i18n="common.date">Tarix</th>
-
-
-
-                                    <th data-i18n="admin.departure">Gediş</th><th data-i18n="trips.arrival">Gəliş</th><th data-i18n="flightDetails.aircraft">Təyyarə</th><th data-i18n="admin.status">Status</th><th data-i18n="admin.actions">Əməliyyatlar</th>
-
-
-
-                                </tr>
-
-
-
-                            </thead>
-
-
-
-                            <tbody id="flights-body"></tbody>
-
-
-
-                        </table>
-
-
-
-                    </div>
+                <div class="admin-panel admin-panel--cream flight-table-panel">
+                <div class="flight-scroll-top" id="flight-scroll-top" aria-label="Cədvəli üfüqi sürüşdür (yuxarı)">
+                    <div id="flight-scroll-top-inner"></div>
+                </div>
+                <div class="admin-table-wrap flight-table-wrap" id="flight-table-wrap">
+                    <table class="admin-table flight-table">
+                        <thead>
+                            <tr>
+                                <th>Uçuş nömrəsi</th><th>Mənşə</th><th>Mənşə şəhəri</th><th>Təyinat</th><th>Təyinat şəhəri</th>
+                                <th>Gediş tarixi</th><th>Gediş</th><th>Gəliş tarixi</th><th>Gəliş</th><th>Təyyarə</th>
+                                <th>Növ</th><th>Cədvəl</th><th>Economy</th><th>Comfort</th><th>Business</th>
+                                <th>Oturacaq</th><th>Status</th><th>Əməliyyatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="flights-body"></tbody>
+                    </table>
+                </div>
                     <div class="admin-pager" id="flights-pager">
                         <button class="admin-btn admin-btn--ghost" id="flights-prev" type="button">&larr;</button>
                         <span id="flights-pager-info"></span>
@@ -510,6 +468,25 @@
 
 
 
+                <div class="admin-panel admin-panel--cream" id="journey-panel">
+                    <div class="admin-panel-header"><h2 class="admin-panel-title">Aktarmalı səyahətlər</h2></div>
+                    <p class="admin-note">Aktarmalı səyahət bazada ayrıca saxlanmır: iki reysin bir-birinə bağlanması (90 dəqiqə – 8 saat) və hava limanlarının əlaqəsi əsasında hesablanır. Axtarışda olduğu kimi qaydalara uyğundur, lakin oturacaq sayına baxmır.</p>
+                    <div class="admin-toolbar">
+                        <select class="admin-select" id="journey-origin" aria-label="Mənşə"></select>
+                        <select class="admin-select" id="journey-destination" aria-label="Təyinat"></select>
+                        <input class="admin-select" id="journey-from" type="date" aria-label="Başlanğıc gün">
+                        <input class="admin-select" id="journey-to" type="date" aria-label="Son gün (ən çox 62 gün)">
+                        <button class="admin-btn admin-btn--primary" id="journey-load" type="button">Səyahətləri göstər</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>Mənşə</th><th>Gediş tarixi</th><th>Aktarma</th><th>Reyslər (nömrə · saat · təyyarə)</th><th>Gözləmə</th><th>Ümumi müddət</th><th>Təyinat</th><th>Economy / Comfort / Business</th></tr>
+                            </thead>
+                            <tbody id="journeys-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
 
 
@@ -1248,6 +1225,21 @@
 
 
 
+            <!-- PAGE TEXTS ("AEROVA haqqında"): GET/PUT api/admin/site-content -->
+            <section class="admin-section" id="section-content" data-section-panel="content" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <div class="admin-toolbar">
+                        <input class="admin-search" id="content-search" type="search" placeholder="Açar və ya mətn üzrə axtarış" data-i18n-placeholder="api.admin.contentSearch">
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.contentKey">Açar</th><th data-i18n="api.admin.contentText">Azərbaycan dilində mətn</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
+                            <tbody id="content-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- USERS (SuperAdmin) -->
             <section class="admin-section" id="section-users" data-section-panel="users" hidden>
                 <div class="admin-panel admin-panel--cream">
@@ -1445,26 +1437,26 @@
 
 
 
-    <script src="assets/js/locales/az.js?v=mc1"></script>
+    <script src="assets/js/locales/az.js?v=ai5"></script>
 
 
 
 
-    <script src="assets/js/i18n.js?v=az1"></script>
-    <script src="assets/js/api-config.js?v=az1"></script>
-    <script src="assets/js/api-client.js?v=az1"></script>
-    <script src="assets/js/airports.js?v=az1"></script>
-    <script src="assets/js/chat-widget.js?v=az1"></script>
+    <script src="assets/js/i18n.js?v=rs1"></script>
+    <script src="assets/js/api-config.js?v=rs1"></script>
+    <script src="assets/js/api-client.js?v=perf2"></script>
+    <script src="assets/js/airports.js?v=perf1"></script>
+    <script src="assets/js/chat-widget.js?v=rs1"></script>
 
 
-    <script src="assets/js/auth.js?v=at1"></script>
+    <script src="assets/js/auth.js?v=fast1"></script>
     <script src="assets/js/vendor/signalr.min.js?v=8.0.7"></script>
-    <script src="assets/js/realtime.js?v=az1"></script>
-    <script src="assets/js/admin.js?v=az1"></script>
+    <script src="assets/js/realtime.js?v=rs1"></script>
+    <script src="assets/js/admin.js?v=cn6"></script>
 
 
 
-    <script src="assets/js/logo.js?v=az1"></script>
+    <script src="assets/js/logo.js?v=rs1"></script>
 
     <div class="admin-toast" id="admin-toast" role="status" aria-live="polite" hidden>
         <span id="admin-toast-text"></span>

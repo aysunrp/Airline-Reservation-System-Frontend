@@ -67,6 +67,7 @@
             promos: { title: tr("api.admin.promos", "Promo kodlar"), subtitle: tr("api.admin.promosSub", "Ödəniş səhifəsi üçün endirim kodları") },
             options: { title: tr("api.admin.options", "Baqaj və yemək"), subtitle: tr("api.admin.optionsSub", "Sərnişinin rezervasiyaya əlavə edə biləcəyi xidmətlər") },
             rules: { title: tr("api.admin.rules", "Ləğv qaydaları"), subtitle: tr("api.admin.rulesSub", "Salona və uçuşa qalan günlərə görə komissiya") },
+            content: { title: tr("api.admin.content", "Səhifə mətnləri"), subtitle: tr("api.admin.contentSub", "\"AEROVA haqqında\" səhifəsinin mətnləri") },
             users: { title: tr("api.admin.users", "İstifadəçilər"), subtitle: tr("api.admin.usersSub", "Hesablar, rollar və giriş") },
             audit: { title: tr("api.admin.audit", "Audit jurnalı"), subtitle: tr("api.admin.auditSub", "Kim nə vaxt nə etdi") }
         };
@@ -98,6 +99,7 @@
         baggage: [],
         meals: [],
         rules: [],
+        content: [],
         users: [],
         audit: [],
         refunds: [],
@@ -326,28 +328,81 @@
         if (search) params.push("search=" + encodeURIComponent(search));
         if (status) params.push("status=" + encodeURIComponent(status));
         if (date) params.push("date=" + encodeURIComponent(date));
+        // The other filters are sent as they are chosen; the API applies them all together.
+        [["origin", "flight-origin-filter"], ["destination", "flight-destination-filter"], ["month", "flight-month-filter"],
+         ["year", "flight-year-filter"], ["aircraftId", "flight-aircraft-filter"], ["flightType", "flight-type-filter"], ["active", "flight-active-filter"]]
+            .forEach(function (pair) {
+                var value = byId(pair[1]).value;
+                if (value) params.push(pair[0] + "=" + encodeURIComponent(value));
+            });
         params.push("take=" + PAGE_SIZE, "skip=" + (state.flightPage * PAGE_SIZE));
         return "api/admin/flights?" + params.join("&");
+    }
+
+    /* The list's filter choices: airports and aircraft come from the same reference data as the other forms. */
+    function fillFlightFilters() {
+        var airports = (state.airports || []).slice().sort(function (a, b) { return a.code < b.code ? -1 : 1; });
+        var choices = [
+            { id: "flight-origin-filter", first: "Bütün mənşələr", fallback: "" },
+            { id: "flight-destination-filter", first: "Bütün təyinatlar", fallback: "" },
+            { id: "journey-origin", first: null, fallback: "GYD" },
+            { id: "journey-destination", first: null, fallback: "JTR" }
+        ];
+        choices.forEach(function (choice) {
+            var select = byId(choice.id);
+            if (!select) return;
+            var keep = select.value || choice.fallback;
+            select.innerHTML = "";
+            if (choice.first !== null) select.add(new Option(choice.first, ""));
+            airports.forEach(function (airport) {
+                select.add(new Option(airport.code + " · " + airport.city, airport.code));
+            });
+            select.value = keep;
+        });
+
+        var aircraftSelect = byId("flight-aircraft-filter");
+        if (aircraftSelect && aircraftSelect.options.length <= 1) {
+            (state.aircraft || []).forEach(function (item) {
+                aircraftSelect.add(new Option(item.name + " (" + item.model + ")", String(item.id)));
+            });
+        }
+
+        if (byId("journey-from") && !byId("journey-from").value) {
+            byId("journey-from").value = "2026-11-01";
+            byId("journey-to").value = "2026-11-30";
+        }
     }
 
     function renderFlights() {
         var body = byId("flights-body");
         if (!state.flights.length) {
-            body.innerHTML = '<tr><td colspan="9" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "Uçuş tapılmadı.")) + "</td></tr>";
+            body.innerHTML = '<tr><td colspan="18" class="admin-empty">' + escapeHtml(tr("admin.noFlights", "Uçuş tapılmadı.")) + "</td></tr>";
         } else {
             body.innerHTML = state.flights.map(function (item) {
                 var departure = atAirport(item.departureAt, item.originCode);
                 var arrival = atAirport(item.arrivalAt, item.destinationCode);
-                return "<tr>" +
-                    "<td>" + escapeHtml(item.flightNumber) + "</td>" +
+                var fares = item.fares || {};
+                var type = item.stops > 0 ? "Dayanacaqlı (" + item.stops + ")" : "Birbaşa";
+                return '<tr data-flight-row="' + item.id + '">' +
+                    '<td class="flight-num">' + escapeHtml(item.flightNumber) + "</td>" +
+                    '<td class="flight-code">' + escapeHtml(item.originCode) + "</td>" +
                     "<td>" + escapeHtml(item.originCity) + "</td>" +
+                    '<td class="flight-code">' + escapeHtml(item.destinationCode) + "</td>" +
                     "<td>" + escapeHtml(item.destinationCity) + "</td>" +
                     "<td>" + escapeHtml(departure.date) + "</td>" +
                     "<td>" + escapeHtml(departure.time) + "</td>" +
+                    "<td>" + escapeHtml(arrival.date) + "</td>" +
                     "<td>" + escapeHtml(arrival.time) + "</td>" +
                     "<td>" + escapeHtml(item.aircraftModel) + "</td>" +
+                    "<td>" + escapeHtml(type) + "</td>" +
+                    "<td>" + statusBadge(item.scheduleActive ? "Active" : "Inactive") + "</td>" +
+                    '<td class="flight-money">' + escapeHtml(fares.Economy != null ? formatMoney(fares.Economy) : "—") + "</td>" +
+                    '<td class="flight-money">' + escapeHtml(fares.Comfort != null ? formatMoney(fares.Comfort) : "—") + "</td>" +
+                    '<td class="flight-money">' + escapeHtml(fares.Business != null ? formatMoney(fares.Business) : "—") + "</td>" +
+                    '<td class="flight-seats">' + escapeHtml(item.seatsAvailable + " / " + item.seatsTotal) + "</td>" +
                     "<td>" + statusBadge(item.status) + "</td>" +
-                    '<td><div class="admin-actions">' +
+                    '<td><div class="flight-action-group">' +
+                    '<button class="admin-btn admin-btn--ghost" type="button" data-flight-details="' + item.id + '" aria-expanded="false">Ətraflı</button>' +
                     '<button class="admin-btn admin-btn--ghost" type="button" data-edit-flight="' + item.id + '">' + escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" +
                     deleteButton("flight", item.id) +
                     "</div></td></tr>";
@@ -362,14 +417,141 @@
         }
     }
 
-    function loadFlights() {
-        loading("flights-body", 9);
-        Promise.all([directory.load(), api.get(flightQuery())]).then(function (results) {
-            state.airports = results[0];
-            state.flights = results[1];
-            renderFlights();
+    /* The top scrollbar mirrors the table's own horizontal position; it is shown only when the table is wider than its box. */
+    function syncFlightScroll() {
+        var wrap = byId("flight-table-wrap");
+        var top = byId("flight-scroll-top");
+        var inner = byId("flight-scroll-top-inner");
+        if (!wrap || !top || !inner) return;
+        inner.style.width = wrap.scrollWidth + "px";
+        top.style.display = wrap.scrollWidth > wrap.clientWidth + 1 ? "block" : "none";
+        if (Math.abs(top.scrollLeft - wrap.scrollLeft) > 0.5) top.scrollLeft = wrap.scrollLeft;
+    }
+
+    /* Each mirror only moves the other when the position really differs, so the two scroll events cannot feed each other. */
+    function bindFlightScroll() {
+        var wrap = byId("flight-table-wrap");
+        var top = byId("flight-scroll-top");
+        if (!wrap || !top) return;
+        top.addEventListener("scroll", function () {
+            if (Math.abs(wrap.scrollLeft - top.scrollLeft) > 0.5) wrap.scrollLeft = top.scrollLeft;
+        });
+        wrap.addEventListener("scroll", function () {
+            if (Math.abs(top.scrollLeft - wrap.scrollLeft) > 0.5) top.scrollLeft = wrap.scrollLeft;
+        });
+        if (window.ResizeObserver) {
+            var observer = new ResizeObserver(syncFlightScroll);
+            observer.observe(wrap);
+            observer.observe(wrap.querySelector("table"));
+        } else {
+            window.addEventListener("resize", syncFlightScroll);
+        }
+    }
+
+    /* The segments of one flight (a flight with stops), loaded when the row's details are opened. */
+    function toggleFlightDetails(id, button) {
+        var row = document.querySelector('tr[data-flight-row="' + id + '"]');
+        if (!row) return;
+        var open = row.nextElementSibling;
+        if (open && open.getAttribute("data-details-for") === String(id)) {
+            open.parentNode.removeChild(open);
+            button.setAttribute("aria-expanded", "false");
+            syncFlightScroll();
+            return;
+        }
+
+        button.setAttribute("aria-expanded", "true");
+        var details = document.createElement("tr");
+        details.className = "flight-details-row";
+        details.setAttribute("data-details-for", String(id));
+        details.innerHTML = '<td colspan="18"><span class="admin-empty">Yüklənir…</span></td>';
+        row.parentNode.insertBefore(details, row.nextSibling);
+
+        api.get("api/admin/flights/" + encodeURIComponent(id)).then(function (flight) {
+            if (!details.parentNode) return;
+            var segments = flight.segments || [];
+            var lines = segments.map(function (segment, index) {
+                var from = atAirport(segment.departureAt, segment.originCode);
+                var to = atAirport(segment.arrivalAt, segment.destinationCode);
+                var wait = "";
+                if (index > 0) {
+                    var gap = (new Date(segment.departureAt + (/Z$/i.test(segment.departureAt) ? "" : "Z")) - new Date(segments[index - 1].arrivalAt + (/Z$/i.test(segments[index - 1].arrivalAt) ? "" : "Z"))) / 60000;
+                    wait = " · dayanacaqda " + formatDuration(gap);
+                }
+                return "<li><strong>Seqment " + (index + 1) + "</strong> " + escapeHtml(segment.originCode + " " + from.time + " → " + segment.destinationCode + " " + to.time + " (" + from.date + ")") + escapeHtml(wait) + "</li>";
+            }).join("");
+            details.innerHTML = '<td colspan="18"><ul class="flight-details-list">' + (lines || "<li>Seqment yoxdur.</li>") + "</ul></td>";
+            syncFlightScroll();
         }).catch(function (error) {
-            failed(error, "flights-body", 9, loadFlights);
+            if (!details.parentNode) return;
+            details.innerHTML = '<td colspan="18"><span class="admin-empty">' + escapeHtml(apiMessage(error)) + "</span></td>";
+            syncFlightScroll();
+        });
+    }
+
+    function loadFlights() {
+        loading("flights-body", 18);
+        Promise.all([directory.load(), api.get("api/admin/aircraft"), api.get(flightQuery())]).then(function (results) {
+            state.airports = results[0];
+            state.aircraft = results[1];
+            state.flights = results[2];
+            fillFlightFilters();
+            renderFlights();
+            syncFlightScroll();
+        }).catch(function (error) {
+            failed(error, "flights-body", 18, loadFlights);
+        });
+    }
+
+    /* ------------------------------------------------------------------ journeys with a transfer */
+
+    function renderJourneys(list) {
+        var body = byId("journeys-body");
+        if (!list.length) {
+            body.innerHTML = '<tr><td colspan="8" class="admin-empty">Bu dövr üçün aktarmalı səyahət tapılmadı.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = list.map(function (journey) {
+            var departure = atAirport(journey.departureAt, journey.originCode);
+            var arrival = atAirport(journey.arrivalAt, journey.destinationCode);
+            var legs = journey.legs.map(function (leg) {
+                var from = atAirport(leg.departureAt, leg.originCode);
+                var to = atAirport(leg.arrivalAt, leg.destinationCode);
+                return escapeHtml(leg.flightNumber + " · " + leg.originCode + " " + from.time + " → " + leg.destinationCode + " " + to.time + " · " + leg.aircraftModel);
+            }).join("<br>");
+            var fares = journey.fares || {};
+            var prices = [fares.Economy, fares.Comfort, fares.Business].map(function (value) {
+                return value != null ? formatMoney(value) : "—";
+            }).join(" / ");
+            return "<tr>" +
+                "<td>" + escapeHtml(journey.originCode) + "</td>" +
+                "<td>" + escapeHtml(departure.date + " " + departure.time) + "</td>" +
+                "<td>" + escapeHtml(journey.transferCode + " · " + journey.transferCity) + "</td>" +
+                "<td>" + legs + "</td>" +
+                "<td>" + escapeHtml(formatDuration(journey.transferMinutes)) + "</td>" +
+                "<td>" + escapeHtml(formatDuration(journey.durationMinutes)) + "</td>" +
+                "<td>" + escapeHtml(journey.destinationCode + " · " + arrival.time + " (" + arrival.date + ")") + "</td>" +
+                "<td>" + escapeHtml(prices) + "</td>" +
+                "</tr>";
+        }).join("");
+    }
+
+    function loadJourneys() {
+        var origin = byId("journey-origin").value;
+        var destination = byId("journey-destination").value;
+        var from = byId("journey-from").value;
+        var to = byId("journey-to").value;
+        if (!origin || !destination || !from || !to) {
+            byId("journeys-body").innerHTML = '<tr><td colspan="8" class="admin-empty">Mənşə, təyinat və tarix aralığını seçin.</td></tr>';
+            return;
+        }
+
+        loading("journeys-body", 8);
+        var url = "api/admin/flights/journeys?origin=" + encodeURIComponent(origin) + "&destination=" + encodeURIComponent(destination) +
+            "&from=" + encodeURIComponent(from) + "&to=" + encodeURIComponent(to);
+        api.get(url).then(renderJourneys).catch(function (error) {
+            failed(error, "journeys-body", 8, loadJourneys);
         });
     }
 
@@ -1077,6 +1259,35 @@
         });
     }
 
+    /* The texts of the "AEROVA haqqında" page (api/admin/site-content). They are edited, never added or deleted: the page looks them up by key. */
+    var CONTENT_PAGE = "about";
+    var CONTENT_PREVIEW_LENGTH = 140;
+    var CONTENT_MAX_LENGTH = 1000;
+
+    function renderContent() {
+        var query = byId("content-search").value.toLowerCase();
+        var rows = state.content.filter(function (item) {
+            return !query || [item.key, item.textAz].join(" ").toLowerCase().indexOf(query) !== -1;
+        });
+
+        byId("content-body").innerHTML = rows.length ? rows.map(function (item) {
+            var text = item.textAz.length > CONTENT_PREVIEW_LENGTH ? item.textAz.slice(0, CONTENT_PREVIEW_LENGTH) + "\u2026" : item.textAz;
+            return "<tr><td><code>" + escapeHtml(item.key) + "</code></td><td title=\"" + escapeHtml(item.textAz) + "\">" + escapeHtml(text) + "</td>" +
+                '<td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-edit-content="' + item.id + '">' +
+                escapeHtml(tr("admin.edit", "Redaktə")) + "</button></div></td></tr>";
+        }).join("") : emptyRow(3, tr("api.admin.noContent", "Mətn tapılmadı."));
+    }
+
+    function loadContent() {
+        loading("content-body", 3);
+        api.get("api/admin/site-content", { query: { page: CONTENT_PAGE } }).then(function (rows) {
+            state.content = rows;
+            renderContent();
+        }).catch(function (error) {
+            failed(error, "content-body", 3, loadContent);
+        });
+    }
+
     /* ------------------------------------------------------------------ forms */
 
     function openModal() {
@@ -1119,6 +1330,10 @@
                     var optionLabel = typeof option === "object" ? option.label : option;
                     return '<option value="' + escapeHtml(optionValue) + '"' + (String(optionValue) === String(value) ? " selected" : "") + ">" + escapeHtml(optionLabel) + "</option>";
                 }).join("") + "</select>";
+            } else if (field.type === "static") {
+                control = '<p id="field-' + field.key + '">' + escapeHtml(value) + "</p>";
+            } else if (field.type === "textarea") {
+                control = '<textarea id="field-' + field.key + '" rows="5"' + (field.maxLength === false ? "" : ' maxlength="' + (field.maxLength || 1000) + '"') + (field.required === false ? "" : " required") + ">" + escapeHtml(value) + "</textarea>";
             } else if (field.type === "days") {
                 var chosen = String(value).split(",").map(function (name) { return name.trim(); });
                 control = '<div class="admin-days" id="field-' + field.key + '">' + DAY_NAMES.map(function (name) {
@@ -1138,6 +1353,10 @@
         var data = {};
         fields.forEach(function (field) {
             var el = byId("field-" + field.key);
+            if (field.type === "static") {
+                return;
+            }
+
             if (field.type === "days") {
                 data[field.key] = Array.prototype.slice.call(el.querySelectorAll("input:checked")).map(function (box) { return box.value; });
                 return;
@@ -1486,6 +1705,30 @@
             toRequest: function (data) { return { code: data.code, name: data.name, description: data.description || null, price: data.price, isActive: data.isActive === "true" }; },
             reload: loadOptions
         },
+        content: {
+            title: tr("api.admin.contentItem", "Səhifə mətni"),
+            path: "api/admin/site-content",
+            fields: function () {
+                return [
+                    { key: "key", label: tr("api.admin.contentKey", "Açar"), type: "static", full: true },
+                    // Checked in toRequest, in Azerbaijani: the browser's own required/maxlength messages are in the browser's language.
+                    { key: "textAz", label: tr("api.admin.contentTextAz", "Azərbaycan dilində mətn"), type: "textarea", full: true, required: false, maxLength: false }
+                ];
+            },
+            toForm: function (item) { return { key: item.key, textAz: item.textAz }; },
+            toRequest: function (data) {
+                if (!data.textAz) {
+                    throw new Error(tr("api.admin.contentEmpty", "Mətn boş ola bilməz."));
+                }
+
+                if (data.textAz.length > CONTENT_MAX_LENGTH) {
+                    throw new Error(tr("api.admin.contentTooLong", "Mətn {max} simvoldan uzun ola bilməz. İndi {count} simvol var.", { max: CONTENT_MAX_LENGTH, count: data.textAz.length }));
+                }
+
+                return { textAz: data.textAz };
+            },
+            reload: loadContent
+        },
         rule: {
             title: tr("api.admin.rule", "Qayda"),
             path: "api/admin/cancellation-rules",
@@ -1598,7 +1841,7 @@
         var loaders = {
             dashboard: loadDashboard, flights: resetFlightsAndLoad, routes: loadRoutes, schedules: loadSchedules,
             aircraft: loadAircraft, seats: loadSeatFlights, bookings: loadBookings, passengers: loadPassengers,
-            airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules,
+            airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules, content: loadContent,
             users: loadUsers, audit: loadAudit, refunds: loadRefunds, support: loadSupport
         };
         loaders[state.section]();
@@ -1608,7 +1851,7 @@
         var painters = {
             dashboard: renderDashboard, flights: renderFlights, routes: renderRoutes, schedules: renderSchedules,
             aircraft: renderAircraft, seats: renderSeatInventory, bookings: renderBookings, passengers: renderPassengers,
-            airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules,
+            airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules, content: renderContent,
             users: renderUsers, audit: renderAudit, refunds: renderRefunds, support: renderSupport
         };
         var meta = getSectionMeta()[state.section];
@@ -2326,6 +2569,10 @@
         byId("flight-search").addEventListener("input", reloadFlights);
         byId("flight-status-filter").addEventListener("change", resetFlightsAndLoad);
         byId("flight-date-filter").addEventListener("change", resetFlightsAndLoad);
+        ["flight-origin-filter", "flight-destination-filter", "flight-month-filter", "flight-year-filter", "flight-aircraft-filter", "flight-type-filter", "flight-active-filter"]
+            .forEach(function (id) { byId(id).addEventListener("change", resetFlightsAndLoad); });
+        byId("journey-load").addEventListener("click", loadJourneys);
+        bindFlightScroll();
         byId("flights-prev").addEventListener("click", function () { state.flightPage = Math.max(0, state.flightPage - 1); loadFlights(); });
         byId("flights-next").addEventListener("click", function () { state.flightPage += 1; loadFlights(); });
 
@@ -2364,6 +2611,7 @@
         addButton("add-rule-btn", "rule");
 
         byId("airport-search").addEventListener("input", renderAirports);
+        byId("content-search").addEventListener("input", renderContent);
         byId("promo-search").addEventListener("input", renderPromos);
         byId("promos-body").addEventListener("click", function (event) {
             var button = event.target.closest("[data-campaign-promo]");
@@ -2417,7 +2665,8 @@
             { bodyId: "promos-body", kind: "promo", list: "promos", label: function (item) { return item.code; } },
             { bodyId: "baggage-body", kind: "baggage", list: "baggage", label: function (item) { return item.name; } },
             { bodyId: "meals-body", kind: "meal", list: "meals", label: function (item) { return item.name; } },
-            { bodyId: "rules-body", kind: "rule", list: "rules", label: function (item) { return item.cabinClass + " \u2265 " + item.minDaysBeforeDeparture; } }
+            { bodyId: "rules-body", kind: "rule", list: "rules", label: function (item) { return item.cabinClass + " \u2265 " + item.minDaysBeforeDeparture; } },
+            { bodyId: "content-body", kind: "content", list: "content", label: function (item) { return item.key; } }
         ].forEach(function (table) {
             byId(table.bodyId).addEventListener("click", function (event) {
                 var editId = event.target.getAttribute("data-edit-" + table.kind);
@@ -2446,6 +2695,8 @@
         });
 
         byId("flights-body").addEventListener("click", function (event) {
+            var detailsId = event.target.getAttribute("data-flight-details");
+            if (detailsId) toggleFlightDetails(detailsId, event.target);
             var editId = event.target.getAttribute("data-edit-flight");
             var deleteId = event.target.getAttribute("data-delete-flight");
             var flight = find(state.flights, editId || deleteId);
