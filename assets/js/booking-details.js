@@ -104,7 +104,7 @@
 
     function getPassengerName(passenger) {
         if (!passenger || typeof passenger !== "object") {
-            return "Passenger";
+            return "Sərnişin";
         }
 
         if (passenger.fullName || passenger.name) {
@@ -118,7 +118,7 @@
             .filter(Boolean)
             .join(" ");
 
-        return name || "Passenger";
+        return name || "Sərnişin";
     }
 
     function getBookingStatus(booking) {
@@ -219,10 +219,13 @@
                 utcDepartureAt: leg.departureAt
             },
             cabinClass: leg.cabinClass,
-            // The other flight of the trip: the return flight of a round trip.
+            journeyNo: leg.journeyNo,
+            // The other flights of the trip: a transfer flight of the same journey or the return journey.
+
             extraFlights: dto.legs.slice(1).map(function (item, index) {
                 var other = pageFlight(item);
                 other.seats = seatsByLeg[index + 1].join(", ");
+                other.journeyNo = item.journeyNo;
                 return other;
             }),
             selectedSeats: seatsByLeg[0],
@@ -288,7 +291,7 @@
         var passengers = Array.isArray(booking.passengers) ? booking.passengers : [];
         renderList("details-passengers", passengers, function (passenger, index) {
             var seat = passenger.assignedSeat
-                ? "Seat " + passenger.assignedSeat
+                ? "Oturacaq " + passenger.assignedSeat
                 : (passenger.passengerType === "Infant" ? tr("api.bookingDetails.infantNoSeat", "Körpə, yer yoxdur") : "Oturacaq təyin edilməyib");
 
             return (
@@ -297,7 +300,7 @@
                         '<p class="detail-list-primary">' + escapeHtml(getPassengerName(passenger)) + "</p>" +
                         '<p class="detail-list-secondary">' + escapeHtml(seat) + "</p>" +
                     "</div>" +
-                    '<span class="detail-list-meta">Passenger ' + (index + 1) + "</span>" +
+                    '<span class="detail-list-meta">Sərnişin ' + (index + 1) + "</span>" +
                 "</li>"
             );
         });
@@ -312,7 +315,7 @@
             return (
                 '<li class="detail-list-item">' +
                     "<div>" +
-                        '<p class="detail-list-primary">' + escapeHtml(item.name || "Passenger") + "</p>" +
+                        '<p class="detail-list-primary">' + escapeHtml(item.name || "Sərnişin") + "</p>" +
                         '<p class="detail-list-secondary">' + escapeHtml(label) + "</p>" +
                     "</div>" +
                     '<span class="detail-list-meta">' + escapeHtml(formatPrice(item.price)) + "</span>" +
@@ -325,7 +328,7 @@
         var items = Array.isArray(booking.meals) ? booking.meals : [];
 
         renderList("details-meals", items, function (item) {
-            var passengerName = item.passengerName || item.name || "Passenger";
+            var passengerName = item.passengerName || item.name || "Sərnişin";
             var mealName = item.mealName || item.label || "Yemək yoxdur";
 
             return (
@@ -345,7 +348,10 @@
         var card = document.querySelector('article[aria-labelledby="flight-info-title"]');
         var extra = booking.extraFlights || [];
         var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
-            return tr("api.journey.returnFlightTitle", "Qayıdış reysi");
+            var other = extra[number - 2];
+            return other && booking.journeyNo != null && Number(other.journeyNo) === Number(booking.journeyNo)
+                ? tr("api.journey.connectionFlightTitle", "Aktarma reysi")
+                : tr("api.journey.returnFlightTitle", "Qayıdış reysi");
         }) : [];
 
         copies.forEach(function (copy, index) {

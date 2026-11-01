@@ -133,9 +133,9 @@
         if (!items.length) {
             list.innerHTML =
                 '<li class="confirmation-passenger-item">' +
-                    '<p class="passenger-label">Passenger 1</p>' +
+                    '<p class="passenger-label">Sərnişin 1</p>' +
                     '<p class="passenger-name">—</p>' +
-                    '<p class="passenger-seat">Seat: <span>—</span></p>' +
+                    '<p class="passenger-seat">Oturacaq: <span>—</span></p>' +
                 "</li>";
             return;
         }
@@ -147,9 +147,9 @@
 
             markup +=
                 '<li class="confirmation-passenger-item">' +
-                    '<p class="passenger-label">Passenger ' + (i + 1) + "</p>" +
+                    '<p class="passenger-label">Sərnişin ' + (i + 1) + "</p>" +
                     '<p class="passenger-name">' + escapeHtml(name) + "</p>" +
-                    '<p class="passenger-seat">Seat: <span>' + escapeHtml(seat) + "</span></p>" +
+                    '<p class="passenger-seat">Oturacaq: <span>' + escapeHtml(seat) + "</span></p>" +
                 "</li>";
         }
 
@@ -238,6 +238,7 @@
                 aircraft: "AEROVA " + leg.aircraftModel
             },
             cabinClass: leg.cabinClass,
+            journeyNo: leg.journeyNo,
             passengerCount: passengers.length,
             selectedSeats: seats,
             seatsText: seatsByLeg.map(function (list) { return list.join(", "); }).filter(Boolean).join(" | "),
@@ -245,6 +246,7 @@
             extraFlights: booking.legs.slice(1).map(function (item, index) {
                 var other = flightOf(item);
                 other.seats = seatsByLeg[index + 1].join(", ");
+                other.journeyNo = item.journeyNo;
                 return other;
             }),
             passengers: passengers,
@@ -257,7 +259,10 @@
         var card = document.querySelector('article[aria-labelledby="flight-details-title"]');
         var extra = bookingData.extraFlights || [];
         var copies = window.AEROVA_JOURNEY ? window.AEROVA_JOURNEY.ensureLegCards(card, extra.length, function (number) {
-            return tr("api.journey.returnFlightTitle", "Qayıdış reysi");
+            var other = extra[number - 2];
+            return other && bookingData.journeyNo != null && Number(other.journeyNo) === Number(bookingData.journeyNo)
+                ? tr("api.journey.connectionFlightTitle", "Aktarma reysi")
+                : tr("api.journey.returnFlightTitle", "Qayıdış reysi");
         }) : [];
 
         copies.forEach(function (copy, index) {
