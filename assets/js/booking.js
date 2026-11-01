@@ -51,9 +51,6 @@ function tr(key, fallback, vars) {
 
 (function () {
     var form = document.getElementById("booking-form");
-    var multiPanel = document.getElementById("multi-city");
-    var segmentList = document.getElementById("segment-list");
-    var addSegmentButton = document.getElementById("add-segment");
     var returnField = form ? form.querySelector(".booking-return") : null;
     var departureField = form ? form.querySelector(".booking-departure") : null;
     var routePair = form ? form.querySelector(":scope > .route-pair") : null;
@@ -67,9 +64,6 @@ function tr(key, fallback, vars) {
 
     if (
         !form ||
-        !multiPanel ||
-        !segmentList ||
-        !addSegmentButton ||
         !returnField ||
         !departureField ||
         !routePair ||
@@ -85,20 +79,14 @@ function tr(key, fallback, vars) {
     }
 
     var tabs = form.querySelectorAll(".booking-tab");
-    var maxSegments = 6;
     var tripType = "round-trip";
     var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     var activeRecognition = null;
 
     var TRIP_PARAM = {
         "round-trip": "roundtrip",
-        "one-way": "oneway",
-        "multi-city": "multicity"
+        "one-way": "oneway"
     };
-
-    function getSegments() {
-        return segmentList.querySelectorAll(".flight-segment");
-    }
 
     function clearValidation() {
         message.hidden = true;
@@ -120,10 +108,11 @@ function tr(key, fallback, vars) {
     }
 
     function setTrip(type) {
+        // Only one-way and round trip exist; anything else (an old saved value, a stale link) means round trip.
+        type = type === "one-way" ? "one-way" : "round-trip";
         tripType = type;
         form.classList.toggle("is-round-trip", type === "round-trip");
         form.classList.toggle("is-one-way", type === "one-way");
-        form.classList.toggle("is-multi-city", type === "multi-city");
 
         tabs.forEach(function (tab) {
             var active = tab.getAttribute("data-trip") === type;
@@ -131,15 +120,9 @@ function tr(key, fallback, vars) {
             tab.setAttribute("aria-selected", active ? "true" : "false");
         });
 
-        var isMulti = type === "multi-city";
         var isRoundTrip = type === "round-trip";
 
-        routePair.hidden = isMulti;
-        departureField.hidden = isMulti;
         returnField.hidden = !isRoundTrip;
-        multiPanel.hidden = !isMulti;
-
-        departureInput.disabled = isMulti;
         returnInput.disabled = !isRoundTrip;
 
         if (typeof hideCitySuggestions === "function") {
@@ -151,30 +134,6 @@ function tr(key, fallback, vars) {
         document.dispatchEvent(new CustomEvent("aerova:tripTypeChange", {
             detail: { tripType: type }
         }));
-    }
-
-    function refreshSegments() {
-        var items = getSegments();
-
-        items.forEach(function (segment, index) {
-            var number = index + 1;
-            var fromField = segment.querySelector(".from-input");
-            var toField = segment.querySelector(".to-input");
-            var dateField = segment.querySelector(".segment-date");
-            var fromMic = segment.querySelector('[data-voice="from"]');
-            var toMic = segment.querySelector('[data-voice="to"]');
-            var removeButton = segment.querySelector(".segment-remove");
-
-            segment.querySelector(".segment-name").textContent = tr("booking.flightN", "Uçuş {n}", { n: number });
-            fromField.setAttribute("aria-label", "Uçuş " + number + " haradan");
-            toField.setAttribute("aria-label", "Uçuş " + number + " haraya");
-            dateField.setAttribute("aria-label", "Uçuş " + number + " gediş tarixi");
-            fromMic.setAttribute("aria-label", "Səsli daxiletmə, uçuş " + number + " gediş");
-            toMic.setAttribute("aria-label", "Səsli daxiletmə, uçuş " + number + " təyinat");
-            removeButton.hidden = items.length < 3;
-        });
-
-        addSegmentButton.hidden = items.length >= maxSegments;
     }
 
     function swapRouteValues(pair) {
@@ -445,106 +404,6 @@ function tr(key, fallback, vars) {
         return true;
     }
 
-    function collectMultiCitySegments() {
-        return Array.prototype.map.call(getSegments(), function (segment) {
-            var from = window.AEROVA_PICKER.selection(segment.querySelector(".from-input"));
-            var to = window.AEROVA_PICKER.selection(segment.querySelector(".to-input"));
-            return {
-                from: from ? from.airport.city : segment.querySelector(".from-input").value.trim(),
-                to: to ? to.airport.city : segment.querySelector(".to-input").value.trim(),
-                fromCode: from ? from.airport.code : "",
-                toCode: to ? to.airport.code : "",
-                fromAirportId: from ? from.airport.id : null,
-                toAirportId: to ? to.airport.id : null,
-                departureDate: segment.querySelector(".segment-date").value.trim()
-            };
-        });
-    }
-
-    function validateMultiCity() {
-        var items = getSegments();
-        var firstInvalid = null;
-
-        for (var i = 0; i < items.length; i += 1) {
-            var segment = items[i];
-            var from = segment.querySelector(".from-input");
-            var to = segment.querySelector(".to-input");
-            var date = segment.querySelector(".segment-date");
-            var fromValue = from.value.trim();
-            var toValue = to.value.trim();
-            var dateValue = date.value.trim();
-
-            from.value = fromValue;
-            to.value = toValue;
-
-            if (!fromValue) {
-                markInvalid(from);
-                if (!firstInvalid) {
-                    firstInvalid = from;
-                }
-            }
-
-            if (!toValue) {
-                markInvalid(to);
-                if (!firstInvalid) {
-                    firstInvalid = to;
-                }
-            }
-
-            if (!dateValue) {
-                markInvalid(date);
-                if (!firstInvalid) {
-                    firstInvalid = date;
-                }
-            }
-
-            var fromChoice = window.AEROVA_PICKER.selection(from);
-            var toChoice = window.AEROVA_PICKER.selection(to);
-            if (fromValue && !fromChoice) { markInvalid(from); firstInvalid = firstInvalid || from; }
-            if (toValue && !toChoice) { markInvalid(to); firstInvalid = firstInvalid || to; }
-            if (fromChoice && toChoice && fromChoice.airport.code === toChoice.airport.code) {
-                markInvalid(to);
-                firstInvalid = firstInvalid || to;
-                showMessage(tr("booking.sameCity", "Gediş və təyinat eynidir. Zəhmət olmasa iki fərqli şəhər seçin."));
-                to.focus();
-                return null;
-            }
-        }
-
-        if (firstInvalid) {
-            showMessage(tr("booking.completeMulti", "Hər uçuş üçün Haradan, Haraya və Gediş tarixini doldurun."));
-            firstInvalid.focus();
-            return null;
-        }
-
-        // Each flight is on the same day as the one before it or later.
-        for (var next = 1; next < items.length; next += 1) {
-            var previousDate = items[next - 1].querySelector(".segment-date").value.trim();
-            var thisDate = items[next].querySelector(".segment-date");
-
-            if (thisDate.value.trim() < previousDate) {
-                markInvalid(thisDate);
-                showMessage(tr("api.journey.multiDates", "Hər reys özündən əvvəlki reysin tarixində və ya ondan sonra olmalıdır."));
-                thisDate.focus();
-                return null;
-            }
-        }
-
-        if (!validateSharedOptions()) {
-            return null;
-        }
-
-        return {
-            tripType: "multicity",
-            passengers: passengersInput.value,
-            adults: String(passengerMix.adults),
-            children: String(passengerMix.children),
-            infants: String(passengerMix.infants),
-            cabinClass: cabinInput.value,
-            segments: collectMultiCitySegments()
-        };
-    }
-
     function openPriceCalendar(mode) {
         document.dispatchEvent(new CustomEvent("aerova:openPriceCalendar", {
             detail: { mode: mode || "departure" }
@@ -651,10 +510,6 @@ function tr(key, fallback, vars) {
         clearValidation();
         stopVoice();
 
-        if (tripType === "multi-city") {
-            return validateMultiCity();
-        }
-
         return validateSimpleTrip();
     }
 
@@ -667,33 +522,19 @@ function tr(key, fallback, vars) {
         params.set("infants", data.infants);
         params.set("cabinClass", data.cabinClass);
 
-        if (data.tripType === "multicity") {
-            params.set("segments", String(data.segments.length));
+        params.set("from", data.from);
+        params.set("to", data.to);
+        // The airports themselves: the results search by these codes (and keep the database ids), not by the text.
+        if (data.fromCode) params.set("fromCode", data.fromCode);
+        if (data.toCode) params.set("toCode", data.toCode);
+        if (data.fromAirportId) params.set("fromAirportId", String(data.fromAirportId));
+        if (data.toAirportId) params.set("toAirportId", String(data.toAirportId));
+        params.set("departureDate", data.departureDate);
 
-            data.segments.forEach(function (segment, index) {
-                var number = index + 1;
-                params.set("from" + number, segment.from);
-                params.set("to" + number, segment.to);
-                if (segment.fromCode) params.set("fromCode" + number, segment.fromCode);
-                if (segment.toCode) params.set("toCode" + number, segment.toCode);
-                params.set("departureDate" + number, segment.departureDate);
-            });
-
-            params.set("segmentsJson", JSON.stringify(data.segments));
-        } else {
-            params.set("from", data.from);
-            params.set("to", data.to);
-            // The airports themselves: the results search by these codes (and keep the database ids), not by the text.
-            if (data.fromCode) params.set("fromCode", data.fromCode);
-            if (data.toCode) params.set("toCode", data.toCode);
-            if (data.fromAirportId) params.set("fromAirportId", String(data.fromAirportId));
-            if (data.toAirportId) params.set("toAirportId", String(data.toAirportId));
-            params.set("departureDate", data.departureDate);
-
-            if (data.returnDate) {
-                params.set("returnDate", data.returnDate);
-            }
+        if (data.returnDate) {
+            params.set("returnDate", data.returnDate);
         }
+    
 
         return "flight-results.html?" + params.toString();
     }
@@ -729,17 +570,9 @@ function tr(key, fallback, vars) {
 
     form.addEventListener("click", function (event) {
         var swap = event.target.closest(".swap-button");
-        if (swap && form.contains(swap) && tripType !== "multi-city") {
+        if (swap && form.contains(swap)) {
             hideCitySuggestions();
             swapRouteValues(swap.closest(".route-pair"));
-            return;
-        }
-
-        var remove = event.target.closest(".segment-remove");
-        if (remove && segmentList.contains(remove) && getSegments().length > 2) {
-            hideCitySuggestions();
-            remove.closest(".flight-segment").remove();
-            refreshSegments();
             return;
         }
 
@@ -748,25 +581,6 @@ function tr(key, fallback, vars) {
             hideCitySuggestions();
             startVoiceInput(mic);
         }
-    });
-
-    addSegmentButton.addEventListener("click", function () {
-        if (getSegments().length >= maxSegments) {
-            return;
-        }
-
-        hideCitySuggestions();
-
-        var clone = getSegments()[0].cloneNode(true);
-        clone.querySelectorAll("input").forEach(function (input) {
-            input.value = "";
-            input.classList.remove("is-invalid");
-        });
-        clone.querySelectorAll(".airport-meta").forEach(function (meta) {
-            meta.remove();
-        });
-        segmentList.appendChild(clone);
-        refreshSegments();
     });
 
     form.addEventListener("submit", function (event) {
@@ -778,7 +592,7 @@ function tr(key, fallback, vars) {
             return;
         }
 
-        if (data.tripType === "multicity" || !data.fromCode || !data.toCode) {
+        if (!data.fromCode || !data.toCode) {
             navigateToResults(data);
             return;
         }
@@ -816,7 +630,6 @@ function tr(key, fallback, vars) {
         });
     }
 
-    refreshSegments();
     setTrip("round-trip");
     applyPrefill();
 })();
@@ -1266,16 +1079,13 @@ function tr(key, fallback, vars) {
 
     function applyTripType(type) {
         tripType = type || "round-trip";
-        var isMulti = tripType === "multi-city";
         var isRoundTrip = tripType === "round-trip";
         var isOneWay = tripType === "one-way";
 
-        calendarSection.hidden = isMulti;
-        modePanel.hidden = isMulti;
         modeReturnButton.hidden = !isRoundTrip;
         summaryReturnBlock.hidden = !isRoundTrip;
 
-        if (isOneWay || isMulti) {
+        if (isOneWay) {
             selectionMode = "departure";
             clearReturnSelection();
         } else if (!departureDate) {
@@ -1592,9 +1402,6 @@ function tr(key, fallback, vars) {
         if (bookingForm) {
             if (bookingForm.classList.contains("is-one-way")) {
                 return "one-way";
-            }
-            if (bookingForm.classList.contains("is-multi-city")) {
-                return "multi-city";
             }
         }
         return "round-trip";
