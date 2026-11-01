@@ -1,12 +1,12 @@
 /* AEROVA AI travel assistant widget */
 .aerova-chat {
-    --chat-navy: #141416;
-    --chat-navy-2: #1d1e21;
+    --chat-navy: #07111d;
+    --chat-navy-2: #0d1b2b;
     --chat-cream: #f6f1e7;
     --chat-cream-muted: rgba(246, 241, 231, 0.74);
-    --chat-gold: #b4673a;
-    --chat-gold-light: #d38a5b;
-    --chat-line: rgba(180, 103, 58, 0.28);
+    --chat-gold: #c6a36a;
+    --chat-gold-light: #e0c48a;
+    --chat-line: rgba(198, 163, 106, 0.28);
     --chat-sans: "Outfit", "Segoe UI", sans-serif;
     --chat-serif: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
     --chat-display: "Cinzel", "Times New Roman", serif;
@@ -66,13 +66,13 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 0 14px 34px rgba(16, 16, 17, 0.38), inset 0 0 0 1px rgba(211, 138, 91, 0.08);
+    box-shadow: 0 14px 34px rgba(5, 12, 22, 0.38), inset 0 0 0 1px rgba(224, 196, 138, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .aerova-chat__launcher:hover {
     transform: translateY(-2px);
-    box-shadow: 0 18px 40px rgba(16, 16, 17, 0.46);
+    box-shadow: 0 18px 40px rgba(5, 12, 22, 0.46);
 }
 
 .aerova-chat__launcher:focus-visible,
@@ -101,7 +101,7 @@ body:has(.site-header.is-menu-open) .aerova-chat:not(.is-open) {
     border: 1px solid var(--chat-line);
     border-radius: 18px;
     background: var(--chat-navy);
-    box-shadow: 0 30px 70px rgba(14, 15, 16, 0.55);
+    box-shadow: 0 30px 70px rgba(3, 8, 15, 0.55);
     animation: aerova-chat-in 0.22s ease-out;
 }
 
@@ -200,10 +200,10 @@ body:has(.site-header.is-menu-open) .aerova-chat:not(.is-open) {
     flex-direction: column;
     gap: 0.7rem;
     background:
-        radial-gradient(circle at 100% 0, rgba(180, 103, 58, 0.08), transparent 45%),
+        radial-gradient(circle at 100% 0, rgba(198, 163, 106, 0.08), transparent 45%),
         var(--chat-navy);
     scrollbar-width: thin;
-    scrollbar-color: rgba(180, 103, 58, 0.4) transparent;
+    scrollbar-color: rgba(198, 163, 106, 0.4) transparent;
 }
 
 .aerova-chat__message {
@@ -239,11 +239,11 @@ body:has(.site-header.is-menu-open) .aerova-chat:not(.is-open) {
 .aerova-chat__message--user .aerova-chat__bubble {
     border-bottom-right-radius: 4px;
     background: var(--chat-cream);
-    color: #161618;
+    color: #1c150c;
 }
 
 .aerova-chat__message--welcome .aerova-chat__bubble {
-    border-color: rgba(180, 103, 58, 0.5);
+    border-color: rgba(198, 163, 106, 0.5);
 }
 
 .aerova-chat__dots {
@@ -291,7 +291,7 @@ body:has(.site-header.is-menu-open) .aerova-chat:not(.is-open) {
     gap: 0.55rem;
     margin: 0 0.9rem;
     padding: 0.4rem 0.4rem 0.4rem 0.95rem;
-    border: 1px solid rgba(180, 103, 58, 0.45);
+    border: 1px solid rgba(198, 163, 106, 0.45);
     border-radius: 16px;
     background: rgba(246, 241, 231, 0.04);
 }
@@ -310,7 +310,7 @@ body:has(.site-header.is-menu-open) .aerova-chat:not(.is-open) {
     resize: none;
     overflow-y: hidden;
     scrollbar-width: thin;
-    scrollbar-color: rgba(180, 103, 58, 0.45) transparent;
+    scrollbar-color: rgba(198, 163, 106, 0.45) transparent;
     background: transparent;
     color: var(--chat-cream);
     font: 400 0.9rem/1.45 var(--chat-sans);
@@ -331,7 +331,7 @@ body:has(.site-header.is-menu-open) .aerova-chat:not(.is-open) {
 
 .aerova-chat__input::-webkit-scrollbar-thumb {
     border-radius: 999px;
-    background: rgba(180, 103, 58, 0.45);
+    background: rgba(198, 163, 106, 0.45);
 }
 
 .aerova-chat__input::-webkit-scrollbar-button {

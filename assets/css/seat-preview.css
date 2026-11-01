@@ -33,9 +33,9 @@
     justify-content: center;
     gap: 0.25rem;
     padding: 0.3rem;
-    border: 1px solid rgba(180, 103, 58, 0.35);
+    border: 1px solid rgba(198, 163, 106, 0.35);
     border-radius: 999px;
-    background: rgba(20, 20, 22, 0.55);
+    background: rgba(7, 17, 29, 0.55);
 }
 
 .seat-preview-tab {
@@ -58,7 +58,7 @@
 
 .seat-preview-tab[aria-selected="true"] {
     background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
-    color: #141416;
+    color: #07111d;
 }
 
 .seat-preview-tab:focus-visible,

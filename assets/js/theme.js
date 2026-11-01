@@ -42,7 +42,7 @@
       button.setAttribute("title", label);
     });
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#07111d" : "#f6f1e7");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#101614" : "#f1eee6");
   }
 
   function apply(theme, animate) {

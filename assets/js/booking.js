@@ -613,6 +613,13 @@ function tr(key, fallback, vars) {
     function applyPrefill() {
         var params = new URLSearchParams(window.location.search);
         var picker = window.AEROVA_PICKER;
+
+        // A cabin named in the link (from the brand page) is chosen in the form; anything else keeps the default.
+        var cabinName = params.get("cabinClass");
+        var cabinSelect = document.getElementById("booking-cabin");
+        if (cabinSelect && ["Economy", "Comfort", "Business"].indexOf(cabinName) !== -1) {
+            cabinSelect.value = cabinName;
+        }
         var wantedFrom = params.get("fromCode") || params.get("from");
         var wantedTo = params.get("toCode") || params.get("to");
 
@@ -792,8 +799,13 @@ function tr(key, fallback, vars) {
         return Math.max(1, parseInt(input && input.value, 10) || 1);
     }
 
+    function chosenCabin() {
+        var cabin = document.getElementById("booking-cabin");
+        return cabin && cabin.value ? cabin.value : "";
+    }
+
     function monthKey(fromCity, toCity, year, month) {
-        return normalizeCity(fromCity) + "|" + normalizeCity(toCity) + "|" + year + "-" + pad(month + 1) + "|" + seatCount();
+        return normalizeCity(fromCity) + "|" + normalizeCity(toCity) + "|" + year + "-" + pad(month + 1) + "|" + seatCount() + "|" + chosenCabin();
     }
 
     function cityCode(city) {
@@ -830,7 +842,8 @@ function tr(key, fallback, vars) {
         var last = new Date(year, month + 1, 0);
         var query = "api/flights/lowest-fares?originCode=" + encodeURIComponent(originCode) +
             "&destinationCode=" + encodeURIComponent(destinationCode) +
-            "&from=" + toISODate(first) + "&to=" + toISODate(last) + "&passengers=" + seatCount();
+            "&from=" + toISODate(first) + "&to=" + toISODate(last) + "&passengers=" + seatCount() +
+            (chosenCabin() ? "&cabinClass=" + encodeURIComponent(chosenCabin()) : "");
 
         window.AEROVA_API.get(query).then(function (days) {
             (days || []).forEach(function (day) {
@@ -1027,7 +1040,7 @@ function tr(key, fallback, vars) {
             return;
         }
 
-        if (returnDate < departureDate) {
+        if (returnDate <= departureDate) {
             clearReturnSelection();
         }
     }
@@ -1232,7 +1245,7 @@ function tr(key, fallback, vars) {
             var date = new Date(year, month, day);
             var iso = toISODate(date);
             var fare = getDayFare(route.from, route.to, date);
-            var beforeDeparture = selectionMode === "return" && departureDate && iso < departureDate;
+            var beforeDeparture = selectionMode === "return" && departureDate && iso <= departureDate;
             var unavailable = fare == null || beforeDeparture;
             var classes = ["price-calendar-day"];
             var label = "Tarix " + iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(0, 4);
@@ -1441,6 +1454,16 @@ function tr(key, fallback, vars) {
             }
             handleRouteChange(true);
         });
+
+        // A different cabin has its own seats and fares, so the days of the month are asked again for it.
+        var cabinSelect = document.getElementById("booking-cabin");
+        if (cabinSelect) {
+            cabinSelect.addEventListener("change", function () {
+                refreshDeparturePrice();
+                refreshReturnPrice();
+                renderCalendar();
+            });
+        }
 
         prevMonthButton.addEventListener("click", function () {
             shiftMonth(-1);

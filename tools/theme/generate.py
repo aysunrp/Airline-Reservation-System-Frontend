@@ -6,7 +6,7 @@ import re, os, glob, colorsys, json, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 CSS_DIR = os.path.normpath(os.path.join(HERE, "..", "..", "assets", "css"))
 OUT = os.path.join(CSS_DIR, "theme.css")
-SKIP_FILES = {"theme.css", "design.css"}
+SKIP_FILES = {"theme.css"}
 CFG = json.load(open(os.path.join(HERE, "config.json"), encoding="utf-8"))
 SKIP_SEL = re.compile(CFG["skip_selectors"], re.I) if CFG["skip_selectors"] else None
 KEEP_FILES = set(CFG.get("keep_files", []))
@@ -172,9 +172,9 @@ def family(c):
     h, l, s = hls(c)
     if c[3] == 0:
         return "none"
-    if 14 <= h <= 52 and s > 0.3 and 0.28 < l < 0.82:
+    if 28 <= h <= 52 and s > 0.38 and 0.3 < l < 0.82 and not (l > 0.8):
         return "gold"
-    if l < 0.2 and (190 <= h <= 260 or s < 0.2):
+    if l < 0.2 and (190 <= h <= 260 or s < 0.15):
         return "navy"
     if l < 0.2 and s < 0.5:
         return "navy"
@@ -186,9 +186,9 @@ def family(c):
 
 
 # Light palette (anchors)
-L = dict(bg=(245, 241, 234), surface=(255, 253, 250), alt=(238, 232, 221), sunken=(232, 225, 211), text=(22, 22, 24), gold_text=(143, 79, 39))
+L = dict(bg=(246, 241, 231), surface=(255, 253, 248), alt=(243, 235, 224), sunken=(239, 230, 214), text=(28, 21, 12), gold_text=(125, 95, 39))
 # Dark palette (anchors)
-D = dict(bg=(20, 20, 22), surface=(33, 34, 37), alt=(25, 26, 28), sunken=(16, 16, 17), text=(246, 241, 231))
+D = dict(bg=(7, 17, 29), surface=(16, 30, 48), alt=(11, 22, 36), sunken=(5, 12, 22), text=(246, 241, 231))
 
 
 def navy_to_light(c):
@@ -239,13 +239,13 @@ def map_color(c, cls, target):
             if cls in ("border",):
                 return None
             if cls == "shadow":
-                return to_css((40, 30, 12), min(a * 0.32, 0.26))
+                return to_css((60, 40, 10), min(a * 0.38, 0.3))
             return None
         if fam == "cream":
             if cls in ("text", "fill"):
                 return to_css(L["text"], min(1.0, a if a >= 0.995 else a * 1.12 + 0.05))
             if cls == "border":
-                return to_css((60, 48, 28), min(0.4, a * 1.5 + 0.04))
+                return to_css((70, 52, 22), min(0.4, a * 1.5 + 0.04))
             if cls == "shadow":
                 return to_css((255, 255, 255), a)
             return None
@@ -287,7 +287,7 @@ def map_color(c, cls, target):
             return None
         if fam == "gold":
             if cls in ("text", "fill") and l < 0.5:
-                return to_css((211, 138, 91), a)
+                return to_css((224, 196, 138), a)
             return None
         if fam == "chroma":
             if cls in ("text", "fill") and l < 0.5:
@@ -357,8 +357,8 @@ def text_kind(decls):
 
 
 ANCH = {
-    "light": {"#f5f1ea": "var(--color-background)", "#fffdfa": "var(--color-surface)", "#eee8dd": "var(--color-surface-alt)", "#e8e1d3": "var(--color-surface-sunken)", "#161618": "var(--color-text)", "#8f4f27": "var(--color-accent-strong)"},
-    "dark": {"#141416": "var(--color-background)", "#212225": "var(--color-surface)", "#191a1c": "var(--color-surface-alt)", "#101011": "var(--color-surface-sunken)", "#f6f1e7": "var(--color-text)"},
+    "light": {"#f6f1e7": "var(--color-background)", "#fffdf8": "var(--color-surface)", "#f3ebe0": "var(--color-surface-alt)", "#efe6d6": "var(--color-surface-sunken)", "#1c150c": "var(--color-text)", "#7d5f27": "var(--color-accent-strong)"},
+    "dark": {"#07111d": "var(--color-background)", "#101e30": "var(--color-surface)", "#0b1624": "var(--color-surface-alt)", "#050c16": "var(--color-surface-sunken)", "#f6f1e7": "var(--color-text)"},
 }
 
 
@@ -457,15 +457,15 @@ def flip_rule(selector, decls, target, force=False):
         nv, ch = rewrite_value(p, v, cls, target)
         if ch:
             new.append((p, nv))
-    return new or gold_text_only(selector, decls, target)
+    return new or None
 
 
 def gold_text_only(selector, decls, target):
-    """the accent used as plain text: deeper copper on ivory, lighter copper on charcoal"""
-    if SKIP_SEL and SKIP_SEL.search(selector):
+    """light theme: the pale gold of a plain text rule is too faint on cream"""
+    if target != "light" or (SKIP_SEL and SKIP_SEL.search(selector)):
         return None
     for p, v in decls:
-        if p.lower().startswith("background") and any(c and family(c) == "gold" and c[3] >= 0.5 for _, c in decl_colors(p, v)):
+        if p.lower().startswith("background") and any(c and family(c) == "gold" for _, c in decl_colors(p, v)):
             return None
         if p.lower().startswith("background") and "url(" in v:
             return None
@@ -473,17 +473,9 @@ def gold_text_only(selector, decls, target):
     for p, v in decls:
         if p.lower() == "color":
             for tok, c in decl_colors(p, v):
-                if not c or family(c) != "gold":
-                    continue
-                l = hls(c)[1]
-                if target == "light" and l > 0.45:
-                    out = to_css(L["gold_text"], c[3])
-                elif target == "dark" and l < 0.5:
-                    out = to_css((211, 138, 91), c[3])
-                else:
-                    continue
-                res.append((p, ANCH[target].get(out, out)))
-                break
+                if c and family(c) == "gold" and hls(c)[1] > 0.45:
+                    res.append((p, ANCH["light"].get(to_css(L["gold_text"], c[3]), to_css(L["gold_text"], c[3]))))
+                    break
     return res or None
 
 

@@ -88,7 +88,7 @@
      * account (after the session ran out, say) keeps them so the booking can carry on.
      */
     var BOOKING_OWNER_KEY = "aerovaBookingOwner";
-    var PERSONAL_BOOKING_KEYS = ["bookingData", "aerovaBooking", "aerovaCheckout", "aerovaSavable", "aerovaPaid", "aerovaManaged", BOOKING_OWNER_KEY];
+    var PERSONAL_BOOKING_KEYS = ["bookingData", "aerovaBooking", "aerovaCheckout", "aerovaSavable", "aerovaPaid", "aerovaManaged", "aerovaTripsCache", BOOKING_OWNER_KEY];
 
     function forgetPersonalBookingData() {
         PERSONAL_BOOKING_KEYS.forEach(function (key) {
@@ -266,18 +266,18 @@
             ".account-menu-caret{display:inline-block;font-size:0.8em;line-height:1;transition:transform 0.2s ease;}" +
             "[aria-expanded=\"true\"]>.account-menu-caret{transform:rotate(180deg);}" +
             ".account-menu{position:absolute;top:calc(100% + 0.65rem);right:0;z-index:1000;min-width:14rem;margin:0;padding:0.4rem;list-style:none;" +
-            "background:var(--color-surface,#1d1e20);border:1px solid rgba(180, 103, 58,0.45);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,0.45);}" +
+            "background:var(--color-surface,#0b1a2c);border:1px solid rgba(198,163,106,0.45);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,0.45);}" +
             ".account-menu[hidden],.account-drawer-list[hidden]{display:none;}" +
             ".account-menu-sep{margin-top:0.3rem;padding-top:0.3rem;border-top:1px solid var(--color-border,rgba(246,241,231,0.12));}" +
             ".account-menu-item{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;width:100%;padding:0.72rem 0.9rem;" +
             "border:0;border-radius:9px;background:transparent;color:var(--color-text,#f6f1e7);font:inherit;font-size:0.74rem;font-weight:400;letter-spacing:0.14em;" +
             "line-height:1.3;text-align:left;text-decoration:none;text-transform:uppercase;white-space:nowrap;cursor:pointer;}" +
-            ".account-menu-item:hover,.account-menu-item:focus-visible{background:rgba(180, 103, 58,0.16);color:var(--color-accent-strong,#d38a5b);}" +
-            ".account-menu-item:focus-visible{outline:2px solid #b4673a;outline-offset:-2px;}" +
-            ".account-menu-item[aria-current=\"page\"]{color:var(--color-accent-strong,#d38a5b);}" +
+            ".account-menu-item:hover,.account-menu-item:focus-visible{background:rgba(198,163,106,0.16);color:var(--color-accent-strong,#e3c78f);}" +
+            ".account-menu-item:focus-visible{outline:2px solid #c6a36a;outline-offset:-2px;}" +
+            ".account-menu-item[aria-current=\"page\"]{color:var(--color-accent-strong,#e3c78f);}" +
             ".account-menu-item .aerova-notif-badge{margin-left:0;}" +
             ".account-drawer-list{display:flex;flex-direction:column;width:100%;margin:0.75rem 0 0;padding:0 0 0 0.9rem;list-style:none;" +
-            "border-left:1px solid rgba(180, 103, 58,0.45);}" +
+            "border-left:1px solid rgba(198,163,106,0.45);}" +
             ".account-drawer-list .account-menu-item{padding:0.85rem 0.5rem;border-radius:0;font-size:0.8rem;border-bottom:1px solid rgba(246,241,231,0.1);}" +
             ".account-drawer-list .account-menu-sep{margin-top:0;padding-top:0;border-top:0;}";
         (document.head || document.documentElement).appendChild(style);
@@ -1438,7 +1438,7 @@
         style.id = BADGE_STYLE_ID;
         style.textContent =
             ".aerova-notif-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.35em;height:1.35em;" +
-            "margin-left:0.45em;padding:0 0.38em;border-radius:999px;background:#b4673a;color:#141416;" +
+            "margin-left:0.45em;padding:0 0.38em;border-radius:999px;background:#c6a36a;color:#07111d;" +
             "box-shadow:0 0 0 1px rgba(246,241,231,0.35);font-size:0.68rem;font-weight:600;line-height:1;" +
             "letter-spacing:0;text-transform:none;vertical-align:0.12em;}" +
             ".aerova-notif-badge[hidden]{display:none;}";

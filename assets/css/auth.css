@@ -1,13 +1,13 @@
 /* AEROVA Auth — login & register */
 
 :root {
-    --color-navy: #141416;
-    --color-navy-deep: #101011;
-    --color-ink: #161618;
+    --color-navy: #07111d;
+    --color-navy-deep: #050c16;
+    --color-ink: #1c150c;
     --color-cream: #f6f1e7;
     --color-cream-muted: rgba(246, 241, 231, 0.82);
-    --color-gold: #b4673a;
-    --color-gold-light: #d38a5b;
+    --color-gold: #c6a36a;
+    --color-gold-light: #e0c48a;
     --font-serif: "Cormorant Garamond", "Palatino Linotype", Palatino, serif;
     --font-display: "Cinzel", "Times New Roman", serif;
     --font-sans: "Outfit", "Segoe UI", sans-serif;
@@ -26,8 +26,8 @@ body.auth-body {
     display: flex;
     flex-direction: column;
     background:
-        radial-gradient(ellipse at 80% 0%, rgba(180, 103, 58, 0.12), transparent 42%),
-        linear-gradient(180deg, #171719 0%, var(--color-navy) 55%, var(--color-navy-deep) 100%);
+        radial-gradient(ellipse at 80% 0%, rgba(198, 163, 106, 0.12), transparent 42%),
+        linear-gradient(180deg, #0a1420 0%, var(--color-navy) 55%, var(--color-navy-deep) 100%);
     color: var(--color-cream);
     font-family: var(--font-sans);
     font-weight: 300;
@@ -122,9 +122,9 @@ h1 {
     padding: 2.25rem 2rem 2.1rem;
     border-radius: 22px;
     background:
-        radial-gradient(ellipse at 0% 0%, rgba(180, 103, 58, 0.14), transparent 45%),
-        linear-gradient(180deg, rgba(35, 36, 40, 0.96) 0%, rgba(25, 26, 28, 0.98) 100%);
-    border: 1px solid rgba(180, 103, 58, 0.32);
+        radial-gradient(ellipse at 0% 0%, rgba(198, 163, 106, 0.14), transparent 45%),
+        linear-gradient(180deg, rgba(18, 32, 51, 0.96) 0%, rgba(11, 22, 36, 0.98) 100%);
+    border: 1px solid rgba(198, 163, 106, 0.32);
     box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
 }
 
@@ -171,19 +171,19 @@ h1 {
 
 .auth-control {
     border-radius: 12px;
-    background: rgba(16, 16, 17, 0.62);
+    background: rgba(5, 12, 22, 0.62);
     border: 1px solid rgba(246, 241, 231, 0.14);
     transition: border-color 0.2s ease, background-color 0.2s ease;
     overflow: hidden;
 }
 
 .auth-control:hover {
-    border-color: rgba(180, 103, 58, 0.45);
+    border-color: rgba(198, 163, 106, 0.45);
 }
 
 .auth-control:focus-within {
     border-color: var(--color-gold);
-    box-shadow: 0 0 0 3px rgba(180, 103, 58, 0.18);
+    box-shadow: 0 0 0 3px rgba(198, 163, 106, 0.18);
 }
 
 .auth-control.is-invalid {
@@ -256,7 +256,7 @@ h1 {
 
 .auth-footer-text a {
     color: var(--color-gold-light);
-    border-bottom: 1px solid rgba(211, 138, 91, 0.35);
+    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
 }
 
 .auth-footer-text a:hover {
@@ -267,8 +267,8 @@ h1 {
     margin-top: 1rem;
     padding: 0.85rem 0.95rem;
     border-radius: 12px;
-    background: rgba(180, 103, 58, 0.08);
-    border: 1px solid rgba(180, 103, 58, 0.22);
+    background: rgba(198, 163, 106, 0.08);
+    border: 1px solid rgba(198, 163, 106, 0.22);
     color: rgba(246, 241, 231, 0.65);
     font-size: 0.82rem;
 }
@@ -288,8 +288,8 @@ h1 {
     margin-top: 1.1rem;
     padding: 0.85rem 0.95rem;
     border-radius: 12px;
-    background: rgba(180, 103, 58, 0.08);
-    border: 1px solid rgba(180, 103, 58, 0.28);
+    background: rgba(198, 163, 106, 0.08);
+    border: 1px solid rgba(198, 163, 106, 0.28);
     color: var(--color-cream-muted);
     font-size: 0.9rem;
     line-height: 1.45;
@@ -319,7 +319,7 @@ h1 {
 .auth-forgot a,
 .auth-links a {
     color: var(--color-gold-light);
-    border-bottom: 1px solid rgba(211, 138, 91, 0.35);
+    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
 }
 
 .auth-forgot a:hover,
@@ -343,7 +343,7 @@ h1 {
 .auth-link-button {
     padding: 0;
     color: var(--color-gold-light);
-    border-bottom: 1px solid rgba(211, 138, 91, 0.35);
+    border-bottom: 1px solid rgba(224, 196, 138, 0.35);
     font-size: 0.9rem;
 }
 
@@ -499,7 +499,7 @@ a.auth-submit:hover {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    border: 2px solid rgba(22, 22, 24, 0.28);
+    border: 2px solid rgba(28, 21, 12, 0.28);
     border-top-color: var(--color-ink);
     animation: auth-spin 0.8s linear infinite;
 }
@@ -526,9 +526,9 @@ a.auth-submit:hover {
     height: 84px;
     margin: 0 auto 1.4rem;
     border-radius: 50%;
-    border: 1px solid rgba(180, 103, 58, 0.45);
-    background: radial-gradient(circle at 30% 25%, rgba(211, 138, 91, 0.22), rgba(180, 103, 58, 0.05) 70%);
-    box-shadow: 0 0 0 8px rgba(180, 103, 58, 0.06);
+    border: 1px solid rgba(198, 163, 106, 0.45);
+    background: radial-gradient(circle at 30% 25%, rgba(224, 196, 138, 0.22), rgba(198, 163, 106, 0.05) 70%);
+    box-shadow: 0 0 0 8px rgba(198, 163, 106, 0.06);
 }
 
 .auth-status-glyph {
@@ -551,7 +551,7 @@ a.auth-submit:hover {
 
 .auth-spinner {
     border-radius: 50%;
-    border: 2px solid rgba(211, 138, 91, 0.25);
+    border: 2px solid rgba(224, 196, 138, 0.25);
     border-top-color: var(--color-gold-light);
     animation: auth-spin 0.9s linear infinite;
 }
@@ -612,8 +612,8 @@ a.auth-submit:hover {
     padding: 1rem 1.1rem;
     border-radius: 14px;
     text-align: left;
-    background: rgba(180, 103, 58, 0.07);
-    border: 1px solid rgba(180, 103, 58, 0.2);
+    background: rgba(198, 163, 106, 0.07);
+    border: 1px solid rgba(198, 163, 106, 0.2);
 }
 
 .auth-help-title {
@@ -733,7 +733,7 @@ a.auth-submit:hover {
     padding: 0;
     border: 1px solid rgba(246, 241, 231, 0.14);
     border-radius: 12px;
-    background: rgba(16, 16, 17, 0.62);
+    background: rgba(5, 12, 22, 0.62);
     color: var(--color-cream);
     font-family: var(--font-display);
     font-size: 1.45rem;
@@ -742,13 +742,13 @@ a.auth-submit:hover {
 }
 
 .code-box:hover {
-    border-color: rgba(180, 103, 58, 0.45);
+    border-color: rgba(198, 163, 106, 0.45);
 }
 
 .code-box:focus {
     outline: none;
     border-color: var(--color-gold);
-    box-shadow: 0 0 0 3px rgba(180, 103, 58, 0.18);
+    box-shadow: 0 0 0 3px rgba(198, 163, 106, 0.18);
 }
 
 .code-box.is-invalid {

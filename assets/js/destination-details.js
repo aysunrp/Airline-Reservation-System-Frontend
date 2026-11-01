@@ -82,7 +82,11 @@
             return;
         }
         if (!flights.length) {
-            list.innerHTML = '<li class="dd-flights-empty" role="status">' + esc(tr("destinations.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</li>";
+            // No direct flight from the home base: when the city can be reached with a transfer, say so instead of "no flights".
+            var reachable = catalog.hasFlights(state.page.city);
+            list.innerHTML = '<li class="dd-flights-empty" role="status">' + esc(reachable
+                ? tr("destinations.connectionOnly", "Birbaşa reys yoxdur. Bu şəhərə aktarma ilə uçuş mümkündür: tarixi seçin və axtarışa baxın.")
+                : tr("destinations.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</li>";
             return;
         }
 

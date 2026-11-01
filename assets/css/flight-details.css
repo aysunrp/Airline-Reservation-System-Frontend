@@ -61,7 +61,7 @@
 .flight-details-page .details-card {
     padding: 1.6rem 1.55rem 1.65rem;
     background: linear-gradient(180deg, #fbf7f0 0%, #f3ebe0 100%);
-    border: 1px solid rgba(180, 103, 58, 0.42);
+    border: 1px solid rgba(198, 163, 106, 0.42);
     border-radius: 18px;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
     color: var(--color-ink);
@@ -91,12 +91,12 @@
     gap: 1rem;
     margin-bottom: 1.35rem;
     padding-bottom: 1.2rem;
-    border-bottom: 1px solid rgba(22, 22, 24, 0.1);
+    border-bottom: 1px solid rgba(28, 21, 12, 0.1);
 }
 
 .flight-summary-airline {
     margin: 0 0 0.35rem;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -109,7 +109,7 @@
 
 .flight-summary-route {
     margin: 0;
-    color: rgba(22, 22, 24, 0.72);
+    color: rgba(28, 21, 12, 0.72);
     font-family: var(--font-serif);
     font-size: 1.35rem;
     font-weight: 500;
@@ -122,9 +122,9 @@
     min-height: 34px;
     padding: 0.4rem 0.85rem;
     border-radius: 999px;
-    background: rgba(180, 103, 58, 0.18);
-    border: 1px solid rgba(180, 103, 58, 0.55);
-    color: #8f4f27;
+    background: rgba(198, 163, 106, 0.18);
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    color: #8a6a3a;
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -146,7 +146,7 @@
 
 .flight-summary-meta-item dt {
     margin: 0;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.14em;
@@ -195,7 +195,7 @@
 
 .timeline-code {
     margin: 0.2rem 0 0;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.16em;
@@ -204,7 +204,7 @@
 
 .timeline-note {
     margin: 0.45rem 0 0;
-    color: rgba(22, 22, 24, 0.62);
+    color: rgba(28, 21, 12, 0.62);
     font-size: 0.92rem;
     font-weight: 300;
     line-height: 1.45;
@@ -223,7 +223,7 @@
     height: 10px;
     border-radius: 50%;
     background: var(--color-gold);
-    box-shadow: 0 0 0 4px rgba(180, 103, 58, 0.18);
+    box-shadow: 0 0 0 4px rgba(198, 163, 106, 0.18);
 }
 
 .timeline-track {
@@ -241,7 +241,7 @@
     top: 50%;
     height: 2px;
     transform: translateY(-50%);
-    background: linear-gradient(90deg, rgba(180, 103, 58, 0.2), rgba(180, 103, 58, 0.9), rgba(180, 103, 58, 0.2));
+    background: linear-gradient(90deg, rgba(198, 163, 106, 0.2), rgba(198, 163, 106, 0.9), rgba(198, 163, 106, 0.2));
 }
 
 .timeline-duration {
@@ -250,8 +250,8 @@
     padding: 0.35rem 0.7rem;
     border-radius: 999px;
     background: #f7f0e6;
-    border: 1px solid rgba(180, 103, 58, 0.45);
-    color: rgba(22, 22, 24, 0.7);
+    border: 1px solid rgba(198, 163, 106, 0.45);
+    color: rgba(28, 21, 12, 0.7);
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -299,7 +299,7 @@
     height: 100%;
     padding: 1.55rem 1.35rem 1.4rem;
     background: linear-gradient(180deg, #fbf7f0 0%, #f3ebe0 100%);
-    border: 1px solid rgba(180, 103, 58, 0.42);
+    border: 1px solid rgba(198, 163, 106, 0.42);
     border-radius: 18px;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
     color: var(--color-ink);
@@ -309,11 +309,11 @@
     z-index: 1;
     transform: translateY(-6px);
     background:
-        radial-gradient(ellipse at 50% 0%, rgba(211, 138, 91, 0.36), transparent 55%),
+        radial-gradient(ellipse at 50% 0%, rgba(224, 196, 138, 0.36), transparent 55%),
         linear-gradient(180deg, #fffaf2 0%, #f4ebdf 100%);
-    border-color: rgba(180, 103, 58, 0.9);
+    border-color: rgba(198, 163, 106, 0.9);
     box-shadow:
-        0 0 0 1px rgba(180, 103, 58, 0.4),
+        0 0 0 1px rgba(198, 163, 106, 0.4),
         0 24px 48px rgba(0, 0, 0, 0.26);
 }
 
@@ -340,7 +340,7 @@
     gap: 0.55rem;
     min-height: 7.5rem;
     padding-bottom: 1.15rem;
-    border-bottom: 1px solid rgba(22, 22, 24, 0.1);
+    border-bottom: 1px solid rgba(28, 21, 12, 0.1);
 }
 
 .fare-card--best-value .fare-card-header {
@@ -349,7 +349,7 @@
 
 .fare-card-label {
     margin: 0;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -372,7 +372,7 @@
 }
 
 .fare-card-per {
-    color: rgba(22, 22, 24, 0.55);
+    color: rgba(28, 21, 12, 0.55);
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.1em;
@@ -381,7 +381,7 @@
 
 .fare-card-note {
     margin: 0;
-    color: rgba(22, 22, 24, 0.66);
+    color: rgba(28, 21, 12, 0.66);
     font-size: 0.95rem;
     font-weight: 300;
     line-height: 1.45;
@@ -401,7 +401,7 @@
     align-content: start;
     gap: 0.25rem;
     padding: 0.85rem 0;
-    border-bottom: 1px solid rgba(22, 22, 24, 0.08);
+    border-bottom: 1px solid rgba(28, 21, 12, 0.08);
 }
 
 .fare-feature:last-child {
@@ -410,7 +410,7 @@
 
 .fare-feature dt {
     margin: 0;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.66rem;
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -419,7 +419,7 @@
 
 .fare-feature dd {
     margin: 0;
-    color: rgba(22, 22, 24, 0.82);
+    color: rgba(28, 21, 12, 0.82);
     font-size: 0.95rem;
     font-weight: 300;
     line-height: 1.4;
@@ -534,18 +534,18 @@
     margin-bottom: 0.85rem;
     border-radius: 50%;
     background: var(--color-gold);
-    box-shadow: 0 0 0 5px rgba(180, 103, 58, 0.2);
+    box-shadow: 0 0 0 5px rgba(198, 163, 106, 0.2);
 }
 
 .journey-stop--stopover .journey-marker {
     background: var(--color-navy);
     border: 3px solid var(--color-gold);
-    box-shadow: 0 0 0 5px rgba(20, 20, 22, 0.08);
+    box-shadow: 0 0 0 5px rgba(7, 17, 29, 0.08);
 }
 
 .journey-stop--arrival .journey-marker {
     background: var(--color-navy);
-    box-shadow: 0 0 0 5px rgba(20, 20, 22, 0.12);
+    box-shadow: 0 0 0 5px rgba(7, 17, 29, 0.12);
 }
 
 .journey-stop-body {
@@ -554,14 +554,14 @@
 
 .journey-stop--stopover .journey-stop-body {
     padding: 0.85rem 0.9rem 0.9rem;
-    border: 1px solid rgba(180, 103, 58, 0.45);
+    border: 1px solid rgba(198, 163, 106, 0.45);
     border-radius: 14px;
-    background: rgba(20, 20, 22, 0.04);
+    background: rgba(7, 17, 29, 0.04);
 }
 
 .journey-label {
     margin: 0 0 0.35rem;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.16em;
@@ -580,7 +580,7 @@
 .journey-next-day {
     display: inline-block;
     margin-left: 0.25rem;
-    color: #8f4f27;
+    color: #9a7844;
     font-family: var(--font-sans, inherit);
     font-size: 0.7rem;
     font-weight: 600;
@@ -591,7 +591,7 @@
 
 .journey-date {
     margin: 0.3rem 0 0;
-    color: rgba(22, 22, 24, 0.66);
+    color: rgba(28, 21, 12, 0.66);
     font-size: 0.85rem;
 }
 
@@ -605,7 +605,7 @@
 
 .journey-code {
     margin-right: 0.2rem;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -613,7 +613,7 @@
 
 .journey-airport {
     margin: 0.25rem 0 0;
-    color: rgba(22, 22, 24, 0.62);
+    color: rgba(28, 21, 12, 0.62);
     font-size: 0.86rem;
     font-weight: 300;
     line-height: 1.4;
@@ -635,7 +635,7 @@
 }
 
 .journey-connection dt {
-    color: rgba(22, 22, 24, 0.62);
+    color: rgba(28, 21, 12, 0.62);
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -684,7 +684,7 @@
     left: 0.4rem;
     right: 0.4rem;
     height: 2px;
-    background: linear-gradient(90deg, rgba(180, 103, 58, 0.35), rgba(180, 103, 58, 0.95), rgba(180, 103, 58, 0.35));
+    background: linear-gradient(90deg, rgba(198, 163, 106, 0.35), rgba(198, 163, 106, 0.95), rgba(198, 163, 106, 0.35));
 }
 
 .journey-leg-line::after {
@@ -699,7 +699,7 @@
 
 .journey-leg-label {
     display: inline-block;
-    color: rgba(22, 22, 24, 0.7);
+    color: rgba(28, 21, 12, 0.7);
     font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.06em;
@@ -719,9 +719,9 @@
     min-width: 0;
     margin: 0 0.75rem;
     padding: 0.9rem 1rem;
-    border: 1px dashed rgba(180, 103, 58, 0.7);
+    border: 1px dashed rgba(198, 163, 106, 0.7);
     border-radius: 14px;
-    background: rgba(20, 20, 22, 0.04);
+    background: rgba(7, 17, 29, 0.04);
 }
 
 .journey-unavailable-title {
@@ -732,7 +732,7 @@
 
 .journey-unavailable-text {
     margin: 0.35rem 0 0;
-    color: rgba(22, 22, 24, 0.66);
+    color: rgba(28, 21, 12, 0.66);
     font-size: 0.88rem;
     line-height: 1.45;
 }
@@ -745,7 +745,7 @@
     gap: 0.5rem 1.5rem;
     margin-top: 1.4rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(180, 103, 58, 0.35);
+    border-top: 1px solid rgba(198, 163, 106, 0.35);
 }
 
 .journey-footer p {
@@ -760,7 +760,7 @@
 .journey-total span,
 .journey-direct,
 .journey-note {
-    color: rgba(22, 22, 24, 0.62);
+    color: rgba(28, 21, 12, 0.62);
     font-size: 0.85rem;
     font-weight: 400;
 }
@@ -800,7 +800,7 @@
         right: auto;
         width: 2px;
         height: auto;
-        background: linear-gradient(180deg, rgba(180, 103, 58, 0.35), rgba(180, 103, 58, 0.95), rgba(180, 103, 58, 0.35));
+        background: linear-gradient(180deg, rgba(198, 163, 106, 0.35), rgba(198, 163, 106, 0.95), rgba(198, 163, 106, 0.35));
     }
 
     .journey-leg-line::after {
@@ -831,9 +831,9 @@
 
 .details-status {
     padding: 2.5rem 1.5rem;
-    border: 1px solid rgba(180, 103, 58, 0.28);
+    border: 1px solid rgba(198, 163, 106, 0.28);
     border-radius: 18px;
-    background: linear-gradient(180deg, #212225 0%, #141416 100%);
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
     text-align: center;
 }
 

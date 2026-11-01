@@ -66,19 +66,19 @@
     return "flight-results.html?" + params.toString();
   }
 
-  /* The results page for the way back: the same cabin and travellers, from the outbound destination on the return date. */
-  function returnSearchUrl(outbound) {
+  /* The results page for the way back: the same cabin and travellers, from where the outbound journey ended to where it began, on the return date. */
+  function returnSearchUrl(first, last) {
     return resultsUrl(new URLSearchParams({
-      from: outbound.to,
-      to: outbound.from,
-      fromCode: outbound.toCode || "",
-      toCode: outbound.fromCode || "",
-      departureDate: outbound.returnDate,
-      returnDate: outbound.returnDate,
-      passengers: String(outbound.passengers || "1"),
+      from: last.to,
+      to: first.from,
+      fromCode: last.toCode || "",
+      toCode: first.fromCode || "",
+      departureDate: first.returnDate,
+      returnDate: first.returnDate,
+      passengers: String(first.passengers || "1"),
       tripType: "roundtrip",
       leg: "2"
-    }), outbound);
+    }), first);
   }
 
   function rememberResultsUrl(url) {
@@ -89,36 +89,71 @@
     }
   }
 
+  function storeSelected(selection) {
+    try {
+      sessionStorage.setItem("aerovaSelectedFlight", JSON.stringify(selection));
+    } catch (error) {
+      // Storage may be unavailable.
+    }
+  }
+
+  /*
+   * What to open after the seats of a flight are saved. A journey with a transfer (selection.via holds its other flights) goes
+   * on to the seats of its next flight first; a round trip then goes on to the return journey; everything else to the passenger
+   * details. The flights of the trip with their seats are kept, in travel order, in journey.flights.
+   */
   function afterSeats(selection) {
-    if (!isRoundTrip(selection)) {
-      reset();
-      return "passenger-details.html";
+    var journey = readJourney();
+    var flights = (journey.flights || []).filter(function (item) { return item.id !== selection.id; });
+    var saved = Object.assign({}, selection, { journeyNo: legNumber(selection) });
+    delete saved.via;
+    var more = selection.via && selection.via.length ? selection.via : [];
+
+    if (more.length) {
+      flights.push(saved);
+      journey.flights = flights;
+      writeJourney(journey);
+      var next = Object.assign({}, more[0], { via: more.slice(1) });
+      storeSelected(next);
+      return "seat-selection.html";
     }
 
-    if (isReturnLeg(selection)) {
-      var journey = readJourney();
-      if (!journey.outbound) {
-        // The outbound flight is gone (a new tab or cleared storage): start the search again.
-        return "booking.html";
+    if (!isRoundTrip(selection)) {
+      if (!flights.length) {
+        reset();
+        return "passenger-details.html";
       }
-      journey["return"] = selection;
+
+      flights.push(saved);
+      journey.flights = flights;
       writeJourney(journey);
       return "passenger-details.html";
     }
 
-    writeJourney({ outbound: selection });
+    if (isReturnLeg(selection)) {
+      if (!journey.outbound) {
+        // The outbound flight is gone (a new tab or cleared storage): start the search again.
+        return "booking.html";
+      }
+      flights.push(saved);
+      journey.flights = flights;
+      journey["return"] = saved;
+      writeJourney(journey);
+      return "passenger-details.html";
+    }
 
-    var url = returnSearchUrl(selection);
+    flights.push(saved);
+    writeJourney({ flights: flights, outbound: saved });
+
+    var url = returnSearchUrl(flights[0], saved);
     rememberResultsUrl(url);
     return url;
   }
 
   function legs(selection) {
-    if (isRoundTrip(selection) && isReturnLeg(selection)) {
-      var journey = readJourney();
-      if (journey.outbound && journey["return"] && journey["return"].id === selection.id) {
-        return [journey.outbound, journey["return"]];
-      }
+    var flights = readJourney().flights || [];
+    if (selection && flights.length && flights[flights.length - 1].id === selection.id) {
+      return flights;
     }
     return selection ? [selection] : [];
   }
@@ -183,7 +218,11 @@
         date: flight.departureDate,
         times: flight.departure + " → " + flight.arrival
       };
-      line.textContent = say("api.journey.returnLine", "Qayıdış: {flight}, {route}, {date}, {times}", vars);
+      // The next flight of the same journey is a transfer; a flight of the other journey is the return.
+      var sameJourney = flight.journeyNo != null && first.journeyNo != null && Number(flight.journeyNo) === Number(first.journeyNo);
+      line.textContent = sameJourney
+        ? say("api.journey.connectionLine", "Aktarma reysi: {flight}, {route}, {date}, {times}", vars)
+        : say("api.journey.returnLine", "Qayıdış: {flight}, {route}, {date}, {times}", vars);
 
       after.parentNode.insertBefore(line, after.nextSibling);
       after = line;

@@ -104,7 +104,7 @@
             aircraft: "AEROVA " + leg.aircraftModel,
             seats: booking.legs.map(function (item) { return item.seats.join(", "); }).filter(Boolean).join(" | ") || "—",
             extraFlights: booking.legs.slice(1).map(function (item) {
-                return { flight: item.flightNumber, route: item.originCity + " \u2192 " + item.destinationCity };
+                return { flight: item.flightNumber, route: item.originCity + " \u2192 " + item.destinationCity, sameJourney: Number(item.journeyNo) === Number(leg.journeyNo) };
             })
         };
     }
@@ -125,7 +125,7 @@
                         '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
                         '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Uçuş {number}", { number: card.flightNumber })) + "</p>" +
                         card.extraFlights.map(function (other) {
-                            return '<p class="trip-card-flight">' + escapeHtml(tr("api.journey.returnTripLine", "Qayıdış {flight}, {route}", { flight: other.flight, route: other.route })) + "</p>";
+                            return '<p class="trip-card-flight">' + escapeHtml((other.sameJourney ? tr("api.journey.connectionTripLine", "Aktarma reysi {flight}, {route}", { flight: other.flight, route: other.route }) : tr("api.journey.returnTripLine", "Qayıdış {flight}, {route}", { flight: other.flight, route: other.route }))) + "</p>";
                         }).join("") +
                     "</div>" +
                     '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +
@@ -187,6 +187,11 @@
         var tabs = document.querySelector(".trips-tabs");
         var buttons = document.getElementById("trips-status-actions");
 
+        var skeleton = document.getElementById("trips-skeleton");
+        if (skeleton) {
+            skeleton.hidden = kind !== "loading";
+        }
+
         document.getElementById("trips-status-title").textContent = title;
         document.getElementById("trips-status-text").textContent = text;
         panel.setAttribute("role", kind === "error" ? "alert" : "status");
@@ -201,7 +206,8 @@
             buttons.appendChild(button);
         });
 
-        panel.hidden = false;
+        // Loading shows placeholder cards instead of a message; the text stays in the (hidden) panel for assistive technology.
+        panel.hidden = kind === "loading";
         if (tabs) {
             tabs.hidden = true;
         }
@@ -228,6 +234,7 @@
         setHidden("upcoming-trips-empty", upcoming.length > 0);
         setHidden("past-trips-empty", past.length > 0);
         setHidden("trips-status", true);
+        setHidden("trips-skeleton", true);
 
         var tabs = document.querySelector(".trips-tabs");
         if (tabs) {
@@ -235,20 +242,69 @@
         }
     }
 
+    /* The last answer of this tab is shown at once while the fresh one loads; it is dropped when the visitor signs out or changes account (auth.js). */
+    var CACHE_KEY = "aerovaTripsCache";
+
+    function readCache() {
+        try {
+            var cached = JSON.parse(window.sessionStorage.getItem(CACHE_KEY) || "null");
+            return cached && Array.isArray(cached.trips) && Array.isArray(cached.airports) ? cached : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function writeCache() {
+        try {
+            window.sessionStorage.setItem(CACHE_KEY, JSON.stringify({ trips: state.trips, airports: state.airports }));
+        } catch (error) {
+            // Without it the page just waits for the server as before.
+        }
+    }
+
     function load() {
         var token = ++loadToken;
 
-        showStatus("loading", tr("api.trips.loadingTitle", "Səyahətləriniz yüklənir"), tr("api.trips.loadingText", "Zəhmət olmasa bir az gözləyin."), []);
+        var cached = readCache();
+        if (cached) {
+            state.airports = cached.airports;
+            state.trips = cached.trips;
+            try {
+                render();
+            } catch (error) {
+                cached = null;
+            }
+        }
+        if (!cached) {
+            showStatus("loading", tr("api.trips.loadingTitle", "Səyahətləriniz yüklənir"), tr("api.trips.loadingText", "Zəhmət olmasa bir az gözləyin."), []);
+        }
 
-        Promise.all([window.AEROVA_AIRPORTS.load(), window.AEROVA_API.get("api/bookings/my")]).then(function (results) {
+        // Both requests start at once. A slow answer is given up after 15 seconds and asked for once more: a request that stalls
+        // should not keep the visitor waiting for the full default timeout.
+        function fetchTrips(retry) {
+            return window.AEROVA_API.get("api/bookings/my", { timeoutMs: 15000 }).catch(function (error) {
+                var transient = error && (error.code === "timeout" || error.code === "network");
+                if (retry && transient) {
+                    return fetchTrips(false);
+                }
+                throw error;
+            });
+        }
+
+        Promise.all([window.AEROVA_AIRPORTS.load(), fetchTrips(true)]).then(function (results) {
             if (token !== loadToken) {
                 return;
             }
             state.airports = results[0];
             state.trips = results[1] || [];
             render();
+            writeCache();
         }).catch(function (error) {
             if (token !== loadToken) {
+                return;
+            }
+            if (cached) {
+                // What is on screen is the last known state; the next visit asks again.
                 return;
             }
 

@@ -386,7 +386,7 @@
             return tr("travelDocs.selectedSeat", "Seçilmiş oturacaq: {seat}", { seat: fallbackSeat });
         }
 
-        var roundTrip = legs.length === 2;
+        var roundTrip = legs.length === 2 && !!activeLegs[1] && Number(activeLegs[1].journeyNo) === 2;
         return legs.map(function (legSeats, legIndex) {
             var seat = legSeats[number - 1] || "—";
             if (roundTrip) {
@@ -1291,7 +1291,8 @@
                     aircraft: leg.aircraft || "",
                     departureDate: leg.departureDate || "",
                     returnDate: leg.returnDate || "",
-                    tripType: leg.tripType || ""
+                    tripType: leg.tripType || "",
+                    journeyNo: leg.journeyNo || null
                 },
                 cabinClass: leg.cabinClass || "",
                 selectedSeats: passengers.map(function (passenger) {

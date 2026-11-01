@@ -260,7 +260,8 @@
       headers.Authorization = "Bearer " + token;
     }
 
-    var timeoutMs = settings.timeoutMs || api.timeoutMs || 45000;
+    // Reads are given up after 20 seconds (the page then shows its error state with a retry); writes (booking, payment, chat) keep the longer limit.
+    var timeoutMs = settings.timeoutMs || (method === "GET" ? Math.min(api.timeoutMs || 45000, 20000) : api.timeoutMs) || 45000;
     var controller = typeof AbortController === "function" ? new AbortController() : null;
     var timedOut = false;
     var timer = controller ? setTimeout(function () { timedOut = true; controller.abort(); }, timeoutMs) : null;
@@ -301,7 +302,32 @@
 
   api.ApiError = ApiError;
   api.request = request;
-  api.get = function (path, options) { return request("GET", path, options); };
+  /*
+   * The same GET asked for again while the first is still on its way (the header, the real-time client and the page itself all ask for the
+   * unread count, for example) shares that one request. Nothing is kept once it has answered, so no answer is ever served late.
+   * The sign-in token is part of the key: another account never receives somebody else's answer.
+   */
+  var inFlight = {};
+
+  api.get = function (path, options) {
+    var settings = options || {};
+    var key;
+    try {
+      key = (settings.skipAuth ? "" : readSession().token) + " " + buildUrl(path, settings.query);
+    } catch (error) {
+      return request("GET", path, options);
+    }
+
+    if (inFlight[key]) {
+      return inFlight[key];
+    }
+
+    var pending = request("GET", path, options);
+    inFlight[key] = pending;
+    var forget = function () { delete inFlight[key]; };
+    pending.then(forget, forget);
+    return pending;
+  };
   api.post = function (path, body, options) { return request("POST", path, merge(options, body)); };
   api.put = function (path, body, options) { return request("PUT", path, merge(options, body)); };
   api.patch = function (path, body, options) { return request("PATCH", path, merge(options, body)); };

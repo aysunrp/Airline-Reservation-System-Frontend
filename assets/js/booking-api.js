@@ -111,8 +111,11 @@
       ? bookingData.legs
       : [{ flight: bookingData.flight, cabinClass: bookingData.cabinClass }];
     // Two flights back and forth are a round trip, one flight is one-way; there is no other kind of trip.
-    var tripType = legs.length === 2 ? "RoundTrip" : "OneWay";
-    if (legs.length > 2) {
+    // A trip with a return journey is a round trip; each journey is one flight or a connection of up to three. Without the journey numbers
+    // (an older selection) two flights are the outbound and the return, as they always were.
+    var numbered = legs.every(function (leg) { return Number(leg.flight && leg.flight.journeyNo) > 0; });
+    var tripType = (numbered ? legs.some(function (leg) { return Number(leg.flight.journeyNo) === 2; }) : legs.length === 2) ? "RoundTrip" : "OneWay";
+    if (legs.length > 6) {
       throw new TypeError("Bron məlumatları natamamdır.");
     }
 
@@ -121,7 +124,11 @@
     return {
       tripType: tripType,
       legs: legs.map(function (leg) {
-        return { flightId: positiveInteger(leg.flight.id, "flight"), cabinClass: lookup(CABINS, leg.cabinClass || bookingData.cabinClass, "cabin") };
+        return {
+          flightId: positiveInteger(leg.flight.id, "flight"),
+          cabinClass: lookup(CABINS, leg.cabinClass || bookingData.cabinClass, "cabin"),
+          journeyNo: numbered ? Number(leg.flight.journeyNo) : 0
+        };
       }),
       passengers: bookingData.passengers.map(function (passenger) { return passengerRequest(passenger, flightId, legs.length); }),
       contactEmail: contact.email,

@@ -26,10 +26,15 @@
    * Times are shown where they happen: each airport's own clock, from its time zone.
    * `airports` is the list from AEROVA_AIRPORTS.load().
    */
+  /* An airport that is not in the list (switched off) is shown by its code in UTC rather than breaking the whole results page. */
+  function knownAirport(directory, airports, code) {
+    return directory.find(airports, code) || { code: code, city: code, name: code, countryCode: "", timeZoneId: "UTC" };
+  }
+
   function toPageFlight(dto, airports) {
     var directory = window.AEROVA_AIRPORTS;
-    var origin = directory.find(airports, dto.originCode);
-    var destination = directory.find(airports, dto.destinationCode);
+    var origin = knownAirport(directory, airports, dto.originCode);
+    var destination = knownAirport(directory, airports, dto.destinationCode);
     var departure = directory.localTime(dto.departureAt, origin.timeZoneId);
     var arrival = directory.localTime(dto.arrivalAt, destination.timeZoneId);
 
@@ -39,8 +44,8 @@
     }
 
     var segments = legs.map(function (leg) {
-      var from = directory.find(airports, leg.originCode);
-      var to = directory.find(airports, leg.destinationCode);
+      var from = knownAirport(directory, airports, leg.originCode);
+      var to = knownAirport(directory, airports, leg.destinationCode);
       var legDeparture = directory.localTime(leg.departureAt, from.timeZoneId);
       var legArrival = directory.localTime(leg.arrivalAt, to.timeZoneId);
 
@@ -90,6 +95,47 @@
     };
   }
 
+  /*
+   * One journey with a transfer (an item of "connections" in POST api/flights/search) in the shape of a page flight, so the cards, the
+   * filters and the sorting treat it like any flight: it leaves where the first flight leaves, lands where the last one lands, has one
+   * stop and costs the sum of its flights. legsData keeps the page flights it is made of, transfer the airport where the passenger changes.
+   */
+  function toConnectionFlight(dto, airports) {
+    var parts = dto.flights.map(function (flight) { return toPageFlight(flight, airports); });
+    var first = parts[0];
+    var last = parts[parts.length - 1];
+    var departure = Date.parse(dto.departureAt.slice(-1) === "Z" ? dto.departureAt : dto.departureAt + "Z");
+    var arrival = Date.parse(dto.arrivalAt.slice(-1) === "Z" ? dto.arrivalAt : dto.arrivalAt + "Z");
+    var durationMinutes = Math.round((arrival - departure) / 60000);
+
+    var cabinPrices = {};
+    Object.keys(dto.fares || {}).forEach(function (cabin) {
+      cabinPrices[cabin] = Number(dto.fares[cabin]);
+    });
+
+    var segments = [];
+    parts.forEach(function (part) { segments = segments.concat(part.segments); });
+
+    return Object.assign({}, first, {
+      instanceId: "c" + parts.map(function (part) { return part.id; }).join("-") + "-" + first.date,
+      flightNumber: parts.map(function (part) { return part.flightNumber; }).join(" + "),
+      to: last.to,
+      toCode: last.toCode,
+      arrival: last.arrival,
+      arrivalDate: last.arrivalDate,
+      arrivalAtUtc: dto.arrivalAt,
+      duration: formatDurationLabel(durationMinutes),
+      durationMinutes: durationMinutes,
+      stops: stopsLabel(1),
+      stopsCount: 1,
+      aircraft: parts.map(function (part) { return part.aircraft; }).filter(function (name, index, all) { return all.indexOf(name) === index; }).join(" / "),
+      cabinPrices: cabinPrices,
+      segments: segments,
+      legsData: parts,
+      transfer: { code: dto.transferCode, city: dto.transferCity, minutes: dto.transferMinutes }
+    });
+  }
+
   /* One flight by its backend id, with its fares, times at each airport and stops. */
   function get(id) {
     var airports = window.AEROVA_AIRPORTS;
@@ -107,6 +153,7 @@
 
   window.AEROVA_FLIGHTS = {
     toPageFlight: toPageFlight,
+    toConnectionFlight: toConnectionFlight,
     get: get
   };
 })();

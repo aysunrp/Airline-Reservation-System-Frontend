@@ -49,7 +49,7 @@
 
 .manage-message {
     margin: 0 0 1.25rem;
-    color: #d38a5b;
+    color: #f0c9a0;
     font-size: 0.95rem;
     font-weight: 300;
 }
@@ -63,9 +63,9 @@
 .booking-not-found {
     padding: 1.55rem 1.5rem 1.6rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.14), transparent 42%),
-        linear-gradient(180deg, #212225 0%, #141416 100%);
-    border: 1px solid rgba(180, 103, 58, 0.34);
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
     border-radius: 20px;
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.22);
 }
@@ -104,8 +104,8 @@
     min-height: 32px;
     padding: 0.35rem 0.8rem;
     border-radius: 999px;
-    background: rgba(180, 103, 58, 0.16);
-    border: 1px solid rgba(180, 103, 58, 0.55);
+    background: rgba(198, 163, 106, 0.16);
+    border: 1px solid rgba(198, 163, 106, 0.55);
     color: var(--color-gold-light);
     font-size: 0.68rem;
     font-weight: 500;
@@ -171,7 +171,7 @@
 
 .booking-action-button--secondary {
     background: transparent;
-    border: 1px solid rgba(180, 103, 58, 0.75);
+    border: 1px solid rgba(198, 163, 106, 0.75);
     color: var(--color-cream);
 }
 

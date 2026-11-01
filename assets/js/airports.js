@@ -17,16 +17,43 @@
     return String(value || "").trim().toLowerCase();
   }
 
+  var CACHE_KEY = "aerovaAirportsCache";
+  var CACHE_MS = 10 * 60 * 1000;
+
+  function readCache() {
+    try {
+      var saved = JSON.parse(window.sessionStorage.getItem(CACHE_KEY) || "null");
+      return saved && Array.isArray(saved.list) && saved.list.length && Date.now() - saved.at < CACHE_MS ? saved.list : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeCache(list) {
+    try {
+      window.sessionStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), list: list }));
+    } catch (error) {
+      // The next page just asks again.
+    }
+  }
+
   /* One request per page; a failed request is forgotten so the next call can try again. */
   function load() {
     if (!api || typeof api.get !== "function") {
       return Promise.reject(new Error("api-client.js must be loaded before airports.js."));
     }
     if (!pending) {
-      pending = api.get("api/airports").then(function (airports) {
-        return Array.isArray(airports) ? airports : [];
+      var fresh = api.get("api/airports").then(function (airports) {
+        var list = Array.isArray(airports) ? airports : [];
+        writeCache(list);
+        return list;
       });
-      pending.catch(function () { pending = null; });
+      fresh.catch(function () { pending = null; });
+
+      // A copy kept by this tab (at most ten minutes old) answers at once while the fresh list loads behind it. Only the airport list is
+      // kept like this: flights, prices and seats are never cached.
+      var cached = readCache();
+      pending = cached ? Promise.resolve(cached) : fresh;
     }
     return pending;
   }

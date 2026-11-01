@@ -49,7 +49,7 @@
 
 .profile-message {
     margin: 0 0 1.25rem;
-    color: #d38a5b;
+    color: #f0c9a0;
     font-size: 0.95rem;
     font-weight: 300;
 }
@@ -82,7 +82,7 @@
     min-height: 42px;
     padding: 0.65rem 1.1rem;
     border-radius: 10px;
-    border: 1px solid rgba(180, 103, 58, 0.75);
+    border: 1px solid rgba(198, 163, 106, 0.75);
     color: var(--color-cream);
     font-size: 0.7rem;
     font-weight: 500;
@@ -108,7 +108,7 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1.1rem 1.15rem;
-    background: rgba(16, 16, 17, 0.55);
+    background: rgba(5, 12, 22, 0.55);
     border: 1px solid rgba(246, 241, 231, 0.12);
     border-radius: 14px;
 }
@@ -141,7 +141,7 @@
     min-height: 38px;
     padding: 0.55rem 0.9rem;
     border-radius: 10px;
-    border: 1px solid rgba(180, 103, 58, 0.55);
+    border: 1px solid rgba(198, 163, 106, 0.55);
     color: var(--color-cream);
     font-size: 0.66rem;
     font-weight: 500;
@@ -193,7 +193,7 @@
 .profile-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(16, 16, 17, 0.72);
+    background: rgba(5, 12, 22, 0.72);
 }
 
 .profile-modal-dialog {
@@ -204,9 +204,9 @@
     width: min(520px, 100%);
     padding: 1.5rem 1.45rem 1.55rem;
     background:
-        radial-gradient(ellipse at 100% 0%, rgba(180, 103, 58, 0.14), transparent 42%),
-        linear-gradient(180deg, #212225 0%, #141416 100%);
-    border: 1px solid rgba(180, 103, 58, 0.34);
+        radial-gradient(ellipse at 100% 0%, rgba(198, 163, 106, 0.14), transparent 42%),
+        linear-gradient(180deg, #101e30 0%, #07111d 100%);
+    border: 1px solid rgba(198, 163, 106, 0.34);
     border-radius: 20px;
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.35);
 }
@@ -244,7 +244,7 @@
 
 .booking-action-button--secondary {
     background: transparent;
-    border: 1px solid rgba(180, 103, 58, 0.75);
+    border: 1px solid rgba(198, 163, 106, 0.75);
     color: var(--color-cream);
 }
 
@@ -294,9 +294,9 @@
 
 .profile-status {
     padding: 2.5rem 1.5rem;
-    border: 1px solid rgba(180, 103, 58, 0.28);
+    border: 1px solid rgba(198, 163, 106, 0.28);
     border-radius: 18px;
-    background: linear-gradient(180deg, #212225 0%, #141416 100%);
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
     text-align: center;
 }
 
@@ -334,8 +334,8 @@
     margin: 0 0 1.25rem;
     padding: 0.85rem 1.1rem;
     border-radius: 14px;
-    background: rgba(180, 103, 58, 0.1);
-    border: 1px solid rgba(180, 103, 58, 0.35);
+    background: rgba(198, 163, 106, 0.1);
+    border: 1px solid rgba(198, 163, 106, 0.35);
     color: var(--color-cream-muted);
     font-size: 0.92rem;
 }

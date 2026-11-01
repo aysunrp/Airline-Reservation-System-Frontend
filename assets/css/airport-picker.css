@@ -8,11 +8,11 @@
     max-height: min(26rem, 60vh);
     overflow-y: auto;
     padding: 0.4rem;
-    border: 1px solid rgba(180, 103, 58, 0.55);
+    border: 1px solid rgba(198, 163, 106, 0.55);
     border-radius: 16px;
     background: #fffdf8;
-    color: #141416;
-    box-shadow: 0 22px 50px rgba(16, 16, 17, 0.35);
+    color: #07111d;
+    box-shadow: 0 22px 50px rgba(5, 12, 22, 0.35);
     opacity: 0;
     transform: translateY(-6px);
     transition: opacity 0.16s ease, transform 0.16s ease;
@@ -35,11 +35,11 @@
 
 .airport-row:hover,
 .airport-row.is-active {
-    background: rgba(180, 103, 58, 0.18);
+    background: rgba(198, 163, 106, 0.18);
 }
 
 .airport-plane {
-    color: #b4673a;
+    color: #b58c43;
     transform: rotate(45deg);
 }
 
@@ -58,7 +58,7 @@
 
 .airport-row-sub {
     overflow: hidden;
-    color: rgba(20, 20, 22, 0.62);
+    color: rgba(7, 17, 29, 0.62);
     font-size: 0.8rem;
     font-weight: 300;
     text-overflow: ellipsis;
@@ -67,15 +67,15 @@
 
 .airport-row-note {
     margin-left: 0.5rem;
-    color: #8f4f27;
+    color: #8a6a2f;
     font-size: 0.74rem;
 }
 
 .airport-row-code {
     padding: 0.15rem 0.55rem;
     border-radius: 999px;
-    background: #141416;
-    color: #d38a5b;
+    background: #07111d;
+    color: #e0c48a;
     font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -84,14 +84,14 @@
 .airport-panel mark {
     padding: 0 0.1em;
     border-radius: 3px;
-    background: rgba(180, 103, 58, 0.4);
+    background: rgba(198, 163, 106, 0.4);
     color: inherit;
 }
 
 .airport-empty {
     margin: 0;
     padding: 1rem 0.8rem;
-    color: rgba(20, 20, 22, 0.68);
+    color: rgba(7, 17, 29, 0.68);
     font-size: 0.9rem;
 }
 
@@ -99,8 +99,8 @@
     display: block;
     margin-top: 0.3rem;
     padding: 0.7rem 0.8rem;
-    border-top: 1px solid rgba(180, 103, 58, 0.4);
-    color: #8f4f27;
+    border-top: 1px solid rgba(198, 163, 106, 0.4);
+    color: #8a6a2f;
     font-size: 0.88rem;
     font-weight: 500;
     text-decoration: none;
@@ -108,13 +108,18 @@
 
 .airport-all:hover,
 .airport-all:focus-visible {
-    color: #56321d;
+    color: #6b5222;
     text-decoration: underline;
 }
 
 /* The airport's name under a chosen field. */
 .airport-meta {
-    margin: 0.35rem 0 0;
+    /* Out of the flow: the name under the field never changes the height of the route row, so both fields stay level. */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0.3rem 0 0;
     color: rgba(246, 241, 231, 0.7);
     font-size: 0.78rem;
     font-weight: 300;
@@ -123,7 +128,7 @@
 
 .airport-meta-note {
     margin-left: 0.4rem;
-    color: #d38a5b;
+    color: #e0c48a;
 }
 
 @media (prefers-reduced-motion: reduce) {

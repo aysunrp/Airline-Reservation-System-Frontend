@@ -302,10 +302,9 @@
             watchImages(grid);
 
             if (limit && cards.length > limit) {
-                more.innerHTML = '<button type="button" class="destination-toggle" aria-expanded="' + expanded + '">' +
-                    escapeHtml(expanded ? tr("destinations.showFewerDestinations", "Daha az göstər")
-                        : tr("destinations.showAllDestinations", "Bütün {count} təyinatı göstər", { count: cards.length })) + "</button>";
-                more.querySelector(".destination-toggle").addEventListener("click", function () { expanded = !expanded; paintGrid(all); });
+                // The front page shows its first destinations (the main countries) and one button that opens the full destinations page.
+                more.innerHTML = '<a class="destination-toggle" href="destinations.html#all-destinations">' +
+                    escapeHtml(tr("destinations.allDestinationsLabel", "Bütün təyinatlar")) + "</a>";
             } else {
                 more.innerHTML = "";
             }

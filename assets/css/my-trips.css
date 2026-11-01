@@ -53,7 +53,7 @@
     gap: 0.55rem;
     padding: 0.35rem;
     background: rgba(246, 241, 231, 0.04);
-    border: 1px solid rgba(180, 103, 58, 0.28);
+    border: 1px solid rgba(198, 163, 106, 0.28);
     border-radius: 14px;
 }
 
@@ -104,7 +104,7 @@
 .trip-card {
     padding: 1.6rem 1.55rem 1.5rem;
     background: linear-gradient(180deg, #fbf7f0 0%, #f3ebe0 100%);
-    border: 1px solid rgba(180, 103, 58, 0.42);
+    border: 1px solid rgba(198, 163, 106, 0.42);
     border-radius: 18px;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
     color: var(--color-ink);
@@ -117,12 +117,12 @@
     gap: 1rem;
     margin-bottom: 1.35rem;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid rgba(22, 22, 24, 0.1);
+    border-bottom: 1px solid rgba(28, 21, 12, 0.1);
 }
 
 .trip-card-airline {
     margin: 0 0 0.35rem;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -141,7 +141,7 @@
 
 .trip-card-flight {
     margin: 0.4rem 0 0;
-    color: rgba(22, 22, 24, 0.68);
+    color: rgba(28, 21, 12, 0.68);
     font-size: 0.95rem;
     font-weight: 400;
 }
@@ -161,9 +161,9 @@
 }
 
 .trip-card-status--confirmed {
-    background: rgba(180, 103, 58, 0.18);
-    border: 1px solid rgba(180, 103, 58, 0.55);
-    color: #8f4f27;
+    background: rgba(198, 163, 106, 0.18);
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    color: #8a6a3a;
 }
 
 .trip-card-status--cancelled {
@@ -195,9 +195,9 @@
     min-height: 26px;
     padding: 0.2rem 0.65rem;
     border-radius: 999px;
-    border: 1px solid rgba(180, 103, 58, 0.55);
-    background: rgba(180, 103, 58, 0.16);
-    color: #8f4f27;
+    border: 1px solid rgba(198, 163, 106, 0.55);
+    background: rgba(198, 163, 106, 0.16);
+    color: #8a6a3a;
     font-size: 0.62rem;
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -247,7 +247,7 @@
 
 .trip-card-meta-item dt {
     margin: 0;
-    color: #8f4f27;
+    color: #9a7844;
     font-size: 0.68rem;
     font-weight: 500;
     letter-spacing: 0.14em;
@@ -269,12 +269,12 @@
     justify-content: space-between;
     gap: 1rem;
     padding-top: 1.2rem;
-    border-top: 1px solid rgba(22, 22, 24, 0.1);
+    border-top: 1px solid rgba(28, 21, 12, 0.1);
 }
 
 .trip-card-price-label {
     margin: 0 0 0.2rem;
-    color: rgba(22, 22, 24, 0.58);
+    color: rgba(28, 21, 12, 0.58);
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.14em;
@@ -316,7 +316,7 @@
     padding: 2.5rem 1.75rem;
     text-align: center;
     background: rgba(246, 241, 231, 0.04);
-    border: 1px solid rgba(180, 103, 58, 0.24);
+    border: 1px solid rgba(198, 163, 106, 0.24);
     border-radius: 18px;
 }
 
@@ -388,9 +388,9 @@
 
 .trips-status {
     padding: 2.5rem 1.5rem;
-    border: 1px solid rgba(180, 103, 58, 0.28);
+    border: 1px solid rgba(198, 163, 106, 0.28);
     border-radius: 18px;
-    background: linear-gradient(180deg, #212225 0%, #141416 100%);
+    background: linear-gradient(180deg, #101e30 0%, #07111d 100%);
     text-align: center;
 }
 
@@ -425,4 +425,33 @@
 .trip-card-refund-amount {
     color: #f6f1e7;
     font-weight: 500;
+}
+
+/* While the trips load: placeholder cards in the place of the list, so the page does not jump when the data arrives. */
+.trips-skeleton[hidden] {
+    display: none !important;
+}
+
+.trips-skeleton {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.trips-skeleton-card {
+    min-height: 15rem;
+    border: 1px solid rgba(198, 163, 106, 0.28);
+    border-radius: 18px;
+    background: linear-gradient(100deg, rgba(128, 128, 128, 0.08) 20%, rgba(128, 128, 128, 0.2) 40%, rgba(128, 128, 128, 0.08) 60%) 0 0 / 220% 100%;
+    animation: trips-skeleton-shimmer 1.4s linear infinite;
+}
+
+@keyframes trips-skeleton-shimmer {
+    from { background-position: 120% 0; }
+    to { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .trips-skeleton-card {
+        animation: none;
+    }
 }
