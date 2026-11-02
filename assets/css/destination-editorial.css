@@ -1,0 +1,687 @@
+/*
+ * Destination detail page (destination-details.html) only: an editorial layout on a dark navy ground, with gold accents.
+ * Everything is scoped to body.destination-details-body, so the other pages and their themes are not changed.
+ */
+
+html body.destination-details-body,
+html[data-theme] body.destination-details-body {
+    --dd-navy: #0a1426;
+    --dd-navy-2: #0f1d36;
+    --dd-panel: rgba(16, 29, 54, 0.72);
+    --dd-line: rgba(201, 164, 92, 0.22);
+    --dd-gold: #c9a45c;
+    --dd-gold-soft: #e6cf9b;
+    --dd-cream: #f3ead8;
+    --dd-muted: #a9b5cb;
+    background: var(--dd-navy);
+    color: var(--dd-cream);
+}
+
+/* the header stays as it is, but reads well on the navy ground of this page */
+.destination-details-body .site-header--transparent {
+    background: transparent;
+}
+
+.destination-details-body .site-header .logo-text,
+.destination-details-body .site-header .nav-link,
+.destination-details-body .site-header .login-button {
+    color: var(--dd-cream);
+}
+
+/* ---- 1. editorial intro: text on the left, the city's photograph on the right ---- */
+
+.destination-details-body .dd-editorial {
+    padding: 8.5rem 0 3.5rem;
+    background:
+        radial-gradient(1000px 420px at 85% -10%, rgba(201, 164, 92, 0.12), transparent 70%),
+        var(--dd-navy);
+}
+
+.destination-details-body .dd-editorial-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+}
+
+.destination-details-body .dd-kicker {
+    margin: 0 0 1rem;
+    color: var(--dd-gold);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.destination-details-body .dd-title {
+    margin: 0 0 1.25rem;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(3rem, 7vw, 5.6rem);
+    font-weight: 500;
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    color: var(--dd-cream);
+}
+
+.destination-details-body .dd-lead {
+    margin: 0 0 1.5rem;
+    max-width: 34rem;
+    font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+    line-height: 1.7;
+    color: var(--dd-cream);
+    opacity: 0.92;
+}
+
+.destination-details-body .dd-status {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--dd-muted);
+}
+
+.destination-details-body .dd-status:empty,
+.destination-details-body .dd-status[hidden] {
+    display: none;
+}
+
+.destination-details-body .dd-editorial-figure {
+    margin: 0;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid var(--dd-line);
+    background: var(--dd-navy-2);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+}
+
+.destination-details-body .dd-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* ---- 2. information blocks ---- */
+
+.destination-details-body .destination-details-content {
+    padding: 1rem 0 2.5rem;
+    background: var(--dd-navy);
+}
+
+.destination-details-body .dd-section-title {
+    margin: 0 0 1rem;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    font-weight: 500;
+    color: var(--dd-cream);
+}
+
+.destination-details-body .dd-info,
+.destination-details-body .dd-airports-section {
+    margin-bottom: 2.25rem;
+    padding: 1.75rem 1.9rem;
+    border: 1px solid var(--dd-line);
+    border-radius: 18px;
+    background: var(--dd-panel);
+    box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.55);
+}
+
+.destination-details-body .dd-intro {
+    margin: 0;
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--dd-cream);
+    opacity: 0.9;
+}
+
+.destination-details-body .dd-intro:empty {
+    display: none;
+}
+
+/* ---- 3. premium travel card: Baku to the chosen city ---- */
+
+.destination-details-body .dd-travel {
+    padding: 2rem 0 1rem;
+    background: var(--dd-navy);
+}
+
+.destination-details-body .dd-travel-card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    gap: 2rem;
+    padding: 2rem;
+    border: 1px solid var(--dd-line);
+    border-radius: 22px;
+    background:
+        linear-gradient(160deg, rgba(201, 164, 92, 0.08), transparent 45%),
+        var(--dd-panel);
+    box-shadow: 0 24px 50px -30px rgba(0, 0, 0, 0.6);
+}
+
+.destination-details-body .dd-travel-card .destination-aside {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.destination-details-body .dd-travel-card .destination-aside-eyebrow {
+    color: var(--dd-gold);
+}
+
+.destination-details-body .dd-travel-card .destination-aside-title {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    color: var(--dd-cream);
+}
+
+.destination-details-body .dd-travel-card .destination-aside-text,
+.destination-details-body .dd-travel-card .destination-back-link {
+    color: var(--dd-muted);
+}
+
+.destination-details-body .dd-travel-card .dd-flights-section {
+    min-width: 0;
+}
+
+.destination-details-body .dd-travel-card .dd-section-title {
+    font-size: 1.5rem;
+}
+
+.destination-details-body .dd-travel-card .destination-aside-cta,
+.destination-details-body .dd-travel-card .page-cta {
+    background: linear-gradient(135deg, var(--dd-gold-soft), var(--dd-gold));
+    color: var(--dd-navy);
+    border: 0;
+}
+
+/* ---- 4. other cities: the same dark ground ---- */
+
+.destination-details-body .dd-others {
+    padding: 2.5rem 0 3.5rem;
+    background: var(--dd-navy-2);
+    border-top: 1px solid var(--dd-line);
+}
+
+/* ---- responsive ---- */
+
+@media (max-width: 960px) {
+    .destination-details-body .dd-travel-card {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .destination-details-body .dd-editorial {
+        padding: 6.5rem 0 2.5rem;
+    }
+
+    /* the photograph first, then the text, one above the other */
+    .destination-details-body .dd-editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .destination-details-body .dd-editorial-figure {
+        order: -1;
+        aspect-ratio: 16 / 11;
+        border-radius: 18px;
+    }
+
+    .destination-details-body .dd-title {
+        font-size: clamp(2.6rem, 13vw, 3.6rem);
+    }
+
+    .destination-details-body .dd-info,
+    .destination-details-body .dd-airports-section {
+        padding: 1.25rem 1.2rem;
+    }
+}
+
+html[data-theme] body.destination-details-body {
+    background: var(--dd-navy);
+    color: var(--dd-cream);
+}
+
+/* the header of this page sits on the navy ground: a dark glass bar with light text */
+html[data-theme] body.destination-details-body .site-header,
+html[data-theme] body.destination-details-body .site-header--transparent {
+    background: rgba(10, 20, 38, 0.82);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--dd-line);
+}
+
+html[data-theme] body.destination-details-body .site-header .logo,
+html[data-theme] body.destination-details-body .site-header .logo-text {
+    color: var(--dd-cream);
+}
+
+/* ---- 5. sights of the city: a photo and a short text for each, with the sources under it ---- */
+
+.destination-details-body .dd-sights-section {
+    margin-bottom: 2.25rem;
+}
+
+.destination-details-body .dd-sights-list {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.destination-details-body .dd-sight {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.25rem;
+    border: 1px solid var(--dd-line);
+    border-radius: 18px;
+    background: var(--dd-panel);
+}
+
+.destination-details-body .dd-sight-figure {
+    margin: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--dd-navy-2);
+}
+
+.destination-details-body .dd-sight-figure img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.destination-details-body .dd-sight-title {
+    margin: 0 0 0.6rem;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: var(--dd-cream);
+}
+
+.destination-details-body .dd-sight-text {
+    margin: 0 0 0.8rem;
+    line-height: 1.65;
+    color: var(--dd-cream);
+    opacity: 0.9;
+}
+
+.destination-details-body .dd-sight-meta {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--dd-muted);
+}
+
+.destination-details-body .dd-sight-meta a {
+    color: var(--dd-gold-soft);
+}
+
+@media (max-width: 760px) {
+    .destination-details-body .dd-sight {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+}
+
+/* ---- Detail page, tidy pass: a clear order of sections, one grid, calm lists ---- */
+
+/* Information and airports sit side by side; the sights take the full width below them. */
+.destination-details-body .destination-details-main-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.destination-details-body .dd-info,
+.destination-details-body .dd-airports-section {
+    margin-bottom: 0;
+    height: 100%;
+}
+
+.destination-details-body .dd-sights-section {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.destination-details-body .dd-sights-section .dd-section-title {
+    margin-bottom: 1.25rem;
+}
+
+/* Sights: a tidy grid of cards, the photograph on top, the text below at a readable size. */
+.destination-details-body .dd-sights-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.25rem;
+}
+
+.destination-details-body .dd-sight {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--dd-line);
+    border-radius: 18px;
+    background: var(--dd-panel);
+}
+
+.destination-details-body .dd-sight-figure {
+    border-radius: 0;
+    aspect-ratio: 4 / 3;
+}
+
+.destination-details-body .dd-sight-body {
+    padding: 1.1rem 1.2rem 1.25rem;
+}
+
+.destination-details-body .dd-sight-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.45rem;
+}
+
+.destination-details-body .dd-sight-text {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 0.7rem;
+}
+
+.destination-details-body .dd-sight-meta {
+    font-size: 0.78rem;
+}
+
+/* Travel card: the booking summary on the left, the flights on the right, flights as calm rows. */
+.destination-details-body .dd-travel-card {
+    align-items: start;
+}
+
+.destination-details-body .dd-flight-list {
+    gap: 0;
+    border-top: 1px solid var(--dd-line);
+}
+
+.destination-details-body .dd-flight {
+    grid-template-columns: minmax(7rem, 0.9fr) minmax(0, 1.3fr) auto auto;
+    gap: 0.3rem 1.1rem;
+    padding: 0.85rem 0.2rem;
+    border: 0;
+    border-bottom: 1px solid var(--dd-line);
+    border-radius: 0;
+    background: none;
+}
+
+.destination-details-body .dd-flight-number {
+    font-size: 0.92rem;
+}
+
+.destination-details-body .dd-flight-route {
+    font-size: 0.82rem;
+    opacity: 0.75;
+}
+
+.destination-details-body .dd-flight-times {
+    font-size: 0.85rem;
+    opacity: 0.92;
+}
+
+.destination-details-body .dd-flight-price {
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-align: right;
+}
+
+.destination-details-body .dd-flight-link {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .destination-details-body .destination-details-main-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .destination-details-body .dd-sights-list {
+        grid-template-columns: 1fr;
+    }
+
+    .destination-details-body .dd-flight {
+        grid-template-columns: 1fr auto;
+    }
+
+    .destination-details-body .dd-flight-times {
+        grid-column: 1 / -1;
+    }
+}
+
+/* The page is always on the navy ground, so its text is always cream, whichever theme is chosen. */
+html body.destination-details-body .dd-section-title,
+html[data-theme] body.destination-details-body .dd-section-title {
+    color: var(--dd-cream);
+}
+
+html body.destination-details-body .dd-intro,
+html[data-theme] body.destination-details-body .dd-intro,
+html body.destination-details-body .dd-airport-zone,
+html[data-theme] body.destination-details-body .dd-airport-zone {
+    color: var(--dd-cream);
+}
+
+/* The same-country cities sit in the content, spanning the full width under the information blocks. */
+.destination-details-body .dd-others {
+    grid-column: 1 / -1;
+    margin-top: 0;
+    padding: 2.25rem 0 2.5rem;
+}
+
+/* The other cities of the country: names only, each one a link to its own page. */
+.destination-details-body .dd-other-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.destination-details-body .dd-other-names a {
+    font-family: var(--font-serif, serif);
+    font-size: 1.35rem;
+    color: var(--dd-cream);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.destination-details-body .dd-other-names a:hover,
+.destination-details-body .dd-other-names a:focus-visible {
+    color: var(--dd-gold-soft);
+    border-bottom-color: var(--dd-gold-soft);
+}
+
+/* "Təyinat haqqında" now sits under the city's description in the hero: a quiet block, no box. */
+.destination-details-body .dd-info.dd-info--hero {
+    margin: 1.75rem 0 0;
+    padding: 1.25rem 0 0;
+    border: 0;
+    border-top: 1px solid rgba(198, 163, 106, 0.22);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    max-width: 34rem;
+}
+
+.destination-details-body .dd-info--hero .dd-section-title {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-sans, sans-serif);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--dd-gold);
+}
+
+.destination-details-body .dd-info--hero .dd-intro {
+    font-size: 0.98rem;
+    line-height: 1.7;
+    opacity: 0.85;
+}
+
+/* The other cities of the country: a row of tiles, each with its own photograph and name. */
+.destination-details-body .dd-other-names {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1.1rem;
+}
+
+.destination-details-body .dd-other-tile {
+    display: block;
+    color: var(--dd-cream);
+    text-decoration: none;
+}
+
+.destination-details-body .dd-other-tile img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid var(--dd-line);
+    transition: transform 0.6s ease;
+}
+
+.destination-details-body .dd-other-tile span {
+    display: block;
+    margin-top: 0.6rem;
+    font-family: var(--font-serif, serif);
+    font-size: 1.2rem;
+    transition: color 0.25s ease;
+}
+
+.destination-details-body .dd-other-tile:hover img,
+.destination-details-body .dd-other-tile:focus-visible img {
+    transform: scale(1.03);
+}
+
+.destination-details-body .dd-other-tile:hover span,
+.destination-details-body .dd-other-tile:focus-visible span {
+    color: var(--dd-gold-soft);
+}
+
+/* The airports and the same-country cities now stack in one column, each across the full width. */
+.destination-details-body .destination-details-main-col {
+    display: block;
+}
+
+.destination-details-body .dd-airports-section,
+.destination-details-body .dd-others {
+    width: 100%;
+}
+
+.destination-details-body .dd-airports-section {
+    margin-bottom: 2rem;
+}
+
+/* The same-country cities sit on the page's own navy ground, with the gold hairline above them, like the rest of the page. */
+html body.destination-details-body .dd-others,
+html[data-theme] body.destination-details-body .dd-others {
+    background:
+        radial-gradient(700px 300px at 0% 0%, rgba(201, 164, 92, 0.07), transparent 70%),
+        var(--dd-navy-2);
+    border-top: 1px solid var(--dd-line);
+    padding: 2.5rem 2rem 2.75rem;
+    border-radius: 22px;
+    background-image: none;
+    color: var(--dd-cream);
+}
+
+html body.destination-details-body .dd-others {
+    background-image:
+        radial-gradient(700px 300px at 0% 0%, rgba(201, 164, 92, 0.07), transparent 70%);
+}
+
+html[data-theme] body.destination-details-body .dd-others .dd-section-title {
+    color: var(--dd-cream);
+}
+
+/* Airports and the same-country cities side by side; one column again on narrow screens. */
+.destination-details-body .destination-details-main-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.destination-details-body .dd-airports-section,
+.destination-details-body .dd-others {
+    grid-column: auto;
+    margin-bottom: 0;
+    width: auto;
+    height: 100%;
+}
+
+@media (max-width: 900px) {
+    .destination-details-body .destination-details-main-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Side by side only where there is room for both; between 900 and 1100 px they stack, and the title of the city block is smaller in its column. */
+@media (max-width: 1100px) {
+    .destination-details-body .destination-details-main-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+.destination-details-body .dd-others .dd-section-title {
+    font-size: 1.6rem;
+    line-height: 1.2;
+}
+
+/* The city block is wide: airports take a third, the same-country cities two thirds, in one row of tiles. */
+.destination-details-body .destination-details-main-col {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+}
+
+.destination-details-body .dd-others .dd-other-names {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+}
+
+@media (max-width: 1100px) {
+    .destination-details-body .destination-details-main-col {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .destination-details-body .destination-details-main-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* The city block takes the full width of the page, so the wide layout has room. */
+.destination-details-body .destination-details-layout {
+    display: block;
+}
+
+.destination-details-body .destination-details-main-col {
+    width: 100%;
+}
+
+/* The city photograph is a little smaller; the text column takes the extra room. */
+.destination-details-body .dd-editorial-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+}

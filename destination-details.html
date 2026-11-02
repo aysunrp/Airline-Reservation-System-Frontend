@@ -24,6 +24,7 @@
 
     <link rel="stylesheet" href="assets/css/destination-catalog.css?v=ds1">
     <link rel="stylesheet" href="assets/css/destination-details.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/destination-editorial.css?v=ed15">
 
     <link rel="stylesheet" href="assets/css/theme.css?v=num4">
 </head>
@@ -88,50 +89,41 @@
 
 
     <main id="destination-details-main">
-        <section class="page-hero destination-details-hero" id="destination-hero" aria-label="İstiqamət başlığı">
-            <div class="page-hero-media" id="destination-hero-media" role="img" aria-label="Təyinat" data-i18n-aria="common.destination"></div>
-            <div class="page-hero-overlay" aria-hidden="true"></div>
-            <div class="page-hero-content">
-                <p class="page-hero-kicker" id="destination-country" data-i18n="common.destination">Təyinat</p>
-                <h1 class="page-hero-title" id="destination-name">&nbsp;</h1>
-                <p class="page-hero-text" id="destination-tagline" role="status" data-i18n="destinations.detailsLoading">Təyinat yüklənir...</p>
+
+        <section class="dd-editorial" aria-label="İstiqamət">
+            <div class="page-shell dd-editorial-grid">
+                <div class="dd-editorial-text">
+                    <p class="dd-kicker" id="destination-country" data-i18n="common.destination">Təyinat</p>
+                    <h1 class="dd-title" id="destination-name">&nbsp;</h1>
+                    <p class="dd-lead" id="destination-description"></p>
+                        <section class="dd-info dd-info--hero" aria-labelledby="dd-info-title">
+                            <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinations.aboutTitle">Təyinat haqqında</h2>
+                            <p class="dd-intro" id="destination-country-desc"></p>
+                        </section>
+                    <p class="dd-status" id="destination-tagline" role="status" data-i18n="destinations.detailsLoading">Təyinat yüklənir...</p>
+                </div>
+                <figure class="dd-editorial-figure">
+                    <img class="dd-photo" id="destination-photo" alt="" width="1600" height="1067" decoding="async" fetchpriority="high">
+                </figure>
             </div>
         </section>
 
         <section class="destination-details-content" id="destination-content" aria-label="İstiqamət məlumatları" hidden>
             <div class="page-shell destination-details-layout">
                 <div class="destination-details-main-col">
-                    <section class="dd-info" aria-labelledby="dd-info-title">
-                        <h2 class="dd-section-title" id="dd-info-title" data-i18n="destinations.aboutTitle">Təyinat haqqında</h2>
-                        <p class="dd-intro" id="destination-description"></p>
-                    </section>
                     <section class="dd-airports-section" aria-labelledby="destination-airports-title">
                         <h2 class="dd-section-title" id="destination-airports-title">Hava limanları</h2>
                         <ul class="dd-airport-list" id="destination-airports"></ul>
                     </section>
-                    <section class="dd-flights-section" aria-labelledby="destination-flights-title">
-                        <h2 class="dd-section-title" id="destination-flights-title">Uçuşlar</h2>
-                        <ul class="dd-flight-list" id="destination-flights"></ul>
-                    </section>
-                </div>
-                <aside class="destination-aside" aria-label="Bu istiqamətə bilet bron edin">
-                    <p class="destination-aside-eyebrow" data-i18n="ui.readyToFly">Uçmağa hazırsınız?</p>
-                    <h2 class="destination-aside-title" id="destination-aside-route">&nbsp;</h2>
-                    <p class="destination-aside-text" id="destination-aside-text" data-i18n="destinationDetails.chooseDateText">Səyahət tarixinizi seçin və mövcud uçuşları tapın.</p>
-                    <label class="destination-airport-pick" id="destination-airport-pick" for="destination-airport-select" hidden>
-                        <span data-i18n="destinations.chooseAirport">Gəliş hava limanı</span>
-                        <select id="destination-airport-select"></select>
-                    </label>
-                    <a class="page-cta destination-aside-cta" id="destination-book-aside" href="#" data-i18n="destinations.bookTicket">Bilet bron et</a>
-                    <a class="destination-back-link" href="destinations.html" data-i18n="destinations.backToDestinations">Təyinatlara qayıt</a>
-                </aside>
-            </div>
             <section class="dd-others dest-catalog" id="destination-others" aria-labelledby="destination-others-title" hidden>
                 <div class="page-shell">
                     <h2 class="dd-section-title" id="destination-others-title">Digər şəhərləri kəşf edin</h2>
-                    <div class="destination-grid" id="destination-others-grid"></div>
+                    <ul class="dd-other-names" id="destination-others-grid"></ul>
                 </div>
             </section>
+                </div>
+            </div>
+
         </section>
 
         <section class="destination-details-status page-shell" id="destination-status" hidden>
@@ -316,7 +308,7 @@
 
 
 
-    <script src="assets/js/locales/az.js?v=ai5"></script>
+    <script src="assets/js/locales/az.js?v=ai6"></script>
     <script src="assets/js/i18n.js?v=rs1"></script>
     <script src="assets/js/api-config.js?v=rs1"></script>
     <script src="assets/js/api-client.js?v=perf2"></script>
@@ -326,8 +318,8 @@
     <script src="assets/js/home.js?v=rs1"></script>
 
     <script src="assets/js/airports.js?v=perf1"></script>
-    <script src="assets/js/destination-catalog.js?v=rs1"></script>
-    <script src="assets/js/destination-details.js?v=cn1"></script>
+    <script src="assets/js/destination-catalog.js?v=img1"></script>
+    <script src="assets/js/destination-details.js?v=gs8"></script>
 
     <script src="assets/js/logo.js?v=rs1"></script>
 

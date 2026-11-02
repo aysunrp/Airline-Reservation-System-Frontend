@@ -110,8 +110,12 @@
 
         var country = page.country;
         setText("destination-others-title", tr("destinations.otherCities", "{country} ölkəsinin digər şəhərlərini kəşf edin", { country: catalog.localized(country, "name") }));
+        // Each city as a small tile: its own photograph and name; the tile opens that city's page.
         byId("destination-others-grid").innerHTML = others.map(function (city) {
-            return catalog.cardMarkup(country, city, { booking: true });
+            var name = catalog.localized(city, "name");
+            return '<li><a class="dd-other-tile" href="' + esc(catalog.detailsUrl(city)) + '">' +
+                '<img data-photo src="' + esc(catalog.imageBase(city)) + '-sm.webp" alt="' + esc(name) + '" loading="lazy" decoding="async">' +
+                '<span>' + esc(name) + "</span></a></li>";
         }).join("");
         catalog.watchImages(byId("destination-others-grid"));
     }
@@ -141,32 +145,49 @@
         apply(chosen);
     }
 
+    /* The country's own description ("Təyinat haqqında"), from the same catalog request the cards use. */
+    function loadCountryDescription(country) {
+        catalog.load().then(function (list) {
+            var found = (list || []).filter(function (item) { return item.code === country.code; })[0];
+            setText("destination-country-desc", found ? catalog.localized(found, "description") : "");
+        }, function () {
+            setText("destination-country-desc", "");
+        });
+    }
+
     function render() {
         var page = state.page;
         var city = page.city;
         var country = page.country;
         var cityName = catalog.localized(city, "name");
         var countryName = catalog.localized(country, "name");
-        var base = catalog.imageBase(city, country);
+        var base = catalog.imageBase(city);
         var hubName = state.hub ? catalog.localized(state.hub.city, "name") : "";
         var airport = catalog.bookableAirport(city);
 
         document.title = "AEROVA | " + cityName + ", " + countryName;
         setText("destination-country", countryName);
         setText("destination-name", cityName);
-        setText("destination-tagline", catalog.localized(city, "description"));
         setText("destination-description", catalog.localized(city, "description"));
+        // The loading line in the intro is replaced by the city's own text; an empty status line is hidden by the stylesheet.
+        setText("destination-tagline", "");
+        loadCountryDescription(country);
         setText("destination-airports-title", tr("destinations.airportsIn", "{city} hava limanları", { city: cityName }));
         setText("destination-flights-title", tr("destinations.flightsFrom", "{origin} şəhərindən reyslər", { origin: hubName || "Baku" }));
-        byId("destination-hero-media").setAttribute("aria-label", catalog.photoAlt(city, country));
-        byId("destination-hero-media").style.backgroundImage = "url('" + base + ".webp'), url('assets/images/airport-premium.jpg')";
+        // The photograph is the city's own file (the same one its catalog card shows). Until it loads, or when it is missing, the neutral picture is shown,
+        // never another city's photograph.
+        var photo = byId("destination-photo");
+        photo.alt = catalog.photoAlt(city, country);
+        photo.onerror = function () { photo.onerror = null; photo.src = "assets/images/airport-premium.jpg"; };
+        photo.src = base + ".webp";
         setText("destination-aside-route", hubName ? tr("destinations.routeTitle", "{from} → {to}", { from: hubName, to: cityName }) : cityName);
         setText("destination-back-country", tr("destinations.backToDestinations", "Təyinatlara qayıt"));
 
-        renderAsideBooking(city, airport);
+        // The travel card (booking summary and flights) is no longer on the page; its parts are drawn only when present.
+        if (byId("destination-book-aside")) renderAsideBooking(city, airport);
 
         renderAirports(hubName);
-        renderFlights();
+        if (byId("destination-flights")) renderFlights();
         renderOthers();
 
         byId("destination-status").hidden = true;
