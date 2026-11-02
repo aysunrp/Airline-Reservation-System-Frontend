@@ -38,7 +38,7 @@
   }
 
   /* One request per page; a failed request is forgotten so the next call can try again. */
-  function load() {
+  function load(options) {
     if (!api || typeof api.get !== "function") {
       return Promise.reject(new Error("api-client.js must be loaded before airports.js."));
     }
@@ -55,7 +55,35 @@
       var cached = readCache();
       pending = cached ? Promise.resolve(cached) : fresh;
     }
-    return pending;
+    if (!options || !options.destinationsOnly) return pending;
+    // The booking search offers only the airports of cities that are switched on in the destinations catalogue; the admin keeps every airport.
+    return Promise.all([pending, activeCities()]).then(function (results) {
+      var list = results[0];
+      var active = results[1];
+      if (!active) return list;
+      return list.filter(function (airport) { return airport.cityId == null || active[airport.cityId]; });
+    });
+  }
+
+  var activeCityPromise = null;
+
+  /* The ids of the cities that are switched on in the destinations catalogue, or null when that list cannot be read (then nothing is filtered). */
+  function activeCities() {
+    if (!activeCityPromise) {
+      activeCityPromise = api.get("api/destinations").then(function (countries) {
+        var ids = {};
+        (Array.isArray(countries) ? countries : []).forEach(function (country) {
+          (country.cities || []).forEach(function (city) {
+            if (city.isActive !== false) ids[city.id] = true;
+          });
+        });
+        return ids;
+      }).catch(function () {
+        activeCityPromise = null;
+        return null;
+      });
+    }
+    return activeCityPromise;
   }
 
   /* The airport whose city or IATA code equals the text (case-insensitive), or null. */

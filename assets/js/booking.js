@@ -1582,7 +1582,7 @@ function tr(key, fallback, vars) {
     }
 
     function initCalendar() {
-        window.AEROVA_AIRPORTS.load().then(function (list) {
+        window.AEROVA_AIRPORTS.load({ destinationsOnly: true }).then(function (list) {
             calendarAirports = list;
             var seen = {};
             CALENDAR_CITIES = list.map(function (airport) { return airport.city; }).filter(function (city) {
