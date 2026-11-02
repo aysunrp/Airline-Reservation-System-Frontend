@@ -328,6 +328,8 @@
         if (search) params.push("search=" + encodeURIComponent(search));
         if (status) params.push("status=" + encodeURIComponent(status));
         if (date) params.push("date=" + encodeURIComponent(date));
+        var timing = byId("flight-timing-filter") ? byId("flight-timing-filter").value : "";
+        if (timing) params.push("timing=" + encodeURIComponent(timing));
         // The other filters are sent as they are chosen; the API applies them all together.
         [["origin", "flight-origin-filter"], ["destination", "flight-destination-filter"], ["month", "flight-month-filter"],
          ["year", "flight-year-filter"], ["aircraftId", "flight-aircraft-filter"], ["flightType", "flight-type-filter"], ["active", "flight-active-filter"]]
@@ -2568,6 +2570,7 @@
         var reloadFlights = debounce(resetFlightsAndLoad, 300);
         byId("flight-search").addEventListener("input", reloadFlights);
         byId("flight-status-filter").addEventListener("change", resetFlightsAndLoad);
+        byId("flight-timing-filter").addEventListener("change", resetFlightsAndLoad);
         byId("flight-date-filter").addEventListener("change", resetFlightsAndLoad);
         ["flight-origin-filter", "flight-destination-filter", "flight-month-filter", "flight-year-filter", "flight-aircraft-filter", "flight-type-filter", "flight-active-filter"]
             .forEach(function (id) { byId(id).addEventListener("change", resetFlightsAndLoad); });
