@@ -96,10 +96,17 @@
         return airports.filter(function (airport) { return airport.hasRoutes; })[0] || airports[0] || null;
     }
 
-    /* A city's own photograph; the country's one only when the city has none. */
-    function imageBase(city, country) {
-        var file = (city && city.imageFile) || (country && country.imageFile) || "";
-        return "assets/images/" + String(file).replace(/\.jpg$/i, "");
+    /*
+     * A city's photograph is assets/images/city-<name slug>.webp (and city-<name slug>-sm.webp for the cards), so replacing the file with the
+     * same name changes the picture everywhere, without a code or database change. A city with no file shows the neutral picture (watchImages),
+     * never another city's photograph.
+     */
+    function citySlug(name) {
+        return String(name || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    }
+
+    function imageBase(city) {
+        return "assets/images/city-" + citySlug(city && city.name);
     }
 
     function isoDay(date) {
@@ -157,7 +164,7 @@
     /* The card, the one component of every gallery. options.booking adds a Book Ticket action; a city without flights opens the results with their empty state. */
     function cardMarkup(country, city, options) {
         options = options || {};
-        var base = imageBase(city, country);
+        var base = imageBase(city);
         var cityName = localized(city, "name");
         var flights = hasFlights(city);
         var description = localized(city, "description") || localized(country, "description");
@@ -266,6 +273,8 @@
                 if (!byCountry[entry.country.code]) { byCountry[entry.country.code] = { country: entry.country, cities: [] }; order.push(entry.country.code); }
                 byCountry[entry.country.code].cities.push(entry.city);
             });
+            // Countries with the most cities first; equal counts keep the catalogue's own order (the sort is stable).
+            order.sort(function (a, b) { return byCountry[b].cities.length - byCountry[a].cities.length; });
             return order.map(function (code) {
                 var group = byCountry[code];
                 return '<section class="destination-group" aria-labelledby="group-' + escapeHtml(code) + '">' +
@@ -316,8 +325,15 @@
             paintGrid(all);
         }
 
+        // While the catalogue loads, placeholder cards hold the grid's shape so the page does not jump when the real cards arrive.
+        function skeletonMarkup() {
+            var placeholders = "";
+            for (var i = 0; i < 8; i++) placeholders += '<article class="destination-card destination-card--skeleton" aria-hidden="true"></article>';
+            return '<p class="visually-hidden" role="status">' + escapeHtml(tr("destinations.loadingCatalog", "Təyinatlar yüklənir...")) + "</p>" + placeholders;
+        }
+
         function start() {
-            grid.innerHTML = statusMarkup(tr("destinations.loadingCatalog", "Təyinatlar yüklənir..."), false);
+            grid.innerHTML = skeletonMarkup();
             more.innerHTML = "";
             if (filters) filters.innerHTML = "";
             load().then(function (list) {

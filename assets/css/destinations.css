@@ -19,38 +19,19 @@
     margin-inline: auto;
 }
 
-/* Hero — full-bleed cinematic */
+/* Intro — text only, on the navy ground; the destination cards below carry the photographs */
 .dest-hero {
     position: relative;
-    min-height: min(92vh, 820px);
-    display: grid;
-    align-items: end;
-    padding: calc(var(--header-height) + 4rem) var(--gutter) 4.5rem;
-    overflow: hidden;
-}
-
-.dest-hero__media,
-.dest-hero__veil {
-    position: absolute;
-    inset: 0;
-}
-
-.dest-hero__media {
-    background: center / cover no-repeat url("../images/maldives.jpg");
-    transform: scale(1.03);
-    animation: dest-hero-drift 22s ease-in-out infinite alternate;
-}
-
-.dest-hero__veil {
-    background:
-        linear-gradient(180deg, rgba(5, 12, 22, 0.25) 0%, rgba(5, 12, 22, 0.55) 45%, rgba(5, 12, 22, 0.92) 100%),
-        linear-gradient(90deg, rgba(5, 12, 22, 0.5), transparent 55%);
+    padding: calc(var(--header-height) + 2.5rem) var(--gutter) 2.25rem;
+    background: radial-gradient(ellipse at 88% 0%, rgba(198, 163, 106, 0.1), transparent 55%);
+    border-bottom: 1px solid rgba(198, 163, 106, 0.2);
 }
 
 .dest-hero__content {
     position: relative;
     z-index: 1;
-    max-width: 38rem;
+    width: min(1180px, calc(100% - (var(--gutter) * 2)));
+    margin-inline: auto;
 }
 
 .dest-hero__kicker {
@@ -66,18 +47,19 @@
 .dest-hero__title {
     margin: 0;
     font-family: var(--font-serif);
-    font-size: clamp(2.8rem, 7vw, 4.8rem);
+    font-size: clamp(2.4rem, 5.5vw, 3.8rem);
     font-weight: 500;
-    line-height: 1.05;
+    line-height: 1.08;
     letter-spacing: 0.01em;
-    color: var(--color-cream);
+    color: inherit;
     animation: dest-fade-up 0.95s ease 0.08s both;
 }
 
 .dest-hero__text {
     margin: 1.15rem 0 0;
     max-width: 32rem;
-    color: var(--color-cream-muted);
+    color: inherit;
+    opacity: 0.78;
     font-family: var(--font-sans);
     font-size: 1.05rem;
     font-weight: 300;
@@ -91,7 +73,7 @@
     padding: 0.85rem 1.6rem;
     border: 1px solid rgba(198, 163, 106, 0.65);
     background: rgba(198, 163, 106, 0.12);
-    color: var(--color-cream);
+    color: inherit;
     font-family: var(--font-sans);
     font-size: 0.82rem;
     letter-spacing: 0.14em;
@@ -173,11 +155,6 @@
     line-height: 1.65;
 }
 
-@keyframes dest-hero-drift {
-    from { transform: scale(1.03) translate3d(0, 0, 0); }
-    to { transform: scale(1.08) translate3d(-1.2%, -1%, 0); }
-}
-
 @keyframes dest-fade-up {
     from { opacity: 0; transform: translateY(18px); }
     to { opacity: 1; transform: translateY(0); }
@@ -191,7 +168,168 @@
 
 @media (max-width: 640px) {
     .dest-hero {
-        min-height: 78vh;
-        padding-bottom: 3rem;
+        padding-bottom: 2rem;
     }
+}
+
+/* Intro, premium pass: a gold hairline frame, a gold kicker rule and a gold filled call to action. Text only, no photograph. */
+.dest-hero {
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse 60% 90% at 100% 0%, rgba(198, 163, 106, 0.16), transparent 60%),
+        radial-gradient(ellipse 50% 70% at 0% 100%, rgba(198, 163, 106, 0.07), transparent 65%),
+        linear-gradient(180deg, rgba(198, 163, 106, 0.04), transparent 60%);
+    border-bottom: 0;
+}
+
+.dest-hero::before {
+    content: "";
+    position: absolute;
+    inset: 1.1rem;
+    border: 1px solid rgba(198, 163, 106, 0.22);
+    border-radius: 24px;
+    pointer-events: none;
+}
+
+.dest-hero::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(198, 163, 106, 0.7), transparent);
+}
+
+.dest-hero__content {
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+
+.dest-hero__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.34em;
+}
+
+.dest-hero__kicker::before {
+    content: "";
+    width: 2.6rem;
+    height: 1px;
+    background: var(--color-gold-light);
+}
+
+.dest-hero__title {
+    max-width: 14ch;
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    line-height: 1.04;
+}
+
+.dest-hero__text {
+    max-width: 34rem;
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.dest-hero__cta {
+    margin-top: 2rem;
+    padding: 0.95rem 2rem;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--color-gold-light, #e0c48a), var(--color-gold, #c6a36a));
+    color: var(--color-ink, #1c150c);
+    font-weight: 500;
+    box-shadow: 0 14px 30px -14px rgba(198, 163, 106, 0.7);
+}
+
+.dest-hero__cta:hover,
+.dest-hero__cta:focus-visible {
+    background: linear-gradient(135deg, #f0dcab, var(--color-gold-light, #e0c48a));
+    color: var(--color-ink, #1c150c);
+    filter: brightness(1.04);
+}
+
+@media (max-width: 640px) {
+    .dest-hero::before {
+        inset: 0.6rem;
+        border-radius: 18px;
+    }
+
+    .dest-hero__cta {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Intro: text on the left, three short notes on the right so the row is balanced. */
+.dest-hero__content {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+}
+
+.dest-hero__notes {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid rgba(198, 163, 106, 0.3);
+}
+
+.dest-hero__note {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding: 1.1rem 0 1.1rem 1.6rem;
+    border-bottom: 1px solid rgba(198, 163, 106, 0.16);
+}
+
+.dest-hero__note:last-child {
+    border-bottom: 0;
+}
+
+.dest-hero__note-no {
+    color: var(--color-gold-light, #e0c48a);
+    font-family: var(--font-serif, serif);
+    font-size: 1.1rem;
+    line-height: 1.2;
+}
+
+.dest-hero__note-title {
+    margin: 0;
+    font-family: var(--font-serif, serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: inherit;
+}
+
+.dest-hero__note-text {
+    margin: 0.35rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    opacity: 0.75;
+}
+
+@media (max-width: 900px) {
+    .dest-hero__content {
+        grid-template-columns: 1fr;
+    }
+
+    .dest-hero__notes {
+        border-left: 0;
+    }
+
+    .dest-hero__note {
+        padding-left: 0;
+    }
+}
+
+/* The intro is gone: the catalog starts at the top, so it clears the transparent header. */
+.destinations-body .dest-catalog {
+    padding-top: calc(var(--header-height) + 2.5rem);
 }
