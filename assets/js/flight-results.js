@@ -539,7 +539,7 @@
                 setStatus({
                     kind: "notice", titleKey: "results.noResultsTitle", titleFallback: "Uçuş tapılmadı",
                     textKey: criteria.timeOfDay ? "voice.results.noneInPeriodTime" : "voice.results.noneInPeriod",
-                    textFallback: "{from} - {to} arasında {origin} - {destination} istiqamətində uçuş yoxdur.",
+                    textFallback: "{origin} - {destination} istiqamətində uçuş yoxdur.",
                     vars: {
                         origin: criteria.from, destination: criteria.to, from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo),
                         part: say("voice.results.partName." + criteria.timeOfDay, criteria.timeOfDay)
@@ -636,13 +636,15 @@
             if (criteria.range) {
                 var span = { from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) };
                 if (isSingleCheapest(criteria)) {
-                    metaElement.textContent = say("voice.results.singleHeading", "{from} - {to} arasında tapılan ən ucuz uçuş", span);
+                    metaElement.textContent = say("voice.results.singleHeading", "Tapılan ən ucuz uçuş");
                 } else if (criteria.cheapest && criteria.single) {
-                    metaElement.textContent = say("voice.results.otherHeading", "{from} - {to} arasında digər uçuşlar, ən ucuzdan başlayaraq", span);
+                    metaElement.textContent = say("voice.results.otherHeading", "Digər uçuşlar, ən ucuzdan başlayaraq");
                 } else {
                     metaElement.textContent = criteria.cheapest
-                        ? say("voice.results.cheapestHeading", "{from} - {to} arasında ən ucuz uçuşlar", span)
-                        : say("voice.results.periodHeading", "{from} - {to} arasında uçuşlar", span);
+                        ? say("voice.results.cheapestHeading", "Ən ucuz uçuşlar")
+                        : criteria.defaultPeriod
+                            ? say("voice.results.nearestHeading", "En yaxın zamanda olan uçuşlar")
+                            : say("voice.results.periodHeading", "Mövcud uçuşlar");
                 }
             } else if (selectedDate) {
                 metaElement.textContent = formatDisplayDate(toISODate(selectedDate));
@@ -720,8 +722,7 @@
                 var each = getCabinPrice(shown, getDefaultCabin(criteria));
                 var travellers = Math.max(1, parseInt(criteria.passengers, 10) || 1);
 
-                lines.push(say("voice.results.singleNote", "Bu, axtarılan {days} gün ərzində ({from} - {to}) tapılan ən aşağı qiymətdir. Digər tarixlər axtarılmayıb.",
-                    { days: periodDays(criteria), from: formatDisplayDate(criteria.dateFrom), to: formatDisplayDate(criteria.dateTo) }));
+                lines.push(say("voice.results.singleNote", "Bu, axtarış dövründə tapılan ən aşağı qiymətdir. Digər tarixlər axtarılmayıb."));
 
                 if (travellers > 1 && typeof each === "number") {
                     lines.push(say("voice.results.singleTotal", "{count} sərnişin üçün qiymət: ${total} (hər biri ${each}).", { count: travellers, total: each * travellers, each: each }));
@@ -735,10 +736,6 @@
             lines.push(say("voice.results.cheapestNote", "Bunlar bu dövrdə tapılan ən ucuz qiymətlərdir. Digər tarixlərdə qiymətlər fərqli ola bilər."));
         } else if (criteria.range && criteria.fastest) {
             lines.push(say("voice.results.fastestNote", "Bunlar bu dövrdə tapılan ən qısa müddətli uçuşlardır, qısa olandan başlayaraq."));
-        }
-
-        if (criteria.range && criteria.defaultPeriod) {
-            lines.push(say("voice.results.defaultPeriodNote", "Tarix deyilmədiyi üçün növbəti {days} gün üzrə uçuşlar göstərilir.", { days: periodDays(criteria) }));
         }
 
         if (criteria.range && !single && viewState === "ready" && rangeInfo.total > rangeInfo.shown) {
