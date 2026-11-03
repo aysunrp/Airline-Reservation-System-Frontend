@@ -170,7 +170,7 @@
     function renderFlightSummary(flight) {
         setText("flight-airline", flight.airline);
         setText("flight-number", flight.flightNumber);
-        setText("flight-route", flight.from + " → " + flight.to);
+        setText("flight-route", (window.AEROVA_JOURNEY && window.AEROVA_JOURNEY.journeyRoute(flight.legs)) || (flight.from + " → " + flight.to));
         setText("flight-date", formatDisplayDate(flight.departureDate));
         setText("flight-times", flight.departure + " → " + flight.arrival);
         setText("flight-cabin", flight.cabinClass);

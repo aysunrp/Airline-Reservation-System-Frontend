@@ -515,12 +515,9 @@
     }
 
     var DOCS = window.AEROVA_TRAVEL_DOCS || null;
-    var TITLE_OPTIONS = [["Mr", "travelDocs.mr"], ["Mrs", "travelDocs.mrs"], ["Ms", "travelDocs.ms"], ["Mx", "travelDocs.mx"]];
     var GENDER_OPTIONS = [
         ["Female", "travelDocs.female"],
-        ["Male", "travelDocs.male"],
-        ["Other", "travelDocs.other"],
-        ["Göstərmək istəmirəm", "travelDocs.preferNot"]
+        ["Male", "travelDocs.male"]
     ];
     var DOC_TYPE_FALLBACKS = { passport: "Passport", az_id_card: "Azərbaycan şəxsiyyət vəsiqəsi" };
 
@@ -577,12 +574,6 @@
                 '<section class="details-section" aria-labelledby="' + personalId + '">' +
                     '<h3 class="details-section-title" id="' + personalId + '" data-i18n="travelDocs.personalInfo">' + escapeHtml(tr("travelDocs.personalInfo", "Şəxsi məlumatlar")) + "</h3>" +
                     '<div class="field-grid">' +
-                        '<div class="field">' +
-                            fieldLabel(prefix + "-title-field", "travelDocs.title", "Müraciət", true) +
-                            '<select class="field-input" id="' + prefix + '-title-field" ' + name("title") + described(prefix + "-title-field") + " required>" +
-                                buildKeyedOptions(TITLE_OPTIONS, "travelDocs.selectTitle", "Müraciəti seçin") +
-                            "</select>" + fieldError(prefix + "-title-field") +
-                        "</div>" +
                         '<div class="field">' +
                             fieldLabel(prefix + "-first-name", "travelDocs.firstName", "Ad", true) +
                             '<input class="field-input" id="' + prefix + '-first-name" ' + name("firstName") + described(prefix + "-first-name") + ' type="text" autocomplete="given-name" required>' + fieldError(prefix + "-first-name") +
@@ -890,8 +881,8 @@
      * The signed-in account's own details (GET api/profile, which answers for the token's account only) start the first adult card
      * filled in, and its phone the contact block. Nothing is stored: the form only starts filled, every field stays editable, and the
      * profile itself changes only on the profile page. Only empty fields are filled, so nothing typed is overwritten. The contact e-mail
-     * stays for the traveller to type, since the booking link goes to the address written there. Other passengers are never filled
-     * with these details.
+     * defaults to the signed-in account's address (editable; the booking link goes to whatever is written there). Other passengers are
+     * never filled with these details.
      */
     var profileNoteState = "";
 
@@ -952,13 +943,14 @@
 
         if (card) {
             var prefix = "passenger-" + card.getAttribute("data-passenger-index") + "-";
-            fillIfEmpty(prefix + "title-field", profile.title);
             fillIfEmpty(prefix + "first-name", profile.firstName);
             fillIfEmpty(prefix + "last-name", profile.lastName);
             fillIfEmpty(prefix + "dob", profile.dateOfBirth);
             // The nationality decides which documents are offered, so it is set after the rest of the card exists.
             fillIfEmpty(prefix + "nationality", profile.nationalityCode);
         }
+
+        fillIfEmpty("contact-email", profile.email);
 
         var phone = splitPhone(profile.phone);
         if (phone && !getTrimmedValue(document.getElementById("contact-phone"))) {
@@ -967,8 +959,61 @@
         }
     }
 
+    function accountContactEmail() {
+        var auth = window.AerovaAuth;
+        if (!auth || !auth.isLoggedIn() || !auth.getCurrentUser) {
+            return "";
+        }
+        var user = auth.getCurrentUser();
+        return user && user.email ? String(user.email).trim() : "";
+    }
+
+    function restoreContactFromBookingData() {
+        try {
+            var stored = JSON.parse(sessionStorage.getItem("bookingData") || "null");
+            var contact = stored && stored.contact;
+            if (!contact) {
+                return;
+            }
+            fillIfEmpty("contact-email", contact.email);
+            fillIfEmpty("contact-country-code", contact.countryCode);
+            fillIfEmpty("contact-phone", contact.mobilePhone);
+        } catch (error) {
+            // Nothing saved yet for this booking.
+        }
+    }
+
+    function setupContactEmailSuggestion(preferredEmail) {
+        var email = String(preferredEmail || accountContactEmail() || "").trim();
+        if (!email) {
+            return;
+        }
+
+        var input = document.getElementById("contact-email");
+        if (!input) {
+            return;
+        }
+
+        var list = document.getElementById("contact-email-options");
+        if (!list) {
+            list = document.createElement("datalist");
+            list.id = "contact-email-options";
+            input.setAttribute("list", "contact-email-options");
+            input.parentNode.appendChild(list);
+        }
+
+        list.innerHTML = "";
+        var option = document.createElement("option");
+        option.value = email;
+        list.appendChild(option);
+
+        fillIfEmpty("contact-email", email);
+    }
+
     function loadProfileDetails() {
         var auth = window.AerovaAuth;
+        setupContactEmailSuggestion();
+
         if (!auth || !auth.isLoggedIn() || !window.AEROVA_API) {
             return;
         }
@@ -982,6 +1027,7 @@
                 return;
             }
 
+            setupContactEmailSuggestion(profile.email);
             fillFromProfile(profile);
             showProfileNote("filled");
         }).catch(function () {
@@ -1070,7 +1116,6 @@
         var passengerNumber = index + 1;
         var prefix = "passenger-" + passengerNumber;
         var fields = {
-            title: getFieldById(prefix + "-title-field"),
             firstName: getFieldById(prefix + "-first-name"),
             middleName: getFieldById(prefix + "-middle-name"),
             lastName: getFieldById(prefix + "-last-name"),
@@ -1085,7 +1130,6 @@
 
         var issuingVisible = !getFieldById(prefix + "-issuing-field").hidden;
         var requiredChecks = [
-            { key: "title", error: "travelDocs.errors.title", message: "Müraciəti seçin" },
             { key: "firstName", error: "travelDocs.errors.firstName", message: "Adınızı daxil edin" },
             { key: "lastName", error: "travelDocs.errors.lastName", message: "Soyadınızı daxil edin" },
             { key: "dateOfBirth", error: "travelDocs.errors.dob", message: "Doğum tarixinizi daxil edin" },
@@ -1104,7 +1148,7 @@
             if (!focusField) focusField = field;
             isValid = false;
         };
-        var card = fields.title ? fields.title.closest(".passenger-card") : null;
+        var card = fields.firstName ? fields.firstName.closest(".passenger-card") : null;
         var options = card ? documentOptionsFor(card) : { documents: ["passport"], minValidityDays: 0, routeType: "international", countries: [] };
         var definition = documentTypeDefinition(getTrimmedValue(fields.documentType));
         var numberValue = getTrimmedValue(fields.documentNumber).toUpperCase().replace(/[\s-]/g, "");
@@ -1184,7 +1228,8 @@
         return {
             valid: true,
             passenger: {
-                title: getTrimmedValue(fields.title),
+                // The form no longer asks for a salutation; the title is left empty.
+                title: "",
                 firstName: getTrimmedValue(fields.firstName),
                 middleName: getTrimmedValue(fields.middleName),
                 lastName: getTrimmedValue(fields.lastName),
@@ -1213,6 +1258,22 @@
                 }
             }
         };
+    }
+
+    /* How many digits follow each country code (the national number, without the code). Codes not listed get a general range. */
+    var PHONE_DIGITS = { "+994": 9, "+44": 10, "+1": 10, "+90": 10, "+971": 9 };
+
+    /* The phone's own rule: digits only, and the count of digits the country needs. Returns the message to show, or "". */
+    function phoneProblem(countryCode, mobilePhone) {
+        if (/[^0-9\s()\-+]/.test(mobilePhone)) {
+            return "Telefon nömrəsinə yalnız rəqəm daxil edin";
+        }
+        var digits = mobilePhone.replace(/\D/g, "");
+        var expected = PHONE_DIGITS[countryCode];
+        if (expected) {
+            return digits.length === expected ? "" : "Bu ölkə üçün telefon nömrəsi " + expected + " rəqəmdən ibarət olmalıdır";
+        }
+        return digits.length >= 6 && digits.length <= 15 ? "" : "Telefon nömrəsi 6–15 rəqəmdən ibarət olmalıdır";
     }
 
     function collectContactData() {
@@ -1250,6 +1311,12 @@
                 focusField = phoneInput;
             }
             isValid = false;
+        } else if (phoneProblem(countryCode, mobilePhone)) {
+            markInvalid(phoneInput, phoneProblem(countryCode, mobilePhone));
+            if (!focusField) {
+                focusField = phoneInput;
+            }
+            isValid = false;
         }
 
         if (!isValid) {
@@ -1264,7 +1331,7 @@
             contact: {
                 email: email,
                 countryCode: countryCode,
-                mobilePhone: mobilePhone
+                mobilePhone: mobilePhone.replace(/\D/g, "")
             }
         };
     }
@@ -1555,6 +1622,7 @@
         loadAirportCountries();
         bindInfantRule();
         loadSavedPassengers();
+        restoreContactFromBookingData();
         loadProfileDetails();
         loadPassengerRules();
     }

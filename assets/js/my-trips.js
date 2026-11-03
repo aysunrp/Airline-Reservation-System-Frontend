@@ -83,6 +83,26 @@
         return tr("common.statusConfirmed", "Təsdiqlənib");
     }
 
+    /* The final destination of one journey (after any transfer). */
+    function outboundDestination(legs, journeyNo) {
+        var same = (legs || []).filter(function (item) { return Number(item.journeyNo) === Number(journeyNo); });
+        return (same[same.length - 1] || legs[legs.length - 1]).destinationCity;
+    }
+
+    /* A journey as its cities in order, transfers included: "Baku → İstanbul → Faro". */
+    function journeyCities(legs, journeyNo) {
+        var same = (legs || []).filter(function (item) { return Number(item.journeyNo) === Number(journeyNo); });
+        if (!same.length) return "";
+        return [same[0].originCity].concat(same.map(function (item) { return item.destinationCity; })).join(" → ");
+    }
+
+    /* The return journey of the trip the same way, or "" when the trip is one way. */
+    function returnJourneyCities(legs, journeyNo) {
+        var other = (legs || []).filter(function (item) { return Number(item.journeyNo) !== Number(journeyNo); });
+        if (!other.length) return "";
+        return journeyCities(other, other[0].journeyNo);
+    }
+
     /* A booking summary from the API, with times shown at each airport. */
     function toCard(booking) {
         var directory = window.AEROVA_AIRPORTS;
@@ -95,7 +115,10 @@
         return {
             booking: booking,
             departsAt: window.AEROVA_BOOKING.parseUtc(leg.departureAt).getTime(),
-            route: leg.originCity + " → " + leg.destinationCity,
+            // The trip as the passenger means it: where the outbound journey starts and where it finally ends, transfers included.
+            route: leg.originCity + " → " + outboundDestination(booking.legs, leg.journeyNo),
+            outboundRoute: journeyCities(booking.legs, leg.journeyNo),
+            returnRoute: returnJourneyCities(booking.legs, leg.journeyNo),
             flightNumber: leg.flightNumber,
             date: departure.date,
             departure: departure.time,
@@ -124,9 +147,8 @@
                         '<p class="trip-card-airline">AEROVA</p>' +
                         '<h2 class="trip-card-route">' + escapeHtml(card.route) + "</h2>" +
                         '<p class="trip-card-flight">' + escapeHtml(tr("trips.flightLabel", "Uçuş {number}", { number: card.flightNumber })) + "</p>" +
-                        card.extraFlights.map(function (other) {
-                            return '<p class="trip-card-flight">' + escapeHtml((other.sameJourney ? tr("api.journey.connectionTripLine", "Aktarma reysi {flight}, {route}", { flight: other.flight, route: other.route }) : tr("api.journey.returnTripLine", "Qayıdış {flight}, {route}", { flight: other.flight, route: other.route }))) + "</p>";
-                        }).join("") +
+                        (card.outboundRoute && card.outboundRoute !== card.route ? '<p class="trip-card-flight">' + escapeHtml(tr("trips.outboundRouteLine", "Gediş: {route}", { route: card.outboundRoute })) + "</p>" : "") +
+                        (card.returnRoute ? '<p class="trip-card-flight">' + escapeHtml(tr("api.journey.returnRouteLine", "Qayıdış: {route}", { route: card.returnRoute })) + "</p>" : "") +
                     "</div>" +
                     '<div class="trip-card-status ' + (cancelled ? "trip-card-status--cancelled" : "trip-card-status--confirmed") + '">' + escapeHtml(statusLabel(booking.status)) + "</div>" +
                 "</div>" +

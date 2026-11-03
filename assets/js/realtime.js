@@ -46,7 +46,7 @@
             pollTimer = setInterval(function () {
                 if (!api || !api.session.isActive()) { stop(); return; }
                 if (typeof options.poll === "function") options.poll();
-            }, options.pollMs || 20000);
+            }, options.pollMs || 3000);
         }
 
         function stopPolling() {
@@ -71,7 +71,7 @@
                     accessTokenFactory: function () { return api.session.token(); },
                     withCredentials: false
                 })
-                .withAutomaticReconnect([0, 2000, 5000, 10000, 20000, 30000])
+                .withAutomaticReconnect([0, 500, 1000, 2000, 5000])
                 .configureLogging(window.signalR.LogLevel.None)
                 .build();
 

@@ -59,7 +59,7 @@
         try {
             var channel = new window.BroadcastChannel("aerova-email");
             channel.postMessage({ type: "booking-confirmed" });
-            window.setTimeout(function () { channel.close(); }, 1500);
+            window.setTimeout(function () { channel.close(); }, 0);
         } catch (error) { /* the other tab also asks by itself */ }
     }
 
@@ -76,7 +76,7 @@
         var hasBooking = false;
         try { hasBooking = !!window.sessionStorage.getItem("bookingData"); } catch (error) { hasBooking = false; }
         if (state.signedIn && hasBooking) {
-            window.setTimeout(function () { window.location.href = "payment.html"; }, 1500);
+            window.location.href = "payment.html";
         }
     }
 
@@ -114,7 +114,7 @@
                 if (message && message.data && message.data.type === "handoff") done(message.data);
             };
             channel.postMessage({ type: "handoff-request" });
-            window.setTimeout(function () { done(null); }, 2000);
+            window.setTimeout(function () { done(null); }, 150);
         } catch (error) {
             window.location.href = "payment.html";
         }

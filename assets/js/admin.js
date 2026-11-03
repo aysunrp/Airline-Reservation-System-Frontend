@@ -823,7 +823,7 @@
         line.textContent = tr("api.admin.seatsUpdated", "Yenilənib: {time}. Xəritə özü yenilənir.", { time: time });
     }
 
-    var SEAT_REFRESH_MS = 10000;
+    var SEAT_REFRESH_MS = 3000;
 
     /* The map follows bookings, payments, cancellations and expiries without a page reload: it is read again every few seconds while it is open. */
     function startSeatRefresh() {
@@ -2428,7 +2428,7 @@
                 onState: paintAdminLive,
                 poll: function () { loadBell(); refreshSupportViews(null); },
                 onResync: function () { loadBell(); refreshSupportViews(null); },
-                pollMs: 20000
+                pollMs: 3000
             });
             adminLive.start();
         }

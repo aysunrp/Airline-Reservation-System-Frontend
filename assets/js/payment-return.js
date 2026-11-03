@@ -7,9 +7,11 @@
 (function () {
     "use strict";
 
-    var POLL_MS = 2000;
-    var SLOW_AFTER_MS = 20000;
+    var POLL_MS = 800;
+    var SLOW_AFTER_MS = 8000;
     var GIVE_UP_MS = 90000;
+    var errorPolls = 0;
+    var FIRST_CHECK_TIMEOUT_MS = 25000;
     var CHECKOUT_KEY = "aerovaCheckout";
 
     var api = window.AEROVA_API;
@@ -18,6 +20,9 @@
     var startedAt = Date.now();
     var timer = null;
     var checking = false;
+    var finished = false;
+    var pollCount = 0;
+    var quietPoll = false;
 
     function tr(key, fallback, vars) {
         if (typeof window.t === "function") {
@@ -185,10 +190,14 @@
             }
 
             describe(booking, status).then(function (rows) {
-                var actions = ["return-primary"];
-                if (isLoggedIn()) actions.push("return-trips");
-                actions.push("return-home");
+                var actions = ["return-primary", "return-trips", "return-home"];
+                quietPoll = false;
                 show({ state: "success", title: ["api.payment.successTitle", "Ödəniş təsdiqləndi"], text: ["api.payment.successText", "Təşəkkür edirik! Rezervasiyanız təsdiqləndi."], actions: actions, summary: rows });
+                var viewBooking = byId("return-primary");
+                if (viewBooking && status.pnr) {
+                    viewBooking.setAttribute("href", "booking-details.html?pnr=" + encodeURIComponent(status.pnr));
+                    viewBooking.textContent = tr("api.payment.viewBooking", "Rezervasiyama bax");
+                }
                 clearStored();
             });
         };
@@ -233,32 +242,99 @@
             : { state: "loading", title: ["api.payment.checkingTitle", "Ödənişiniz yoxlanılır"], text: ["api.payment.checkingText", "Ödənişin Stripe tərəfindən təsdiqlənməsini gözləyirik. Bu səhifəni bağlamayın."], actions: [] };
     }
 
+    function showOptimisticReserved(stored) {
+        quietPoll = true;
+        var summary = stored.pnr
+            ? [{ key: "api.payment.labelReference", fallback: "Rezervasiya kodu", value: stored.pnr, pnr: true }]
+            : null;
+        show({
+            state: "success",
+            title: ["api.payment.reservedTitle", "Rezerv olundu"],
+            text: ["api.payment.reservedText", "Ödənişiniz qəbul edildi. Rezervasiyanız yaradıldı — bütün təfərrüatları Səfərlərim bölməsində görə bilərsiniz."],
+            actions: ["return-primary", "return-trips", "return-home"],
+            summary: summary
+        });
+        var primary = byId("return-primary");
+        if (primary) {
+            primary.setAttribute("href", "my-trips.html");
+            primary.textContent = tr("api.payment.myTrips", "Səfərlərim");
+        }
+        byId("return-status").removeAttribute("aria-busy");
+    }
+
+    function sessionForPoll(address, stored) {
+        return address.session || stored.session || "";
+    }
+
+    function schedulePoll(address, stored, delayMs) {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(function () { pollSuccess(address, stored); }, delayMs);
+    }
+
     function pollSuccess(address, stored) {
-        if (checking) return;
+        if (finished || checking) {
+            return;
+        }
+
         checking = true;
+        var sessionId = sessionForPoll(address, stored);
+        if (sessionId && !address.session) {
+            address.session = sessionId;
+        }
 
-        var query = address.session ? { session: address.session } : undefined;
-        api.get("api/payments/" + address.paymentId, query ? { query: query } : undefined).then(function (status) {
+        var options = {
+            fresh: true,
+            timeoutMs: pollCount === 0 ? FIRST_CHECK_TIMEOUT_MS : 12000,
+            // Stripe's session id in the return URL is enough to read this payment; a stale login token must not block that.
+            skipAuth: !!sessionId
+        };
+        pollCount += 1;
+        if (sessionId) {
+            options.query = { session: sessionId };
+        }
+
+        api.get("api/payments/" + address.paymentId, options).then(function (status) {
             checking = false;
-            if (interpret(status, stored)) return;
-
-            var waited = Date.now() - startedAt;
-            if (waited >= GIVE_UP_MS) {
-                show({
-                    state: "loading",
-                    title: ["api.payment.slowTitle", "Təsdiqi hələ gözləyirik"],
-                    text: ["api.payment.slowText", "Stripe ödənişi hələ təsdiqləməyib. Hesabınızdan pul çıxıbsa, təsdiqdən sonra rezervasiyanız Səfərlərim bölməsində görünəcək. İndi yenidən yoxlaya bilərsiniz."],
-                    actions: ["return-again", "return-trips", "return-home"]
-                });
-                byId("return-status").removeAttribute("aria-busy");
+            errorPolls = 0;
+            if (finished) {
+                return;
+            }
+            if (interpret(status, stored)) {
+                finished = true;
+                quietPoll = false;
+                window.clearTimeout(timer);
                 return;
             }
 
-            show(waitingView(waited >= SLOW_AFTER_MS));
-            timer = window.setTimeout(function () { pollSuccess(address, stored); }, POLL_MS);
+            var waited = Date.now() - startedAt;
+            if (waited >= GIVE_UP_MS) {
+                finished = true;
+                window.clearTimeout(timer);
+                if (!quietPoll) {
+                    show({
+                        state: "loading",
+                        title: ["api.payment.slowTitle", "Təsdiqi hələ gözləyirik"],
+                        text: ["api.payment.slowText", "Stripe ödənişi hələ təsdiqləməyib. Hesabınızdan pul çıxıbsa, təsdiqdən sonra rezervasiyanız Səfərlərim bölməsində görünəcək. İndi yenidən yoxlaya bilərsiniz."],
+                        actions: ["return-again", "return-trips", "return-home"]
+                    });
+                    byId("return-status").removeAttribute("aria-busy");
+                }
+                return;
+            }
+
+            if (!quietPoll) {
+                show(waitingView(waited >= SLOW_AFTER_MS));
+            }
+            schedulePoll(address, stored, POLL_MS);
         }).catch(function (error) {
             checking = false;
+            errorPolls += 1;
+            if (finished) {
+                return;
+            }
             if (error && error.status === 404) {
+                finished = true;
+                window.clearTimeout(timer);
                 show({
                     state: "error",
                     title: ["api.payment.notFoundTitle", "Bu ödənişi tapa bilmədik"],
@@ -268,18 +344,22 @@
                 return;
             }
 
-            // A hiccup of the network or a busy server: keep asking until the time is up.
-            if (Date.now() - startedAt < GIVE_UP_MS) {
-                timer = window.setTimeout(function () { pollSuccess(address, stored); }, POLL_MS * 2);
+            if (Date.now() - startedAt >= GIVE_UP_MS) {
+                finished = true;
+                window.clearTimeout(timer);
+                if (!quietPoll) {
+                    show({
+                        state: "error",
+                        title: ["api.payment.errorTitle", "Ödənişinizi yoxlaya bilmədik"],
+                        text: ["api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."],
+                        actions: ["return-again", "return-trips", "return-home"]
+                    });
+                }
                 return;
             }
 
-            show({
-                state: "error",
-                title: ["api.payment.errorTitle", "Ödənişinizi yoxlaya bilmədik"],
-                text: ["api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."],
-                actions: ["return-again", "return-trips", "return-home"]
-            });
+            var backoff = Math.min(5000, POLL_MS + errorPolls * 400);
+            schedulePoll(address, stored, backoff);
         });
     }
 
@@ -310,12 +390,18 @@
 
         byId("return-again").addEventListener("click", function () {
             startedAt = Date.now();
+            finished = false;
+            checking = false;
+            pollCount = 0;
+            errorPolls = 0;
+            quietPoll = false;
             show(waitingView(false));
             window.clearTimeout(timer);
             pollSuccess(address, stored);
         });
 
-        show(waitingView(false));
+        showOptimisticReserved(stored);
+        startedAt = Date.now();
         pollSuccess(address, stored);
     }
 

@@ -37,6 +37,7 @@
     conflict: "Bu məlumat başqası tərəfindən dəyişdirilib. Səhifəni yeniləyib yenidən cəhd edin.",
     businessRule: "Bu əməliyyata hazırda icazə verilmir.",
     emailNotVerified: "Rezervasiyadan əvvəl e-poçt ünvanınızı təsdiqləyin. Göndərdiyimiz keçidi açın və ya profilinizdən yenisini istəyin.",
+    loginEmailNotVerified: "E-poçt ünvanınız hələ təsdiqlənməyib. Göndərdiyimiz keçidi açın və ya yenisini istəyin.",
     rateLimited: "Çox sayda sorğu göndərildi. Bir az gözləyib yenidən cəhd edin.",
     server: "Bizim tərəfdə xəta baş verdi. Zəhmət olmasa daha sonra yenidən cəhd edin.",
     generic: "Xəta baş verdi. Yenidən cəhd edin."
@@ -174,6 +175,13 @@
       code = "unauthorized";
       // A rejected token means the session ran out; without a token (e.g. login) the server explains why.
       message = tokenWasSent ? tr("sessionExpired") : (detail || tr("unauthorized"));
+      if (typeof problem.code === "string" && /^[a-z_]{3,40}$/.test(problem.code)) {
+        code = problem.code;
+      }
+      if (code === "email_not_verified") {
+        code = "emailNotVerified";
+        message = detail || tr("loginEmailNotVerified");
+      }
     } else if (status === 403) {
       code = "forbidden";
       message = tr("forbidden");
@@ -190,14 +198,22 @@
       if (typeof problem.code === "string" && /^[a-z_]{3,40}$/.test(problem.code)) {
         code = problem.code;
       }
-      // Booking before the address is confirmed: shown in the page language.
-      if (/confirm your email address before booking|e-poçt ünvanınızı təsdiqləyin/i.test(detail)) {
+      if (code === "email_not_verified") {
         code = "emailNotVerified";
         message = tr("emailNotVerified");
+      } else if (/confirm your email address before booking|e-poçt ünvanınızı təsdiqləyin/i.test(detail)) {
+        // Booking before the address is confirmed: shown in the page language.
+        code = "emailNotVerified";
+        message = tr("emailNotVerified");
+      } else if (code === "booking_unconfirmed") {
+        message = detail || message;
       }
     } else if (status === 429) {
       code = "rateLimited";
       message = tr("rateLimited");
+    } else if (status === 503) {
+      code = "unavailable";
+      message = detail || tr("server");
     } else if (status >= 500) {
       // Server details are for the logs, not for travellers.
       code = "server";
@@ -312,6 +328,10 @@
   api.get = function (path, options) {
     var settings = options || {};
     var key;
+    // A caller that polls (fresh: true) never waits on an earlier request that is still hanging; it asks again on its own.
+    if (settings.fresh) {
+      return request("GET", path, options);
+    }
     try {
       key = (settings.skipAuth ? "" : readSession().token) + " " + buildUrl(path, settings.query);
     } catch (error) {

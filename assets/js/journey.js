@@ -177,6 +177,26 @@
   }
 
   /*
+   * The route of a trip as the passenger means it: from where the outbound journey starts to where it finally ends (through any transfer),
+   * e.g. "Baku → Faro" for Baku → Istanbul → Faro. The same for the return journey when there is one.
+   */
+  function journeyRoute(legs) {
+    var list = (legs || []).map(function (leg) { return leg.flight || leg; });
+    if (!list.length) {
+      return null;
+    }
+    var first = list[0];
+    var last = first;
+    list.forEach(function (flight) {
+      var sameJourney = flight.journeyNo == null || first.journeyNo == null || Number(flight.journeyNo) === Number(first.journeyNo);
+      if (sameJourney) {
+        last = flight;
+      }
+    });
+    return first.from + " → " + last.to;
+  }
+
+  /*
    * A summary shows the first flight in its own fields. This adds one line under `afterElementId` for every other flight of
    * the trip (the return flight of a round trip); with one flight it removes
    * the lines. `legs` are the booking legs ({ flight: {...} }).
@@ -202,6 +222,21 @@
 
     var first = legs[0].flight || legs[0];
     var after = anchor;
+
+    // The return journey as one line of its own: from where it starts to where it ends.
+    var returnLegs = legs.slice(1).map(function (leg) { return leg.flight || leg; }).filter(function (flight) {
+      return !(flight.journeyNo != null && first.journeyNo != null && Number(flight.journeyNo) === Number(first.journeyNo));
+    });
+    if (returnLegs.length) {
+      var journeyLine = document.createElement("p");
+      journeyLine.id = baseId + "-journey";
+      journeyLine.style.margin = "0.4rem 0 0";
+      journeyLine.style.fontSize = "0.88em";
+      journeyLine.style.opacity = "0.85";
+      journeyLine.textContent = say("api.journey.returnRouteLine", "Qayıdış marşrutu: {route}", { route: returnLegs[0].from + " → " + returnLegs[returnLegs.length - 1].to });
+      after.parentNode.insertBefore(journeyLine, after.nextSibling);
+      after = journeyLine;
+    }
 
     legs.slice(1).forEach(function (leg, position) {
       var flight = leg.flight || leg;
@@ -288,6 +323,7 @@
     ensureReturnCard: ensureReturnCard,
     ensureLegCards: ensureLegCards,
     paintReturnLine: paintReturnLine,
+    journeyRoute: journeyRoute,
     seatsText: seatsText,
     isRoundTrip: isRoundTrip,
     isReturnLeg: isReturnLeg,

@@ -251,7 +251,6 @@
     }
 
     function populateForm(profile) {
-        setFieldValue("profile-title", profile.title);
         setFieldValue("profile-first-name", profile.firstName);
         setFieldValue("profile-last-name", profile.lastName);
         setFieldValue("profile-dob", profile.dateOfBirth);
@@ -297,7 +296,6 @@
 
     function validateProfileForm() {
         var fields = [
-            { id: "profile-title", message: "Müraciəti seçin" },
             { id: "profile-first-name", message: "Adınızı daxil edin" },
             { id: "profile-last-name", message: "Soyadınızı daxil edin" },
             { id: "profile-dob", message: "Doğum tarixinizi daxil edin" },
@@ -330,7 +328,6 @@
 
     function collectProfileFromForm() {
         return {
-            title: getTrimmedValue("profile-title"),
             firstName: getTrimmedValue("profile-first-name"),
             lastName: getTrimmedValue("profile-last-name"),
             dateOfBirth: getTrimmedValue("profile-dob"),
@@ -368,7 +365,7 @@
         }
 
         window.AEROVA_API.put("api/profile", {
-            title: data.title,
+            title: null,
             firstName: data.firstName,
             lastName: data.lastName,
             dateOfBirth: data.dateOfBirth,

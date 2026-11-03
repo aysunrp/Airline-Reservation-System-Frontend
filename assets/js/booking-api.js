@@ -55,7 +55,7 @@
     }
 
     return {
-      title: passenger.title,
+      title: "",
       firstName: passenger.firstName,
       middleName: passenger.middleName || null,
       lastName: passenger.lastName,
@@ -193,8 +193,9 @@
 
     // A hold made for different choices (other seats, baggage...) would keep those seats busy, so release it first.
     var lastName = bookingData.passengers[0].lastName;
-    var release = held && held.pnr
-      ? window.AEROVA_API.post("api/bookings/" + encodeURIComponent(held.pnr) + "/cancel", { lastName: lastName, reason: "Replaced by a new reservation" }).catch(function () {
+    var heldStillActive = held && held.expiresAt && parseUtc(held.expiresAt).getTime() > Date.now();
+    var release = held && held.pnr && heldStillActive
+      ? window.AEROVA_API.post("api/bookings/" + encodeURIComponent(held.pnr) + "/cancel", { lastName: lastName, reason: "Replaced by a new reservation" }, { timeoutMs: 12000 }).catch(function () {
         // Already expired or released: nothing to free.
       })
       : Promise.resolve();
@@ -247,6 +248,22 @@
     }
   }
 
+  /* Same match as ensure(), without calling the API (for payment page fast path). */
+  function peekHeld(bookingData) {
+    var request;
+    try {
+      request = buildRequest(bookingData);
+    } catch (error) {
+      return null;
+    }
+    var key = fingerprint(request);
+    var cached = readHeld();
+    if (cached && cached.fingerprint === key && cached.expiresAt && parseUtc(cached.expiresAt).getTime() > Date.now()) {
+      return cached;
+    }
+    return null;
+  }
+
   window.AEROVA_BOOKING = {
     markConfirmed: markConfirmed,
     extendHold: extendHold,
@@ -254,6 +271,7 @@
     savablePassengers: savablePassengers,
     quote: quote,
     ensure: ensure,
+    peekHeld: peekHeld,
     forget: forget,
     parseUtc: parseUtc
   };

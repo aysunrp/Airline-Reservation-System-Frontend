@@ -67,7 +67,7 @@
     function load() {
         if (loaded) return Promise.resolve(airports);
         if (!directory) return Promise.reject(new Error("airports.js is missing."));
-        return directory.load().then(function (list) {
+        return directory.load({ destinationsOnly: true }).then(function (list) {
             airports = (list || []).filter(function (airport) { return airport.isActive !== false; }).map(function (airport) {
                 airport._search = haystack(airport);
                 airport._words = airport._search.split(/[^a-z0-9Ѐ-ӿ]+/).filter(Boolean);
@@ -156,8 +156,7 @@
             meta.className = "airport-meta";
             control.appendChild(meta);
         }
-        meta.innerHTML = escapeHtml(chosen.airport.name) + (chosen.airport.hasRoutes ? "" :
-            ' <span class="airport-meta-note">' + escapeHtml(tr("picker.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</span>");
+        meta.innerHTML = escapeHtml(chosen.airport.name);
     }
 
     function set(input, value) {
@@ -275,7 +274,7 @@
     function rowMarkup(airport, query, id, role) {
         var city = cityName(airport);
         var country = countryName(airport);
-        var note = airport.hasRoutes ? "" : '<span class="airport-row-note">' + escapeHtml(tr("picker.noFlightsYet", "Hələlik planlaşdırılmış reys yoxdur")) + "</span>";
+        var note = "";
         return '<div class="airport-row" role="option" id="' + id + '" data-code="' + escapeHtml(airport.code) + '" aria-selected="false">' + PLANE +
             '<span class="airport-row-main"><span class="airport-row-title">' + highlight(city, query) + (country ? ", " + highlight(country, query) : "") + "</span>" +
             '<span class="airport-row-sub">' + highlight(airport.name, query) + note + "</span></span>" +

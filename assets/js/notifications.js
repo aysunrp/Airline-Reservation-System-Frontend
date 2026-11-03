@@ -368,7 +368,6 @@
         var href = link.getAttribute("href");
         var finished = false;
         function go() { if (!finished) { finished = true; window.location.href = href; } }
-        setTimeout(go, 2500);
         markRead().then(go, go);
     }
 

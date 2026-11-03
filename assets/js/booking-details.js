@@ -151,20 +151,37 @@
         return status ? String(status) : "NotEligible";
     }
 
+    function airportFor(airports, code) {
+        var directory = window.AEROVA_AIRPORTS;
+        var found = directory && directory.find ? directory.find(airports, code) : null;
+        return found || { city: code || "—", code: code || "", timeZoneId: "UTC" };
+    }
+
+    function localTimeAt(airports, utcValue, code) {
+        var directory = window.AEROVA_AIRPORTS;
+        var airport = airportFor(airports, code);
+        try {
+            return directory.localTime(utcValue, airport.timeZoneId || "UTC");
+        } catch (error) {
+            var text = String(utcValue || "");
+            return { date: text.slice(0, 10) || "—", time: "—" };
+        }
+    }
+
     /* One BookingDto from the API in the shape the sections below render. Times are shown at each airport. */
     function toPageBooking(dto, airports) {
-        var directory = window.AEROVA_AIRPORTS;
+        if (!dto || !Array.isArray(dto.legs) || !dto.legs.length) {
+            throw new RangeError("Rezervasiyada uçuş məlumatı yoxdur.");
+        }
+
+        var list = Array.isArray(airports) ? airports : [];
         var leg = dto.legs[0];
-        var origin = directory.find(airports, leg.originCode);
-        var destination = directory.find(airports, leg.destinationCode);
-        var departure = directory.localTime(leg.departureAt, origin.timeZoneId);
-        var arrival = directory.localTime(leg.arrivalAt, destination.timeZoneId);
+        var departure = localTimeAt(list, leg.departureAt, leg.originCode);
+        var arrival = localTimeAt(list, leg.arrivalAt, leg.destinationCode);
 
         function pageFlight(item) {
-            var from = directory.find(airports, item.originCode);
-            var to = directory.find(airports, item.destinationCode);
-            var out = directory.localTime(item.departureAt, from.timeZoneId);
-            var back = directory.localTime(item.arrivalAt, to.timeZoneId);
+            var out = localTimeAt(list, item.departureAt, item.originCode);
+            var back = localTimeAt(list, item.arrivalAt, item.destinationCode);
             return {
                 flightNumber: item.flightNumber,
                 route: item.originCity + " \u2192 " + item.destinationCity,
@@ -372,9 +389,13 @@
     function renderBooking(booking) {
         var flight = booking.flight || {};
         var seats = Array.isArray(booking.selectedSeats) ? booking.selectedSeats.join(", ") : "—";
-        var route = flight.from && flight.to
-            ? flight.from + " → " + flight.to
-            : (flight.route || "—");
+        // The route is the trip as the passenger means it: where the outbound journey starts and where it finally ends, transfers included.
+        var bookingLegs = Array.isArray(booking.legs) ? booking.legs : [];
+        var outboundNo = bookingLegs.length ? bookingLegs[0].journeyNo : null;
+        var outboundLegs = bookingLegs.filter(function (leg) { return leg.journeyNo === outboundNo; });
+        var route = outboundLegs.length
+            ? outboundLegs[0].originCode + " → " + outboundLegs[outboundLegs.length - 1].destinationCode
+            : (flight.from && flight.to ? flight.from + " → " + flight.to : (flight.route || "—"));
         var status = getBookingStatus(booking);
         var statusBadge = document.getElementById("details-status");
 
@@ -1033,24 +1054,75 @@
         });
     }
 
+    var BOOKING_FETCH_MS = 15000;
+
+    function fetchMyBooking(pnr) {
+        return window.AEROVA_API.get("api/bookings/my/" + encodeURIComponent(String(pnr || "").trim().toUpperCase()), { timeoutMs: BOOKING_FETCH_MS });
+    }
+
+    function fetchGuestBooking(pnr, lastName) {
+        return window.AEROVA_API.get(
+            "api/bookings/" + encodeURIComponent(String(pnr || "").trim().toUpperCase()) + "?lastName=" + encodeURIComponent(lastName),
+            { timeoutMs: BOOKING_FETCH_MS }
+        );
+    }
+
+    /* Signed-in "trips" links may omit ?pnr=; pick the booking this tab just paid for or the newest trip. */
+    function resolveTripsBooking() {
+        var params = getPageParams();
+        var pnr = String(params.get("pnr") || "").trim();
+
+        if (/^[A-Za-z0-9]{6}$/.test(pnr)) {
+            return fetchMyBooking(pnr);
+        }
+
+        var paid = readJSON("aerovaPaid");
+        if (paid && paid.pnr) {
+            return fetchMyBooking(paid.pnr);
+        }
+
+        return window.AEROVA_API.get("api/bookings/my", { timeoutMs: BOOKING_FETCH_MS }).then(function (trips) {
+            var list = Array.isArray(trips) ? trips : [];
+            if (!list.length || !list[0].pnr) {
+                return null;
+            }
+            return fetchMyBooking(list[0].pnr);
+        });
+    }
+
     /* Which booking to open: one of mine (signed in) or one found with its reference and a passenger's last name. */
     function requestBooking() {
         var params = getPageParams();
-        var pnr = String(params.get("pnr") || "").toUpperCase();
+        var source = String(params.get("source") || "").toLowerCase();
+        var pnr = String(params.get("pnr") || "").trim().toUpperCase();
 
-        if (String(params.get("source") || "").toLowerCase() === "manage") {
+        if (source === "manage") {
             var managed = readJSON("aerovaManaged");
             if (!managed || !managed.pnr || !managed.lastName) {
                 return null;
             }
-            return window.AEROVA_API.get("api/bookings/" + encodeURIComponent(managed.pnr) + "?lastName=" + encodeURIComponent(managed.lastName));
+            return fetchGuestBooking(managed.pnr, managed.lastName);
+        }
+
+        if (source === "trips") {
+            return resolveTripsBooking();
         }
 
         if (/^[A-Z0-9]{6}$/.test(pnr)) {
-            return window.AEROVA_API.get("api/bookings/my/" + pnr);
+            return fetchMyBooking(pnr);
         }
 
         return null;
+    }
+
+    function loadAirportsForDetails() {
+        if (!window.AEROVA_AIRPORTS || typeof window.AEROVA_AIRPORTS.load !== "function") {
+            return Promise.resolve([]);
+        }
+
+        return window.AEROVA_AIRPORTS.load().catch(function () {
+            return [];
+        });
     }
 
     function applyIntentActions() {
@@ -1074,12 +1146,31 @@
 
         setPageStatus({ kind: "loading", title: tr("api.bookingDetails.loadingTitle", "Rezervasiyanız yüklənir"), text: tr("api.bookingDetails.loadingText", "Zəhmət olmasa bir az gözləyin."), actions: [] });
 
-        Promise.all([window.AEROVA_AIRPORTS.load(), request]).then(function (results) {
+        Promise.all([loadAirportsForDetails(), Promise.resolve(request)]).then(function (results) {
+            var dto = results[1];
+            if (!dto) {
+                showEmptyBookingState();
+                return;
+            }
+
             activeAirports = results[0];
-            activeBooking = toPageBooking(results[1], activeAirports);
-            setPageStatus(null);
-            renderBooking(activeBooking);
-            applyIntentActions();
+            try {
+                activeBooking = toPageBooking(dto, activeAirports);
+                setPageStatus(null);
+                renderBooking(activeBooking);
+                applyIntentActions();
+            } catch (renderError) {
+                if (window.console) {
+                    window.console.error(renderError);
+                }
+                setPageStatus({
+                    kind: "error",
+                    title: tr("api.bookingDetails.errorTitle", "Rezervasiyanı yükləmək mümkün olmadı"),
+                    text: tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."),
+                    actions: [{ label: tr("api.options.retry", "Yenidən cəhd et") }],
+                    onAction: loadBooking
+                });
+            }
         }).catch(function (error) {
             var isApiError = window.AEROVA_API && error instanceof window.AEROVA_API.ApiError;
 

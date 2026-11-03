@@ -127,12 +127,9 @@
                     ' data-option-id="' + escapeHtml(option.id) + '"' +
                     ' aria-pressed="' + (isSelected ? "true" : "false") + '"' +
                 ">" +
-                    '<span class="meal-option-media meal-option-media--' + escapeHtml(option.code) + '" aria-hidden="true"></span>' +
-                    '<span class="meal-option-copy">' +
-                        '<p class="meal-option-name">' + escapeHtml(option.name) + "</p>" +
-                        '<p class="meal-option-description">' + escapeHtml(option.description) + "</p>" +
-                        '<p class="meal-option-price">' + escapeHtml(formatPrice(option.price)) + "</p>" +
-                    "</span>" +
+                    '<p class="meal-option-name">' + escapeHtml(option.name) + "</p>" +
+                    '<p class="meal-option-description">' + escapeHtml(option.description) + "</p>" +
+                    '<p class="meal-option-price">' + escapeHtml(formatPrice(option.price)) + "</p>" +
                 "</button>"
             );
         }).join("");
@@ -238,6 +235,29 @@
         renderSummary();
     }
 
+    function mealLabels(option) {
+        var code = String(option.code || "").toLowerCase();
+        if (code === "classic") {
+            return {
+                name: tr("api.options.classicMealName", "Klassik yemək"),
+                description: tr("api.options.classicMealDesc", option.description || "")
+            };
+        }
+        if (code === "wellness") {
+            return {
+                name: tr("api.options.wellnessMealName", "Sağlam yemək"),
+                description: tr("api.options.wellnessMealDesc", option.description || "")
+            };
+        }
+        if (code === "signature") {
+            return {
+                name: tr("api.options.signatureMealName", "Premium yemək"),
+                description: tr("api.options.signatureMealDesc", option.description || "")
+            };
+        }
+        return { name: option.name, description: option.description || "" };
+    }
+
     function toOptions(list) {
         return [{
             id: "none",
@@ -246,11 +266,12 @@
             description: tr("api.options.noMealText", "Bu sərnişin üçün uçuş yeməyindən imtina edin."),
             price: 0
         }].concat(list.map(function (option) {
+            var labels = mealLabels(option);
             return {
                 id: String(option.id),
                 code: option.code,
-                name: option.name,
-                description: option.description || "",
+                name: labels.name,
+                description: labels.description,
                 price: Number(option.price)
             };
         }));

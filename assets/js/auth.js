@@ -3,6 +3,7 @@
     var USER_KEY = "aerovaUser";
     var LOGGED_IN_KEY = "isLoggedIn";
     var PENDING_EMAIL_KEY = "aerovaPendingEmail";
+    var PENDING_EMAIL_RAW_KEY = "aerovaPendingEmailRaw";
 
     /* The three roles, written once: every other script asks the helpers below instead of comparing words. */
     var ROLES = { user: "User", admin: "Admin", superAdmin: "SuperAdmin" };
@@ -29,6 +30,19 @@
 
     function normalizeEmail(email) {
         return String(email || "").trim().toLowerCase();
+    }
+
+    function rememberPendingEmail(email) {
+        var normalized = normalizeEmail(email);
+        if (!normalized) {
+            return;
+        }
+        try {
+            window.sessionStorage.setItem(PENDING_EMAIL_RAW_KEY, normalized);
+            window.sessionStorage.setItem(PENDING_EMAIL_KEY, maskEmail(normalized));
+        } catch (storageError) {
+            // Resend then asks the person to sign in or register again in this tab.
+        }
     }
 
     function isValidEmail(email) {
@@ -704,7 +718,10 @@
                 window.location.href = pageAfterLogin(signedIn);
             }).catch(function (error) {
                 passwordInput.value = "";
-                if (error && error.status === 401) {
+                if (error && error.code === "emailNotVerified") {
+                    rememberPendingEmail(email);
+                    window.location.href = "check-email.html?status=sent&reason=unverified";
+                } else if (error && error.status === 401) {
                     setFieldError(emailInput, tr("auth.loginFailed", "E-poçt və ya şifrə yanlışdır"));
                     setFieldError(passwordInput, tr("auth.loginFailed", "E-poçt və ya şifrə yanlışdır"));
                 } else if (error && error.status === 429) {
@@ -793,9 +810,8 @@
                 // Registering does not sign anybody in: the person confirms the address with the e-mailed link and signs in.
                 passwordInput.value = "";
                 confirmInput.value = "";
-                try {
-                    window.sessionStorage.setItem(PENDING_EMAIL_KEY, maskEmail(email));
-                } catch (storageError) { /* the page then says "your email address" instead of the masked one */ }
+                var registeredEmail = (response && response.user && response.user.email) || email;
+                rememberPendingEmail(registeredEmail);
                 window.location.href = "check-email.html?status=" + (response && response.verificationEmailSent ? "sent" : "nomail");
             }).catch(function (error) {
                 passwordInput.value = "";
@@ -842,7 +858,7 @@
         if (registered === "sent") {
             showNoticeKey(notice, "api.account.registeredSent", "Hesab yaradıldı. E-poçt ünvanınıza təsdiq keçidi göndərdik. Onu açın, sonra daxil olun.", "success");
         } else if (registered === "nomail") {
-            showNoticeKey(notice, "api.account.registeredNoMail", "Hesab yaradıldı, amma təsdiq məktubunu indi göndərə bilmədik. Daxil olun və profilinizdən yeni keçid istəyin.", "");
+            showNoticeKey(notice, "api.account.registeredNoMail", "Hesab yaradıldı, amma təsdiq məktubunu indi göndərə bilmədik. E-poçt göndərilməsi işləyəndə check-email səhifəsindən yeni keçid istəyin.", "");
         } else if (params.get("verified") === "1") {
             showNoticeKey(notice, "api.account.verifiedLogin", "E-poçtunuz təsdiqləndi. İndi daxil ola bilərsiniz.", "success");
         } else if (params.get("reset") === "1") {
@@ -1063,7 +1079,7 @@
             if (cooldown > 0) return;
             showNotice(result, "");
             showError("");
-            startCooldown(60);
+            startCooldown(5);
 
             window.AEROVA_API.post("api/auth/forgot-password", { email: email, language: "az" }).then(function () {
                 // The same words whether or not an account exists.
@@ -1085,7 +1101,6 @@
 
         paintSubtitle();
         paintLabels();
-        startCooldown(60);
         boxes[0].focus();
     }
 
@@ -1280,7 +1295,7 @@
                 if (event && event.data && event.data.type === "ack") finish(true);
             };
             channel.postMessage({ type: "email-verified" });
-            window.setTimeout(function () { finish(false); }, 1200);
+            window.setTimeout(function () { finish(false); }, 150);
         }
 
         function leaveAfterConfirming() {
@@ -1297,9 +1312,7 @@
                     }
                     setKeyedText(redirect, "api.account.verifyContinue", "Sizi rezervasiyaya qaytarırıq...");
                     redirect.hidden = false;
-                    window.setTimeout(function () {
-                        window.location.href = booking ? "payment.html" : "profile.html";
-                    }, 1500);
+                    window.location.href = booking ? "payment.html" : "profile.html";
                 });
                 return;
             }
@@ -1312,9 +1325,7 @@
                 }
                 redirect.hidden = false;
                 // Long enough to read the result; the button is there for anybody who does not want to wait.
-                window.setTimeout(function () {
-                    window.location.href = "login.html?verified=1";
-                }, 2200);
+                window.location.href = "login.html?verified=1";
             });
         }
 
@@ -1359,7 +1370,7 @@
             status.setAttribute("data-state", noMail ? "success" : "mail");
             if (noMail) {
                 title.textContent = tr("api.account.checkNoMailTitle", "Hesabınız hazırdır");
-                text.textContent = tr("api.account.checkNoMailText", "Təsdiq məktubunu indi göndərə bilmədik. Daxil olun və profilinizdə \"Keçidi yenidən göndər\" düyməsinə basın.");
+                text.textContent = tr("api.account.checkNoMailText", "Təsdiq məktubunu indi göndərə bilmədik. Aşağıdakı düymə ilə qeydiyyat e-poçtunuza yenidən göndərməyə cəhd edin.");
             } else {
                 title.textContent = tr("api.account.checkTitle", "E-poçtunuzu yoxlayın");
                 text.textContent = masked
@@ -1369,9 +1380,88 @@
             status.querySelectorAll("[data-sent-only]").forEach(function (item) {
                 item.hidden = noMail;
             });
+            if (resendButton) {
+                resendButton.textContent = tr("api.account.checkResend", "Keçidi yenidən göndər");
+            }
+            if (goLoginLink) {
+                goLoginLink.textContent = tr("api.account.checkGoLogin", "E-poçtu təsdiqlədim — daxil ol");
+            }
+        }
+
+        var resendButton = document.getElementById("check-resend");
+        var goLoginLink = document.querySelector(".auth-actions a[href=\"login.html\"]");
+        var feedback = document.getElementById("check-feedback");
+        if (resendButton) {
+            resendButton.addEventListener("click", function () {
+                var raw = "";
+                try { raw = window.sessionStorage.getItem(PENDING_EMAIL_RAW_KEY) || ""; } catch (storageError) { raw = ""; }
+                if (!raw) {
+                    if (feedback) {
+                        feedback.textContent = tr("api.account.checkResendNeedRegister", "Keçidi yenidən göndərmək üçün eyni brauzerdə qeydiyyatdan keçin və ya qeydiyyat zamanı istifadə etdiyiniz e-poçtu daxil edin.");
+                        feedback.hidden = false;
+                    }
+                    return;
+                }
+                resendButton.disabled = true;
+                window.AEROVA_API.post("api/auth/resend-verification-email", { email: raw, language: "az" }).then(function () {
+                    if (feedback) {
+                        feedback.textContent = tr("api.account.verifyResent", "Yeni keçid göndərdik. Gələnlər və Spam qovluğuna baxın.");
+                        feedback.hidden = false;
+                    }
+                    resendButton.disabled = false;
+                }).catch(function (error) {
+                    if (feedback) {
+                        feedback.textContent = (error && error.userMessage) || tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
+                        feedback.hidden = false;
+                    }
+                    resendButton.disabled = false;
+                });
+            });
+        }
+
+        if (new URLSearchParams(window.location.search).get("reason") === "unverified" && feedback) {
+            feedback.textContent = tr("api.account.loginBlockedUnverified", "Təsdiqlənməmiş hesaba daxil olmaq olmur. E-poçtdakı keçidi açın və ya yenisini göndərin.");
+            feedback.hidden = false;
         }
 
         paint();
+
+        var rawOnLoad = "";
+        try { rawOnLoad = window.sessionStorage.getItem(PENDING_EMAIL_RAW_KEY) || ""; } catch (storageError) { rawOnLoad = ""; }
+        var params = new URLSearchParams(window.location.search);
+        if (rawOnLoad && resendButton && params.get("reason") === "unverified") {
+            var autoKey = "aerovaAutoResent";
+            var already = false;
+            try { already = window.sessionStorage.getItem(autoKey) === rawOnLoad; } catch (storageError) { already = false; }
+            if (!already) {
+                try { window.sessionStorage.setItem(autoKey, rawOnLoad); } catch (storageError) { /* one resend per address in this tab */ }
+                resendButton.click();
+            }
+        }
+    }
+
+    function guardVerifiedEmail() {
+        if (!isLoggedIn()) {
+            return false;
+        }
+        var user = getCurrentUser();
+        if (!user || user.emailVerified !== false || user.role !== "User") {
+            return false;
+        }
+        var path = window.location.pathname.toLowerCase();
+        var allowed = [
+            "check-email.html",
+            "verify-email.html",
+            "login.html",
+            "register.html"
+        ];
+        if (allowed.some(function (page) { return path.indexOf(page) !== -1; })) {
+            return false;
+        }
+        rememberPendingEmail(user.email);
+        clearAuthState();
+        window.location.replace("check-email.html?status=sent&reason=unverified");
+        return true;
     }
 
     /* Remembers in this tab that the signed-in address is confirmed (what the profile banner reads). */
@@ -1516,7 +1606,9 @@
         }
 
         if (needsAuth && !isLoggedIn()) {
-            window.location.replace("login.html?next=" + encodeURIComponent(currentPageName()) + (inBookingFlow ? "&needed=booking" : ""));
+            // The page comes back with its own reference (for example ?pnr=...), so the visitor lands on the same booking after signing in.
+            var backTo = currentPageName() + (window.location.search || "");
+            window.location.replace("login.html?next=" + encodeURIComponent(backTo) + (inBookingFlow ? "&needed=booking" : ""));
             return true;
         }
 
@@ -1526,6 +1618,7 @@
     function init() {
         purgeLegacyAccounts();
         if (guardAuthenticatedPages()) return;
+        if (guardVerifiedEmail()) return;
         updateNavigation();
         enhancePasswordFields();
         handleLoginForm();

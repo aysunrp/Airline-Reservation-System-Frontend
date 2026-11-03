@@ -227,7 +227,7 @@
 
     function startLive() {
         if (live || !window.AEROVA_REALTIME) return;
-        live = window.AEROVA_REALTIME.create({ onEvent: onLiveEvent, onState: paintLive, poll: refreshAll, onResync: refreshAll, pollMs: 20000 });
+        live = window.AEROVA_REALTIME.create({ onEvent: onLiveEvent, onState: paintLive, poll: refreshAll, onResync: refreshAll, pollMs: 3000 });
         live.start();
     }
 

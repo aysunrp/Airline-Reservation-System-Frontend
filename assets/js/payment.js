@@ -30,6 +30,8 @@
 
     /* The booking made in the backend: its price and when the seat hold ends. Nothing is priced locally once it exists. */
     var heldBooking = null;
+    /* Server quote while ensure() is still running — same shape as heldBooking.price. */
+    var previewPrice = null;
     var holdTimer = null;
 
     function setText(id, value) {
@@ -112,7 +114,7 @@
     }
 
     function calculatePriceBreakdown() {
-        var price = heldBooking && heldBooking.price;
+        var price = (heldBooking && heldBooking.price) || previewPrice;
 
         if (!price) {
             return { baseFare: 0, baggage: 0, meals: 0, taxes: 0, subtotal: 0, discount: 0, promoCode: "", promoPercent: 0, grandTotal: 0 };
@@ -253,8 +255,12 @@
 
         if (payButton) {
             payButton.textContent = (typeof t === "function" ? t("payment.pay", { amount: formatPrice(prices.grandTotal) }) : ("Pay " + formatPrice(prices.grandTotal)));
-            payButton.disabled = false;
-            payButton.removeAttribute("disabled");
+            if (heldBooking) {
+                payButton.disabled = false;
+                payButton.removeAttribute("disabled");
+            } else {
+                payButton.disabled = true;
+            }
         }
 
         updatePromoUi();
@@ -392,6 +398,149 @@
     }
 
     var paying = false;
+    var CHECKOUT_TIMEOUT_MS = 22000;
+    var checkoutPrefetch = null;
+    var checkoutPrefetchFlight = null;
+    var payRedirectPending = null;
+    var payingUiTimer = null;
+
+    function normalizePnr(pnr) {
+        return String(pnr || "").trim().toUpperCase();
+    }
+
+    function normalizeLastName(lastName) {
+        return String(lastName || "").trim();
+    }
+
+    function checkoutKey(pnr, lastName) {
+        return normalizePnr(pnr) + "|" + normalizeLastName(lastName).toLowerCase();
+    }
+
+    function pnrMatches(a, b) {
+        return normalizePnr(a) === normalizePnr(b);
+    }
+
+    function lastNameMatches(a, b) {
+        return normalizeLastName(a).toLowerCase() === normalizeLastName(b).toLowerCase();
+    }
+
+    function checkoutUrlFrom(session) {
+        return session && (session.checkoutUrl || session.CheckoutUrl);
+    }
+
+    function checkoutExpiresAt(session) {
+        return session && (session.expiresAt || session.ExpiresAt);
+    }
+
+    function clearCheckoutState() {
+        checkoutPrefetch = null;
+        checkoutPrefetchFlight = null;
+        payRedirectPending = null;
+        endPayUi();
+    }
+
+    function endPayUi() {
+        if (payingUiTimer) {
+            window.clearTimeout(payingUiTimer);
+            payingUiTimer = null;
+        }
+        setPaying(false);
+    }
+
+    function beginPayUi() {
+        if (payingUiTimer) {
+            window.clearTimeout(payingUiTimer);
+        }
+        payingUiTimer = window.setTimeout(function () {
+            payingUiTimer = null;
+            if (payRedirectPending) {
+                setPaying(true);
+            }
+        }, 400);
+    }
+
+    function redirectToCheckout(session, pnr, lastName) {
+        var checkoutUrl = checkoutUrlFrom(session);
+        if (!isStripeCheckoutUrl(checkoutUrl)) {
+            throw new Error("Ödəniş səhifəsinin ünvanı Stripe Checkout ünvanı deyil.");
+        }
+
+        payRedirectPending = null;
+        endPayUi();
+        rememberCheckout(session, pnr, lastName);
+        window.AEROVA_BOOKING.extendHold(checkoutExpiresAt(session));
+        stopHoldTimer();
+        window.location.assign(checkoutUrl);
+    }
+
+    function storeCheckoutPrefetch(session, pnr, lastName) {
+        var url = checkoutUrlFrom(session);
+        if (!heldBooking || !pnrMatches(heldBooking.pnr, pnr) || !isStripeCheckoutUrl(url)) {
+            return;
+        }
+
+        checkoutPrefetch = {
+            pnr: normalizePnr(pnr),
+            lastName: normalizeLastName(lastName),
+            session: session,
+            url: url
+        };
+    }
+
+    function maybeCompletePendingPay(session, pnr, lastName) {
+        if (!payRedirectPending) {
+            return;
+        }
+        if (!pnrMatches(payRedirectPending.pnr, pnr) || !lastNameMatches(payRedirectPending.lastName, lastName)) {
+            return;
+        }
+
+        try {
+            redirectToCheckout(session, pnr, lastName);
+        } catch (error) {
+            payRedirectPending = null;
+            endPayUi();
+            checkoutPrefetch = null;
+            if (window.console) {
+                window.console.error(error);
+            }
+            showMessage(tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
+        }
+    }
+
+    function requestCheckoutSession(pnr, lastName) {
+        var key = checkoutKey(pnr, lastName);
+        if (checkoutPrefetchFlight && checkoutPrefetchFlight.key === key) {
+            return checkoutPrefetchFlight.promise;
+        }
+
+        var promise = window.AEROVA_API.post(
+            "api/payments/checkout-session",
+            { pnr: pnr, lastName: lastName },
+            { timeoutMs: CHECKOUT_TIMEOUT_MS }
+        );
+        checkoutPrefetchFlight = { key: key, promise: promise };
+        promise.then(function () {
+            if (checkoutPrefetchFlight && checkoutPrefetchFlight.promise === promise) {
+                checkoutPrefetchFlight = null;
+            }
+        }, function () {
+            if (checkoutPrefetchFlight && checkoutPrefetchFlight.promise === promise) {
+                checkoutPrefetchFlight = null;
+            }
+        });
+        return promise;
+    }
+
+    function prefetchCheckoutSession(pnr, lastName) {
+        checkoutPrefetch = null;
+        requestCheckoutSession(pnr, lastName).then(function (session) {
+            storeCheckoutPrefetch(session, pnr, lastName);
+            maybeCompletePendingPay(session, pnr, lastName);
+        }).catch(function () {
+            checkoutPrefetch = null;
+        });
+    }
 
     function setPaying(isPaying) {
         var payButton = document.getElementById("pay-button");
@@ -437,7 +586,8 @@
             if (window.console) {
                 window.console.error(error);
             }
-            setPaying(false);
+            payRedirectPending = null;
+            endPayUi();
             showMessage(tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             return;
         }
@@ -449,16 +599,30 @@
                     paymentSucceeded(pnr, lastName);
                     return;
                 }
-                setPaying(false);
+                payRedirectPending = null;
+                endPayUi();
                 showMessage(error.userMessage);
             }).catch(function () {
-                setPaying(false);
+                payRedirectPending = null;
+                endPayUi();
                 showMessage(error.userMessage);
             });
             return;
         }
 
-        setPaying(false);
+        payRedirectPending = null;
+        endPayUi();
+
+        if (error.code === "booking_unconfirmed") {
+            var layout = document.querySelector(".payment-layout");
+            var data = readBookingData();
+            if (heldBooking && data) {
+                waitForBookingLink(heldBooking, data, layout);
+            } else {
+                showMessage(error.userMessage);
+            }
+            return;
+        }
 
         if (error.status === 422 && /seats were released|no longer be paid/i.test(error.userMessage || "")) {
             holdEnded();
@@ -476,7 +640,12 @@
     /* What the return page needs to show the booking afterwards: the payment, its reference and a passenger's last name. */
     function rememberCheckout(session, pnr, lastName) {
         try {
-            sessionStorage.setItem("aerovaCheckout", JSON.stringify({ paymentId: session.paymentId, pnr: pnr, lastName: lastName }));
+            sessionStorage.setItem("aerovaCheckout", JSON.stringify({
+                paymentId: session.paymentId || session.PaymentId,
+                session: session.sessionId || session.SessionId || "",
+                pnr: pnr,
+                lastName: lastName
+            }));
 
             // Signed-in travellers are offered to save the passengers they typed in once the booking is confirmed (see the confirmation page).
             var savable = window.AerovaAuth && window.AerovaAuth.isLoggedIn() ? window.AEROVA_BOOKING.savablePassengers(readBookingData()) : [];
@@ -494,7 +663,7 @@
     function handlePayClick(event) {
         event.preventDefault();
 
-        if (paying) {
+        if (paying || payRedirectPending) {
             return;
         }
 
@@ -509,16 +678,24 @@
         var pnr = heldBooking.pnr;
         var lastName = bookingData.passengers[0].lastName;
 
-        setPaying(true);
-        window.AEROVA_API.post("api/payments/checkout-session", { pnr: pnr, lastName: lastName }).then(function (session) {
-            if (!isStripeCheckoutUrl(session && session.checkoutUrl)) {
-                throw new Error("Ödəniş səhifəsinin ünvanı Stripe Checkout ünvanı deyil.");
+        if (checkoutPrefetch && pnrMatches(checkoutPrefetch.pnr, pnr) && lastNameMatches(checkoutPrefetch.lastName, lastName) && isStripeCheckoutUrl(checkoutPrefetch.url)) {
+            try {
+                redirectToCheckout(checkoutPrefetch.session, pnr, lastName);
+            } catch (error) {
+                checkoutPrefetch = null;
+                if (window.console) {
+                    window.console.error(error);
+                }
+                showMessage(tr("api.errors.generic", "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."));
             }
+            return;
+        }
 
-            rememberCheckout(session, pnr, lastName);
-            window.AEROVA_BOOKING.extendHold(session.expiresAt);
-            stopHoldTimer();
-            window.location.assign(session.checkoutUrl);
+        payRedirectPending = { pnr: pnr, lastName: lastName };
+        beginPayUi();
+        requestCheckoutSession(pnr, lastName).then(function (session) {
+            storeCheckoutPrefetch(session, pnr, lastName);
+            maybeCompletePendingPay(session, pnr, lastName);
         }).catch(function (error) {
             paymentFailed(error, pnr, lastName);
         });
@@ -606,6 +783,7 @@
 
     function holdEnded() {
         stopHoldTimer();
+        clearCheckoutState();
         window.AEROVA_BOOKING.forget();
         heldBooking = null;
         bookingPanel("error", tr("api.booking.expiredTitle", "Yerlərin saxlanma müddəti bitdi"), tr("api.booking.expiredText", "Yerlər 15 dəqiqə saxlanılmışdı və indi azad edilib. Zəhmət olmasa yerləri yenidən seçin."), [
@@ -645,7 +823,7 @@
      * confirmation page in another tab of this browser says so. Nothing is created until the server says the address is confirmed,
      * and a repeated answer cannot reserve twice: the retry is used up by the first one.
      */
-    var VERIFY_POLL_MS = 5000;
+    var VERIFY_POLL_MS = 600;
     var VERIFY_MAX_POLLS = 36;
     var verifyWatch = { timer: null, polls: 0, busy: false, retry: null, listening: false };
 
@@ -703,6 +881,8 @@
             }
             checkVerification(false);
         }, VERIFY_POLL_MS);
+
+        checkVerification(false);
 
         if (verifyWatch.listening) {
             return;
@@ -798,9 +978,23 @@
         bookingPanel("error", title, text, actions);
     }
 
+    function showPaymentShell(bookingData, layout) {
+        var panel = document.getElementById("booking-status");
+
+        if (panel) {
+            panel.hidden = true;
+        }
+        if (layout) {
+            layout.hidden = false;
+        }
+
+        populatePaymentSummary(bookingData);
+    }
+
     function showReserved(held, bookingData, layout) {
         var panel = document.getElementById("booking-status");
 
+        previewPrice = null;
         heldBooking = held;
         if (panel) {
             panel.hidden = true;
@@ -812,6 +1006,11 @@
         restoreAppliedPromo();
         populatePaymentSummary(bookingData);
         startHoldTimer();
+
+        var lead = bookingData.passengers[0];
+        if (lead && lead.lastName) {
+            prefetchCheckoutSession(held.pnr, lead.lastName);
+        }
     }
 
     /*
@@ -820,6 +1019,9 @@
      * into view, and when the confirmation page in another tab of this browser says so. Payment is only offered once the server says the
      * booking is confirmed, and the answer is used once, so a repeated one cannot open the summary or a payment twice.
      */
+    // The booking link is checked every two seconds for five minutes; the confirmation tab also tells this tab at once.
+    var LINK_POLL_MS = 600;
+    var LINK_MAX_POLLS = 150;
     var linkWatch = { timer: null, polls: 0, busy: false, held: null, bookingData: null, layout: null, listening: false };
 
     function stopLinkTimer() {
@@ -855,7 +1057,7 @@
         }
 
         linkWatch.busy = true;
-        window.AEROVA_API.get("api/bookings/my/" + encodeURIComponent(held.pnr)).then(function (booking) {
+        window.AEROVA_API.get("api/bookings/my/" + encodeURIComponent(held.pnr), { fresh: true, timeoutMs: 6000 }).then(function (booking) {
             linkWatch.busy = false;
             if (!linkWatch.held) {
                 return;
@@ -878,13 +1080,18 @@
             }
         }).catch(function (error) {
             linkWatch.busy = false;
-            if (error && (error.status === 401 || error.status === 404)) {
-                // The sign-in ended (the site handles that itself) or the booking is gone: waiting on would only repeat the refusal.
+            if (error && error.status === 401) {
+                // The sign-in has ended: say so, instead of waiting in silence.
                 linkWatch.held = null;
                 stopLinkTimer();
-                if (error.status === 404) {
-                    holdEnded();
-                }
+                setText("booking-status-text", tr("api.booking.sessionEnded", "Sessiyanız bitib. Zəhmət olmasa yenidən daxil olun, rezervasiyanız saxlanılır."));
+                return;
+            }
+            if (error && error.status === 404) {
+                // The booking is gone or belongs to another account: waiting on would only repeat the refusal.
+                linkWatch.held = null;
+                stopLinkTimer();
+                holdEnded();
                 return;
             }
             if (manual) {
@@ -931,13 +1138,15 @@
 
         linkWatch.timer = window.setInterval(function () {
             linkWatch.polls += 1;
-            if (linkWatch.polls > VERIFY_MAX_POLLS) {
+            if (linkWatch.polls > LINK_MAX_POLLS) {
                 stopLinkTimer();
                 setText("booking-status-text", tr("api.booking.watchStopped", "Avtomatik yoxlamanı dayandırdıq. Keçidi açandan sonra düyməni basın."));
                 return;
             }
             checkBookingLink(false);
-        }, VERIFY_POLL_MS);
+        }, LINK_POLL_MS);
+
+        checkBookingLink(false);
 
         if (linkWatch.listening) {
             return;
@@ -968,9 +1177,17 @@
 
     /* Creates the booking in the backend (or reuses the one already held) before the payment page shows anything priced. */
     function reserveBooking(bookingData, layout) {
-        var panel = document.getElementById("booking-status");
+        clearCheckoutState();
+        showPaymentShell(bookingData, layout);
 
-        bookingPanel("loading", tr("api.booking.loadingTitle", "Yerləriniz rezerv olunur"), tr("api.booking.loadingText", "Zəhmət olmasa gözləyin, yerləriniz saxlanılır və qiymət təsdiqlənir."), []);
+        window.AEROVA_BOOKING.quote(bookingData).then(function (price) {
+            if (!heldBooking && price) {
+                previewPrice = price;
+                refreshTotals(bookingData);
+            }
+        }).catch(function () {
+            // Totals stay at zero until ensure() succeeds.
+        });
 
         window.AEROVA_BOOKING.ensure(bookingData).then(function (held) {
             if (held.contactConfirmed === false) {
@@ -1032,6 +1249,17 @@
         }
 
         showMessage("");
+
+        var cached = window.AEROVA_BOOKING.peekHeld(bookingData);
+        if (cached) {
+            if (cached.contactConfirmed === false) {
+                waitForBookingLink(cached, bookingData, layout);
+            } else {
+                showReserved(cached, bookingData, layout);
+            }
+            return;
+        }
+
         reserveBooking(bookingData, layout);
     }
 
