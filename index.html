@@ -12,10 +12,20 @@
     <link rel="stylesheet" href="assets/css/destination-catalog.css?v=ds1">
     <link rel="stylesheet" href="assets/css/scrollbars.css?v=rs1">
     <link rel="stylesheet" href="assets/css/logo.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/brand-intro.css?v=bi1">
+    <script>
+        (function () {
+            try {
+                if (sessionStorage.getItem("aerova.brandIntroSeen") === "1") return;
+            } catch (e) { return; }
+            document.documentElement.classList.add("is-brand-intro-pending");
+        })();
+    </script>
     <link rel="stylesheet" href="assets/css/chat-widget.css?v=rs1">
     <link rel="stylesheet" href="assets/css/theme.css?v=num4">
 </head>
 <body>
+    <script src="assets/js/brand-intro.js?v=bi1"></script>
     <header id="site-header" class="site-header">
         <div class="header-container">
             <div class="logo">
@@ -45,7 +55,10 @@
 
     <main>
         <section id="hero" class="hero-section">
-            <div class="hero-background" role="img" aria-label="Buludların üzərində uçan təyyarə" data-i18n-aria="home.heroAria"></div>
+            <div class="hero-background">
+                <video class="hero-video" muted loop playsinline autoplay preload="metadata" aria-hidden="true" hidden></video>
+                <div class="hero-background-fallback" role="img" aria-label="Buludların üzərində uçan təyyarə" data-i18n-aria="home.heroAria"></div>
+            </div>
             <div class="hero-overlay" aria-hidden="true"></div>
             <div class="hero-content">
                 <p class="hero-eyebrow" data-i18n="home.heroEyebrow">Lüks Səyahət Təcrübəsi</p>
@@ -342,10 +355,14 @@
     <script src="assets/js/api-config.js?v=rs1"></script>
     <script src="assets/js/api-client.js?v=perf2"></script>
     <script src="assets/js/chat-widget.js?v=rs1"></script>
-    <script src="assets/js/auth.js?v=fast2"></script>
+    <script src="assets/js/auth.js?v=fast3"></script>
     <script src="assets/js/destination-catalog.js?v=img1"></script>
+    <script src="assets/js/hero-video.js?v=hv2"></script>
     <script src="assets/js/home.js?v=ai3"></script>
     <script src="assets/js/logo.js?v=rs1"></script>
+    <script>window.AEROVA_CMS_PAGES = ["home", "footer"];</script>
+    <script src="assets/js/cms-content.js?v=cms1"></script>
+    <script src="assets/js/cms-lists.js?v=cl1"></script>
 
 </body>
 </html>

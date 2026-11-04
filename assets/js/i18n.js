@@ -30,7 +30,7 @@
   function applyToElement(el) {
     if (!el || el.nodeType !== 1) return;
     var key = el.getAttribute("data-i18n");
-    if (key) {
+    if (key && t(key) !== key) { /* a key with no translation keeps the text written in the page */
       var translated = t(key);
       var tag = (el.tagName || "").toLowerCase();
       if (tag === "input" || tag === "textarea") {
@@ -55,15 +55,15 @@
       }
     }
     var htmlKey = el.getAttribute("data-i18n-html");
-    if (htmlKey) el.innerHTML = t(htmlKey);
+    if (htmlKey && t(htmlKey) !== htmlKey) el.innerHTML = t(htmlKey);
     var ph = el.getAttribute("data-i18n-placeholder");
-    if (ph) el.setAttribute("placeholder", t(ph));
+    if (ph && t(ph) !== ph) el.setAttribute("placeholder", t(ph));
     var aria = el.getAttribute("data-i18n-aria");
-    if (aria) el.setAttribute("aria-label", t(aria));
+    if (aria && t(aria) !== aria) el.setAttribute("aria-label", t(aria));
     var title = el.getAttribute("data-i18n-title");
-    if (title) el.setAttribute("title", t(title));
+    if (title && t(title) !== title) el.setAttribute("title", t(title));
     var valueKey = el.getAttribute("data-i18n-value");
-    if (valueKey) el.value = t(valueKey);
+    if (valueKey && t(valueKey) !== valueKey) el.value = t(valueKey);
   }
 
   function applyTranslations(root) {
@@ -91,4 +91,33 @@
   } else {
     init();
   }
+})();
+
+/*
+ * The footer is on most pages but only the home, support and about pages ask the CMS for it. On any other page that has a footer, load the CMS scripts
+ * (footer texts, hero/social links and contact details) so the admin panel changes the footer everywhere. API failures leave the page as it is written.
+ */
+(function () {
+  "use strict";
+  var self = document.currentScript;
+  if (!self || !self.src) return;
+  var base = self.src.replace(/[^\/]*(\?.*)?$/, "");
+
+  function load(name, done) {
+    var tag = document.createElement("script");
+    tag.src = base + name + "?v=cf1";
+    tag.onload = done;
+    document.head.appendChild(tag);
+  }
+
+  function start() {
+    if (!document.getElementById("site-footer") || window.AEROVA_CMS_PAGES || document.querySelector('script[src*="cms-lists.js"]')) return;
+    load("cms-content.js", function () {
+      if (window.AEROVA_loadCmsPages) window.AEROVA_loadCmsPages(["footer"]);
+      load("cms-lists.js", function () {});
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
 })();

@@ -1779,7 +1779,7 @@ window.AEROVA_LOCALES.az = {
       "colCustomer": "Müştəri",
       "colSubject": "Mövzu başlığı",
       "colCategory": "Mövzu",
-      "colStatus": "Status",
+      "colStatus": "Vəziyyət",
       "colCreated": "Yaradılıb",
       "colUpdated": "Son yenilənmə",
       "open": "Aç",
@@ -1793,8 +1793,8 @@ window.AEROVA_LOCALES.az = {
       "replyPlaceholder": "Cavabı yazın (müştəriyə e-poçtla bildirilir)...",
       "send": "Cavabı göndər",
       "afterReply": "Cavabdan sonrakı status",
-      "keepWaiting": "Müştərini gözləyir",
-      "statusLabel": "Status",
+      "keepWaiting": "Müştəri cavabı gözlənilir",
+      "statusLabel": "Vəziyyət",
       "saveStatus": "Statusu saxla",
       "replySent": "Cavab saxlanıldı.",
       "statusSaved": "Status saxlanıldı.",
@@ -1806,6 +1806,8 @@ window.AEROVA_LOCALES.az = {
         "bellEmpty": "Hələ dəstək bildirişi yoxdur.",
         "toastNew": "Yeni dəstək müraciəti {number}",
         "toastReply": "{number} üzrə müştəri cavabı",
+        "bellNewTitle": "Yeni dəstək müraciəti {number}",
+        "bellReplyTitle": "{number} üzrə müştəri cavabı",
         "setupRequired": "Dəstək müraciətləri hələ qurulmayıb: verilənlər bazasının son miqrasiyası (AddSupportTickets) tətbiq olunmayıb."
     }
   },

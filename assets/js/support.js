@@ -42,7 +42,12 @@
     }
 
     function categoryText(value) { return tr("support.categories." + value, value); }
-    function statusText(value) { return tr("support.status." + value, value); }
+    function statusText(value) {
+        if (window.AEROVA_SUPPORT_STATUS && typeof window.AEROVA_SUPPORT_STATUS.label === "function") {
+            return window.AEROVA_SUPPORT_STATUS.label(value);
+        }
+        return tr("support.status." + value, value);
+    }
 
     function show(el, visible) { el.hidden = !visible; }
 
