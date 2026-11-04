@@ -514,9 +514,13 @@
             return checkoutPrefetchFlight.promise;
         }
 
+        var payload = { pnr: pnr, lastName: lastName };
+        if (window.location && window.location.origin) {
+            payload.returnOrigin = window.location.origin;
+        }
         var promise = window.AEROVA_API.post(
             "api/payments/checkout-session",
-            { pnr: pnr, lastName: lastName },
+            payload,
             { timeoutMs: CHECKOUT_TIMEOUT_MS }
         );
         checkoutPrefetchFlight = { key: key, promise: promise };
@@ -640,12 +644,17 @@
     /* What the return page needs to show the booking afterwards: the payment, its reference and a passenger's last name. */
     function rememberCheckout(session, pnr, lastName) {
         try {
+            var payer = window.AerovaAuth && window.AerovaAuth.getCurrentUser && window.AerovaAuth.getCurrentUser();
             sessionStorage.setItem("aerovaCheckout", JSON.stringify({
                 paymentId: session.paymentId || session.PaymentId,
                 session: session.sessionId || session.SessionId || "",
                 pnr: pnr,
-                lastName: lastName
+                lastName: lastName,
+                userId: payer && payer.id
             }));
+            if (window.AerovaAuth && typeof window.AerovaAuth.rememberPayerSession === "function") {
+                window.AerovaAuth.rememberPayerSession();
+            }
 
             // Signed-in travellers are offered to save the passengers they typed in once the booking is confirmed (see the confirmation page).
             var savable = window.AerovaAuth && window.AerovaAuth.isLoggedIn() ? window.AEROVA_BOOKING.savablePassengers(readBookingData()) : [];

@@ -97,6 +97,9 @@
     var SUPPORT_STATUS = { "Open": "Open", "İcradadır": "InProgress", "Cavabınız gözlənilir": "WaitingForCustomer", "Resolved": "Resolved" };
 
     function supportStatus(text) {
+        if (window.AEROVA_SUPPORT_STATUS && typeof window.AEROVA_SUPPORT_STATUS.label === "function") {
+            return window.AEROVA_SUPPORT_STATUS.label(text);
+        }
         var key = SUPPORT_STATUS[text];
         return key ? tr("support.status." + key, text) : text;
     }

@@ -16,6 +16,30 @@
 
     var api = window.AEROVA_API;
     var mode = document.body.getAttribute("data-return");
+    var payerLinksBound = false;
+
+    function restorePayerAccount() {
+        return !!(window.AerovaAuth && typeof window.AerovaAuth.restorePayerSession === "function" && window.AerovaAuth.restorePayerSession());
+    }
+
+    restorePayerAccount();
+
+    /* Stripe return must not fire authenticated reads until the payer snapshot is applied (auth.js runs on DOMContentLoaded). */
+    function deferAuthenticatedSideEffectsUntilReady() {
+        if (window.AerovaAuth && typeof window.AerovaAuth.restorePayerSession === "function") {
+            window.AerovaAuth.restorePayerSession();
+        }
+        if (window.AerovaAuth && typeof window.AerovaAuth.updateNotificationBadges === "function" && window.AerovaAuth.isLoggedIn()) {
+            window.AerovaAuth.updateNotificationBadges();
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", deferAuthenticatedSideEffectsUntilReady);
+    } else {
+        deferAuthenticatedSideEffectsUntilReady();
+    }
+
     var view = null;
     var startedAt = Date.now();
     var timer = null;
@@ -39,7 +63,113 @@
     }
 
     function isLoggedIn() {
+        restorePayerAccount();
         return !!(window.AerovaAuth && window.AerovaAuth.isLoggedIn());
+    }
+
+    function currentUserId() {
+        var user = window.AerovaAuth && window.AerovaAuth.getCurrentUser && window.AerovaAuth.getCurrentUser();
+        return user && user.id;
+    }
+
+    function rememberManagedBooking(pnr, lastName) {
+        if (!pnr || !lastName) {
+            return false;
+        }
+        try {
+            sessionStorage.setItem("aerovaManaged", JSON.stringify({ pnr: pnr, lastName: lastName }));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function checkoutPayerId(stored) {
+        var data = stored || readStored();
+        return data && data.userId != null ? String(data.userId) : "";
+    }
+
+    function payerAccountReady(stored) {
+        restorePayerAccount();
+        var id = currentUserId();
+        if (!id) {
+            return false;
+        }
+        var expected = checkoutPayerId(stored);
+        if (expected && String(id) !== expected) {
+            restorePayerAccount();
+            id = currentUserId();
+        }
+        return !!id && (!expected || String(id) === expected);
+    }
+
+    /* Signed-in payer: My Trips. Guest: manage-by-PNR or trips list. */
+    function primaryAfterPaymentHref(pnr, lastName, stored) {
+        restorePayerAccount();
+        if (payerAccountReady(stored)) {
+            return "my-trips.html";
+        }
+        if (rememberManagedBooking(pnr, lastName)) {
+            return "booking-details.html?source=manage";
+        }
+        return "my-trips.html";
+    }
+
+    function bookingDetailsHref(pnr, lastName) {
+        if (rememberManagedBooking(pnr, lastName)) {
+            return "booking-details.html?source=manage";
+        }
+        return "my-trips.html";
+    }
+
+    function bindPayerLinks() {
+        if (payerLinksBound) {
+            return;
+        }
+        payerLinksBound = true;
+
+        function goAsPayer(event) {
+            var link = event.currentTarget;
+            if (!link || !link.getAttribute) {
+                return;
+            }
+            if (event && typeof event.preventDefault === "function") {
+                event.preventDefault();
+            }
+            restorePayerAccount();
+            var stored = readStored();
+            var paid = null;
+            try { paid = JSON.parse(sessionStorage.getItem("aerovaPaid") || "null"); } catch (error) { paid = null; }
+            var pnr = (paid && paid.pnr) || stored.pnr;
+            var lastName = (paid && paid.lastName) || stored.lastName;
+            var id = link.id;
+            var href = link.getAttribute("href") || "index.html";
+
+            if (id === "return-primary") {
+                href = primaryAfterPaymentHref(pnr, lastName, stored);
+            } else if (id === "return-trips") {
+                href = payerAccountReady(stored) ? "my-trips.html" : bookingDetailsHref(pnr, lastName);
+            } else if (id === "return-home" || (link.className && link.className.indexOf("auth-header-link") !== -1)) {
+                href = "index.html";
+            }
+
+            window.location.assign(href);
+        }
+
+        ["return-primary", "return-trips", "return-home"].forEach(function (id) {
+            var el = byId(id);
+            if (el) {
+                el.addEventListener("click", goAsPayer);
+            }
+        });
+        var headerHome = document.querySelector(".auth-header-link");
+        if (headerHome) {
+            headerHome.addEventListener("click", goAsPayer);
+        }
+
+        window.addEventListener("aerova:session-expired", function () {
+            restorePayerAccount();
+        });
     }
 
     /* ---------------------------------------------------------------- what the address and the tab remember */
@@ -190,12 +320,12 @@
             }
 
             describe(booking, status).then(function (rows) {
-                var actions = ["return-primary", "return-trips", "return-home"];
+                var actions = ["return-primary", "return-home"];
                 quietPoll = false;
                 show({ state: "success", title: ["api.payment.successTitle", "Ödəniş təsdiqləndi"], text: ["api.payment.successText", "Təşəkkür edirik! Rezervasiyanız təsdiqləndi."], actions: actions, summary: rows });
                 var viewBooking = byId("return-primary");
                 if (viewBooking && status.pnr) {
-                    viewBooking.setAttribute("href", "booking-details.html?pnr=" + encodeURIComponent(status.pnr));
+                    viewBooking.setAttribute("href", primaryAfterPaymentHref(status.pnr, lastName, stored));
                     viewBooking.textContent = tr("api.payment.viewBooking", "Rezervasiyama bax");
                 }
                 clearStored();
@@ -251,12 +381,13 @@
             state: "success",
             title: ["api.payment.reservedTitle", "Rezerv olundu"],
             text: ["api.payment.reservedText", "Ödənişiniz qəbul edildi. Rezervasiyanız yaradıldı — bütün təfərrüatları Səfərlərim bölməsində görə bilərsiniz."],
-            actions: ["return-primary", "return-trips", "return-home"],
+            actions: ["return-primary", "return-home"],
             summary: summary
         });
         var primary = byId("return-primary");
         if (primary) {
-            primary.setAttribute("href", "my-trips.html");
+            restorePayerAccount();
+            primary.setAttribute("href", primaryAfterPaymentHref(stored.pnr, stored.lastName, stored));
             primary.textContent = tr("api.payment.myTrips", "Səfərlərim");
         }
         byId("return-status").removeAttribute("aria-busy");
@@ -437,6 +568,8 @@
 
     function init() {
         if (!api || !mode) return;
+        restorePayerAccount();
+        bindPayerLinks();
         if (mode === "success") {
             startSuccess();
         } else {

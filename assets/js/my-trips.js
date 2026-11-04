@@ -267,9 +267,25 @@
     /* The last answer of this tab is shown at once while the fresh one loads; it is dropped when the visitor signs out or changes account (auth.js). */
     var CACHE_KEY = "aerovaTripsCache";
 
+    function cacheUserId() {
+        if (window.AerovaAuth && typeof window.AerovaAuth.restorePayerSession === "function") {
+            window.AerovaAuth.restorePayerSession();
+        }
+        var user = window.AerovaAuth && window.AerovaAuth.getCurrentUser && window.AerovaAuth.getCurrentUser();
+        return user && user.id != null ? String(user.id) : "";
+    }
+
     function readCache() {
+        var uid = cacheUserId();
+        if (!uid) {
+            return null;
+        }
         try {
             var cached = JSON.parse(window.sessionStorage.getItem(CACHE_KEY) || "null");
+            if (!cached || String(cached.userId) !== uid) {
+                try { window.sessionStorage.removeItem(CACHE_KEY); } catch (error) { /* ignore */ }
+                return null;
+            }
             return cached && Array.isArray(cached.trips) && Array.isArray(cached.airports) ? cached : null;
         } catch (error) {
             return null;
@@ -277,8 +293,12 @@
     }
 
     function writeCache() {
+        var uid = cacheUserId();
+        if (!uid) {
+            return;
+        }
         try {
-            window.sessionStorage.setItem(CACHE_KEY, JSON.stringify({ trips: state.trips, airports: state.airports }));
+            window.sessionStorage.setItem(CACHE_KEY, JSON.stringify({ userId: uid, trips: state.trips, airports: state.airports }));
         } catch (error) {
             // Without it the page just waits for the server as before.
         }
@@ -341,6 +361,11 @@
             ]);
         });
     }
+
+    window.addEventListener("aerova:payer-session-restored", function () {
+        try { window.sessionStorage.removeItem(CACHE_KEY); } catch (error) { /* ignore */ }
+        load();
+    });
 
     document.addEventListener("DOMContentLoaded", load);
 })();

@@ -66,10 +66,16 @@
         return hasSession();
     }
 
+    function peekStoredUser() {
+        var stored = readJSON(localStorage, USER_KEY);
+        if (!stored) {
+            stored = readJSON(sessionStorage, USER_KEY);
+        }
+        return stored;
+    }
+
     function getCurrentUser() {
         if (!hasSession()) {
-            try { sessionStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
-            try { localStorage.removeItem(USER_KEY); } catch (error) { /* ignore */ }
             return null;
         }
         // Kept next to the token (local storage) so every tab knows who is signed in; an older tab-only copy is moved over once.
@@ -102,7 +108,25 @@
      * account (after the session ran out, say) keeps them so the booking can carry on.
      */
     var BOOKING_OWNER_KEY = "aerovaBookingOwner";
-    var PERSONAL_BOOKING_KEYS = ["bookingData", "aerovaBooking", "aerovaCheckout", "aerovaSavable", "aerovaPaid", "aerovaManaged", "aerovaTripsCache", BOOKING_OWNER_KEY];
+    var PAYER_SESSION_KEY = "aerovaPayerSession";
+    var TRIPS_CACHE_KEY = "aerovaTripsCache";
+    var PERSONAL_BOOKING_KEYS = ["bookingData", "aerovaBooking", "aerovaCheckout", "aerovaSavable", "aerovaPaid", "aerovaManaged", TRIPS_CACHE_KEY, BOOKING_OWNER_KEY];
+
+    /* My Trips cache must never show another account's list after Stripe return or a tab switch. */
+    function syncTripsCacheToUser(userId) {
+        if (userId == null || userId === "") {
+            try { sessionStorage.removeItem(TRIPS_CACHE_KEY); } catch (error) { /* ignore */ }
+            return;
+        }
+        try {
+            var cached = JSON.parse(sessionStorage.getItem(TRIPS_CACHE_KEY) || "null");
+            if (!cached || cached.userId == null || String(cached.userId) !== String(userId)) {
+                sessionStorage.removeItem(TRIPS_CACHE_KEY);
+            }
+        } catch (error) {
+            try { sessionStorage.removeItem(TRIPS_CACHE_KEY); } catch (ignore) { /* ignore */ }
+        }
+    }
 
     function forgetPersonalBookingData() {
         PERSONAL_BOOKING_KEYS.forEach(function (key) {
@@ -117,6 +141,79 @@
             forgetPersonalBookingData();
         }
         try { sessionStorage.setItem(BOOKING_OWNER_KEY, String(userId)); } catch (error) { /* ignore */ }
+    }
+
+    /* Stripe Checkout leaves this site; another tab may sign in as someone else before the customer returns. */
+    function rememberPayerSession() {
+        if (!isLoggedIn() || !window.AEROVA_API || !window.AEROVA_API.session) {
+            return false;
+        }
+        var user = getCurrentUser();
+        var token = window.AEROVA_API.session.token();
+        if (!user || !user.id || !token) {
+            return false;
+        }
+        try {
+            sessionStorage.setItem(PAYER_SESSION_KEY, JSON.stringify({
+                user: user,
+                token: token,
+                expires: window.AEROVA_API.session.expiresAt() || 0
+            }));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function readPayerSession() {
+        try {
+            var parsed = JSON.parse(sessionStorage.getItem(PAYER_SESSION_KEY) || "null");
+            if (!parsed || !parsed.token || !parsed.user || !parsed.user.id) {
+                return null;
+            }
+            if (parsed.expires && Number(parsed.expires) <= Date.now()) {
+                return null;
+            }
+            return parsed;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    /* Puts back the account that started Stripe Checkout, instead of whoever last signed in in another tab. */
+    function isStripeReturnPage() {
+        if (document.body && document.body.getAttribute("data-return")) {
+            return true;
+        }
+        var path = (window.location.pathname || "").toLowerCase();
+        return path.indexOf("payment-success.html") !== -1 || path.indexOf("payment-cancel.html") !== -1;
+    }
+
+    function restorePayerSession() {
+        var snap = readPayerSession();
+        if (!snap || !window.AEROVA_API || !window.AEROVA_API.session) {
+            return false;
+        }
+
+        var activeToken = window.AEROVA_API.session.token();
+        var storedUser = peekStoredUser();
+        if (activeToken && activeToken === snap.token && storedUser && String(storedUser.id) === String(snap.user.id)) {
+            syncTripsCacheToUser(snap.user.id);
+            return true;
+        }
+
+        var expiresAt = snap.expires ? new Date(Number(snap.expires)).toISOString() : "";
+        if (!window.AEROVA_API.session.save({ accessToken: snap.token, expiresAt: expiresAt })) {
+            return false;
+        }
+        writeJSON(localStorage, USER_KEY, snap.user);
+        try { sessionStorage.setItem(BOOKING_OWNER_KEY, String(snap.user.id)); } catch (error) { /* ignore */ }
+        syncTripsCacheToUser(snap.user.id);
+        updateNavigation();
+        try {
+            window.dispatchEvent(new CustomEvent("aerova:payer-session-restored", { detail: { userId: snap.user.id } }));
+        } catch (error) { /* ignore */ }
+        return true;
     }
 
     function setLoggedInUser(authResponse) {
@@ -135,7 +232,17 @@
             return null;
         }
 
+        try {
+            var previousPayer = readPayerSession();
+            if (previousPayer && String(previousPayer.user.id) !== String(safeUser.id)) {
+                sessionStorage.removeItem(PAYER_SESSION_KEY);
+            }
+        } catch (error) {
+            // A leftover payer snapshot must not block the new sign-in.
+        }
+
         claimBookingData(safeUser.id);
+        syncTripsCacheToUser(safeUser.id);
         writeJSON(localStorage, USER_KEY, safeUser);
         return safeUser;
     }
@@ -155,6 +262,7 @@
     function logout() {
         clearAuthState();
         forgetPersonalBookingData();
+        try { sessionStorage.removeItem(PAYER_SESSION_KEY); } catch (error) { /* ignore */ }
         window.location.href = "login.html";
     }
 
@@ -184,8 +292,8 @@
     }
 
     function updateNavigation() {
-        var user = getCurrentUser();
-        var loggedIn = !!user;
+        var loggedIn = isLoggedIn();
+        var user = loggedIn ? getCurrentUser() : null;
         var headerActions = document.querySelector(".header-actions");
         var drawerNav = document.querySelector("#primary-navigation");
 
@@ -228,7 +336,9 @@
             syncDrawerAccountMenu(drawerNav, loggedIn ? user : null);
         }
 
-        updateNotificationBadges();
+        if (!isStripeReturnPage() || loggedIn) {
+            updateNotificationBadges();
+        }
 
         document.querySelectorAll("[data-auth-logout]").forEach(function (el) {
             el.addEventListener("click", function (event) {
@@ -247,8 +357,8 @@
     var ACCOUNT_ITEMS = [
         { href: "profile.html", key: "profile.title", fallback: "Profilim" },
         { href: "my-trips.html", key: "nav.myTrips", fallback: "Səyahətlərim" },
-        { href: "notifications.html", key: "nav.notifications", fallback: "Notifications", badge: true },
-        { logout: true, key: "nav.logout", fallback: "Logout" }
+        { href: "notifications.html", key: "nav.notifications", fallback: "Bildirişlər", badge: true },
+        { logout: true, key: "nav.logout", fallback: "Çıxış" }
     ];
     var ADMIN_ITEM = { href: "admin.html", key: "nav.adminPanel", fallback: "Admin paneli" };
     var accountDocumentBound = false;
@@ -471,6 +581,9 @@
         }
         setAccountButtonName(button, user);
         refreshAccountLabels(menu);
+        if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
+            window.AEROVA_I18N.applyTranslations(menu);
+        }
     }
 
     function syncDrawerAccountMenu(drawerNav, user) {
@@ -512,6 +625,9 @@
         }
         setAccountButtonName(toggle, user);
         refreshAccountLabels(list);
+        if (window.AEROVA_I18N && typeof window.AEROVA_I18N.applyTranslations === "function") {
+            window.AEROVA_I18N.applyTranslations(list);
+        }
     }
 
     function clearFieldError(input) {
@@ -1617,6 +1733,7 @@
 
     function init() {
         purgeLegacyAccounts();
+        restorePayerSession();
         if (guardAuthenticatedPages()) return;
         if (guardVerifiedEmail()) return;
         updateNavigation();
@@ -1633,6 +1750,10 @@
         handleVerifyBanner();
         // The API rejected the token (it ran out): forget it and send the visitor to sign in again.
         window.addEventListener("aerova:session-expired", function () {
+            if (restorePayerSession()) {
+                updateNavigation();
+                return;
+            }
             clearAuthState();
             updateNavigation();
             if (guardAuthenticatedPages()) return;
@@ -1647,6 +1768,12 @@
 
             // Signing in or out in another tab of this browser applies here too, without a reload.
             if (event.key === "aerovaAccessToken" || event.key === USER_KEY) {
+                var user = getCurrentUser();
+                if (user && user.id) {
+                    syncTripsCacheToUser(user.id);
+                } else {
+                    syncTripsCacheToUser("");
+                }
                 updateNavigation();
                 if (!isLoggedIn()) {
                     guardAuthenticatedPages();
@@ -1678,6 +1805,9 @@
         getCurrentUser: getCurrentUser,
         logout: logout,
         clearAuthState: clearAuthState,
+        rememberPayerSession: rememberPayerSession,
+        restorePayerSession: restorePayerSession,
+        isStripeReturnPage: isStripeReturnPage,
         updateNotificationBadges: updateNotificationBadges,
         getUnreadNotificationCount: getUnreadNotificationCount
     };
