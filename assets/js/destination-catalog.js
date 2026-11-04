@@ -109,6 +109,27 @@
         return "assets/images/city-" + citySlug(city && city.name);
     }
 
+    function mediaPublicUrl(relativePath) {
+        if (!relativePath || !api) return null;
+        var path = String(relativePath).trim().replace(/\\/g, "/");
+        if (path.indexOf("destinations/") === 0 || path.indexOf("sights/") === 0) {
+            return api.url("/media/" + path);
+        }
+        if (path.indexOf("/media/") === 0) {
+            return api.url(path);
+        }
+        return null;
+    }
+
+    function cityPhotoUrls(city) {
+        var fromDb = city && city.imageFile ? mediaPublicUrl(city.imageFile) : null;
+        if (fromDb) {
+            return { hero: fromDb, sm: fromDb, lg: fromDb };
+        }
+        var base = imageBase(city);
+        return { hero: base + ".webp", sm: base + "-sm.webp", lg: base + ".webp" };
+    }
+
     function isoDay(date) {
         return date.toISOString().slice(0, 10);
     }
@@ -164,7 +185,7 @@
     /* The card, the one component of every gallery. options.booking adds a Book Ticket action; a city without flights opens the results with their empty state. */
     function cardMarkup(country, city, options) {
         options = options || {};
-        var base = imageBase(city);
+        var photos = cityPhotoUrls(city);
         var cityName = localized(city, "name");
         var flights = hasFlights(city);
         var description = localized(city, "description") || localized(country, "description");
@@ -176,9 +197,12 @@
             book = '<a class="destination-book destination-book--ghost" href="' + escapeHtml(resultsUrl(city, null, country)) + '">' + escapeHtml(tr("destinations.bookTicket", "Bilet bron et")) + "</a>";
         }
 
+        var srcset = photos.sm === photos.lg
+            ? escapeHtml(photos.sm)
+            : escapeHtml(photos.sm) + " 800w, " + escapeHtml(photos.lg) + " 1600w";
         return '<article class="destination-card" data-city="' + escapeHtml(city.id) + '" data-country="' + escapeHtml(country.code) + '"' + (flights ? "" : ' data-no-flights="true"') + ">" +
-            '<img class="destination-image" data-photo src="' + escapeHtml(base) + '-sm.webp" srcset="' + escapeHtml(base) + "-sm.webp 800w, " + escapeHtml(base) +
-            '.webp 1600w" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 25vw" width="800" height="533" loading="lazy" decoding="async" alt="' + escapeHtml(photoAlt(city, country)) + '">' +
+            '<img class="destination-image" data-photo src="' + escapeHtml(photos.sm) + '" srcset="' + srcset +
+            '" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 25vw" width="800" height="533" loading="lazy" decoding="async" alt="' + escapeHtml(photoAlt(city, country)) + '">' +
             '<div class="destination-overlay" aria-hidden="true"></div>' +
             '<div class="destination-content">' +
             '<p class="destination-location">' + escapeHtml(localized(country, "name")) + "</p>" +
@@ -355,9 +379,9 @@
 
     window.AEROVA_DESTINATIONS = {
         load: load, loadCity: loadCity, loadCityFlights: loadCityFlights, hubInfo: hubInfo, hubCityName: hubCityName,
-        localized: localized, hasFlights: hasFlights, bookableAirport: bookableAirport, imageBase: imageBase,
+        localized: localized, hasFlights: hasFlights, bookableAirport: bookableAirport, imageBase: imageBase, cityPhotoUrls: cityPhotoUrls, mediaPublicUrl: mediaPublicUrl,
         resultsUrl: resultsUrl, detailsUrl: detailsUrl, photoAlt: photoAlt, watchImages: watchImages, cardMarkup: cardMarkup,
-        featuredCity: featuredCity, tr: tr, escapeHtml: escapeHtml
+        featuredCity: featuredCity, citySlug: citySlug, tr: tr, escapeHtml: escapeHtml
     };
 
     if (document.readyState === "loading") {

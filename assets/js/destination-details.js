@@ -101,6 +101,35 @@
         }).join("");
     }
 
+    function renderSights(city) {
+        var section = byId("destination-sights");
+        var list = byId("destination-sights-list");
+        if (!section || !list || !window.AEROVA_CITY_SIGHTS) {
+            if (section) section.hidden = true;
+            return;
+        }
+        var slug = catalog.citySlug(city && city.name);
+        var sights = window.AEROVA_CITY_SIGHTS[slug];
+        if (!sights || !sights.length) {
+            section.hidden = true;
+            list.innerHTML = "";
+            return;
+        }
+        section.hidden = false;
+        list.innerHTML = sights.map(function (sight) {
+            var meta = sight.photo && sight.photo.url
+                ? '<p class="dd-sight-meta"><a href="' + esc(sight.photo.url) + '" target="_blank" rel="noopener noreferrer">' +
+                    esc(tr("destinations.sightPhotoCredit", "Foto: Wikimedia Commons")) + "</a></p>"
+                : "";
+            var source = sight.source && sight.source.url
+                ? '<p class="dd-sight-meta"><a href="' + esc(sight.source.url) + '" target="_blank" rel="noopener noreferrer">' + esc(sight.source.title || "") + "</a></p>"
+                : "";
+            return '<li class="dd-sight"><figure class="dd-sight-figure"><img src="' + esc(sight.image) + '" alt="' + esc(sight.name) + '" loading="lazy" decoding="async"></figure>' +
+                '<div class="dd-sight-body"><h3 class="dd-sight-title">' + esc(sight.name) + "</h3>" +
+                '<p class="dd-sight-text">' + esc(sight.text) + "</p>" + source + meta + "</div></li>";
+        }).join("");
+    }
+
     function renderOthers() {
         var section = byId("destination-others");
         var page = state.page;
@@ -114,7 +143,7 @@
         byId("destination-others-grid").innerHTML = others.map(function (city) {
             var name = catalog.localized(city, "name");
             return '<li><a class="dd-other-tile" href="' + esc(catalog.detailsUrl(city)) + '">' +
-                '<img data-photo src="' + esc(catalog.imageBase(city)) + '-sm.webp" alt="' + esc(name) + '" loading="lazy" decoding="async">' +
+                '<img data-photo src="' + esc(catalog.cityPhotoUrls(city).sm) + '" alt="' + esc(name) + '" loading="lazy" decoding="async">' +
                 '<span>' + esc(name) + "</span></a></li>";
         }).join("");
         catalog.watchImages(byId("destination-others-grid"));
@@ -161,7 +190,7 @@
         var country = page.country;
         var cityName = catalog.localized(city, "name");
         var countryName = catalog.localized(country, "name");
-        var base = catalog.imageBase(city);
+        var photos = catalog.cityPhotoUrls(city);
         var hubName = state.hub ? catalog.localized(state.hub.city, "name") : "";
         var airport = catalog.bookableAirport(city);
 
@@ -179,7 +208,7 @@
         var photo = byId("destination-photo");
         photo.alt = catalog.photoAlt(city, country);
         photo.onerror = function () { photo.onerror = null; photo.src = "assets/images/airport-premium.jpg"; };
-        photo.src = base + ".webp";
+        photo.src = photos.hero;
         setText("destination-aside-route", hubName ? tr("destinations.routeTitle", "{from} → {to}", { from: hubName, to: cityName }) : cityName);
         setText("destination-back-country", tr("destinations.backToDestinations", "Təyinatlara qayıt"));
 
@@ -188,6 +217,7 @@
 
         renderAirports(hubName);
         if (byId("destination-flights")) renderFlights();
+        renderSights(city);
         renderOthers();
 
         byId("destination-status").hidden = true;
@@ -217,6 +247,10 @@
         if (!state || !event.target || event.target.id !== "destination-airport-select") return;
         state.chosen = event.target.value;
         renderAsideBooking(state.page.city, catalog.bookableAirport(state.page.city));
+    });
+
+    document.addEventListener("aerova:sight-media-ready", function () {
+        if (state && state.page && state.page.city) renderSights(state.page.city);
     });
 
 

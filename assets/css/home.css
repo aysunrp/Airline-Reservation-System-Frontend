@@ -259,10 +259,28 @@ h1 {
     background-color: var(--color-navy-deep);
 }
 
-.hero-background::after {
-    content: "";
+.hero-video {
     position: absolute;
     inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 62% center;
+    opacity: 0;
+    transition: opacity 1.1s ease;
+    pointer-events: none;
+}
+
+.hero-background.is-video-ready .hero-video {
+    opacity: 1;
+}
+
+/* Static jet photo: only when CMS video is unavailable (see hero-video.js). */
+.hero-background-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
     background: url("../images/hero-jet-dusk-hd.webp") center / cover no-repeat;
     transform: translate(12%, 9%);
     -webkit-mask-image:
@@ -273,6 +291,38 @@ h1 {
         linear-gradient(90deg, transparent 0%, #000 22%, #000 100%),
         linear-gradient(180deg, transparent 0%, #000 18%, #000 100%);
     mask-composite: intersect;
+    transition: opacity 1s ease;
+    pointer-events: none;
+}
+
+.hero-background.awaiting-hero-video .hero-background-fallback,
+.hero-background.has-hero-video .hero-background-fallback {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hero-background.is-video-ready .hero-background-fallback {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hero-background.has-hero-video.is-reduced-motion .hero-background-fallback {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hero-background.has-hero-video.is-reduced-motion .hero-video {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .hero-video {
+        object-position: 58% 42%;
+    }
+
+    .hero-background-fallback {
+        transform: translate(6%, 6%) scale(1.06);
+    }
 }
 
 .hero-overlay {
