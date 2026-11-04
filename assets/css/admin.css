@@ -1342,3 +1342,77 @@ table {
     flex-wrap: wrap;
     gap: 0.35rem;
 }
+
+.admin-hero-preview {
+    position: relative;
+    margin: 0 0 1.25rem;
+    min-height: 220px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #0b1524;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-hero-preview video {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: 62% center;
+    display: block;
+}
+
+.admin-hero-preview-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(5, 12, 22, 0.55) 0%, rgba(5, 12, 22, 0.15) 45%, rgba(5, 12, 22, 0.65) 100%),
+        linear-gradient(100deg, rgba(5, 12, 22, 0.82) 0%, rgba(5, 12, 22, 0.2) 55%, transparent 100%);
+}
+
+.admin-hero-preview-caption {
+    position: absolute;
+    left: 1rem;
+    bottom: 0.75rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    z-index: 2;
+}
+
+.admin-form-panel {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.admin-media-thumb {
+    display: block;
+    width: 56px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.admin-media-thumb--inline {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.35rem;
+    width: 40px;
+    height: 28px;
+}
+
+.admin-hint-inline {
+    font-size: 0.75rem;
+    margin-left: 0.35rem;
+    opacity: 0.75;
+}
+
+.admin-panel-hint {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.62);
+}

@@ -35,7 +35,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/css/admin.css?v=cn5">
+    <link rel="stylesheet" href="assets/css/admin.css?v=cn6">
 
 
     <link rel="stylesheet" href="assets/css/scrollbars.css?v=rs1">
@@ -142,6 +142,8 @@
                 <button class="admin-nav-link" type="button" data-section="options" data-i18n="api.admin.options">Baqaj və yemək</button>
                 <button class="admin-nav-link" type="button" data-section="rules" data-i18n="api.admin.rules">Ləğv qaydaları</button>
                 <button class="admin-nav-link" type="button" data-section="content" data-i18n="api.admin.content">Səhifə mətnləri</button>
+                <button class="admin-nav-link" type="button" data-section="hero-video">Hero Video</button>
+                <button class="admin-nav-link" type="button" data-section="sight-media" data-i18n="api.admin.sightMedia">Sight şəkilləri</button>
                 <p class="admin-nav-group" data-super-only hidden data-i18n="api.admin.superAdminGroup">SuperAdmin</p>
                 <button class="admin-nav-link" type="button" data-section="users" data-super-only hidden data-i18n="api.admin.users">İstifadəçilər</button>
                 <button class="admin-nav-link" type="button" data-section="audit" data-super-only hidden data-i18n="api.admin.audit">Audit jurnalı</button>
@@ -1234,12 +1236,93 @@
             <section class="admin-section" id="section-content" data-section-panel="content" hidden>
                 <div class="admin-panel admin-panel--cream">
                     <div class="admin-toolbar">
+                        <label class="admin-field admin-field--inline" for="content-page">
+                            <span class="visually-hidden">Səhifə</span>
+                            <select class="admin-select" id="content-page" aria-label="Səhifə">
+                                <option value="home">Ana səhifə</option>
+                                <option value="about">AEROVA haqqında</option>
+                                <option value="support">Dəstək</option>
+                                <option value="footer">Footer (sayt üzrə)</option>
+                                <option value="destinations">İstiqamətlər</option>
+                            </select>
+                        </label>
                         <input class="admin-search" id="content-search" type="search" placeholder="Açar və ya mətn üzrə axtarış" data-i18n-placeholder="api.admin.contentSearch">
+                        <button class="admin-btn admin-btn--primary" id="add-content-btn" type="button" data-i18n="api.admin.addContent">Mətn əlavə et</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
                             <thead><tr><th data-i18n="api.admin.contentKey">Açar</th><th data-i18n="api.admin.contentText">Azərbaycan dilində mətn</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
                             <tbody id="content-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-section" id="section-hero-video" data-section-panel="hero-video" hidden>
+                <div class="admin-panel admin-panel--cream admin-hero-video-panel">
+                    <div class="admin-toolbar">
+                        <button class="admin-btn admin-btn--primary" type="button" id="hero-video-add-btn">Yeni hero video</button>
+                    </div>
+                    <div class="admin-hero-preview" id="hero-video-preview">
+                        <div class="admin-hero-preview-overlay"></div>
+                        <video id="hero-video-preview-video" muted loop playsinline></video>
+                        <p class="admin-hero-preview-caption">Landing page önizləməsi</p>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Başlıq</th>
+                                    <th>Status</th>
+                                    <th>Video URL</th>
+                                    <th>Mənbə</th>
+                                    <th>Əməliyyatlar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hero-video-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="admin-form-panel" id="hero-video-form-panel" hidden>
+                        <h3 class="admin-form-title" id="hero-video-form-title">Hero video</h3>
+                        <div class="admin-form-grid">
+                            <div class="admin-field"><label for="hero-field-title">Başlıq</label><input id="hero-field-title" type="text" required></div>
+                            <div class="admin-field"><label for="hero-field-sortOrder">Sıra</label><input id="hero-field-sortOrder" type="number" min="0" value="0"></div>
+                            <div class="admin-field admin-field--full"><label for="hero-field-videoUrl">Video URL</label><input id="hero-field-videoUrl" type="url" required></div>
+                            <div class="admin-field admin-field--full"><label>Video faylı yüklə</label><input id="hero-video-upload-video" type="file" accept="video/mp4,video/webm"></div>
+                            <div class="admin-field admin-field--full"><label for="hero-field-posterUrl">Poster URL</label><input id="hero-field-posterUrl" type="url"></div>
+                            <div class="admin-field admin-field--full"><label>Poster yüklə</label><input id="hero-video-upload-poster" type="file" accept="image/jpeg,image/png,image/webp"></div>
+                            <div class="admin-field admin-field--full"><label for="hero-field-mobileVideoUrl">Mobil video URL (istəyə bağlı)</label><input id="hero-field-mobileVideoUrl" type="url"></div>
+                            <div class="admin-field admin-field--full"><label for="hero-field-notes">Daxili qeyd</label><textarea id="hero-field-notes" rows="3"></textarea></div>
+                            <div class="admin-field"><label for="hero-field-sourceName">Mənbə adı</label><input id="hero-field-sourceName" type="text"></div>
+                            <div class="admin-field"><label for="hero-field-sourceUrl">Mənbə URL</label><input id="hero-field-sourceUrl" type="url"></div>
+                            <div class="admin-field admin-field--full"><label for="hero-field-licenseInfo">Lisenziya</label><input id="hero-field-licenseInfo" type="text"></div>
+                            <div class="admin-field admin-field--full"><label class="admin-check"><input id="hero-field-isActive" type="checkbox"> Yayımla (aktiv et)</label></div>
+                        </div>
+                        <div class="admin-form-actions">
+                            <button class="admin-btn admin-btn--ghost" type="button" id="hero-video-form-cancel">Ləğv et</button>
+                            <button class="admin-btn admin-btn--primary" type="button" id="hero-video-form-save">Yadda saxla</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIGHT MEDIA -->
+            <section class="admin-section" id="section-sight-media" data-section-panel="sight-media" hidden>
+                <div class="admin-panel admin-panel--cream">
+                    <p class="admin-panel-hint" data-i18n="api.admin.sightMediaHelp">city-sights.js slug və indeks (0, 1, …). Məs: paris + 0 = Eyfel qülləsi.</p>
+                    <div class="admin-form-grid admin-form-grid--compact">
+                        <div class="admin-field"><label for="sight-media-slug">Şəhər slug</label><input id="sight-media-slug" type="text" placeholder="paris" autocomplete="off"></div>
+                        <div class="admin-field"><label for="sight-media-index">Sight indeksi</label><input id="sight-media-index" type="number" min="0" max="20" value="0"></div>
+                        <div class="admin-field admin-field--full"><label for="sight-media-file">Şəkil faylı</label><input id="sight-media-file" type="file" accept="image/jpeg,image/png,image/webp"></div>
+                    </div>
+                    <div class="admin-form-actions">
+                        <button class="admin-btn admin-btn--primary" type="button" id="sight-media-upload-btn" data-i18n="api.admin.upload">Yüklə</button>
+                        <button class="admin-btn admin-btn--ghost" type="button" id="sight-media-delete-btn" data-i18n="api.admin.removeOverride">Override sil</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th data-i18n="api.admin.sightMediaKey">Açar</th><th data-i18n="api.admin.sightMediaPath">Fayl yolu</th><th data-i18n="api.admin.preview">Önizləmə</th><th data-i18n="admin.actions">Əməliyyatlar</th></tr></thead>
+                            <tbody id="sight-media-body"></tbody>
                         </table>
                     </div>
                 </div>
@@ -1416,18 +1499,6 @@
 
 
 
-            <div class="admin-modal-actions">
-
-
-
-                <button class="admin-btn admin-btn--secondary" type="button" data-close-details data-i18n="common.close">Bağla</button>
-
-
-
-            </div>
-
-
-
         </div>
 
 
@@ -1442,22 +1513,29 @@
 
 
 
-    <script src="assets/js/locales/az.js?v=ai5"></script>
+    <script src="assets/js/locales/az.js?v=ai7"></script>
 
 
 
 
-    <script src="assets/js/i18n.js?v=rs1"></script>
+    <script src="assets/js/i18n.js?v=rs2"></script>
+    <script src="assets/js/support-status-labels.js?v=1"></script>
     <script src="assets/js/api-config.js?v=rs1"></script>
     <script src="assets/js/api-client.js?v=perf2"></script>
     <script src="assets/js/airports.js?v=perf1"></script>
     <script src="assets/js/chat-widget.js?v=rs1"></script>
 
 
-    <script src="assets/js/auth.js?v=fast2"></script>
+    <script src="assets/js/auth.js?v=fast6"></script>
     <script src="assets/js/vendor/signalr.min.js?v=8.0.7"></script>
     <script src="assets/js/realtime.js?v=rs1"></script>
-    <script src="assets/js/admin.js?v=cn7"></script>
+    <script src="assets/js/admin-hero-video.js?v=hv2"></script>
+    <script src="assets/js/destination-catalog.js?v=img1"></script>
+    <script src="assets/js/admin-destination-media.js?v=dm1"></script>
+    <script src="assets/js/admin-sight-media.js?v=sm2"></script>
+    <script src="assets/js/admin.js?v=cn13"></script>
+    <script src="assets/js/admin-cms.js?v=cms3"></script>
+    <script src="assets/js/admin-website.js?v=wm4"></script>
 
 
 

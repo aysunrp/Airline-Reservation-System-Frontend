@@ -67,7 +67,9 @@
             promos: { title: tr("api.admin.promos", "Promo kodlar"), subtitle: tr("api.admin.promosSub", "Ödəniş səhifəsi üçün endirim kodları") },
             options: { title: tr("api.admin.options", "Baqaj və yemək"), subtitle: tr("api.admin.optionsSub", "Sərnişinin rezervasiyaya əlavə edə biləcəyi xidmətlər") },
             rules: { title: tr("api.admin.rules", "Ləğv qaydaları"), subtitle: tr("api.admin.rulesSub", "Salona və uçuşa qalan günlərə görə komissiya") },
-            content: { title: tr("api.admin.content", "Səhifə mətnləri"), subtitle: tr("api.admin.contentSub", "\"AEROVA haqqında\" səhifəsinin mətnləri") },
+            content: { title: tr("api.admin.content", "Səhifə mətnləri"), subtitle: contentSectionSubtitle() },
+            "hero-video": { title: tr("api.admin.heroVideo", "Hero Video Management"), subtitle: tr("api.admin.heroVideoSub", "Ana səhifə sinematik hero videosu") },
+            "sight-media": { title: tr("api.admin.sightMedia", "Sight şəkilləri"), subtitle: tr("api.admin.sightMediaSub", "Şəhər görməli yerləri fotoları (city-sights.js override)") },
             users: { title: tr("api.admin.users", "İstifadəçilər"), subtitle: tr("api.admin.usersSub", "Hesablar, rollar və giriş") },
             audit: { title: tr("api.admin.audit", "Audit jurnalı"), subtitle: tr("api.admin.auditSub", "Kim nə vaxt nə etdi") }
         };
@@ -1042,17 +1044,35 @@
             '" data-destination-id="' + item.id + '">' + escapeHtml(label) + "</button>";
     }
 
+    function destMediaPreviewHtml(imageFile) {
+        if (!imageFile) return "";
+        var url = "";
+        if (window.AEROVA_DESTINATIONS && window.AEROVA_DESTINATIONS.mediaPublicUrl) {
+            url = window.AEROVA_DESTINATIONS.mediaPublicUrl(imageFile) || "";
+        }
+        if (!url && window.AEROVA_API && String(imageFile).indexOf("destinations/") === 0) {
+            url = window.AEROVA_API.url("/media/" + imageFile);
+        }
+        if (url) {
+            return ' <img class="admin-media-thumb admin-media-thumb--inline" src="' + escapeHtml(url) + '" alt="">';
+        }
+        return ' <code class="admin-hint-inline">' + escapeHtml(imageFile) + "</code>";
+    }
+
     function renderDestinations() {
         var rows = state.destinations || [];
         byId("destinations-body").innerHTML = rows.length ? rows.map(function (country) {
             var html = '<tr class="admin-row-group"><td><strong>' + escapeHtml(destinationName(country)) + "</strong> " + escapeHtml(country.code) +
-                "</td><td></td><td></td><td></td><td>" + activeBadge(country.isActive) + '</td><td><div class="admin-actions">' + destinationEdit("country", country) + destinationToggle("country", country) + "</div></td></tr>";
+                destMediaPreviewHtml(country.imageFile) +
+                "</td><td></td><td></td><td></td><td>" + activeBadge(country.isActive) + '</td><td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-dest-media="country" data-dest-media-id="' + country.id + '">' +
+                escapeHtml(tr("api.admin.destImage", "Şəkil")) + "</button>" + destinationEdit("country", country) + destinationToggle("country", country) + "</div></td></tr>";
             country.cities.forEach(function (city) {
                 var codes = city.airports.map(function (airport) { return airport.code; }).join(", ");
                 var flights = city.airports.some(function (airport) { return airport.hasRoutes; });
-                html += "<tr><td></td><td>" + escapeHtml(destinationName(city)) + "</td><td>" + escapeHtml(codes) + "</td><td>" +
+                html += "<tr><td></td><td>" + escapeHtml(destinationName(city)) + destMediaPreviewHtml(city.imageFile) + "</td><td>" + escapeHtml(codes) + "</td><td>" +
                     escapeHtml(flights ? tr("api.admin.destYes", "Var") : tr("api.admin.destNo", "Hələ yoxdur")) + "</td><td>" + activeBadge(city.isActive) +
-                    '</td><td><div class="admin-actions">' + destinationEdit("city", city) + destinationToggle("city", city) + "</div></td></tr>";
+                    '</td><td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-dest-media="city" data-dest-media-id="' + city.id + '">' +
+                    escapeHtml(tr("api.admin.destImage", "Şəkil")) + "</button>" + destinationEdit("city", city) + destinationToggle("city", city) + "</div></td></tr>";
             });
             return html;
         }).join("") : emptyRow(6, tr("api.admin.destEmpty", "Təyinat kataloqu boşdur. API başlayanda və verilənlər bazası yeni olduqda əlavə olunur."));
@@ -1261,10 +1281,33 @@
         });
     }
 
-    /* The texts of the "AEROVA haqqında" page (api/admin/site-content). They are edited, never added or deleted: the page looks them up by key. */
-    var CONTENT_PAGE = "about";
+    /* Website CMS texts (api/admin/site-content). Rows are seeded; admins edit only, never add or delete keys. */
+    var CONTENT_PAGES = {
+        home: { label: "Ana səhifə", hint: "Hero, kartlar, Why AEROVA, premium və abunə blokları" },
+        about: { label: "AEROVA haqqında", hint: "Haqqımızda səhifəsinin bütün mətnləri" },
+        support: { label: "Dəstək", hint: "Dəstək səhifəsi başlıqları və FAQ" },
+        footer: { label: "Footer", hint: "Sayt üzrə footer mətnləri" }
+    };
+    var CONTENT_PAGE = "home";
     var CONTENT_PREVIEW_LENGTH = 140;
     var CONTENT_MAX_LENGTH = 1000;
+
+    function contentSectionSubtitle() {
+        var meta = CONTENT_PAGES[CONTENT_PAGE] || CONTENT_PAGES.about;
+        return meta.label + " — " + meta.hint;
+    }
+
+    function syncContentPageUi() {
+        var select = byId("content-page");
+        if (select && select.value !== CONTENT_PAGE) {
+            select.value = CONTENT_PAGE;
+        }
+        var section = document.querySelector('[data-section-panel="content"]');
+        if (section) {
+            var sub = section.querySelector(".admin-section-subtitle");
+            if (sub) sub.textContent = contentSectionSubtitle();
+        }
+    }
 
     function renderContent() {
         var query = byId("content-search").value.toLowerCase();
@@ -1274,13 +1317,17 @@
 
         byId("content-body").innerHTML = rows.length ? rows.map(function (item) {
             var text = item.textAz.length > CONTENT_PREVIEW_LENGTH ? item.textAz.slice(0, CONTENT_PREVIEW_LENGTH) + "\u2026" : item.textAz;
+            var deleteBtn = item.canDelete !== false
+                ? '<button class="admin-btn admin-btn--danger" type="button" data-delete-content="' + item.id + '">' + escapeHtml(tr("admin.delete", "Sil")) + "</button>"
+                : "";
             return "<tr><td><code>" + escapeHtml(item.key) + "</code></td><td title=\"" + escapeHtml(item.textAz) + "\">" + escapeHtml(text) + "</td>" +
                 '<td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-edit-content="' + item.id + '">' +
-                escapeHtml(tr("admin.edit", "Redaktə")) + "</button></div></td></tr>";
+                escapeHtml(tr("admin.edit", "Redaktə")) + "</button>" + deleteBtn + "</div></td></tr>";
         }).join("") : emptyRow(3, tr("api.admin.noContent", "Mətn tapılmadı."));
     }
 
     function loadContent() {
+        syncContentPageUi();
         loading("content-body", 3);
         api.get("api/admin/site-content", { query: { page: CONTENT_PAGE } }).then(function (rows) {
             state.content = rows;
@@ -1731,6 +1778,38 @@
             },
             reload: loadContent
         },
+        contentCreate: {
+            title: tr("api.admin.addContent", "Mətn əlavə et"),
+            path: "api/admin/site-content",
+            fields: function () {
+                return [
+                    { key: "page", label: tr("api.admin.contentPage", "Səhifə"), type: "select", options: [
+                        { value: "home", label: tr("api.admin.contentPageHome", "Ana səhifə") },
+                        { value: "about", label: tr("api.admin.contentPageAbout", "AEROVA haqqında") },
+                        { value: "support", label: tr("api.admin.contentPageSupport", "Dəstək") },
+                        { value: "footer", label: tr("api.admin.contentPageFooter", "Footer") },
+                        { value: "destinations", label: tr("api.admin.contentPageDestinations", "İstiqamətlər") }
+                    ] },
+                    { key: "key", label: tr("api.admin.contentKey", "Açar"), full: true },
+                    { key: "textAz", label: tr("api.admin.contentTextAz", "Azərbaycan dilində mətn"), type: "textarea", full: true, required: false, maxLength: false }
+                ];
+            },
+            defaults: function () { return { page: CONTENT_PAGE }; },
+            toForm: function (item) { return item; },
+            toRequest: function (data) {
+                if (!data.key || !String(data.key).trim()) {
+                    throw new Error(tr("api.admin.contentKeyRequired", "Açar tələb olunur."));
+                }
+                if (!data.textAz) {
+                    throw new Error(tr("api.admin.contentEmpty", "Mətn boş ola bilməz."));
+                }
+                if (data.textAz.length > CONTENT_MAX_LENGTH) {
+                    throw new Error(tr("api.admin.contentTooLong", "Mətn {max} simvoldan uzun ola bilməz. İndi {count} simvol var.", { max: CONTENT_MAX_LENGTH, count: data.textAz.length }));
+                }
+                return { page: data.page || CONTENT_PAGE, key: String(data.key).trim(), textAz: data.textAz };
+            },
+            reload: loadContent
+        },
         rule: {
             title: tr("api.admin.rule", "Qayda"),
             path: "api/admin/cancellation-rules",
@@ -1844,7 +1923,13 @@
             dashboard: loadDashboard, flights: resetFlightsAndLoad, routes: loadRoutes, schedules: loadSchedules,
             aircraft: loadAircraft, seats: loadSeatFlights, bookings: loadBookings, passengers: loadPassengers,
             airports: loadAirports, promos: loadPromos, options: loadOptions, rules: loadRules, content: loadContent,
-            users: loadUsers, audit: loadAudit, refunds: loadRefunds, support: loadSupport
+            users: loadUsers, audit: loadAudit, refunds: loadRefunds, support: loadSupport,
+            "hero-video": function () {
+                if (window.AEROVA_ADMIN_HERO_VIDEO) window.AEROVA_ADMIN_HERO_VIDEO.load();
+            },
+            "sight-media": function () {
+                if (window.AEROVA_ADMIN_SIGHT_MEDIA) window.AEROVA_ADMIN_SIGHT_MEDIA.load();
+            }
         };
         loaders[state.section]();
     }
@@ -1854,7 +1939,11 @@
             dashboard: renderDashboard, flights: renderFlights, routes: renderRoutes, schedules: renderSchedules,
             aircraft: renderAircraft, seats: renderSeatInventory, bookings: renderBookings, passengers: renderPassengers,
             airports: renderAirports, promos: renderPromos, options: renderOptions, rules: renderRules, content: renderContent,
-            users: renderUsers, audit: renderAudit, refunds: renderRefunds, support: renderSupport
+            users: renderUsers, audit: renderAudit, refunds: renderRefunds, support: renderSupport,
+            "hero-video": function () {
+                if (window.AEROVA_ADMIN_HERO_VIDEO) window.AEROVA_ADMIN_HERO_VIDEO.render();
+            },
+            "sight-media": function () { /* table reloads on load */ }
         };
         var meta = getSectionMeta()[state.section];
         byId("admin-page-title").textContent = meta.title;
@@ -2199,7 +2288,23 @@
     }
 
     function supportStatusText(value) {
+        if (window.AEROVA_SUPPORT_STATUS && typeof window.AEROVA_SUPPORT_STATUS.label === "function") {
+            return window.AEROVA_SUPPORT_STATUS.label(value);
+        }
         return tr("support.status." + value, value);
+    }
+
+    function supportStatusBadge(raw) {
+        var key = window.AEROVA_SUPPORT_STATUS && window.AEROVA_SUPPORT_STATUS.canonical
+            ? window.AEROVA_SUPPORT_STATUS.canonical(raw)
+            : String(raw || "");
+        var tone = "neutral";
+        if (key === "Open" || key === "InProgress" || key === "WaitingForCustomer") {
+            tone = "warning";
+        } else if (key === "Resolved") {
+            tone = "success";
+        }
+        return '<span class="admin-badge admin-badge--' + tone + '">' + escapeHtml(supportStatusText(raw)) + "</span>";
     }
 
     function renderSupport() {
@@ -2208,7 +2313,7 @@
             return "<tr><td>" + escapeHtml(item.ticketNumber) + "</td><td>" + escapeHtml(item.customerName) + "<br><small>" + escapeHtml(item.customerEmail) + "</small></td>" +
                 "<td>" + escapeHtml(item.subject) + (item.bookingPnr ? "<br><small>" + escapeHtml(item.bookingPnr) + "</small>" : "") + "</td>" +
                 "<td>" + escapeHtml(tr("support.categories." + item.category, item.category)) + "</td>" +
-                "<td>" + statusBadge(supportStatusText(item.status)) + "</td><td>" + supportDate(item.createdAt) + "</td><td>" + supportDate(item.updatedAt) + "</td>" +
+                "<td>" + supportStatusBadge(item.status) + "</td><td>" + supportDate(item.createdAt) + "</td><td>" + supportDate(item.updatedAt) + "</td>" +
                 '<td><div class="admin-actions"><button class="admin-btn admin-btn--ghost" type="button" data-support-open="' + item.id + '">' + escapeHtml(tr("support.admin.open", "Aç")) + "</button></div></td></tr>";
         }).join("") : emptyRow(8, tr("support.admin.empty", "Dəstək müraciəti tapılmadı."));
 
@@ -2264,7 +2369,7 @@
             var statusOptions = SUPPORT_STATUSES.map(function (value) {
                 return '<option value="' + value + '"' + (value === ticket.status ? " selected" : "") + ">" + escapeHtml(supportStatusText(value)) + "</option>";
             }).join("");
-            var afterOptions = '<option value="">' + escapeHtml(tr("support.admin.keepWaiting", "Müştərini gözləyir")) + "</option>" + SUPPORT_STATUSES.map(function (value) {
+            var afterOptions = '<option value="">' + escapeHtml(tr("support.admin.keepWaiting", "Müştəri cavabı gözlənilir")) + "</option>" + SUPPORT_STATUSES.map(function (value) {
                 return '<option value="' + value + '">' + escapeHtml(supportStatusText(value)) + "</option>";
             }).join("");
 
@@ -2321,6 +2426,33 @@
     var bellItems = [];
     var adminToastTimer = null;
 
+    function supportCategoryText(value) {
+        return tr("support.categories." + value, value);
+    }
+
+    /* Backend staff notifications are stored in English; show Azerbaijani in the bell. */
+    function translateStaffNotificationTitle(title) {
+        var text = String(title || "");
+        var created = /^New support request (\S+)$/.exec(text);
+        if (created) {
+            return tr("support.admin.bellNewTitle", "Yeni dəstək müraciəti {number}", { number: created[1] });
+        }
+        var reply = /^Customer reply on (\S+)$/.exec(text);
+        if (reply) {
+            return tr("support.admin.bellReplyTitle", "{number} üzrə müştəri cavabı", { number: reply[1] });
+        }
+        return text;
+    }
+
+    function translateStaffNotificationMessage(message) {
+        var text = String(message || "").trim();
+        var withCategory = /^(.+?)\s+\(([A-Za-z]+)\)\s*$/.exec(text);
+        if (withCategory) {
+            return withCategory[1] + " · " + supportCategoryText(withCategory[2]);
+        }
+        return text;
+    }
+
     function renderBell() {
         var unread = bellItems.filter(function (item) { return !item.isRead; }).length;
         var badge = byId("admin-bell-count");
@@ -2329,7 +2461,8 @@
         byId("admin-bell").setAttribute("aria-label", tr("support.admin.bellTitle", "Dəstək bildirişləri") + (unread ? " (" + unread + ")" : ""));
         byId("admin-bell-list").innerHTML = bellItems.length ? bellItems.slice(0, 20).map(function (item) {
             return '<li><button type="button" class="admin-bell-item' + (item.isRead ? "" : " is-unread") + '" data-bell="' + item.id + '">' +
-                "<strong>" + escapeHtml(item.title) + "</strong><small>" + escapeHtml(item.message) + " \u00b7 " + supportDate(item.createdAt) + "</small></button></li>";
+                "<strong>" + escapeHtml(translateStaffNotificationTitle(item.title)) + "</strong><small>" +
+                escapeHtml(translateStaffNotificationMessage(item.message)) + " \u00b7 " + supportDate(item.createdAt) + "</small></button></li>";
         }).join("") : '<li class="admin-bell-empty">' + escapeHtml(tr("support.admin.bellEmpty", "Hələ dəstək bildirişi yoxdur.")) + "</li>";
     }
 
@@ -2612,9 +2745,15 @@
         addButton("add-baggage-btn", "baggage");
         addButton("add-meal-btn", "meal");
         addButton("add-rule-btn", "rule");
+        addButton("add-content-btn", "contentCreate");
 
         byId("airport-search").addEventListener("input", renderAirports);
         byId("content-search").addEventListener("input", renderContent);
+        byId("content-page").addEventListener("change", function () {
+            CONTENT_PAGE = byId("content-page").value || "home";
+            syncContentPageUi();
+            loadContent();
+        });
         byId("promo-search").addEventListener("input", renderPromos);
         byId("promos-body").addEventListener("click", function (event) {
             var button = event.target.closest("[data-campaign-promo]");
@@ -2835,6 +2974,12 @@
             }
         });
     }
+
+    window.AEROVA_ADMIN = {
+        get state() { return state; },
+        loadDestinations: loadDestinations,
+        notify: showMessage
+    };
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", init);
