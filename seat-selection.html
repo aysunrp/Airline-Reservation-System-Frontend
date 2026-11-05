@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/seat-selection.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/seat-passengers.css?v=sp1">
     <link rel="stylesheet" href="assets/css/scrollbars.css?v=rs1">
     <link rel="stylesheet" href="assets/css/logo.css?v=rs1">
     <link rel="stylesheet" href="assets/css/chat-widget.css?v=rs1">
@@ -79,6 +80,18 @@
                             </div>
                         </div>
 
+                        <section class="seat-passengers" id="seat-passengers" aria-labelledby="seat-passengers-title" hidden>
+                            <div class="seat-passengers-head">
+                                <h2 class="seat-passengers-title" id="seat-passengers-title">Sərnişinlər</h2>
+                                <div class="seat-passengers-tools">
+                                    <button type="button" class="pax-tool" id="seat-together">Yanaşı otur</button>
+                                    <button type="button" class="pax-tool pax-tool--ghost" id="seat-clear-all">Hamısını təmizlə</button>
+                                </div>
+                            </div>
+                            <p class="seat-passengers-hint" id="seat-passengers-hint"></p>
+                            <div class="pax-list" id="pax-list" role="radiogroup" aria-label="Yer seçilən sərnişin"></div>
+                        </section>
+
                         <div class="seat-status" id="seat-status" role="status" aria-live="polite"></div>
                         <div class="airplane" id="aircraft-cabin" data-layout="economy" aria-label="Təyyarənin oturacaq sxemi">
                             <p class="airplane-front-label">FRONT</p>
@@ -120,6 +133,10 @@
                                     <p class="seat-info-label" id="selected-seat-label" data-i18n="seats.selectedSeats">Seçilmiş oturacaqlar</p>
                                     <p class="seat-info-value" id="selected-seat-value" data-i18n="seats.noSeat">Oturacaq seçilməyib</p>
                                     <p class="seat-progress" id="seat-progress" data-i18n="ui.0Of1SeatsSelected">1 yerdən 0 oturacaq seçildi</p>
+                                    <p class="seat-missing" id="seat-missing" hidden>
+                                        <span id="seat-missing-text"></span>
+                                        <button type="button" class="seat-missing-jump" id="seat-missing-jump" hidden></button>
+                                    </p>
                                     <ol class="seat-assignments" id="seat-assignments" aria-label="Hər sərnişinin oturacağı"></ol>
                                 </div>
                                 <div class="seat-info-item">
@@ -232,7 +249,8 @@
     <script src="assets/js/auth.js?v=fast2"></script>
     <script src="assets/js/journey.js?v=jr2"></script>
     <script src="assets/js/seat-layouts.js?v=rs1"></script>
-    <script src="assets/js/seat-selection.js?v=mc1"></script>
+    <script src="assets/js/seat-assign.js?v=sp1"></script>
+    <script src="assets/js/seat-selection.js?v=sp1"></script>
     <script src="assets/js/logo.js?v=rs1"></script>
 
 </body>
