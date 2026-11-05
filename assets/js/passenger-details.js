@@ -808,6 +808,7 @@
         setCardField(prefix + "document-number", saved.documentNumber);
         setCardField(prefix + "issuing-country", saved.documentIssuingCountry);
         setCardField(prefix + "document-expiry", saved.documentExpiryDate);
+        refreshDuplicateDocumentErrors();
     }
 
     function refreshSavedChoices() {
@@ -1110,6 +1111,48 @@
         if (continueButton) {
             continueButton.disabled = !isVisible;
         }
+    }
+
+    /* "ab 123-456" and "AB123456" are the same document number. */
+    function normalizedDocumentNumber(input) {
+        return String((input && input.value) || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    }
+
+    /*
+     * One document number belongs to one traveller: the same number on two passengers of a booking (infants included) is an error on
+     * BOTH fields, each naming the other passenger. The server refuses it as well. Returns the fields that carry the error, in page order.
+     */
+    function refreshDuplicateDocumentErrors() {
+        var inputs = Array.prototype.slice.call(document.querySelectorAll("#passenger-cards .passenger-card input[id$='-document-number']"));
+
+        inputs.forEach(function (input) {
+            if (input.getAttribute("data-duplicate-number")) {
+                input.removeAttribute("data-duplicate-number");
+                clearFieldError(input);
+            }
+        });
+
+        var groups = {};
+        inputs.forEach(function (input, index) {
+            var number = normalizedDocumentNumber(input);
+            if (number) {
+                (groups[number] = groups[number] || []).push(index);
+            }
+        });
+
+        var flagged = [];
+        inputs.forEach(function (input, index) {
+            var group = groups[normalizedDocumentNumber(input)];
+            if (!group || group.length < 2) {
+                return;
+            }
+            var other = group.filter(function (position) { return position !== index; })[0];
+            showFieldError(input, "api.passengers.duplicateDocument", "Bu sənəd nömrəsi {n}-ci sərnişinin nömrəsi ilə eynidir. Hər sərnişinin sənədi fərqli olmalıdır.", { n: other + 1 });
+            input.setAttribute("data-duplicate-number", "true");
+            flagged.push(input);
+        });
+
+        return flagged;
     }
 
     function collectPassengerData(index, seat) {
@@ -1443,6 +1486,14 @@
             }
         }
 
+        var duplicates = refreshDuplicateDocumentErrors();
+        if (duplicates.length) {
+            isValid = false;
+            if (!focusField || (focusField.compareDocumentPosition(duplicates[0]) & Node.DOCUMENT_POSITION_PRECEDING)) {
+                focusField = duplicates[0];
+            }
+        }
+
         contactResult = collectContactData();
         if (!contactResult.valid) {
             isValid = false;
@@ -1509,6 +1560,18 @@
                 clearFieldError(target);
             }
         });
+
+        // The same document number twice is shown while typing and when leaving the field, on both passengers. Any edit on a passenger
+        // card looks again, because other code clears the error of the field that was edited.
+        function recheckNumbers(event) {
+            var target = event.target;
+            if (target && target.classList && target.classList.contains("field-input") && target.closest("#passenger-cards")) {
+                refreshDuplicateDocumentErrors();
+            }
+        }
+        document.addEventListener("input", recheckNumbers);
+        document.addEventListener("change", recheckNumbers);
+        document.addEventListener("focusout", recheckNumbers);
     }
 
     /* The country of every airport comes from the backend; once it is known the document choices of every passenger are worked out again. */
