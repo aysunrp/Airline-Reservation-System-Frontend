@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="assets/css/chat-widget.css?v=rs1">
 
     <link rel="stylesheet" href="assets/css/profile.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/account-delete.css?v=ad1">
 
     <link rel="stylesheet" href="assets/css/theme.css?v=num4">
 </head>
@@ -247,6 +248,35 @@
                     </div>
 
                 </form>
+
+                <article class="details-card danger-zone" id="delete-account-card" aria-labelledby="delete-account-title" hidden>
+
+                    <h2 class="details-card-title" id="delete-account-title">Hesabı sil</h2>
+
+                    <p class="danger-text">Hesabınız həmişəlik silinəcək: profil məlumatlarınız, saxlanmış sərnişinlər, bildirişlər və dəstək müraciətləriniz silinir. Bronlarınız və ödənişləriniz qanunla tələb olunan uçot üçün saxlanılır; bron nömrəsi ilə onları idarə edə bilərsiniz. Bu geri qaytarıla bilməz.</p>
+
+                    <button type="button" class="danger-button" id="delete-account-open" aria-expanded="false" aria-controls="delete-account-panel">Hesabı silmək istəyirəm</button>
+
+                    <div class="danger-panel" id="delete-account-panel" hidden>
+
+                        <p class="danger-steps">Təhlükəsizlik üçün əvvəl şifrənizi daxil edin. Sonra e-poçtunuza təsdiq keçidi göndərəcəyik; hesab yalnız o keçidi açıb təsdiqləyəndən sonra silinəcək.</p>
+
+                        <div class="field">
+                            <label class="field-label" for="delete-account-password">Cari şifrə</label>
+                            <input class="field-input" id="delete-account-password" type="password" autocomplete="current-password" aria-describedby="delete-account-error">
+                            <p class="danger-error" id="delete-account-error" role="alert" hidden></p>
+                        </div>
+
+                        <div class="danger-actions">
+                            <button type="button" class="danger-submit" id="delete-account-send">Təsdiq keçidi göndər</button>
+                            <button type="button" class="danger-ghost" id="delete-account-cancel">Ləğv et</button>
+                        </div>
+
+                        <p class="danger-sent" id="delete-account-sent" role="status" tabindex="-1" hidden></p>
+
+                    </div>
+
+                </article>
 
             </div>
 
@@ -534,6 +564,7 @@
 
     <script src="assets/js/travel-documents.js?v=mc1"></script>
     <script src="assets/js/profile.js?v=rs1"></script>
+    <script src="assets/js/account-delete.js?v=ad2"></script>
 
     <script src="assets/js/logo.js?v=rs1"></script>
 
