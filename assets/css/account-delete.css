@@ -1,0 +1,153 @@
+/* The "delete my account" card on the profile page: a quiet danger zone that uses the theme colours (light and dark). */
+
+.danger-zone {
+    --dz-red: #d9786a;
+    --dz-text: var(--color-text, #f6f1e7);
+    --dz-muted: var(--color-muted, rgba(246, 241, 231, 0.72));
+    --dz-border: var(--color-border, rgba(246, 241, 231, 0.14));
+    margin-top: 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--dz-red) 45%, transparent);
+}
+
+html[data-theme="light"] .danger-zone {
+    --dz-red: #a8392b;
+}
+
+.danger-zone[hidden] {
+    display: none;
+}
+
+.danger-zone .details-card-title {
+    color: var(--dz-red);
+}
+
+.danger-text,
+.danger-steps {
+    margin: 0 0 1rem;
+    color: var(--dz-muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.danger-button,
+.danger-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.65rem 1.2rem;
+    border: 1px solid var(--dz-red);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--dz-red);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.danger-button:hover,
+.danger-submit:hover:not(:disabled) {
+    background: var(--dz-red);
+    color: #fff;
+}
+
+.danger-submit:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+.danger-ghost {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    color: var(--dz-muted);
+    font-size: 0.8rem;
+}
+
+.danger-button:focus-visible,
+.danger-submit:focus-visible,
+.danger-ghost:focus-visible,
+.danger-sent:focus-visible {
+    outline: 3px solid var(--color-accent-strong, #e0c48a);
+    outline-offset: 3px;
+}
+
+.danger-panel {
+    display: grid;
+    gap: 0.9rem;
+    max-width: 30rem;
+}
+
+.danger-panel[hidden] {
+    display: none;
+}
+
+.danger-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.danger-error {
+    margin: 0.4rem 0 0;
+    color: var(--dz-red);
+    font-size: 0.86rem;
+}
+
+.danger-error[hidden],
+.danger-sent[hidden] {
+    display: none;
+}
+
+.danger-error::before {
+    content: "! ";
+    font-weight: 700;
+}
+
+.danger-sent {
+    margin: 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--dz-border);
+    border-left: 4px solid var(--color-accent, #c6a36a);
+    border-radius: 10px;
+    color: var(--dz-text);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* The confirmation page (opened from the e-mail) */
+.auth-submit--danger {
+    background: #b5473a;
+    color: #fff;
+}
+
+.auth-submit--danger:hover {
+    filter: brightness(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .danger-button,
+    .danger-submit {
+        transition: none;
+    }
+}
+
+.danger-list {
+    margin: 0 0 1.25rem;
+    padding: 0 0 0 1.2rem;
+    text-align: left;
+    color: var(--color-muted, rgba(246, 241, 231, 0.78));
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.danger-list[hidden] {
+    display: none;
+}
+
+.danger-list li + li {
+    margin-top: 0.4rem;
+}

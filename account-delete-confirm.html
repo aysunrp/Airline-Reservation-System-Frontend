@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="assets/js/theme.js?v=th1"></script>
+    <title>AEROVA | Hesabın silinməsini təsdiqləyin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/auth.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/scrollbars.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/logo.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/chat-widget.css?v=rs1">
+    <link rel="stylesheet" href="assets/css/theme.css?v=num4">
+    <link rel="stylesheet" href="assets/css/account-delete.css?v=ad1">
+</head>
+
+<body class="auth-body">
+    <header class="auth-header">
+        <div class="auth-logo">
+            <span class="auth-logo-text">Aerova</span>
+        </div>
+        <a class="auth-header-link" href="index.html" data-i18n="auth.backHome">Ana səhifəyə qayıt</a>
+    </header>
+
+    <main class="auth-main">
+        <section class="auth-card auth-card--status" aria-labelledby="delete-title">
+            <div class="auth-status" id="delete-status" data-state="loading" aria-live="polite">
+                <div class="auth-status-icon" aria-hidden="true">
+                    <span class="auth-spinner auth-status-glyph auth-status-glyph--loading"></span>
+                    <svg class="auth-status-glyph auth-status-glyph--mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg>
+                    <svg class="auth-status-glyph auth-status-glyph--success" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    <svg class="auth-status-glyph auth-status-glyph--error" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
+                </div>
+
+                <p class="auth-eyebrow">Hesab</p>
+                <h1 class="auth-title" id="delete-title">Keçid yoxlanılır</h1>
+                <p class="auth-status-text" id="delete-message">Bir az gözləyin...</p>
+
+                <ul class="danger-list" id="delete-list" hidden>
+                    <li>Profil məlumatlarınız, saxlanmış sərnişinlər, bildirişlər və dəstək müraciətləriniz silinəcək.</li>
+                    <li>Bronlarınız və ödənişləriniz qanunla tələb olunan uçot üçün saxlanılır; bron nömrəsi ilə idarə edə bilərsiniz.</li>
+                    <li>Bu əməliyyat geri qaytarıla bilməz.</li>
+                </ul>
+
+                <div class="auth-actions" id="delete-actions">
+                    <button type="button" class="auth-submit auth-submit--danger" id="delete-confirm-button" hidden>Bəli, hesabımı həmişəlik sil</button>
+                    <a class="auth-link-button" id="delete-keep" href="profile.html" hidden>Xeyr, hesabım qalsın</a>
+                    <a class="auth-submit" id="delete-home" href="index.html" hidden>Ana səhifəyə keç</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/js/locales/az.js?v=ai5"></script>
+    <script src="assets/js/i18n.js?v=rs1"></script>
+    <script src="assets/js/api-config.js?v=rs1"></script>
+    <script src="assets/js/api-client.js?v=perf2"></script>
+    <script src="assets/js/chat-widget.js?v=rs1"></script>
+    <script src="assets/js/auth.js?v=fast2"></script>
+    <script src="assets/js/account-delete-confirm.js?v=ad1"></script>
+    <script src="assets/js/logo.js?v=rs1"></script>
+</body>
+</html>
