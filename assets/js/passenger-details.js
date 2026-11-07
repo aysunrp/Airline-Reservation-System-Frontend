@@ -984,6 +984,59 @@
         }
     }
 
+    /*
+     * Coming back to this page (the back button from baggage, meals or payment, or a refresh) must not empty the form. The passengers that were
+     * saved when "Davam et" was pressed are put back, but only when they belong to this very booking (same flight and the same seat ids), and
+     * only into fields that are still empty, so nothing the traveller has typed since is overwritten. It runs twice: once when the cards are
+     * drawn, and once more after the airport countries arrive, which can rebuild the document choices.
+     */
+    function restorePassengersFromBookingData() {
+        var stored = null;
+        try {
+            stored = JSON.parse(sessionStorage.getItem("bookingData") || "null");
+        } catch (error) {
+            return;
+        }
+
+        if (!stored || !Array.isArray(stored.passengers) || !stored.passengers.length || !activeFlightData) {
+            return;
+        }
+
+        var sameFlight = stored.flight && Number(stored.flight.id) === Number(activeFlightData.id);
+        var sameSeats = JSON.stringify((stored.selectedSeatIds || []).map(Number)) === JSON.stringify((activeSelectedSeatIds || []).map(Number));
+        if (!sameFlight || !sameSeats) {
+            return;
+        }
+
+        stored.passengers.forEach(function (passenger, index) {
+            var prefix = "passenger-" + (index + 1) + "-";
+            if (!document.getElementById(prefix + "first-name")) {
+                return;
+            }
+
+            var documentInfo = passenger.document || {};
+            fillIfEmpty(prefix + "first-name", passenger.firstName);
+            fillIfEmpty(prefix + "middle-name", passenger.middleName);
+            fillIfEmpty(prefix + "last-name", passenger.lastName);
+            fillIfEmpty(prefix + "dob", passenger.dateOfBirth);
+            fillIfEmpty(prefix + "gender", passenger.gender);
+            // The nationality decides which documents are offered, so it goes before the document.
+            fillIfEmpty(prefix + "nationality", passenger.nationalityCode);
+            // The document type has a default, so it is not "empty": it is put back while the number is still empty.
+            var typeField = document.getElementById(prefix + "document-type");
+            var numberField = document.getElementById(prefix + "document-number");
+            if (typeField && numberField && !numberField.value && documentInfo.type && typeField.value !== documentInfo.type &&
+                Array.prototype.some.call(typeField.options, function (option) { return option.value === documentInfo.type; })) {
+                setCardField(prefix + "document-type", documentInfo.type);
+            }
+            fillIfEmpty(prefix + "document-number", documentInfo.number);
+            fillIfEmpty(prefix + "issuing-country", documentInfo.issuingCountry);
+            fillIfEmpty(prefix + "document-expiry", documentInfo.expiryDate);
+        });
+
+        refreshDuplicateDocumentErrors();
+    }
+
     function setupContactEmailSuggestion(preferredEmail) {
         var email = String(preferredEmail || accountContactEmail() || "").trim();
         if (!email) {
@@ -1581,6 +1634,7 @@
             DOCS.setAirports(airports);
             document.querySelectorAll("#passenger-cards .passenger-card").forEach(updateDocumentFields);
             updateRouteNotice();
+            restorePassengersFromBookingData();
         }).catch(function () { /* the built-in country list stays in use; the server checks the documents anyway */ });
     }
 
@@ -1684,6 +1738,7 @@
         renderPassengerCards(cardSeats);
         loadAirportCountries();
         bindInfantRule();
+        restorePassengersFromBookingData();
         loadSavedPassengers();
         restoreContactFromBookingData();
         loadProfileDetails();
