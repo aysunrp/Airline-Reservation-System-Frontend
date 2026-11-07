@@ -101,35 +101,6 @@
         }).join("");
     }
 
-    function renderSights(city) {
-        var section = byId("destination-sights");
-        var list = byId("destination-sights-list");
-        if (!section || !list || !window.AEROVA_CITY_SIGHTS) {
-            if (section) section.hidden = true;
-            return;
-        }
-        var slug = catalog.citySlug(city && city.name);
-        var sights = window.AEROVA_CITY_SIGHTS[slug];
-        if (!sights || !sights.length) {
-            section.hidden = true;
-            list.innerHTML = "";
-            return;
-        }
-        section.hidden = false;
-        list.innerHTML = sights.map(function (sight) {
-            var meta = sight.photo && sight.photo.url
-                ? '<p class="dd-sight-meta"><a href="' + esc(sight.photo.url) + '" target="_blank" rel="noopener noreferrer">' +
-                    esc(tr("destinations.sightPhotoCredit", "Foto: Wikimedia Commons")) + "</a></p>"
-                : "";
-            var source = sight.source && sight.source.url
-                ? '<p class="dd-sight-meta"><a href="' + esc(sight.source.url) + '" target="_blank" rel="noopener noreferrer">' + esc(sight.source.title || "") + "</a></p>"
-                : "";
-            return '<li class="dd-sight"><figure class="dd-sight-figure"><img src="' + esc(sight.image) + '" alt="' + esc(sight.name) + '" loading="lazy" decoding="async"></figure>' +
-                '<div class="dd-sight-body"><h3 class="dd-sight-title">' + esc(sight.name) + "</h3>" +
-                '<p class="dd-sight-text">' + esc(sight.text) + "</p>" + source + meta + "</div></li>";
-        }).join("");
-    }
-
     function renderOthers() {
         var section = byId("destination-others");
         var page = state.page;
@@ -217,7 +188,6 @@
 
         renderAirports(hubName);
         if (byId("destination-flights")) renderFlights();
-        renderSights(city);
         renderOthers();
 
         byId("destination-status").hidden = true;
@@ -247,10 +217,6 @@
         if (!state || !event.target || event.target.id !== "destination-airport-select") return;
         state.chosen = event.target.value;
         renderAsideBooking(state.page.city, catalog.bookableAirport(state.page.city));
-    });
-
-    document.addEventListener("aerova:sight-media-ready", function () {
-        if (state && state.page && state.page.city) renderSights(state.page.city);
     });
 
 
