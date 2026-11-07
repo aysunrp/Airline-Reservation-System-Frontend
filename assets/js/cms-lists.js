@@ -134,6 +134,13 @@
         "about.business": '.brand-class__media img[src*="exp-business"]'
     };
 
+    /* Pictures that are the background of a section: the selector of the section and the layer put over the picture (if the design has one). */
+    var SLOT_BACKGROUNDS = {
+        "about.banner": { selector: ".brand-hero__media", overlay: "" },
+        "about.journey": { selector: ".brand-journey", overlay: "linear-gradient(180deg, rgba(7, 13, 23, 0.86) 0%, rgba(7, 13, 23, 0.92) 100%), " },
+        "about.final": { selector: ".brand-final__media", overlay: "" }
+    };
+
     function applyImageSlots(settings) {
         var logo = imageSrc(settings["image.logo"] ? "/media/" + String(settings["image.logo"]).replace(/^\/+/, "") : "");
         if (logo) {
@@ -150,6 +157,14 @@
                 box.insertBefore(image, text);
             });
         }
+        Object.keys(SLOT_BACKGROUNDS).forEach(function (slot) {
+            var path = settings["image." + slot];
+            var target = document.querySelector(SLOT_BACKGROUNDS[slot].selector);
+            var url = path ? imageSrc("/media/" + String(path).replace(/^\/+/, "")) : "";
+            if (url && target && /^[\w:\/.%\-]+$/.test(url)) {
+                target.style.background = SLOT_BACKGROUNDS[slot].overlay + 'url("' + url + '") center / cover no-repeat';
+            }
+        });
         Object.keys(SLOT_TARGETS).forEach(function (slot) {
             var path = settings["image." + slot];
             var target = document.querySelector(SLOT_TARGETS[slot]);

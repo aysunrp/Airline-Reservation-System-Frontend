@@ -10,6 +10,9 @@
     }
 
     var STATIC_HERO_IMAGE = "assets/images/hero-jet-dusk-hd.webp";
+    /* The video that ships with the website: shown when the API is not running or has no hero video, so the page opens with a video on its own. */
+    var LOCAL_HERO = { videoUrl: "assets/video/aerova-hero-night-flight-hd.mp4", posterUrl: "assets/video/aerova-hero-night-flight-poster.jpg" };
+    var triedLocalVideo = false;
     background.classList.add("awaiting-hero-video");
     var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var narrow = window.matchMedia("(max-width: 768px)");
@@ -18,7 +21,7 @@
         if (!path) {
             return "";
         }
-        if (/^https?:\/\//i.test(path)) {
+        if (/^https?:\/\//i.test(path) || String(path).indexOf("assets/") === 0) {
             return path;
         }
         return api.url(String(path).replace(/^\/+/, ""));
@@ -53,6 +56,11 @@
     }
 
     function useFallbackOnly() {
+        if (!triedLocalVideo) {
+            triedLocalVideo = true;
+            applyPayload(LOCAL_HERO);
+            return;
+        }
         background.classList.remove("has-hero-video", "is-video-ready", "awaiting-hero-video", "is-reduced-motion");
         video.hidden = true;
         video.removeAttribute("poster");

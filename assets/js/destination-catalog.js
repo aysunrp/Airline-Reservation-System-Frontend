@@ -112,7 +112,7 @@
     function mediaPublicUrl(relativePath) {
         if (!relativePath || !api) return null;
         var path = String(relativePath).trim().replace(/\\/g, "/");
-        if (path.indexOf("destinations/") === 0 || path.indexOf("sights/") === 0) {
+        if (path.indexOf("destinations/") === 0) {
             return api.url("/media/" + path);
         }
         if (path.indexOf("/media/") === 0) {
