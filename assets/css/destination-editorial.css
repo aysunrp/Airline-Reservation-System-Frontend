@@ -258,80 +258,22 @@ html[data-theme] body.destination-details-body .site-header .logo-text {
     color: var(--dd-cream);
 }
 
-/* ---- 5. sights of the city: a photo and a short text for each, with the sources under it ---- */
 
-.destination-details-body .dd-sights-section {
-    margin-bottom: 2.25rem;
-}
 
-.destination-details-body .dd-sights-list {
-    display: grid;
-    gap: 1.25rem;
-}
 
-.destination-details-body .dd-sight {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
-    gap: 1.5rem;
-    align-items: center;
-    padding: 1.25rem;
-    border: 1px solid var(--dd-line);
-    border-radius: 18px;
-    background: var(--dd-panel);
-}
 
-.destination-details-body .dd-sight-figure {
-    margin: 0;
-    aspect-ratio: 4 / 3;
-    border-radius: 14px;
-    overflow: hidden;
-    background: var(--dd-navy-2);
-}
 
-.destination-details-body .dd-sight-figure img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
-.destination-details-body .dd-sight-title {
-    margin: 0 0 0.6rem;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 1.45rem;
-    font-weight: 500;
-    color: var(--dd-cream);
-}
 
-.destination-details-body .dd-sight-text {
-    margin: 0 0 0.8rem;
-    line-height: 1.65;
-    color: var(--dd-cream);
-    opacity: 0.9;
-}
 
-.destination-details-body .dd-sight-meta {
-    margin: 0.25rem 0 0;
-    font-size: 0.8rem;
-    line-height: 1.5;
-    color: var(--dd-muted);
-}
 
-.destination-details-body .dd-sight-meta a {
-    color: var(--dd-gold-soft);
-}
 
 @media (max-width: 760px) {
-    .destination-details-body .dd-sight {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 1rem;
-    }
 }
 
 /* ---- Detail page, tidy pass: a clear order of sections, one grid, calm lists ---- */
 
-/* Information and airports sit side by side; the sights take the full width below them. */
+/* Information and airports sit side by side. */
 .destination-details-body .destination-details-main-col {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -345,59 +287,14 @@ html[data-theme] body.destination-details-body .site-header .logo-text {
     height: 100%;
 }
 
-.destination-details-body .dd-sights-section {
-    grid-column: 1 / -1;
-    margin-bottom: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    box-shadow: none;
-}
 
-.destination-details-body .dd-sights-section .dd-section-title {
-    margin-bottom: 1.25rem;
-}
 
-/* Sights: a tidy grid of cards, the photograph on top, the text below at a readable size. */
-.destination-details-body .dd-sights-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.25rem;
-}
 
-.destination-details-body .dd-sight {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid var(--dd-line);
-    border-radius: 18px;
-    background: var(--dd-panel);
-}
 
-.destination-details-body .dd-sight-figure {
-    border-radius: 0;
-    aspect-ratio: 4 / 3;
-}
 
-.destination-details-body .dd-sight-body {
-    padding: 1.1rem 1.2rem 1.25rem;
-}
 
-.destination-details-body .dd-sight-title {
-    font-size: 1.35rem;
-    margin-bottom: 0.45rem;
-}
 
-.destination-details-body .dd-sight-text {
-    font-size: 0.92rem;
-    line-height: 1.6;
-    margin-bottom: 0.7rem;
-}
 
-.destination-details-body .dd-sight-meta {
-    font-size: 0.78rem;
-}
 
 /* Travel card: the booking summary on the left, the flights on the right, flights as calm rows. */
 .destination-details-body .dd-travel-card {
@@ -453,9 +350,6 @@ html[data-theme] body.destination-details-body .site-header .logo-text {
 }
 
 @media (max-width: 560px) {
-    .destination-details-body .dd-sights-list {
-        grid-template-columns: 1fr;
-    }
 
     .destination-details-body .dd-flight {
         grid-template-columns: 1fr auto;
@@ -684,4 +578,49 @@ html[data-theme] body.destination-details-body .dd-others .dd-section-title {
 /* The city photograph is a little smaller; the text column takes the extra room. */
 .destination-details-body .dd-editorial-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+}
+
+/*
+ * A city with no other city of its country (Male) has nothing to put beside the airports, so the airports take the whole row and their cards
+ * lie side by side in it, instead of one narrow column with an empty space to the right.
+ */
+.destination-details-body .dd-airports-section:only-child,
+.destination-details-body .dd-airports-section:has(+ .dd-others[hidden]) {
+    grid-column: 1 / -1;
+}
+
+.destination-details-body .dd-airports-section:only-child .dd-airport-list,
+.destination-details-body .dd-airports-section:has(+ .dd-others[hidden]) .dd-airport-list {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: 1rem;
+}
+
+/* One airport on a full row: the card is as long as the row, the details on the left and the booking button on the right. */
+.destination-details-body .dd-airports-section:only-child .dd-airport-list:has(> .dd-airport-card:only-child),
+.destination-details-body .dd-airports-section:has(+ .dd-others[hidden]) .dd-airport-list:has(> .dd-airport-card:only-child) {
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+    .destination-details-body .dd-airports-section:only-child .dd-airport-card:only-child,
+    .destination-details-body .dd-airports-section:has(+ .dd-others[hidden]) .dd-airport-card:only-child {
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: 2rem;
+        align-items: center;
+        padding: 1.4rem 1.6rem;
+    }
+
+    .destination-details-body .dd-airports-section:only-child .dd-airport-card:only-child > *,
+    .destination-details-body .dd-airports-section:has(+ .dd-others[hidden]) .dd-airport-card:only-child > * {
+        grid-column: 1;
+    }
+
+    .destination-details-body .dd-airports-section:only-child .dd-airport-card:only-child > .dd-city-book,
+    .destination-details-body .dd-airports-section:has(+ .dd-others[hidden]) .dd-airport-card:only-child > .dd-city-book {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        align-self: center;
+        padding-inline: 2.2rem;
+        min-height: 46px;
+    }
 }
