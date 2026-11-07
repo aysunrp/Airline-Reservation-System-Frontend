@@ -1,0 +1,109 @@
+/* AEROVA admin: design tokens. Colours, spacing (8px grid), type scale, radii and shadows live here only. */
+:root {
+    --font-ui: "Outfit", "Segoe UI", system-ui, sans-serif;
+    --font-title: "Cormorant Garamond", "Palatino Linotype", Georgia, serif;
+
+    --fs-xs: 0.75rem;
+    --fs-sm: 0.8125rem;
+    --fs-md: 0.9375rem;
+    --fs-lg: 1.125rem;
+    --fs-xl: 1.5rem;
+    --fs-2xl: 2rem;
+
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 24px;
+    --s-6: 32px;
+    --s-7: 48px;
+
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --r-pill: 999px;
+
+    --sidebar-w: 264px;
+    --topbar-h: 64px;
+    --content-w: 1240px;
+    --drawer-w: 520px;
+
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --dur: 160ms;
+
+    --z-sidebar: 30;
+    --z-topbar: 20;
+    --z-drawer: 60;
+    --z-modal: 80;
+    --z-toast: 100;
+}
+
+/* Light is the default. */
+:root,
+:root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #f6f3ec;
+    --surface: #ffffff;
+    --surface-2: #faf7f1;
+    --surface-3: #f0ebe0;
+    --border: rgba(60, 45, 20, 0.13);
+    --border-strong: rgba(60, 45, 20, 0.26);
+    --text: #1f1a12;
+    --text-2: #5d5546;
+    --text-3: #8a8171;
+    --accent: #b8914f;
+    --accent-strong: #7a5c24;
+    --accent-soft: rgba(184, 145, 79, 0.14);
+    --primary: #101c2e;
+    --on-primary: #f7f2e8;
+    --primary-hover: #1b2c46;
+    --danger: #b3382e;
+    --danger-soft: rgba(179, 56, 46, 0.1);
+    --success: #23704a;
+    --success-soft: rgba(35, 112, 74, 0.12);
+    --warning: #946212;
+    --warning-soft: rgba(184, 120, 20, 0.14);
+    --info: #25557f;
+    --info-soft: rgba(37, 85, 127, 0.11);
+    --shadow-sm: 0 1px 2px rgba(40, 28, 8, 0.06);
+    --shadow-md: 0 6px 20px rgba(40, 28, 8, 0.09);
+    --shadow-lg: 0 18px 48px rgba(40, 28, 8, 0.18);
+    --scrim: rgba(20, 14, 4, 0.45);
+    --focus: 0 0 0 3px rgba(184, 145, 79, 0.45);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #09131f;
+    --surface: #0f1d2f;
+    --surface-2: #132338;
+    --surface-3: #1a2d46;
+    --border: rgba(246, 241, 231, 0.11);
+    --border-strong: rgba(246, 241, 231, 0.24);
+    --text: #f4eee2;
+    --text-2: #c5bdac;
+    --text-3: #93897a;
+    --accent: #d2ad6c;
+    --accent-strong: #e6c88f;
+    --accent-soft: rgba(210, 173, 108, 0.16);
+    --primary: #d2ad6c;
+    --on-primary: #0a1523;
+    --primary-hover: #e2c07e;
+    --danger: #ee7b6f;
+    --danger-soft: rgba(238, 123, 111, 0.14);
+    --success: #6fcf9b;
+    --success-soft: rgba(111, 207, 155, 0.14);
+    --warning: #ecc267;
+    --warning-soft: rgba(236, 194, 103, 0.14);
+    --info: #86b7e6;
+    --info-soft: rgba(134, 183, 230, 0.14);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 6px 22px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 20px 56px rgba(0, 0, 0, 0.55);
+    --scrim: rgba(2, 7, 14, 0.62);
+    --focus: 0 0 0 3px rgba(210, 173, 108, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root { --dur: 0ms; }
+}
