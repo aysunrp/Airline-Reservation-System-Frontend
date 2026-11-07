@@ -984,8 +984,16 @@
         });
     }
 
+    var slowTimer = null;
+    var SLOW_LOADING_MS = 6000;
+
     /* Replaces the page content with one message (loading, an error or no booking); a null spec brings the content back. */
     function setPageStatus(spec) {
+        if (slowTimer) {
+            window.clearTimeout(slowTimer);
+            slowTimer = null;
+        }
+
         var container = document.querySelector(".booking-details-page .page-container");
         var intro = document.querySelector(".details-intro");
         if (!container) {
@@ -1039,6 +1047,30 @@
         var retry = panel.querySelector("[data-status-action]");
         if (retry && spec.onAction) {
             retry.addEventListener("click", spec.onAction);
+        }
+
+        // A server that is slow to answer (the first request after it starts can take many seconds) is explained, with a way to try again,
+        // instead of leaving the same "loading" message on the screen.
+        if (spec.kind === "loading" && spec.slowRetry) {
+            slowTimer = window.setTimeout(function () {
+                slowTimer = null;
+                var text = panel.querySelector(".details-empty-text");
+                if (!text || panel.hidden || panel.getAttribute("role") !== "status") {
+                    return;
+                }
+                text.textContent = tr("api.bookingDetails.slowText", "Server cavabı gecikir. Bir az da gözləyin; çox çəkərsə yenidən cəhd edin.");
+                if (!panel.querySelector(".booking-actions-row")) {
+                    var row = document.createElement("div");
+                    row.className = "booking-actions-row";
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "booking-action-button booking-action-button--primary";
+                    button.textContent = tr("api.options.retry", "Yenidən cəhd et");
+                    button.addEventListener("click", spec.slowRetry);
+                    row.appendChild(button);
+                    panel.appendChild(row);
+                }
+            }, SLOW_LOADING_MS);
         }
     }
 
@@ -1144,7 +1176,7 @@
             return;
         }
 
-        setPageStatus({ kind: "loading", title: tr("api.bookingDetails.loadingTitle", "Rezervasiyanız yüklənir"), text: tr("api.bookingDetails.loadingText", "Zəhmət olmasa bir az gözləyin."), actions: [] });
+        setPageStatus({ kind: "loading", title: tr("api.bookingDetails.loadingTitle", "Rezervasiyanız yüklənir"), text: tr("api.bookingDetails.loadingText", "Zəhmət olmasa bir az gözləyin."), actions: [], slowRetry: loadBooking });
 
         Promise.all([loadAirportsForDetails(), Promise.resolve(request)]).then(function (results) {
             var dto = results[1];
