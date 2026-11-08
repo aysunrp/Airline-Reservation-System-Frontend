@@ -187,10 +187,18 @@
         }
         // With both airports chosen and no flight between them (not even through one transfer), the line says so instead of the airport's name.
         meta.innerHTML = input._connectionOnly
-            ? '<span class="airport-meta-note">' + escapeHtml(tr("picker.connectionOnly", "Birbaşa reys yoxdur, yalnız transferlə mümkündür.")) + "</span>"
+            ? '<span class="airport-meta-note">' + escapeHtml(connectionNote(input._connectionOnly)) + "</span>"
             : input._noRoute
             ? '<span class="airport-meta-note">' + escapeHtml(tr("picker.noRouteShort", "Bu iki istiqamət arasında reys yoxdur.")) + "</span>"
             : escapeHtml(chosen.airport.name);
+    }
+
+    /* "Birbaşa reys yoxdur. Transfer: İstanbul (IST)" - the transfer airports come from route-check. */
+    function connectionNote(via) {
+        var names = (Array.isArray(via) ? via : []).slice(0, 2).map(function (code) { var a = byCode(code); return a ? cityName(a) + " (" + a.code + ")" : code; });
+        return names.length
+            ? tr("picker.connectionVia", "Birbaşa reys yoxdur. Transfer: {via}.", { via: names.join(", ") })
+            : tr("picker.connectionOnly", "Birbaşa reys yoxdur, yaxın günlərdə uyğun transfer də tapılmadı.");
     }
 
     /* After a choice: when both fields hold an airport, ask whether a flight joins them and mark the destination field if none does. */
@@ -204,7 +212,7 @@
         var to = selection(toInput);
         var token = ++routeChecks;
         function apply(missing, viaTransfer) {
-            toInput._connectionOnly = !!viaTransfer;
+            toInput._connectionOnly = viaTransfer || false;
             toInput._noRoute = missing;
             toInput.classList.toggle("is-invalid", missing);
             if (missing) toInput.setAttribute("aria-invalid", "true"); else toInput.removeAttribute("aria-invalid");
@@ -212,7 +220,7 @@
         }
         if (!from || !to || from.airport.code === to.airport.code) { apply(false); return; }
         checkRouteInfo(from.airport.code, to.airport.code).then(function (info) {
-            if (token === routeChecks) apply(!!info && info.exists === false, !!info && info.exists === true && info.direct === false);
+            if (token === routeChecks) apply(!!info && info.exists === false, info && info.exists === true && info.direct === false ? info.via : false);
         });
     }
 
@@ -514,7 +522,7 @@
     function checkRouteInfo(fromCode, toCode) {
         if (!api) return Promise.resolve(null);
         return api.get("api/airports/route-check?origin=" + encodeURIComponent(fromCode) + "&destination=" + encodeURIComponent(toCode)).then(function (result) {
-            return result ? { exists: !!result.exists, direct: typeof result.direct === "boolean" ? result.direct : null } : null;
+            return result ? { exists: !!result.exists, direct: typeof result.direct === "boolean" ? result.direct : null, via: Array.isArray(result.via) ? result.via : [] } : null;
         }, function () { return null; });
     }
 
