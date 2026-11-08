@@ -127,7 +127,7 @@
     e.launcher.setAttribute("aria-label", tr("open", "Səyahət köməkçisini açın"));
     e.eyebrow.textContent = tr("eyebrow", "AEROVA Konsyerj");
     e.title.textContent = tr("title", "Səyahət köməkçisi");
-    e.subtitle.textContent = tr("subtitle", "Səyahət suallarınıza süni intellekt cavabları");
+    e.subtitle.textContent = tr("subtitle", "AEROVA ilə bağlı suallarınıza süni intellekt cavabları");
     e.clear.textContent = tr("clear", "Təmizlə");
     e.clear.setAttribute("aria-label", tr("clearLabel", "Söhbəti təmizləyin"));
     e.close.setAttribute("aria-label", tr("close", "Səyahət köməkçisini bağlayın"));
