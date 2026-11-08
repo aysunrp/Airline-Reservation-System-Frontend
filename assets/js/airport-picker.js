@@ -167,6 +167,7 @@
         input.classList.remove("is-invalid");
         showMeta(input);
         input.dispatchEvent(new CustomEvent("aerova:airportchange", { bubbles: true, detail: { airport: airport } }));
+        refreshRoute(input);
     }
 
     /* A small line under the input: the airport's name and, when it has no route yet, a note. The IATA code is already in the text. */
@@ -184,7 +185,32 @@
             meta.className = "airport-meta";
             control.appendChild(meta);
         }
-        meta.innerHTML = escapeHtml(chosen.airport.name);
+        // With both airports chosen and no flight between them (not even through one transfer), the line says so instead of the airport's name.
+        meta.innerHTML = input._noRoute
+            ? '<span class="airport-meta-note">' + escapeHtml(tr("picker.noRouteShort", "Bu iki istiqamət arasında reys yoxdur.")) + "</span>"
+            : escapeHtml(chosen.airport.name);
+    }
+
+    /* After a choice: when both fields hold an airport, ask whether a flight joins them and mark the destination field if none does. */
+    var routeChecks = 0;
+    function refreshRoute(input) {
+        var other = otherInput(input);
+        if (!other) return;
+        var toInput = input.classList.contains("to-input") ? input : other;
+        var fromInput = toInput === input ? other : input;
+        var from = selection(fromInput);
+        var to = selection(toInput);
+        var token = ++routeChecks;
+        function apply(missing) {
+            toInput._noRoute = missing;
+            toInput.classList.toggle("is-invalid", missing);
+            if (missing) toInput.setAttribute("aria-invalid", "true"); else toInput.removeAttribute("aria-invalid");
+            showMeta(toInput);
+        }
+        if (!from || !to || from.airport.code === to.airport.code) { apply(false); return; }
+        checkRoute(from.airport.code, to.airport.code).then(function (exists) {
+            if (token === routeChecks) apply(exists === false);
+        });
     }
 
     function set(input, value) {
@@ -423,6 +449,8 @@
             input._airport = null;
             input._display = "";
             input._typed = input.value;
+            var pairTo = input.classList.contains("to-input") ? input : otherInput(input);
+            if (pairTo) { pairTo._noRoute = false; pairTo.classList.remove("is-invalid"); pairTo.removeAttribute("aria-invalid"); }
             var meta = input.closest(".field-control");
             meta = meta ? meta.querySelector(".airport-meta") : null;
             if (meta) meta.remove();
