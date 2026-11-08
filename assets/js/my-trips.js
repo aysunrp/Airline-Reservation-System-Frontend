@@ -154,6 +154,7 @@
                 "</div>" +
                 '<dl class="trip-card-meta">' +
                     meta(tr("trips.bookingReference", "Bron istinadı"), booking.pnr) +
+                    meta(tr("trips.bookedOn", "Bron tarixi"), formatBookedOn(booking.createdAt)) +
                     meta(tr("trips.flightDate", "Uçuş tarixi"), formatDisplayDate(card.date)) +
                     meta(tr("trips.departure", "Gediş"), card.departure) +
                     meta(tr("trips.arrival", "Gəliş"), card.arrival) +
@@ -233,6 +234,14 @@
         if (tabs) {
             tabs.hidden = true;
         }
+    }
+
+    /* When the booking was made, in the traveller's own time: "08.11.2026, 19:42". */
+    function formatBookedOn(value) {
+        var time = value ? window.AEROVA_BOOKING.parseUtc(value) : null;
+        if (!time || isNaN(time.getTime())) return "—";
+        function two(n) { return String(n).padStart(2, "0"); }
+        return two(time.getDate()) + "." + two(time.getMonth() + 1) + "." + time.getFullYear() + ", " + two(time.getHours()) + ":" + two(time.getMinutes());
     }
 
     function bookedAt(card) {
