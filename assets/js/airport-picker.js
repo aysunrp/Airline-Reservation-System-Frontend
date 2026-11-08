@@ -186,7 +186,9 @@
             control.appendChild(meta);
         }
         // With both airports chosen and no flight between them (not even through one transfer), the line says so instead of the airport's name.
-        meta.innerHTML = input._noRoute
+        meta.innerHTML = input._connectionOnly
+            ? '<span class="airport-meta-note">' + escapeHtml(tr("picker.connectionOnly", "Birbaşa reys yoxdur, yalnız transferlə mümkündür.")) + "</span>"
+            : input._noRoute
             ? '<span class="airport-meta-note">' + escapeHtml(tr("picker.noRouteShort", "Bu iki istiqamət arasında reys yoxdur.")) + "</span>"
             : escapeHtml(chosen.airport.name);
     }
@@ -201,15 +203,16 @@
         var from = selection(fromInput);
         var to = selection(toInput);
         var token = ++routeChecks;
-        function apply(missing) {
+        function apply(missing, viaTransfer) {
+            toInput._connectionOnly = !!viaTransfer;
             toInput._noRoute = missing;
             toInput.classList.toggle("is-invalid", missing);
             if (missing) toInput.setAttribute("aria-invalid", "true"); else toInput.removeAttribute("aria-invalid");
             showMeta(toInput);
         }
         if (!from || !to || from.airport.code === to.airport.code) { apply(false); return; }
-        checkRoute(from.airport.code, to.airport.code).then(function (exists) {
-            if (token === routeChecks) apply(exists === false);
+        checkRouteInfo(from.airport.code, to.airport.code).then(function (info) {
+            if (token === routeChecks) apply(!!info && info.exists === false, !!info && info.exists === true && info.direct === false);
         });
     }
 
@@ -450,7 +453,7 @@
             input._display = "";
             input._typed = input.value;
             var pairTo = input.classList.contains("to-input") ? input : otherInput(input);
-            if (pairTo) { pairTo._noRoute = false; pairTo.classList.remove("is-invalid"); pairTo.removeAttribute("aria-invalid"); }
+            if (pairTo) { pairTo._noRoute = false; pairTo._connectionOnly = false; pairTo.classList.remove("is-invalid"); pairTo.removeAttribute("aria-invalid"); }
             var meta = input.closest(".field-control");
             meta = meta ? meta.querySelector(".airport-meta") : null;
             if (meta) meta.remove();
@@ -508,6 +511,13 @@
     }
 
     /* Whether an active route joins the two airports. null when it could not be checked (the search then goes on and the results say what is there). */
+    function checkRouteInfo(fromCode, toCode) {
+        if (!api) return Promise.resolve(null);
+        return api.get("api/airports/route-check?origin=" + encodeURIComponent(fromCode) + "&destination=" + encodeURIComponent(toCode)).then(function (result) {
+            return result ? { exists: !!result.exists, direct: typeof result.direct === "boolean" ? result.direct : null } : null;
+        }, function () { return null; });
+    }
+
     function checkRoute(fromCode, toCode) {
         if (!api) return Promise.resolve(null);
         return api.get("api/airports/route-check?origin=" + encodeURIComponent(fromCode) + "&destination=" + encodeURIComponent(toCode)).then(function (result) {
