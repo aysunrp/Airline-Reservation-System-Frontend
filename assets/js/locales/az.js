@@ -616,6 +616,8 @@ window.AEROVA_LOCALES.az = {
     "confirmRequired": "Şifrəni təsdiqləyin",
     "passwordMismatch": "Şifrələr uyğun gəlmir",
     "loginFailed": "E-poçt və ya şifrə yanlışdır",
+    "accountNotFound": "Bu e-poçt ünvanı ilə hesab tapılmadı. Hesab silinibsə və ya açılmayıbsa, qeydiyyatdan keçin.",
+    "wrongPassword": "Şifrə yanlışdır",
     "emailExists": "Bu e-poçt ilə hesab artıq mövcuddur",
     "registerSuccess": "Hesab yaradıldı. İndi daxil ola bilərsiniz.",
     "firstNamePh": "Ad",

@@ -837,6 +837,11 @@
                 if (error && error.code === "emailNotVerified") {
                     rememberPendingEmail(email);
                     window.location.href = "check-email.html?status=sent&reason=unverified";
+                } else if (error && error.code === "account_not_found") {
+                    // No account uses this address (never opened, or deleted): say so, and point to sign-up.
+                    setFieldError(emailInput, tr("auth.accountNotFound", "Bu e-poçt ünvanı ilə hesab tapılmadı. Hesab silinibsə və ya açılmayıbsa, qeydiyyatdan keçin."));
+                } else if (error && error.code === "wrong_password") {
+                    setFieldError(passwordInput, tr("auth.wrongPassword", "Şifrə yanlışdır"));
                 } else if (error && error.status === 401) {
                     setFieldError(emailInput, tr("auth.loginFailed", "E-poçt və ya şifrə yanlışdır"));
                     setFieldError(passwordInput, tr("auth.loginFailed", "E-poçt və ya şifrə yanlışdır"));
