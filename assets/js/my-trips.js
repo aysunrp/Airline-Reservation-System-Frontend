@@ -235,11 +235,17 @@
         }
     }
 
+    function bookedAt(card) {
+        var time = card.booking.createdAt ? window.AEROVA_BOOKING.parseUtc(card.booking.createdAt).getTime() : 0;
+        return isNaN(time) ? 0 : time;
+    }
+
     function render() {
         var now = Date.now();
         var cards = state.trips.filter(isTrip).map(toCard);
         var upcoming = cards.filter(function (card) { return card.departsAt >= now && card.booking.status !== "Completed"; })
-            .sort(function (a, b) { return a.departsAt - b.departsAt; });
+            // The newest booking first; bookings made at the same moment keep the earlier flight first.
+            .sort(function (a, b) { return bookedAt(b) - bookedAt(a) || a.departsAt - b.departsAt; });
         var past = cards.filter(function (card) { return upcoming.indexOf(card) === -1; })
             .sort(function (a, b) { return b.departsAt - a.departsAt; });
 
