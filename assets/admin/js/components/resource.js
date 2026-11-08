@@ -121,6 +121,15 @@ export function crudView(cfg) {
                     const input = h("input", { class: "input", type: "date", "aria-label": f.label, title: f.label });
                     input.addEventListener("change", () => change(input.value));
                     controls.push(input);
+                } else if (typeof f.options === "function") {
+                    // The choices are loaded (the airports): the select starts with "all" and fills when they arrive.
+                    const all = { value: "", label: f.allLabel || f.label };
+                    const select = filterSelect({ label: f.label, options: [all], onChange: change });
+                    Promise.resolve(f.options()).then((list) => {
+                        select.replaceChildren(...[all, ...list].map((o) => h("option", { value: String(o.value) }, o.label)));
+                        select.value = state.filters[i] || "";
+                    }).catch(() => { /* the search box still works */ });
+                    controls.push(select);
                 } else controls.push(filterSelect({ label: f.label, options: f.options, onChange: change }));
             });
 

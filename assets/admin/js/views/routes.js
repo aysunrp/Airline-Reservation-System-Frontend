@@ -13,7 +13,11 @@ export const { render } = crudView({
     prepare: () => store.airportOptions(),
     label: (r) => r.code,
     searchText: (r) => [r.code, r.originCity, r.destinationCity].join(" "),
-    filters: [{ label: "Status", options: yesNoAll(), test: (r, v) => r.isActive === (v === "Active") }],
+    filters: [
+        { label: "Mənşə", allLabel: "Bütün mənşələr", options: () => store.airportOptions(), test: (r, v) => r.originCode === v },
+        { label: "Təyinat", allLabel: "Bütün təyinatlar", options: () => store.airportOptions(), test: (r, v) => r.destinationCode === v },
+        { label: "Status", options: yesNoAll(), test: (r, v) => r.isActive === (v === "Active") }
+    ],
     columns: [
         { label: "Marşrut", render: (r) => cellMain(r.code, r.originCity + " → " + r.destinationCity) },
         { label: "Məsafə", num: true, render: (r) => r.distanceKm.toLocaleString("en-US") + " km" },
@@ -27,7 +31,7 @@ export const { render } = crudView({
         { key: "durationMinutes", label: "Müddət (dəqiqə)", type: "number", min: 1 },
         { key: "isActive", label: "Status", type: "switch", switchLabel: "Aktiv" }
     ],
-    defaults: () => ({ isActive: true, originCode: "GYD" }),
+    defaults: () => ({ isActive: true }),
     toForm: (r) => ({ originCode: r.originCode, destinationCode: r.destinationCode, distanceKm: r.distanceKm, durationMinutes: r.durationMinutes, isActive: r.isActive }),
     toRequest: (d) => ({ originCode: d.originCode, destinationCode: d.destinationCode, distanceKm: d.distanceKm, durationMinutes: d.durationMinutes, isActive: d.isActive }),
     afterChange: () => store.invalidate("routes")

@@ -24,6 +24,8 @@ export const { render } = crudView({
     label: (r) => r.flightNumber,
     searchText: (r) => [r.flightNumber, r.originCity, r.destinationCity].join(" "),
     filters: [
+        { label: "Mənşə", allLabel: "Bütün mənşələr", options: () => store.airportOptions(), test: (r, v) => String(r.routeCode || "").split("-")[0] === v },
+        { label: "Təyinat", allLabel: "Bütün təyinatlar", options: () => store.airportOptions(), test: (r, v) => String(r.routeCode || "").split("-")[1] === v },
         { label: "Status", options: yesNoAll(), test: (r, v) => r.isActive === (v === "Active") },
         { label: "Bu tarixdə qüvvədə olan", type: "date", test: (r, v) => r.validFrom <= v && (!r.validTo || r.validTo >= v) }
     ],
