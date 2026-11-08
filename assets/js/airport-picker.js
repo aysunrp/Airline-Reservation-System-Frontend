@@ -27,6 +27,8 @@
     var activeIndex = -1;
     var uid = 0;
     var MAX_RESULTS = 8;
+    var directOf = null;   // code -> codes joined by an active route (either direction); null until api/airports/network has been read
+    var outOf = null;      // code -> codes an active route leads to
 
     function tr(key, fallback, vars) {
         if (window.AEROVA_I18N && typeof window.AEROVA_I18N.t === "function") {
@@ -64,9 +66,35 @@
             airport.name, airport.code, airport.countryCode].concat(airport.aliases || []).join(" | "));
     }
 
+    /* The active routes: the other field offers only airports that can be flown between (directly or through one transfer, like route-check).
+       When they cannot be read the lists simply stay complete and the search says what is there. */
+    function loadNetwork() {
+        if (directOf || !api) return;
+        api.get("api/airports/network").then(function (pairs) {
+            if (!Array.isArray(pairs)) return;
+            var direct = {}, out = {};
+            pairs.forEach(function (pair) {
+                var a = String(pair.origin || "").toUpperCase(), b = String(pair.destination || "").toUpperCase();
+                if (!a || !b) return;
+                (direct[a] = direct[a] || {})[b] = true;
+                (direct[b] = direct[b] || {})[a] = true;
+                (out[a] = out[a] || {})[b] = true;
+            });
+            directOf = direct;
+            outOf = out;
+        }, function () { /* no filtering */ });
+    }
+
+    function joined(from, to) {
+        if (!directOf) return true;
+        if (directOf[from] && directOf[from][to]) return true;
+        return Object.keys(outOf[from] || {}).some(function (hub) { return hub !== to && outOf[hub] && outOf[hub][to] && hub !== from; });
+    }
+
     function load() {
         if (loaded) return Promise.resolve(airports);
         if (!directory) return Promise.reject(new Error("airports.js is missing."));
+        loadNetwork();
         return directory.load({ destinationsOnly: true }).then(function (list) {
             airports = (list || []).filter(function (airport) { return airport.isActive !== false; }).map(function (airport) {
                 airport._search = haystack(airport);
@@ -210,9 +238,13 @@
         return 5;
     }
 
-    function search(query, exclude) {
+    function search(query, exclude, asOrigin) {
         var typed = fold(query).trim();
         var pool = airports.filter(function (airport) { return !exclude || airport.code !== exclude.code; });
+        // With the other side chosen, only airports that can be flown to (or from) it are offered.
+        if (exclude && directOf) {
+            pool = pool.filter(function (airport) { return asOrigin ? joined(airport.code, exclude.code) : joined(exclude.code, airport.code); });
+        }
 
         if (!typed) {
             // Nothing typed yet: the airports that can be flown to, then the rest.
@@ -288,7 +320,7 @@
 
         var other = selection(otherInput(input));
         var query = input._typed != null ? input._typed : (selection(input) ? "" : input.value);
-        var found = loaded ? search(query, other && other.airport) : [];
+        var found = loaded ? search(query, other && other.airport, input.classList.contains("from-input")) : [];
         var html;
 
         if (!loaded) {
