@@ -161,6 +161,24 @@
         return "flight-results.html?" + params.toString();
     }
 
+    /*
+     * The booking page with the destination already chosen (and Baku as the departure). The traveller sets the dates and the number of
+     * passengers there and searches; nothing is searched until then, so the passenger count is never guessed.
+     */
+    function bookingUrl(city, airport) {
+        var target = airport || bookableAirport(city);
+        var here = new URLSearchParams(window.location.search);
+        var params = new URLSearchParams({
+            from: hub ? hub.city.name : "Baku",
+            fromCode: hub ? hub.airport.code : "GYD",
+            to: city.name,
+            toCode: target ? target.code : ""
+        });
+        if (!params.get("toCode")) params.delete("toCode");
+        if (here.get("cabinClass")) params.set("cabinClass", here.get("cabinClass"));
+        return "booking.html?" + params.toString();
+    }
+
     /* The city's own page. */
     function detailsUrl(city) {
         return "destination-details.html?city=" + encodeURIComponent(city.id);
@@ -194,7 +212,7 @@
         var book = "";
 
         if (options.booking) {
-            book = '<a class="destination-book destination-book--ghost" href="' + escapeHtml(resultsUrl(city, null, country)) + '">' + escapeHtml(tr("destinations.bookTicket", "Bilet bron et")) + "</a>";
+            book = '<a class="destination-book destination-book--ghost" href="' + escapeHtml(bookingUrl(city, null)) + '">' + escapeHtml(tr("destinations.bookTicket", "Bilet bron et")) + "</a>";
         }
 
         var srcset = photos.sm === photos.lg
@@ -380,7 +398,7 @@
     window.AEROVA_DESTINATIONS = {
         load: load, loadCity: loadCity, loadCityFlights: loadCityFlights, hubInfo: hubInfo, hubCityName: hubCityName,
         localized: localized, hasFlights: hasFlights, bookableAirport: bookableAirport, imageBase: imageBase, cityPhotoUrls: cityPhotoUrls, mediaPublicUrl: mediaPublicUrl,
-        resultsUrl: resultsUrl, detailsUrl: detailsUrl, photoAlt: photoAlt, watchImages: watchImages, cardMarkup: cardMarkup,
+        resultsUrl: resultsUrl, bookingUrl: bookingUrl, detailsUrl: detailsUrl, photoAlt: photoAlt, watchImages: watchImages, cardMarkup: cardMarkup,
         featuredCity: featuredCity, citySlug: citySlug, tr: tr, escapeHtml: escapeHtml
     };
 

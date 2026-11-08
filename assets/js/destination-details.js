@@ -53,7 +53,7 @@
 
     /* Every airport has its own working button: Baku to exactly this airport. Without a flight the results page says so. */
     function bookButton(city, airport, className) {
-        return '<a class="' + className + '" data-airport="' + esc(airport.code) + '" href="' + esc(catalog.resultsUrl(city, airport, state.page.country)) + '">' +
+        return '<a class="' + className + '" data-airport="' + esc(airport.code) + '" href="' + esc(catalog.bookingUrl(city, airport)) + '">' +
             esc(tr("destinations.bookTicket", "Bilet bron et")) + " · " + esc(airport.code) + "</a>";
     }
 
@@ -130,9 +130,9 @@
         function apply(code) {
             var target = airports.filter(function (a) { return a.code === code; })[0] || preferred;
             state.chosen = target ? target.code : "";
-            cta.setAttribute("href", target ? catalog.resultsUrl(city, target, state.page.country) : "#");
+            cta.setAttribute("href", target ? catalog.bookingUrl(city, target) : "#");
             setText("destination-aside-text", target && !target.hasRoutes
-                ? tr("destinations.noFlightsDetail", "Hələlik planlaşdırılmış reys yoxdur. Nəticə səhifəsində mövcud olanlar göstərilir.")
+                ? tr("destinations.noFlightsDetail", "Hələlik planlaşdırılmış reys yoxdur. Rezervasiya səhifəsində mövcud olanlar göstərilir.")
                 : tr("destinationDetails.chooseDateText", "Səyahət tarixinizi seçin və mövcud uçuşları tapın."));
         }
 
