@@ -57,6 +57,7 @@ export function buildShell() {
         h("div", { class: "sidebar-foot" },
             h("div", { class: "who" }, h("div", { class: "avatar", text: auth.initials() }),
                 h("div", { style: { minWidth: 0 } }, h("div", { class: "who-name", text: auth.displayName() }), h("div", { class: "who-role", text: roleLabel(me && me.role) }))),
+            h("a", { class: "nav-link", href: "index.html", title: "Saytın ana səhifəsinə qayıt" }, icon("home", 18), "Ana səhifəyə qayıt"),
             h("button", { class: "nav-link", type: "button", on: { click: auth.logout } }, icon("logout", 18), "Çıxış")));
 
     /* ---------- top bar ---------- */
