@@ -166,6 +166,9 @@
             title: profile.title || "",
             firstName: profile.firstName || "",
             lastName: profile.lastName || "",
+            fatherName: profile.fatherName || "",
+            passportNumber: profile.passportNumber || "",
+            nationalIdNumber: profile.nationalIdNumber || "",
             dateOfBirth: profile.dateOfBirth || "",
             nationality: profile.nationalityCode || "",
             email: profile.email || "",
@@ -253,6 +256,9 @@
     function populateForm(profile) {
         setFieldValue("profile-first-name", profile.firstName);
         setFieldValue("profile-last-name", profile.lastName);
+        setFieldValue("profile-father-name", profile.fatherName);
+        setFieldValue("profile-passport", profile.passportNumber);
+        setFieldValue("profile-national-id", profile.nationalIdNumber);
         setFieldValue("profile-dob", profile.dateOfBirth);
         setFieldValue("profile-nationality", profile.nationality);
         setFieldValue("profile-email", profile.email);
@@ -317,6 +323,22 @@
             }
         });
 
+        // Optional fields: only checked when something is typed.
+        ["profile-father-name", "profile-passport", "profile-national-id"].forEach(function (id) { clearFieldError(document.getElementById(id)); });
+        var fatherName = getTrimmedValue("profile-father-name");
+        if (fatherName && !/^[\p{L}][\p{L} .'\-]*$/u.test(fatherName)) {
+            markInvalid(document.getElementById("profile-father-name"), "Ata adını yalnız hərflərlə yazın");
+            isValid = false;
+        }
+        [["profile-passport", "Pasport nömrəsi 5-20 hərf və rəqəmdən ibarət olmalıdır"], ["profile-national-id", "Şəxsiyyət vəsiqəsi nömrəsi 5-20 hərf və rəqəmdən ibarət olmalıdır"]].forEach(function (pair) {
+            var value = getTrimmedValue(pair[0]);
+            var compact = value.replace(/[ \-]/g, "");
+            if (value && (!/^[A-Za-z0-9 \-]+$/.test(value) || compact.length < 5 || compact.length > 20)) {
+                markInvalid(document.getElementById(pair[0]), pair[1]);
+                isValid = false;
+            }
+        });
+
         var email = getTrimmedValue("profile-email");
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             markInvalid(document.getElementById("profile-email"), "Düzgün e-poçt ünvanı daxil edin");
@@ -330,6 +352,9 @@
         return {
             firstName: getTrimmedValue("profile-first-name"),
             lastName: getTrimmedValue("profile-last-name"),
+            fatherName: getTrimmedValue("profile-father-name"),
+            passportNumber: getTrimmedValue("profile-passport"),
+            nationalIdNumber: getTrimmedValue("profile-national-id"),
             dateOfBirth: getTrimmedValue("profile-dob"),
             nationality: getTrimmedValue("profile-nationality"),
             email: getTrimmedValue("profile-email"),
@@ -343,6 +368,9 @@
         title: "profile-title",
         firstName: "profile-first-name",
         lastName: "profile-last-name",
+        fatherName: "profile-father-name",
+        passportNumber: "profile-passport",
+        nationalIdNumber: "profile-national-id",
         dateOfBirth: "profile-dob",
         nationalityCode: "profile-nationality",
         email: "profile-email",
@@ -368,6 +396,9 @@
             title: null,
             firstName: data.firstName,
             lastName: data.lastName,
+            fatherName: data.fatherName,
+            passportNumber: data.passportNumber,
+            nationalIdNumber: data.nationalIdNumber,
             dateOfBirth: data.dateOfBirth,
             nationalityCode: data.nationality,
             email: data.email,

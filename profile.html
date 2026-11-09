@@ -23,7 +23,6 @@
     <link rel="stylesheet" href="assets/css/chat-widget.css?v=rs1">
 
     <link rel="stylesheet" href="assets/css/profile.css?v=rs1">
-    <link rel="stylesheet" href="assets/css/account-delete.css?v=ad1">
 
     <link rel="stylesheet" href="assets/css/theme.css?v=num4">
 </head>
@@ -101,6 +100,8 @@
 
                         <div class="profile-intro-actions">
 
+                            <a class="profile-secondary-button" href="account-settings.html" data-i18n="nav.accountSettings">Hesab tənzimləmələri</a>
+
                             <a class="profile-secondary-button" href="notifications.html" data-i18n="nav.notifications">Bildirişlər</a>
 
                             <a class="profile-secondary-button" href="my-trips.html" data-i18n="nav.myTrips">Səyahətlərim</a>
@@ -155,6 +156,14 @@
 
                             <div class="field">
 
+                                <label class="field-label" for="profile-father-name">Ata adı</label>
+
+                                <input class="field-input" id="profile-father-name" name="fatherName" type="text" autocomplete="off" maxlength="100">
+
+                            </div>
+
+                            <div class="field">
+
                                 <label class="field-label" for="profile-dob">Doğum tarixi <span class="required-mark" aria-hidden="true">*</span></label>
 
                                 <input class="field-input" id="profile-dob" name="dateOfBirth" type="date" required>
@@ -168,6 +177,24 @@
                                 <select class="field-input" id="profile-nationality" name="nationality" autocomplete="country" required></select>
 
                             </div>
+
+                            <div class="field">
+
+                                <label class="field-label" for="profile-passport">Pasport nömrəsi</label>
+
+                                <input class="field-input" id="profile-passport" name="passportNumber" type="text" autocomplete="off" maxlength="30" placeholder="məsələn, C12345678" aria-describedby="profile-docs-hint">
+
+                            </div>
+
+                            <div class="field">
+
+                                <label class="field-label" for="profile-national-id">Şəxsiyyət vəsiqəsi nömrəsi</label>
+
+                                <input class="field-input" id="profile-national-id" name="nationalIdNumber" type="text" autocomplete="off" maxlength="30" placeholder="məsələn, AA1234567" aria-describedby="profile-docs-hint">
+
+                            </div>
+
+                            <p class="profile-modal-hint field--full" id="profile-docs-hint">İxtiyari. Sənəd nömrələri yalnız sizin profilinizdə saxlanılır; boşluq və defis nəzərə alınmır.</p>
 
                         </div>
 
@@ -185,7 +212,9 @@
 
                                 <label class="field-label" for="profile-email">E-poçt <span class="required-mark" aria-hidden="true">*</span></label>
 
-                                <input class="field-input" id="profile-email" name="email" type="email" autocomplete="email" required>
+                                <input class="field-input" id="profile-email" name="email" type="email" autocomplete="email" required readonly aria-describedby="profile-email-hint">
+
+                                <p class="profile-modal-hint" id="profile-email-hint">E-poçt ünvanı hesabınıza bağlıdır və bu formadan dəyişdirilmir.</p>
 
                             </div>
 
@@ -248,35 +277,6 @@
                     </div>
 
                 </form>
-
-                <article class="details-card danger-zone" id="delete-account-card" aria-labelledby="delete-account-title" hidden>
-
-                    <h2 class="details-card-title" id="delete-account-title">Hesabı sil</h2>
-
-                    <p class="danger-text">Hesabınız həmişəlik silinəcək: profil məlumatlarınız, saxlanmış sərnişinlər, bildirişlər və dəstək müraciətləriniz silinir. Bronlarınız və ödənişləriniz qanunla tələb olunan uçot üçün saxlanılır; bron nömrəsi ilə onları idarə edə bilərsiniz. Bu geri qaytarıla bilməz.</p>
-
-                    <button type="button" class="danger-button" id="delete-account-open" aria-expanded="false" aria-controls="delete-account-panel">Hesabı silmək istəyirəm</button>
-
-                    <div class="danger-panel" id="delete-account-panel" hidden>
-
-                        <p class="danger-steps">Təhlükəsizlik üçün əvvəl şifrənizi daxil edin. Sonra e-poçtunuza təsdiq keçidi göndərəcəyik; hesab yalnız o keçidi açıb təsdiqləyəndən sonra silinəcək.</p>
-
-                        <div class="field">
-                            <label class="field-label" for="delete-account-password">Cari şifrə</label>
-                            <input class="field-input" id="delete-account-password" type="password" autocomplete="current-password" aria-describedby="delete-account-error">
-                            <p class="danger-error" id="delete-account-error" role="alert" hidden></p>
-                        </div>
-
-                        <div class="danger-actions">
-                            <button type="button" class="danger-submit" id="delete-account-send">Təsdiq keçidi göndər</button>
-                            <button type="button" class="danger-ghost" id="delete-account-cancel">Ləğv et</button>
-                        </div>
-
-                        <p class="danger-sent" id="delete-account-sent" role="status" tabindex="-1" hidden></p>
-
-                    </div>
-
-                </article>
 
             </div>
 
@@ -555,16 +555,15 @@
 
 
 
-    <script src="assets/js/locales/az.js?v=ai5"></script>
+    <script src="assets/js/locales/az.js?v=as1"></script>
     <script src="assets/js/i18n.js?v=rs1"></script>
     <script src="assets/js/api-config.js?v=rs1"></script>
     <script src="assets/js/api-client.js?v=perf2"></script>
     <script src="assets/js/chat-widget.js?v=rs1"></script>
-    <script src="assets/js/auth.js?v=fast2"></script>
+    <script src="assets/js/auth.js?v=as1"></script>
 
     <script src="assets/js/travel-documents.js?v=mc1"></script>
-    <script src="assets/js/profile.js?v=rs1"></script>
-    <script src="assets/js/account-delete.js?v=ad2"></script>
+    <script src="assets/js/profile.js?v=id1"></script>
 
     <script src="assets/js/logo.js?v=rs1"></script>
 
