@@ -17,6 +17,7 @@ window.AEROVA_LOCALES.az = {
     "logout": "Çıxış",
     "notifications": "Bildirişlər",
     "profile": "Profil",
+    "accountSettings": "Hesab tənzimləmələri",
     "openMenu": "Menyunu aç",
     "closeMenu": "Menyunu bağla",
     "primary": "Əsas",

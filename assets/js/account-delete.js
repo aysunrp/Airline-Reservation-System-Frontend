@@ -1,5 +1,5 @@
 /*
- * "Hesabı sil" on the profile page. This only asks for the deletion: the password is checked on the server and a confirmation link is
+ * "Hesabı sil" on the account settings page. This only asks for the deletion: the password is checked on the server and a confirmation link is
  * e-mailed to the account. Nothing is deleted here; the account goes only when the link's page (account-delete-confirm.html) confirms.
  */
 (function () {
@@ -34,7 +34,8 @@
     }
 
     function syncVisibility() {
-        card.hidden = !form || form.hidden || isStaff();
+        // On the profile page the card waited for the form; on the settings page there is no such form and it shows at once.
+        card.hidden = (!!form && form.hidden) || isStaff();
     }
 
     function setError(text) {

@@ -260,10 +260,29 @@
     }
 
     function logout() {
-        clearAuthState();
-        forgetPersonalBookingData();
-        try { sessionStorage.removeItem(PAYER_SESSION_KEY); } catch (error) { /* ignore */ }
-        window.location.href = "login.html";
+        var finished = false;
+        function finish() {
+            if (finished) return;
+            finished = true;
+            clearAuthState();
+            forgetPersonalBookingData();
+            try { sessionStorage.removeItem(PAYER_SESSION_KEY); } catch (error) { /* ignore */ }
+            window.location.href = "login.html";
+        }
+
+        // The sign-out is real: this device's session is ended on the server too, so its token cannot be used again.
+        // It is tried first and never waits long: if the server cannot be reached the device is still signed out here.
+        var api = window.AEROVA_API;
+        if (api && api.session && api.session.isActive() && typeof api.del === "function") {
+            try {
+                api.del("api/account/sessions/current").then(finish, finish);
+            } catch (error) {
+                finish();
+            }
+            window.setTimeout(finish, 1500);
+        } else {
+            finish();
+        }
     }
 
     function tr(key, fallback, vars) {
@@ -356,6 +375,7 @@
     var ACCOUNT_STYLE_ID = "aerova-account-menu-style";
     var ACCOUNT_ITEMS = [
         { href: "profile.html", key: "profile.title", fallback: "Profilim" },
+        { href: "account-settings.html", key: "nav.accountSettings", fallback: "Hesab tənzimləmələri" },
         { href: "my-trips.html", key: "nav.myTrips", fallback: "Səyahətlərim" },
         { href: "notifications.html", key: "nav.notifications", fallback: "Bildirişlər", badge: true },
         { logout: true, key: "nav.logout", fallback: "Çıxış" }
