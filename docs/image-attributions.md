@@ -2,7 +2,7 @@
 
 Bütün şəkillər Wikimedia Commons-dan götürülüb və lisenziyası istifadəyə icazə verir. Hər şəkil yalnız öz şəhərinə aiddir; başqa şəhərin şəkli fallback kimi istifadə olunmur.
 
-Fayllar `assets/images/city-<şəhər-slug>.webp` (1600 px) və `city-<şəhər-slug>-sm.webp` (800 px) adı ilə saxlanılır. Şəkli dəyişmək üçün eyni adlı faylı yeni şəkillə əvəz etmək kifayətdir.
+Fayllar `assets/images/city-<şəhər-slug>.webp` (təxminən 736-1200 px en) və `city-<şəhər-slug>-sm.webp` (640 px en, kartlar üçün) adı ilə saxlanılır. Şəkli dəyişmək üçün eyni adlı faylı yeni şəkillə əvəz etmək kifayətdir.
 
 ## Yeni əlavə olunan şəkillər
 
