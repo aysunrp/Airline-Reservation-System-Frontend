@@ -372,27 +372,6 @@
             : { state: "loading", title: ["api.payment.checkingTitle", "Ödənişiniz yoxlanılır"], text: ["api.payment.checkingText", "Ödənişin Stripe tərəfindən təsdiqlənməsini gözləyirik. Bu səhifəni bağlamayın."], actions: [] };
     }
 
-    function showOptimisticReserved(stored) {
-        quietPoll = true;
-        var summary = stored.pnr
-            ? [{ key: "api.payment.labelReference", fallback: "Rezervasiya kodu", value: stored.pnr, pnr: true }]
-            : null;
-        show({
-            state: "success",
-            title: ["api.payment.reservedTitle", "Rezerv olundu"],
-            text: ["api.payment.reservedText", "Ödənişiniz qəbul edildi. Rezervasiyanız yaradıldı — bütün təfərrüatları Səfərlərim bölməsində görə bilərsiniz."],
-            actions: ["return-primary", "return-home"],
-            summary: summary
-        });
-        var primary = byId("return-primary");
-        if (primary) {
-            restorePayerAccount();
-            primary.setAttribute("href", primaryAfterPaymentHref(stored.pnr, stored.lastName, stored));
-            primary.textContent = tr("api.payment.myTrips", "Səfərlərim");
-        }
-        byId("return-status").removeAttribute("aria-busy");
-    }
-
     function sessionForPoll(address, stored) {
         return address.session || stored.session || "";
     }
@@ -531,7 +510,8 @@
             pollSuccess(address, stored);
         });
 
-        showOptimisticReserved(stored);
+        // Nothing is claimed until the server says the payment is Paid and the booking Confirmed (see interpret).
+        show(waitingView(false));
         startedAt = Date.now();
         pollSuccess(address, stored);
     }
