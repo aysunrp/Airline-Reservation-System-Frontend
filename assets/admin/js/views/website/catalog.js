@@ -1,9 +1,9 @@
-/* Countries and cities of the destinations catalog: texts, switched on or off (never deleted) and each city's photograph. */
+/* Countries and cities of the destinations catalog: added here, texts, switched on or off, deleted by a SuperAdmin, and each city's photograph. */
 import { h, mount, icon } from "../../core/dom.js";
 import * as api from "../../core/api.js";
 import * as auth from "../../core/auth.js";
 import { ok, fail, confirmDialog, openDrawer } from "../../core/ui.js";
-import { loadingBlock, errorState, emptyState } from "../../components/page.js";
+import { loadingBlock, errorState, emptyState, button } from "../../components/page.js";
 import { searchBox } from "../../components/toolbar.js";
 import { openForm } from "../../components/form.js";
 import { activeBadge } from "../../components/badge.js";
@@ -42,6 +42,42 @@ async function editCity(city) {
         ],
         values: { nameAz: city.nameAz, nameRu: city.nameRu, description: city.description, descriptionAz: city.descriptionAz, descriptionRu: city.descriptionRu, aliases: (city.aliases || []).join("; ") },
         onSubmit: (d) => api.put("api/admin/destinations/cities/" + city.id, d)
+    });
+}
+
+async function addCountry() {
+    return openForm({
+        title: "Yeni ölkə", wide: true, submitLabel: "Əlavə et",
+        intro: "Ölkə aktiv əlavə olunur. Şəhər və hava limanı ölkənin içindən əlavə edilir.",
+        fields: [
+            { key: "code", label: "Ölkə kodu", maxLength: 2, placeholder: "NO", hint: "İki hərfli ISO kodu (AZ, TR, NO). Sonradan dəyişmir." },
+            { key: "name", label: "Ad (ingilis)" }, { key: "nameAz", label: "Ad (azərbaycan)" }, { key: "nameRu", label: "Ad (rus)" },
+            { key: "description", label: "Təsvir (ingilis)", type: "textarea", rows: 3, maxLength: 400 },
+            { key: "descriptionAz", label: "Təsvir (azərbaycan)", type: "textarea", rows: 3, maxLength: 400 },
+            { key: "descriptionRu", label: "Təsvir (rus)", type: "textarea", rows: 3, maxLength: 400 }
+        ],
+        values: {},
+        onSubmit: (d) => api.post("api/admin/destinations/countries", d)
+    });
+}
+
+async function addCity(country) {
+    return openForm({
+        title: "Yeni şəhər: " + nameOf(country), wide: true, submitLabel: "Əlavə et",
+        intro: "Şəhər hava limanı ilə birlikdə əlavə olunur: hava limanı olmayan şəhəri axtarmaq və rezerv etmək olmur. Şəkli əlavə etdikdən sonra “Şəkil” düyməsi ilə yükləyə bilərsən.",
+        fields: [
+            { key: "name", label: "Ad (ingilis)", hint: "Şəhərin açarıdır, sonradan dəyişmir." },
+            { key: "nameAz", label: "Ad (azərbaycan)" }, { key: "nameRu", label: "Ad (rus)" },
+            { key: "description", label: "Təsvir (ingilis)", type: "textarea", rows: 3, maxLength: 400 },
+            { key: "descriptionAz", label: "Təsvir (azərbaycan)", type: "textarea", rows: 3, maxLength: 400 },
+            { key: "descriptionRu", label: "Təsvir (rus)", type: "textarea", rows: 3, maxLength: 400 },
+            { key: "aliases", label: "Digər yazılışlar", required: false, span2: true, hint: "Nöqtəli vergül ilə ayır (səsli axtarış üçün)." },
+            { key: "airportCode", label: "Hava limanı kodu", maxLength: 3, placeholder: "OSL", hint: "3 hərfli IATA kodu. Başqa şəhərə bağlı kod qəbul olunmur." },
+            { key: "airportName", label: "Hava limanının adı", placeholder: "Oslo Gardermoen Airport" },
+            { key: "timeZoneId", label: "Vaxt qurşağı", span2: true, placeholder: "Europe/Oslo", hint: "IANA adı (Asia/Baku, Europe/London). “Azerbaijan Standard Time” qəbul olunmur." }
+        ],
+        values: {},
+        onSubmit: (d) => api.post(`api/admin/destinations/countries/${country.id}/cities`, d)
     });
 }
 
@@ -114,6 +150,7 @@ export function catalogManager() {
             h("button", { class: "btn btn-ghost btn-icon btn-sm", type: "button", "aria-expanded": String(isOpen), "aria-label": nameOf(country) + " şəhərləri", on: { click: () => { if (opened.has(country.id)) opened.delete(country.id); else opened.add(country.id); cities.hidden = !cities.hidden; } } }, icon("down", 16)),
             h("div", { class: "grow" }, h("div", { class: "cell-main", text: `${nameOf(country)} (${country.code})` }), h("div", { class: "cell-sub", text: `${country.cities.length} şəhər` })),
             activeBadge(country.isActive),
+            h("button", { class: "btn btn-ghost btn-sm", type: "button", on: { click: async () => { if (await addCity(country)) { opened.add(country.id); ok("Şəhər əlavə olundu."); load(); } } } }, icon("plus", 14), "Şəhər"),
             h("button", { class: "btn btn-ghost btn-sm", type: "button", on: { click: async () => { if (await editCountry(country)) { ok("Ölkə yeniləndi."); load(); } } } }, "Redaktə"),
             h("button", { class: "btn btn-ghost btn-sm" + (country.isActive ? " btn-danger-text" : ""), type: "button", on: { click: () => toggle(country, "country") } }, country.isActive ? "Deaktiv et" : "Aktiv et"),
             deleteButton(country, "country"));
@@ -135,8 +172,9 @@ export function catalogManager() {
         try {
             countries = await api.get("api/admin/destinations");
             mount(box, h("div", { class: "stack-sm" },
-                h("div", { class: "row" }, searchBox({ placeholder: "Ölkə, şəhər və ya hava limanı kodu…", onInput: (v) => { query = v; draw(); } })),
-                h("p", { class: "small muted", text: (auth.isSuper() ? "Ölkə və şəhərləri deaktiv etmək (saytdan gizlətmək) və ya silmək olar. Silmə yalnız marşrutda, cədvəldə və ya reysdə istifadə olunmayanlar üçündür." : "Ölkə və şəhərləri deaktiv etmək olar. Silmə yalnız SuperAdmin üçündür.") + " Şəhər şəkli yükləyib dəyişə və ya standarta qaytara bilərsən." }),
+                h("div", { class: "row" }, searchBox({ placeholder: "Ölkə, şəhər və ya hava limanı kodu…", onInput: (v) => { query = v; draw(); } }),
+                    button("Yeni ölkə", { variant: "secondary", iconName: "plus", onClick: async () => { const created = await addCountry(); if (created) { if (created.id) opened.add(created.id); ok("Ölkə əlavə olundu."); load(); } } })),
+                h("p", { class: "small muted", text: (auth.isSuper() ? "Ölkə və şəhərləri deaktiv etmək (saytdan gizlətmək) və ya silmək olar. Silmə yalnız marşrutda, cədvəldə və ya reysdə istifadə olunmayanlar üçündür." : "Ölkə və şəhərləri deaktiv etmək olar. Silmə yalnız SuperAdmin üçündür.") + " Şəhər şəkli yükləyib dəyişə və ya standarta qaytara bilərsən. Yeni ölkə və ya şəhər əlavə etmək üçün “Yeni ölkə” və ölkənin yanındakı “Şəhər” düymələrindən istifadə et." }),
                 list));
             draw();
         } catch (error) { mount(box, errorState(error, load)); }
