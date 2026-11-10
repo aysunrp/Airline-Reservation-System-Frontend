@@ -217,7 +217,7 @@
 
         var srcset = photos.sm === photos.lg
             ? escapeHtml(photos.sm)
-            : escapeHtml(photos.sm) + " 800w, " + escapeHtml(photos.lg) + " 1600w";
+            : escapeHtml(photos.sm) + " 640w, " + escapeHtml(photos.lg) + " 800w";
         return '<article class="destination-card" data-city="' + escapeHtml(city.id) + '" data-country="' + escapeHtml(country.code) + '"' + (flights ? "" : ' data-no-flights="true"') + ">" +
             '<img class="destination-image" data-photo src="' + escapeHtml(photos.sm) + '" srcset="' + srcset +
             '" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 25vw" width="800" height="533" loading="lazy" decoding="async" alt="' + escapeHtml(photoAlt(city, country)) + '">' +
