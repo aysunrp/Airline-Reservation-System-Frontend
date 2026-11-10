@@ -796,16 +796,20 @@
     }
 }
 
-/* The card text is light on the photograph in both themes; these win over the theme's light-mode text colours. */
-html .dest-catalog .destination-card .destination-location {
+/* The card text is light on the photograph in both themes; these win over the theme's light-mode text colours.
+   The home page's destinations section shows the same cards, so it follows the same rule. */
+html .dest-catalog .destination-card .destination-location,
+html .destinations-section .destination-card .destination-location {
     color: #e0c48a;
 }
 
-html .dest-catalog .destination-card .destination-name {
+html .dest-catalog .destination-card .destination-name,
+html .destinations-section .destination-card .destination-name {
     color: #f6f1e7;
 }
 
-html .dest-catalog .destination-card .destination-description {
+html .dest-catalog .destination-card .destination-description,
+html .destinations-section .destination-card .destination-description {
     color: rgba(246, 241, 231, 0.84);
 }
 
