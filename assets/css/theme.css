@@ -3855,3 +3855,67 @@ html[data-theme="dark"] .sp-faq-item p {
 html[data-theme="dark"] .sp-live {
     color: rgba(246, 241, 231, 0.72);
 }
+
+/* ---- light: about-aerova.html (the page was drawn for dark; light sections get dark text and light cards, the photo sections keep their dark veil and light text) ---- */
+html[data-theme="light"] .brand-class,
+html[data-theme="light"] .brand-cabin-panel {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+}
+
+html[data-theme="light"] .brand-class h3,
+html[data-theme="light"] .brand-cabin-panel h2,
+html[data-theme="light"] .brand-story__text h2,
+html[data-theme="light"] .brand-pillar h3,
+html[data-theme="light"] .brand-value h3,
+html[data-theme="light"] .brand-services-values h2 {
+    color: var(--color-text);
+}
+
+html[data-theme="light"] .brand-class__body > p,
+html[data-theme="light"] .brand-section-sub,
+html[data-theme="light"] .brand-story__text > p,
+html[data-theme="light"] .brand-pillar p,
+html[data-theme="light"] .brand-value p,
+html[data-theme="light"] .brand-cabin-panel__lead,
+html[data-theme="light"] .brand-cabin-panel__list {
+    color: rgba(28, 21, 12, 0.76);
+}
+
+html[data-theme="light"] .brand-link,
+html[data-theme="light"] .brand-pillar__icon,
+html[data-theme="light"] .brand-value__icon,
+html[data-theme="light"] .brand-service__icon {
+    color: var(--color-accent-strong);
+}
+
+html[data-theme="light"] .brand-eyebrow {
+    color: var(--color-accent-strong);
+}
+
+html[data-theme="light"] .brand-services {
+    border-right-color: var(--color-border);
+}
+
+html[data-theme="light"] .brand-service {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+/* the photo sections stay dark in both themes, so their titles stay light */
+html[data-theme="light"] .brand-hero .brand-eyebrow,
+html[data-theme="light"] .brand-journey .brand-eyebrow,
+html[data-theme="light"] .brand-final .brand-eyebrow {
+    color: #c6a36a;
+}
+
+html[data-theme="light"] .brand-journey h2,
+html[data-theme="light"] .brand-journey h3,
+html[data-theme="light"] .brand-final h2 {
+    color: #f6f1e7;
+}
+
+html[data-theme="light"] .brand-journey .brand-section-sub {
+    color: rgba(246, 241, 231, 0.72);
+}
