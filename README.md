@@ -38,7 +38,8 @@ git status
 git pull
 ```
 
-3. `payment-success.html`, `payment-cancel.html`, `cancel-confirm.html`, `confirm-booking.html`, `account-delete-confirm.html` kimi səhifələr 27 Oktyabr 2026-dan sonra əlavə olunub. Köhnə nüsxədə (ZIP, köhnə clone) bu səhifələr olmur, ödəniş qayıdışı və e-poçt linkləri isə onlara yönəlir.
+3. Sayt alt qovluqdan açılıbsa (ünvanda `5500/` ilə `index.html` arasında qovluq adı varsa), Stripe-dan qayıdış `payment.js`-in göndərdiyi qovluq yolu ilə gedir. Ən sadəsi yenə də repo qovluğunu sayt kökü kimi açmaqdır.
+4. `payment-success.html`, `payment-cancel.html`, `cancel-confirm.html`, `confirm-booking.html`, `account-delete-confirm.html` kimi səhifələr 27 Oktyabr 2026-dan sonra əlavə olunub. Köhnə nüsxədə (ZIP, köhnə clone) bu səhifələr olmur, ödəniş qayıdışı və e-poçt linkləri isə onlara yönəlir.
 
 ## Səhifələr
 Bron axını: `index` / `flight-results` → `flight-details` → `seat-selection` → `passenger-details` → `baggage-selection` → `meal-selection` → `payment` (Stripe Checkout) → `payment-success` (və ya `payment-cancel`) → `confirmation`. `my-trips` və `booking-details` mövcud bronlara baxış üçündür. Giriş tələb edən səhifələr giriş olmadıqda `login.html`-ə yönləndirir.
