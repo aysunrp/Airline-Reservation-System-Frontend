@@ -508,6 +508,18 @@
         }
     }
 
+    /* Where Stripe must send the traveller back to: the folder this page is served from, so
+       payment-success.html is found whether the site is served at the root of the host or from
+       a sub-folder (a parent folder opened in the editor, a clone kept inside another folder). */
+    function returnBase() {
+        var loc = window.location;
+        if (!loc || (loc.protocol !== "http:" && loc.protocol !== "https:") || !loc.origin) {
+            return "";
+        }
+        var folder = loc.pathname.replace(/[^\/]*$/, "").replace(/\/+$/, "");
+        return loc.origin + folder;
+    }
+
     function requestCheckoutSession(pnr, lastName) {
         var key = checkoutKey(pnr, lastName);
         if (checkoutPrefetchFlight && checkoutPrefetchFlight.key === key) {
@@ -515,8 +527,9 @@
         }
 
         var payload = { pnr: pnr, lastName: lastName };
-        if (window.location && window.location.origin) {
-            payload.returnOrigin = window.location.origin;
+        var siteBase = returnBase();
+        if (siteBase) {
+            payload.returnOrigin = siteBase;
         }
         var promise = window.AEROVA_API.post(
             "api/payments/checkout-session",
