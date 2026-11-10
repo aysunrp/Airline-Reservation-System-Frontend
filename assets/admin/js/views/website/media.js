@@ -28,7 +28,7 @@ function filesTab() {
                 try { await api.upload("PUT", "api/admin/media/file?path=" + encodeURIComponent(x.path), file); ok("Şəkil dəyişdirildi."); load(); } catch (error) { fail(api.message(error)); }
             });
             return h("div", { class: "media-item" },
-                h("div", { class: "media-thumb" }, x.isImage ? h("img", { src: api.url(x.url), alt: "", loading: "lazy" }) : "Video"),
+                h("div", { class: "media-thumb" }, x.isImage ? h("img", { src: api.url(x.url), alt: "", loading: "lazy" }) : h("video", { src: api.url(x.url) + "#t=0.5", preload: "metadata", muted: true, playsinline: true })),
                 h("div", { class: "media-meta" }, h("div", { class: "media-name", text: x.path }), h("div", { class: "muted", text: KB(x.sizeBytes) + " · " + new Date(x.modifiedUtc).toLocaleDateString("az-AZ") }),
                     h("div", { class: "chips" }, x.usedBy.length ? x.usedBy.map((u) => h("span", { class: "badge badge-success", text: u })) : [h("span", { class: "badge badge-warning", text: "İstifadə olunmur" })])),
                 h("div", { class: "media-actions" },
